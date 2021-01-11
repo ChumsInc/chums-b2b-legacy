@@ -1,0 +1,240 @@
+@import "./social-icons.scss";
+
+
+.banner {
+  text-align: left;
+  float: left;
+}
+
+.bannerTitle {
+  margin: 0;
+  padding: 10px 0;
+  font-weight: normal;
+  font-size: 1.25rem;
+  line-height: 1rem;
+  text-align: left;
+}
+
+.bannerDesc {
+  padding: 0;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.contactUs {
+  float: right;
+  text-align: right;
+  max-width: 300px;
+  font-size: 0.75rem;
+  margin-right: 0;
+
+  p {margin: 0}
+}
+
+.actionLinks {
+  float: right;
+  font-size: 0.75rem;
+
+  .link {
+    clear: both;
+    padding-left: 0.75rem;
+  }
+}
+
+.link {
+  display: inline-block;
+  padding: 3px 8px;
+  text-decoration: none;
+  font-size: 1.125em; /* ~18px */
+}
+
+.link,
+.link:active,
+.link:visited {
+  color: rgba(255, 255, 255, .8);
+}
+
+.link:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+.highlight {
+  margin-right: 8px;
+  margin-left: 8px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, .15);
+  color: #fff;
+}
+
+.highlight:hover {
+  background: rgba(0, 0, 0, .3);
+}
+
+.spacer {
+  color: rgba(255, 255, 255, .3);
+}
+
+.navbar {
+  text-shadow: none;
+}
+
+.navbar.navbar-default .container {
+  width: inherit;
+}
+
+.nav-tabs a {
+  cursor: pointer;
+}
+
+//.heading-bar {
+//  background-color: $heading-bar-bgcolor;
+//  color: $heading-bar-color;
+//  text-align: center;
+//  position: fixed;
+//  top: 0;
+//  width: 100%;
+//  font-weight: bold;
+//  height: 30px;
+//  z-index: 100;
+//  margin-top: 0;
+//  .row {
+//    margin-top: 5px;
+//  }
+//
+//  @media only screen and (max-width: 950px)  {
+//    .left-bar {
+//      text-align: left;
+//      padding-left: 15px;
+//    }
+//    .right-bar {
+//      text-align: right;
+//      padding-right: 15px;
+//    }
+//  }
+//}
+
+
+
+/*
+.navbar-chums {
+  transition: all 0.2s ease-in-out;
+  top: 30px;
+  background-color: $navbar-bgcolor;
+  margin-bottom: 10px;
+
+  .nav > li.active > a,
+  .nav > li > a:focus,
+  .nav > li > a:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .site-logo {
+    position: absolute;
+    left: 50%;
+
+    .logo-center {
+      position: relative;
+      left: -50%;
+    }
+
+    .logo {
+      width: 200px;
+      margin-top: -18px;
+      transition: all 0.2s ease-in-out;
+    }
+  }
+
+  li.cart-nav {
+    a {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      .current-cart {
+        .cart-name {
+          padding: 0 10px;
+          color: lightblue;
+        }
+        .cart-total {
+          color: lightblue;
+          &:first-of-type {
+            margin-right: 5px;
+          }
+        }
+      }
+    }
+  }
+
+  li.profile-nav {
+    a {
+      padding-top: 5px;
+      padding-bottom: 5px;
+      .profile-icon {
+        img {
+          height: 40px;
+          width: auto;
+        }
+      }
+    }
+  }
+  .navbar-nav > li > a {
+    color: $navbar-color;
+    font-weight: bold;
+    text-transform: uppercase;
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  .nav .open > a,
+  .nav .open > a:focus,
+  .nav .open > a:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+  }
+
+  .navbar-toggle .icon-bar {
+    background-color: $navbar-color;
+  }
+
+  .navbar-collapse {
+    border-top: 0;
+    margin-left: 0;
+    &.collapsing,
+    &.collapsing.in {
+      margin-left: 0px;
+      background-color: rgba(255, 255, 255, 0.8);
+      color: #000;
+      .navbar-nav > li > a {
+        color: #000;
+      }
+    }
+  }
+}
+*/
+
+.social-icons {
+  float: right;
+  padding-top: 4px;
+
+  .icon-set {
+    display: inline-block;
+    margin-left: 10px;
+    span {
+      display: none;
+    }
+  }
+  div:first-child {
+    margin-left: 0;
+  }
+
+  .twitter {
+    @extend .twitter-icon;
+    @extend .icon-set;
+  }
+  .facebook {
+    @extend .facebook-icon;
+    @extend .icon-set;
+  }
+  .instagram {
+    @extend .instagram-icon;
+    @extend .icon-set;
+  }
+}

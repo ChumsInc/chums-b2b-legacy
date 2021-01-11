@@ -1,0 +1,13 @@
+@import "../../node_modules/bootstrap/scss/variables";
+.pagination {
+  margin-bottom: 0;
+  &.filtered {
+    .page-item.active {
+      .page-link {
+        background-color: $warning;
+        border-color: $warning;
+        color: $black;
+      }
+    }
+  }
+}

@@ -1,0 +1,324 @@
+
+label.color-swatch,
+.tag--swatch,
+.color-swatch {
+
+  &.color-swatch--leather-100 {background-image: url('/images/swatches/2020/swatch-leather-100.jpg');}
+  &.color-swatch--suede-100 {background-color: #000000;}
+  &.color-swatch--100 {background-color: #000000;} 		//black
+  &.color-swatch--dual-100 {background-color: #000000;} 		//black
+  &.color-swatch--101 {background-color: #276bb8;} 		//royal
+  &.color-swatch--tech-101 {background-color: #99becc;} //royal
+  &.color-swatch--102 {background-color: #c02119;} 		//red
+  &.color-swatch--103 {background-color: #92999f;} 		//grey
+  &.color-swatch--105 {background-color: #181a44;} 		//navy
+  &.color-swatch--silicone-105 {background-color: #536ca7;} //royal
+  &.color-swatch--107 {background-color: #eeeeee;} 		//white
+  &.color-swatch--108 {background-color: #ffdf28;} 		//yellow --- using same as ev-yellow
+  &.color-swatch--109 {background-color: #754f9f;}		//purple
+  &.color-swatch--111 {background-color: #2cb156;}		//green
+  &.color-swatch--113 {background-color: #dcc7b3;}		//tan
+  &.color-swatch--116 {background-color: #895a4e;}		//brown
+  &.color-swatch--117 {background-color: #e0663b;}		//orange
+  &.color-swatch--118 {background-image: url('/images/swatches/2020/swatch-leather-118.jpg');}
+  &.color-swatch--leather-118 {background-image: url('/images/swatches/2020/swatch-leather-118.jpg');}
+  &.color-swatch--suede-118 {background-image: url('/images/swatches/2020/swatch-suede-118.jpg');}
+  &.color-swatch--leather-119 {background-image: url('/images/swatches/2020/swatch-leather-119.jpg');}
+  &.color-swatch--119 {background-image: url('/images/swatches/2020/swatch-leather-119.jpg');}
+  &.color-swatch--121 {background-color: #5d202b;}		//burgundy
+  &.color-swatch--122 {background-color: #57553c;}		//olive
+  &.color-swatch--mariner-126 {background-image: url('/images/swatches/2020/swatch-mariner-126.jpg');}
+  &.color-swatch--127 {background-color: #4296c2;}		//
+  &.color-swatch--130 {background-color: #b39767;}
+  &.color-swatch--131 {background-color: #093d18;}		//hunter
+  &.color-swatch--132 {background-color: #BFD333;}		//neon green
+  &.color-swatch--133 {background-color: #93c75f;}		//ivy
+  &.color-swatch--134 {background-color: #58beb9;}		//tempest
+  &.color-swatch--139 {background-color: #dddcdb;}		//steel
+  &.color-swatch--140 {background-color: #9f3b95;}		//berry
+  &.color-swatch--141 {background-color: #e36e66;}		//
+  &.color-swatch--146 {background-color: #5a5940;}		//
+  &.color-swatch--149 {background-color: #865688;}		//eggplant
+
+  &.color-swatch--151 {background-color: #C9B037;}		//gold
+  &.color-swatch--152 {background-color: #e1e1e1;}		//silver
+  &.color-swatch--153 {background-color: #a7c1a3;}		//moss green
+  &.color-swatch--155 {background-color: #ceada6;}		//copper    
+  &.color-swatch--156 {background-image: url('/images/swatches/2020/swatch-ratchet-156.jpg');}
+  &.color-swatch--157 {background-image: url('/images/swatches/2020/swatch-ratchet-157.jpg');}
+  &.color-swatch--159 {background-image: url('/images/swatches/2020/swatch-159.jpg');}
+  &.color-swatch--160 {background-image: url('/images/swatches/2020/swatch-ratchet-160.jpg');}
+  &.color-swatch--168 {background-image: url('/images/swatches/2020/swatch-168.jpg');}
+  &.color-swatch--170 {background-image: url('/images/swatches/2020/swatch-170.jpg');}
+  &.color-swatch--silicone-170 {background-color: #e7e4bc;}		//moon glow
+  &.color-swatch--185 {background-image: url('/images/swatches/2020/swatch-185.jpg');}
+  &.color-swatch--186 {background-image: url('/images/swatches/2020/swatch-186.jpg');}
+  &.color-swatch--187 {background-image: url('/images/swatches/2020/swatch-187.jpg');}
+  &.color-swatch--188 {background-image: url('/images/swatches/2020/swatch-188.jpg');}
+  &.color-swatch--189 {background-image: url('/images/swatches/2020/swatch-189.jpg');}
+  &.color-swatch--190 {background-image: url('/images/swatches/2020/swatch-190.jpg');}
+  &.color-swatch--199 {background-image: url('/images/swatches/2020/swatch-199.jpg');}
+
+  &.color-swatch--217 {background-color: #8c2f30;}		//adobo red  
+  &.color-swatch--218 {background-color: #c9e079;}		//green
+  &.color-swatch--219 {background-color: #cff471;}		//
+  &.color-swatch--223 {background-color: #85a8cb;}		//
+  &.color-swatch--228 {background-color: #2557C5;}		//
+  &.color-swatch--250 {background-color: #00a3e0;}		//aqua
+  &.color-swatch--dual-250 {background-image: url('/images/swatches/2020/250-swatch-angle.jpg');}
+  &.color-swatch--264 {background-color: #ebc121;}		//mango
+
+
+  &.color-swatch--306 {background-image: url('/images/swatches/2020/swatch-306.jpg');}	//black & grey
+  &.color-swatch--307 {background-image: url('/images/swatches/2020/swatch-307.jpg');}	//black & grey
+  &.color-swatch--308 {background-image: url('/images/swatches/2020/swatch-308.jpg');}	//black & grey
+  &.color-swatch--310 {background-image: url('/images/swatches/2020/swatch-310.jpg');}	//
+  &.color-swatch--311 {background-image: url('/images/swatches/2020/swatch-311.jpg');}	//
+  &.color-swatch--312 {background-image: url('/images/swatches/2020/swatch-312.jpg');}	//
+  &.color-swatch--313 {background-image: url('/images/swatches/2020/swatch-313.jpg');}	//
+  &.color-swatch--314 {background-image: url('/images/swatches/2020/swatch-314.jpg');}	//
+  &.color-swatch--315 {background-image: url('/images/swatches/2020/swatch-315.jpg');}	//
+  &.color-swatch--319 {background-image: url('/images/swatches/2020/swatch-ratchet-319.jpg');}
+  &.color-swatch--320 {background-image: url('/images/swatches/2020/swatch-rope-320.jpg');}
+  &.color-swatch--rope-329 {background-image: url('/images/swatches/2020/swatch-rope-329.jpg');}
+  &.color-swatch--329 {background-image: url('/images/swatches/2020/swatch-329.jpg');}
+  &.color-swatch--mariner-340 {background-image: url('/images/swatches/2020/swatch-mariner-340.jpg');}
+  &.color-swatch--342 {background-image: url('/images/swatches/2020/swatch-ratchet-342.jpg');}
+  &.color-swatch--349 {background-image: url('/images/swatches/2020/swatch-349.jpg');}	//realtree xtra
+
+  &.color-swatch--350 {background-image: url('/images/swatches/2020/swatch-rope-350.jpg');}
+  &.color-swatch--351 {background-image: url('/images/swatches/2020/swatch-351.jpg');}  //realtree edge
+  &.color-swatch--352 {background-image: url('/images/swatches/2020/swatch-352.jpg');}  //realtree wave
+  &.color-swatch--dual-356 {background-image: url('/images/swatches/2020/356-swatch-angle.jpg');}
+  &.color-swatch--357 {background-color: #a9a8a8;}		//storm
+  &.color-swatch--358 {background-color: #faca3e;}		//canary
+  &.color-swatch--359 {background-color: #efa43c;}		//tangerine
+  &.color-swatch--360 {background-color: #485b38;}
+  &.color-swatch--361 {background-color: #b3c9da;}
+  &.color-swatch--362 {background-color: #575f68;}
+  &.color-swatch--363 {background-color: #afb1b2;}
+  &.color-swatch--364 {background-color: #c9baa3;}
+  &.color-swatch--365 {background-color: #3e5487;}
+  &.color-swatch--367 {background-color: #8e8b82;}		//lichen
+  &.color-swatch--368 {background-color: #712b2b;}		//pomegranate
+  &.color-swatch--369 {background-color: #dca448;}		//marigold
+  &.color-swatch--370 {background-color: #4aa6b0;}		//teal
+  &.color-swatch--390 {background-color: #64534f;}		//fudge
+  &.color-swatch--391 {background-color: #4d5751;}		//dark forest
+
+  &.color-swatch--456 {background-image: url('/images/swatches/2020/swatch-456.jpg');}
+  &.color-swatch--457 {background-image: url('/images/swatches/2020/swatch-457.jpg');}
+  &.color-swatch--458 {background-image: url('/images/swatches/2020/swatch-458.jpg');}
+  &.color-swatch--459 {background-image: url('/images/swatches/2020/swatch-459.jpg');}
+  &.color-swatch--460 {background-image: url('/images/swatches/2020/swatch-460.jpg');} //blue pineapple
+  &.color-swatch--461 {background-image: url('/images/swatches/2020/swatch-461.jpg');}
+  &.color-swatch--462 {background-image: url('/images/swatches/2020/swatch-462.jpg');} //yellow pineapple
+
+  &.color-swatch--500 {background-image: url('/images/swatches/2020/swatch-500.png');}	//red-grey stripe
+  &.color-swatch--501 {background-image: url('/images/swatches/2020/swatch-501.png');}	//grey-white-stripe
+  &.color-swatch--504 {background-image: url('/images/swatches/2020/swatch-504.png');}	//black-grey-stripe
+  &.color-swatch--512 {background-image: url('/images/swatches/2020/512-swatch.jpg');}
+  &.color-swatch--514 {background-image: url('/images/swatches/2020/514-swatch.jpg');}
+  &.color-swatch--515 {background-image: url('/images/swatches/2020/515-swatch.jpg');}
+
+
+  &.color-swatch--560 {background-image: url('/images/swatches/2020/swatch-560.png');}	//navy-red-stripe
+  &.color-swatch--561 {background-image: url('/images/swatches/2020/swatch-561.png');}	//orange-white-black-stripe
+  &.color-swatch--562 {background-image: url('/images/swatches/2020/swatch-562.png');}	//green-tan-stripe
+
+  &.color-swatch--601 {background-color: #13c9eb;}		//ev-blue
+  &.color-swatch--ratchet-601 {background-image: url('/images/swatches/2020/swatch-ratchet-601.jpg');}
+  &.color-swatch--602 {background-image: url('/images/swatches/2020/swatch-ratchet-602.jpg');}
+  &.color-swatch--605 {background-image: url('/images/swatches/2020/swatch-ratchet-605.jpg');}
+  &.color-swatch--mariner-605 {background-image: url('/images/swatches/2020/swatch-mariner-605.jpg');}
+  &.color-swatch--606 {background-color: #ec2173;}		//ev-pink
+  &.color-swatch--608 {background-color: #ffdf28;}		//ev-yellow or ev-lime-yellow
+  &.color-swatch--609 {background-color: #ffaa4d;}
+  &.color-swatch--611 {background-color: #8bef14;}		//ev-green
+  &.color-swatch--617 {background-color: #f58e13;}		//ev-orange
+
+  &.color-swatch--701 {background-image: url('/images/swatches/2020/swatch-701.png');}	//rainbow-tie-dye
+  &.color-swatch--ltd-701 {background-image: url('/images/swatches/2020/swatch-ltd-701.jpg');}	//rainbow-tie-dye
+  &.color-swatch--702 {background-image: url('/images/swatches/2020/swatch-702.png');}	//rasta-tie-dye
+  &.color-swatch--704 {background-image: url('/images/swatches/2020/swatch-704.png');}	//sky-dye
+  &.color-swatch--706 {background-image: url('/images/swatches/2020/swatch-706.png');}	//marine-tie-dye
+  &.color-swatch--ltd-707 {background-image: url('/images/swatches/2020/swatch-ltd-707.jpg');}
+  &.color-swatch--710 {background-image: url('/images/swatches/2020/swatch-710.jpg');}	//brown digicamo
+  &.color-swatch--711 {background-image: url('/images/swatches/2020/swatch-711.jpg');}	//gray digicamo
+  &.color-swatch--713 {background-image: url('/images/swatches/2020/swatch-rope-713.jpg');}
+  &.color-swatch--715 {background-image: url('/images/swatches/2020/swatch-715.jpg');} //rasta
+  &.color-swatch--720 {background-color: #266252;}
+  &.color-swatch--724 {background-color: #713e3d;}
+
+  &.color-swatch--748 {background-color: #6d7f97;}		//blue
+  &.color-swatch--749 {background-color: #e1e1e1;}		//silver
+  &.color-swatch--771 {background-color: #c44b8f;}		//very-berry
+  &.color-swatch--776 {background-color: #ff6068;}
+  &.color-swatch--781 {background-color: #4e9b5b;}		//fern
+  &.color-swatch--786 {background-color: #48975e;}		//meadow green
+  &.color-swatch--791 {background-image: url('/images/swatches/2020/swatch-791.jpg');}	//Topo
+  &.color-swatch--792 {background-image: url('/images/swatches/2020/swatch-792.jpg');}	//Plaid
+  &.color-swatch--793 {background-image: url('/images/swatches/2020/swatch-793.jpg');}	//Checkerboard
+  &.color-swatch--794 {background-image: url('/images/swatches/2020/swatch-794.jpg');}	//Gingham
+  &.color-swatch--795 {background-image: url('/images/swatches/2020/swatch-795.jpg');}	//Aspens
+  &.color-swatch--796 {background-image: url('/images/swatches/2020/swatch-796.jpg');}	//Winter
+
+  &.color-swatch--802 {background-image: url('/images/swatches/2020/swatch-802.jpg');}	//rainbow trout
+  &.color-swatch--803 {background-image: url('/images/swatches/2020/swatch-803.jpg');}	//brown trout
+  &.color-swatch--804 {background-image: url('/images/swatches/2020/swatch-804.jpg');}	//brook trout
+  &.color-swatch--805 {background-image: url('/images/swatches/2020/swatch-805.jpg');}	//marlin
+  &.color-swatch--806 {background-image: url('/images/swatches/2020/swatch-806.jpg');}	//steelhead
+  &.color-swatch--809 {background-image: url('/images/swatches/2020/swatch-809.jpg');}	//merican flag
+  &.color-swatch--rope-809 {background-image: url('/images/swatches/2020/swatch-rope-809.jpg');}
+  &.color-swatch--811 {background-image: url('/images/swatches/2020/swatch-rope-811.jpg');}
+  &.color-swatch--812 {background-image: url('/images/swatches/2020/swatch-rope-812.jpg');}
+  &.color-swatch--813 {background-image: url('/images/swatches/2020/swatch-rope-813.jpg');}
+  &.color-swatch--814 {background-image: url('/images/swatches/2020/swatch-rope-814.jpg');}
+  &.color-swatch--827 {background-image: url('/images/swatches/2020/swatch-rope-827.jpg');}
+  &.color-swatch--828 {background-image: url('/images/swatches/2020/swatch-rope-828.jpg');}
+  &.color-swatch--832 {background-image: url('/images/swatches/2020/swatch-ratchet-832.jpg');}
+  &.color-swatch--837 {background-image: url('/images/swatches/2020/swatch-rope-837.jpg');}
+  &.color-swatch--830 {background-color: #e76b9b;}
+  &.color-swatch--842 {background-image: url('/images/swatches/2020/swatch-rope-842.jpg');}
+  &.color-swatch--845 {background-image: url('/images/swatches/2020/swatch-rope-845.jpg');}
+
+  &.color-swatch--851 {background-image: url('/images/swatches/2020/swatch-rope-851.jpg');}
+  &.color-swatch--862 {background-image: url('/images/swatches/2020/swatch-rope-862.jpg');}
+  &.color-swatch--863 {background-image: url('/images/swatches/2020/swatch-rope-863.jpg');}
+  &.color-swatch--866 {background-image: url('/images/swatches/2020/swatch-rope-866.jpg');}
+  &.color-swatch--870 {background-image: url('/images/swatches/2020/swatch-rope-870.jpg');}
+  &.color-swatch--871 {background-image: url('/images/swatches/2020/swatch-rope-871.jpg');}
+  &.color-swatch--872 {background-image: url('/images/swatches/2020/swatch-colorado.jpg');}
+  &.color-swatch--mariner-879 {background-image: url('/images/swatches/2020/swatch-mariner-879.jpg');}
+  &.color-swatch--mariner-883 {background-image: url('/images/swatches/2020/swatch-mariner-883.jpg');}
+  &.color-swatch--884 {background-image: url('/images/swatches/2020/swatch-884.jpg');}	//
+  &.color-swatch--885 {background-image: url('/images/swatches/2020/swatch-885.jpg');}	//
+  &.color-swatch--886 {background-image: url('/images/swatches/2020/swatch-886.jpg');}	//
+  &.color-swatch--887 {background-image: url('/images/swatches/2020/swatch-887.jpg');}	//
+  &.color-swatch--888 {background-image: url('/images/swatches/2020/swatch-888.jpg');}	//
+  &.color-swatch--889 {background-image: url('/images/swatches/2020/swatch-889.jpg');}	//
+  &.color-swatch--890 {background-image: url('/images/swatches/2020/swatch-890.jpg');}	//
+  &.color-swatch--891 {background-image: url('/images/swatches/2020/swatch-891.jpg');}	//
+  &.color-swatch--mariner-892 {background-image: url('/images/swatches/2020/swatch-mariner-892.jpg');}
+  &.color-swatch--893 {background-image: url('/images/swatches/2020/swatch-893.jpg');}	//
+  &.color-swatch--894 {background-image: url('/images/swatches/2020/swatch-894.jpg');}	//
+  &.color-swatch--895 {background-image: url('/images/swatches/2020/swatch-895.jpg');}	//
+  &.color-swatch--896 {background-image: url('/images/swatches/2020/swatch-896.jpg');}	//
+  &.color-swatch--898 {background-image: url('/images/swatches/2020/swatch-898.jpg');}	//
+
+  &.color-swatch--ltd-911 {background-image: url('/images/swatches/2020/swatch-ltd-911.jpg');}
+  &.color-swatch--920 {background-image: url('/images/swatches/2020/swatch-920.jpg');}
+  &.color-swatch--921 {background-image: url('/images/swatches/2020/swatch-921.jpg');}
+  &.color-swatch--922 {background-image: url('/images/swatches/2020/swatch-922.jpg');}
+  &.color-swatch--937 {background-image: url('/images/swatches/2020/swatch-937.jpg');}
+  &.color-swatch--938 {background-image: url('/images/swatches/2020/swatch-938.jpg');}
+  &.color-swatch--939 {background-image: url('/images/swatches/2020/swatch-939.jpg');}
+  &.color-swatch--940 {background-image: url('/images/swatches/2020/swatch-940.jpg');}
+  &.color-swatch--941 {background-image: url('/images/swatches/2020/swatch-941.jpg');}
+  &.color-swatch--942 {background-image: url('/images/swatches/2020/swatch-942.jpg');}
+  &.color-swatch--943 {background-image: url('/images/swatches/2020/swatch-943.jpg');}
+
+  &.color-swatch--950 {background-image: url('/images/swatches/2020/swatch-950.jpg');}	//halpin
+  &.color-swatch--951 {background-image: url('/images/swatches/2020/swatch-951B.jpg');}
+  &.color-swatch--951b {background-image: url('/images/swatches/2020/swatch-951B.jpg');}	//earlfish
+
+  // seersucker
+  &.color-swatch--100-seersucker {background-image: url('/images/swatches/2020/swatch-100.jpg');}
+  &.color-swatch--101-seersucker {background-image: url('/images/swatches/2020/swatch-101.jpg');}
+  &.color-swatch--106-seersucker {background-image: url('/images/swatches/2020/swatch-106.jpg');}
+  &.color-swatch--109-seersucker {background-image: url('/images/swatches/2020/swatch-109.jpg');}
+  &.color-swatch--166-seersucker {background-image: url('/images/swatches/2020/swatch-166.jpg');}
+  &.color-swatch--601-seersucker {background-image: url('/images/swatches/2020/swatch-601.jpg');}
+  &.color-swatch--781-seersucker {background-image: url('/images/swatches/2020/swatch-781.jpg');}
+
+  // surf shorts and similar products
+  &.color-swatch--ss103 {background-image: url('/images/swatches/2020/swatch-103.jpg');}	//black & grey
+  &.color-swatch--ss113 {background-image: url('/images/swatches/2020/113-swatch-angle.jpg');}
+  &.color-swatch--ss117 {background-image: url('/images/swatches/2020/swatch-117.jpg');}	//black & orange
+  &.color-swatch--ss127 {background-image: url('/images/swatches/2020/swatch-127.jpg');}	//black & ocean blue
+  &.color-swatch--ss146 {background-image: url('/images/swatches/2020/swatch-146.jpg');}	//black & tate olive
+  &.color-swatch--ss158 {background-image: url('/images/swatches/2020/swatch-158.jpg');}	//red-white
+  &.color-swatch--ss169 {background-image: url('/images/swatches/2020/swatch-169.jpg');}	//charcoal & neon green
+  &.color-swatch--ss171 {background-image: url('/images/swatches/2020/swatch-171.jpg');}	//
+  &.color-swatch--ss172 {background-image: url('/images/swatches/2020/swatch-172.jpg');}	// mustard yellow & Horizon Blue
+  &.color-swatch--ss173 {background-image: url('/images/swatches/2020/swatch-173.jpg');}	// Neon Pink & Horizon Blue
+  &.color-swatch--ss174 {background-image: url('/images/swatches/2020/swatch-174.jpg');}	// Sunrize Orange & Horizon Blue
+  &.color-swatch--ss309 {background-image: url('/images/swatches/2020/309-TRI-swatch-angle.jpg');}
+  &.color-swatch--ss356 {background-image: url('/images/swatches/2020/356-TRI-swatch-angle.jpg');}
+  &.color-swatch--ss374 {background-image: url('/images/swatches/2020/374-TRI-swatch-angle.jpg');}
+
+
+  //realtree
+  &.color-swatch--337,
+  &.color-swatch--rt-max4 {background-image: url('/images/swatches/2020/swatch-rt-max4.png');}	// RealTree Max-4
+  &.color-swatch--338,
+  &.color-swatch--rt-apb {background-image: url('/images/swatches/2020/swatch-rt-apb.png');}	// RealTree APB
+  &.color-swatch--339,
+  &.color-swatch--rt-apc {background-image: url('/images/swatches/2020/swatch-rt-apc.png');}	// RealTree APC
+  &.color-swatch--349,
+  &.color-swatch--rt-xtra {background-image: url('/images/swatches/2020/swatch-rt-xtra.png');}	// RealTree Xtra
+  &.color-swatch--351,
+  &.color-swatch--rt-edge {background-image: url('/images/swatches/2020/swatch-rt-edge.jpg');}	// RealTree Edge
+
+  // bags and cases
+  &.color-swatch--100-101 {background-image: url('/images/swatches/2020/swatch-100-101.png');}	// blue/navy
+  &.color-swatch--108-136 {background-image: url('/images/swatches/2020/swatch-108-136.png');}	// white/sulfur green
+  //&.color-swatch--100-101 {background-image: url('/images/swatches/2020/swatch-100-101.jpg');}	// blue/navy
+  //&.color-swatch--100-101 {background-image: url('/images/swatches/2020/swatch-100-101.jpg');}	// blue/navy
+
+  &.color-swatch--transit-128,
+  &.color-swatch--transit-blue-navy {background-image: url('/images/swatches/2020/swatch-100-101.png');}	// blue/navy
+  &.color-swatch--transit-14015,
+  &.color-swatch--transit-14022,
+  &.color-swatch--transit-grey {background-image: url('/images/swatches/2020/swatch-transit-grey.jpg');}	// transit grey/black
+  &.color-swatch--transit-14028,
+  &.color-swatch--transit-14030,
+  &.color-swatch--transit-green {background-image: url('/images/swatches/2020/swatch-transit-green.jpg');}	// transit grey/black
+  &.color-swatch--transit-red {background-image: url('/images/swatches/2020/swatch-transit-red.jpg');}	// transit grey/black
+  &.color-swatch--transit-100,
+  &.color-swatch--14052,
+  &.color-swatch--14056 {background-color: #444444;}
+  &.color-swatch--transit-103,
+  &.color-swatch--14053,
+  &.color-swatch--transit-charcoal {background-image: url('/images/swatches/2020/swatch-transit-charcoal.png');}	// transit grey/black
+  &.color-swatch--14054,
+  &.color-swatch--transit-pink {background-image: url('/images/swatches/2020/swatch-transit-pink.png');}	// transit grey/black
+  &.color-swatch--14055,
+  &.color-swatch--transit-sulfur {background-image: url('/images/swatches/2020/swatch-transit-sulfur.png');}	// transit grey/black
+  &.color-swatch--transit-white {background-image: url('/images/swatches/2020/swatch-transit-white.png');} // transit grey/white
+  &.color-swatch--transit-14031,
+  &.color-swatch--transit-14032,
+  &.color-swatch--transit-blue {background-color: #276bb8;}
+
+
+
+  &.color-swatch--js-100,
+  &.color-swatch--js-54154,
+  &.color-swatch--js-54240,
+  &.color-swatch--js-54157,
+  &.color-swatch--js-54255,
+  &.color-swatch--js-black {background-image: url('/images/swatches/2020/swatch-js-black.jpg');}
+  &.color-swatch--js-103,
+  &.color-swatch--js-54158,
+  &.color-swatch--js-54256,
+  &.color-swatch--js-grey {background-image: url('/images/swatches/2020/swatch-js-grey.jpg');}
+  &.color-swatch--js-54155,
+  &.color-swatch--js-54159,
+  &.color-swatch--js-54261,
+  &.color-swatch--js-54163,
+  &.color-swatch--js-totemfish {background-image: url('/images/swatches/2020/swatch-js-totemfish.jpg');}
+  &.color-swatch--js-54243,
+  &.color-swatch--js-rt-xtra {background-image: url('/images/swatches/2020/swatch-js-rt-xtra.jpg');}
+  &.color-swatch--js-351 {background-image: url('/images/swatches/2020/swatch-351.jpg');}  //realtree edge
+
+
+  &.color-swatch--kq100 {background-image: url('/images/swatches/2020/swatch-kq100.jpg');}	//Key Quiver
+  &.color-swatch--kq132 {background-image: url('/images/swatches/2020/swatch-kq132.jpg');}	//Key Quiver
+  &.color-swatch--kq160 {background-image: url('/images/swatches/2020/swatch-kq160.jpg');}	//Key Quiver
+  &.color-swatch--kq877 {background-image: url('/images/swatches/2020/swatch-kq877.jpg');}	//Key Quiver
+  &.color-swatch--kq878 {background-image: url('/images/swatches/2020/swatch-kq878.jpg');}	//Key Quiver
+
+  &.color-swatch--14057 {background-image: url('/images/swatches/2020/swatch-14057.png');}	//
+  &.color-swatch--14058 {background-image: url('/images/swatches/2020/swatch-14058.png');}	//
+  &.color-swatch--14059 {background-image: url('/images/swatches/2020/swatch-14059.png');}	//
+}

@@ -1,0 +1,180 @@
+//$cdn:                   '//d3p5mpp4lupu52.cloudfront.net';
+$cdn:                   '';
+
+
+$chums-red:             #d0112b;
+$bc-blue:               #00a8e2;
+$active-color:          #0099CC;
+$natural-color:         #F6A800;
+$button-blue:           #0076BB;
+
+
+$text-color:            #5f5f5f;
+$white-base:            rgb(255, 255, 255);
+$label-color:           #585858;
+
+$message-bg-color:      #F6A800;
+
+$footer-bg-color:       #000000;
+$footer-links-bg-color: #262626;
+$footer-color:          $white-base;
+$footer-links-height:   40px;
+$footer-contact-padding: 1.5rem;
+$icon-margin:           5px;
+$social-icon-size:      25px;
+$footer-top-margin:     0px;
+$mountain-footer-height: 130px;
+//$navbar-menu-width:     600px;
+
+$navbar-top-bar-bg-color:     black;
+$navbar-top-bar-color:        darken($white-base, 10%);
+$navbar-tob-bar-color-hover:  $white-base;
+$navbar-color:                black;
+$navbar-bg-color:             white;
+$navbar-sub-bg-color:         lighten($navbar-bg-color, 5%);
+$navbar-color:                darken($white-base, 20%);
+$navbar-color-hover:          $white-base;
+$navbar-logo-width:           20vw;
+$navbar-logo-max-width:       240px;
+$navbar-logo-padding:         $navbar-logo-max-width / 6;
+
+$button-border-color:   #666666;
+$button-border:         1px solid $button-border-color;
+$button-background:     #ffffff;
+$button-text-color:     #666666;
+$button-border-active:  1px solid #000000;
+$button-background-active: darken($button-background, 20%);
+$button-text-color-active: darken($button-text-color, 40%);
+$button-background-hover: darken($button-background, 15%);
+$button-text-color-hover: $button-text-color;
+
+$navbar-separator:      lighten($navbar-bg-color, 10%);
+$subnav-background-color:       transparentize(white, 0.05);
+$subnav-bottom-border-color:    transparentize($navbar-bg-color, 0.75);
+
+$product-details-background:    transparent;
+$product-details-border-color:  lighten($navbar-bg-color, 75%);
+
+$shop-button-color:               #000000;
+$shop-button-background:          #CCCCCC;
+$shop-button-hover-color:         #FFFFFF;
+$shop-button-hover-background:    #FF0000;
+
+$global-message-line-height: 1.5rem;
+
+//overrides for bootstrap
+$border-radius:               0;
+$border-radius-sm:            0;
+$border-radius-lg:            0;
+$input-btn-focus-width:       .1rem;
+$primary:                     $button-blue;
+$button-primary-bg-color:     darken($button-blue, 10%);
+$button-primary-text-color:   white;
+
+//swatch stuff
+$swatch-border:         1px solid transparent;
+$swatch-border-hover:   #AAAAAA;
+$swatch-text-color:     #555555;
+$swatch-text-active:    #333333;
+$swatch-scroll-width:   1rem;
+$swatch-padding:        0.15rem;
+$swatch-margin:         0 0.25rem 0.5rem;
+$swatch-width:          2rem;
+$swatch-height:         $swatch-width;
+
+
+/** stuff from old site */
+
+$link-color:            #0567bb;
+$heading-bar-color:     #000000; // bar above the menu bar
+$heading-bar-bgcolor:   #ffffff; // bar above the menu bar
+$navbar-bgcolor:        #78b1d0;
+$breadcrumb-bar:        darken($navbar-bgcolor, 10%);
+$social-hashtag-bgcolor:#000000;
+$social-hashtag-color:  #dddddd;
+$footer-bgcolor:        #888888;
+$section-head-color:    #00559D;
+$cart-error-bg:         #f12021;
+$cart-error:            #ffffff;
+
+$instagram-images-bg:   linear-gradient($social-hashtag-bgcolor, $footer-bgcolor);
+
+$gray-dark:             #404040; // color(black lightness(+25%));   /* #404040 */
+$gray:                  #555; // color(black lightness(+33.5%)); /* #555 */
+$gray-light:            #777; // color(black lightness(+46.7%)); /* #777 */
+$gray-lighter:          #eee; // color(black lightness(+93.5%)); /* #eee */
+
+$carousel-color:        $gray-dark;
+$color-code:            $gray;
+
+@mixin rounded-button($radius) {
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  border-radius: $radius;
+}
+
+
+$kit-component:         #A66;
+
+$heading-bar-bgcolor:   #FFF;
+$heading-bar-color:     #000;
+$navbar-bgcolor:        black;
+$navbar-color:          #eee;
+$social-hashtag-bgcolor:#000000;
+$social-hashtag-color:  #dddddd;
+$footer-color:          #eeeeee;
+$footer-bgcolor:        #888888;
+$section-head-color:    #00559D;
+$cart-error-bg:         #f12021;
+$cart-error:            #ffffff;
+
+/*
+ * Typography
+ * ========================================================================== */
+
+$font-family-base:      'Segoe UI', 'HelveticaNeue-Light', sans-serif;
+
+/*
+ * Layout
+ * ========================================================================== */
+
+$max-content-width:     950px;
+
+/*
+ * Media queries breakpoints
+ * ========================================================================== */
+
+$screen-xs-min:         480px;  /* Extra small screen / phone */
+$screen-sm-min:         768px;  /* Small screen / tablet */
+$screen-md-min:         992px;  /* Medium screen / desktop */
+$screen-lg-min:         1200px; /* Large screen / wide desktop */
+
+/*
+ * Animations
+ * ========================================================================== */
+
+$animation-swift-out:   .45s cubic-bezier(0.3, 1, 0.4, 1) 0s;
+
+/*
+ * CHUMS Specific
+ */
+$logo-width: 107px;
+$logo-height: 100px;
+$logo-padding: $logo-width / 2;
+
+
+.loading-spinner {
+  background-size: 50%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-image: url('data:image/svg+xml;utf8,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22xMidYMid%22%3E%3Cpath%20stroke%3D%22none%22%20d%3D%22M10%2050A40%2040%200%200%200%2090%2050A40%2042%200%200%201%2010%2050%22%20fill%3D%22%23c5523f%22%20transform%3D%22rotate(35.4082%2050%2051)%22%3E%3CanimateTransform%20attributeName%3D%22transform%22%20type%3D%22rotate%22%20calcMode%3D%22linear%22%20values%3D%220%2050%2051%3B360%2050%2051%22%20keyTimes%3D%220%3B1%22%20dur%3D%221.5s%22%20begin%3D%220s%22%20repeatCount%3D%22indefinite%22%3E%3C%2FanimateTransform%3E%3C%2Fpath%3E%3C%2Fsvg%3E')
+  /*
+  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+    <path stroke="none" d="M10 50A40 40 0 0 0 90 50A40 42 0 0 1 10 50" fill="#c5523f" transform="rotate(35.4082 50 51)">
+      <animateTransform attributeName="transform" type="rotate" calcMode="linear" values="0 50 51;360 50 51"
+        keyTimes="0;1" dur="1.5s" begin="0s" repeatCount="indefinite"></animateTransform>
+    </path>
+  </svg>
+  */
+}

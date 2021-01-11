@@ -1,0 +1,17 @@
+.user-profile {
+  display: flex;
+  flex-direction: row;
+  flex: 1 1 auto;
+
+  .user-profile-picture {
+    flex: 0 0 auto;
+    margin-right: 2rem;
+    img {
+      max-width: 96px;
+    }
+  }
+  .user-profile-tasks {
+    flex: 1 1 auto;
+
+  }
+}

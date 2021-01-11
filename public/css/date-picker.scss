@@ -1,0 +1,84 @@
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+
+
+.date-picker {
+  input[type="text"] {
+    cursor: pointer;
+  }
+
+  .popover {
+    min-width: 250px;
+  }
+
+  .cell {
+    text-align: center;
+    cursor: pointer;
+    width: 1/7 * 100%;
+  }
+
+  .monthSelector {
+    @extend .cell;
+    flex-grow: 1;
+    padding-left: .25rem;
+    padding-right: .25rem;
+  }
+
+  .monthName {
+    @extend .cell;
+    flex-grow: 2;
+    padding-left: .25rem;
+    padding-right: .25rem;
+  }
+
+  .dayName {
+    @extend .cell;
+    margin-top: 10px;
+    color: black;
+    font-size: smaller;
+    cursor: inherit;
+    text-align: center;
+  }
+
+  .dayContainer {
+    @extend .cell;
+
+    .day {
+      padding-top: 3px;
+      padding-bottom: 3px;
+      border: 1px solid transparent;
+      border-radius: $border-radius-sm;
+      cursor: pointer;
+      color: $gray-400;
+      &:hover {
+        color: $black;
+        border-color: map-get($theme-colors, 'primary');;
+      }
+
+      &.inMonth {
+        color: $black;
+        &.day-0,
+        &.day-6 {
+          color: $gray-600;
+        }
+      }
+
+      &.today {
+        color: white;
+        background-color: map-get($theme-colors, 'info');
+      }
+
+      &.selected {
+        color: white !important;
+        background-color: map-get($theme-colors, 'primary') !important;
+      }
+      &.disabled {
+        cursor: not-allowed;
+        color: $gray-400 !important;
+        &:hover {
+          border-color: map-get($theme-colors, 'warning');
+        }
+      }
+    }
+  }
+}
