@@ -1,0 +1,4 @@
+/node_modules/
+/public/css/.sass-cache/
+/public/js/*.js
+/public/js/*.txt
