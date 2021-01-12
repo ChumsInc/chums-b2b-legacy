@@ -30,6 +30,7 @@ export const PATH_SALES_ORDERS = '/orders/:orderType?';
 export const PATH_SALES_ORDER = '/orders/:orderType/:Company/:SalesOrderNo';
 export const PATH_INVOICE = '/invoices/:Company/:InvoiceType/:InvoiceNo';
 export const PATH_SALES_ORDER_BREADCRUMB = '/orders/:orderType?/:Company?/:SalesOrderNo?';
+export const PATH_INVOICE_BREADCRUMB = '/orders/:orderType?/:Company?/:SalesOrderNo?';
 export const PATH_SIGNUP = '/signup';
 export const PATH_SET_PASSWORD = '/set-password';
 
@@ -70,7 +71,7 @@ export const API_PATH_PAST_ORDERS = '/node-dev/b2b/invoices/:Company/:ARDivision
 export const API_PATH_INVOICES = '/node-dev/b2b/invoices/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_PROMOTE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo-:ShipToCode?';
 export const API_PATH_SALES_ORDER = '/node-sage/api/:Company/salesorder/:SalesOrderNo';
-export const API_PATH_INVOICE = '/node-sage/api/:Company/invoice/:InvoiceNo';
+export const API_PATH_INVOICE = '/node-sage/api/:Company/invoice/:InvoiceType/:InvoiceNo';
 export const API_PATH_SAVE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
 export const API_PATH_SEND_ORDER_EMAIL = '/node-sage/api/:Company/salesorder/:SalesOrderNo/email';
 export const API_PATH_CART_ACTION = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';

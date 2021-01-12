@@ -95,28 +95,29 @@ class InvoicePage extends Component {
     }
 
     documentTitle() {
-        return `Invoice #${this.props.invoice.InvoiceNo || ''}`;
+        const {InvoiceNo = '', InvoiceType = ''} = this.props.invoice;
+        return `Invoice #${InvoiceNo}-${InvoiceType}`;
     }
 
     componentDidMount() {
         const {match, currentCustomer, ARDivisionNo, CustomerNo, invoice, loading} = this.props;
-        const {Company, InvoiceNo} = match.params;
+        const {Company, InvoiceNo, InvoiceType} = match.params;
         if (Company !== currentCustomer.Company || ARDivisionNo !== currentCustomer.ARDivisionNo || CustomerNo !== currentCustomer.CustomerNo) {
             this.props.setCustomerAccount(currentCustomer);
             this.props.fetchAccount({...currentCustomer, fetchOrders: true}, true);
         }
-        if (!loading && (invoice.InvoiceNo !== InvoiceNo)) {
-            this.props.selectInvoice({Company, InvoiceNo});
+        if (!loading && (invoice.InvoiceNo !== InvoiceNo || invoice.InvoiceType !== InvoiceType)) {
+            this.props.selectInvoice({Company, InvoiceNo, InvoiceType});
         }
         this.props.setDocumentTitle(this.documentTitle());
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {match, loading, documentTitle, invoice} = this.props;
-        const {Company, InvoiceNo} = match.params;
+        const {Company, InvoiceNo, InvoiceType} = match.params;
         const newDocumentTitle = this.documentTitle();
-        if (invoice.InvoiceNo !== InvoiceNo && !loading) {
-            this.props.selectInvoice({Company, InvoiceNo});
+        if (!loading && (invoice.InvoiceNo !== InvoiceNo || invoice.InvoiceType !== InvoiceType)) {
+            this.props.selectInvoice({Company, InvoiceNo, InvoiceType});
         }
         if (documentTitle !== newDocumentTitle) {
             this.props.setDocumentTitle(this.documentTitle());

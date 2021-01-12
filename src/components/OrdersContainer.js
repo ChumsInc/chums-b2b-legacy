@@ -13,6 +13,34 @@ import {NEW_CART, ORDER_TYPE, ORDER_TYPE_NAMES} from "../constants/orders";
 import {buildPath} from "../utils/fetch";
 import {fetchInvoices} from '../actions/invoices';
 
+const mapStateToProps = ({user, customer, carts, openOrders, cart, app, invoices}) => {
+    const {currentCustomer} = user;
+    const {company, account, currentCart} = customer;
+    const {cartNo} = cart;
+    const {documentTitle} = app;
+    const {ARDivisionNo, CustomerNo, loading} = account;
+    return {
+        currentCustomer,
+        company,
+        ARDivisionNo,
+        CustomerNo,
+        loading,
+        carts,
+        openOrders,
+        cartNo,
+        documentTitle,
+        invoices,
+    }
+};
+
+const mapDispatchToProps = {
+    fetchAccount: fetchCustomerAccount,
+    fetchOpenOrders,
+    fetchInvoices,
+    selectCart,
+    newCart,
+    setDocumentTitle,
+};
 
 class OrdersContainer extends Component {
     static propTypes = {
@@ -141,33 +169,5 @@ class OrdersContainer extends Component {
     }
 }
 
-const mapStateToProps = ({user, customer, carts, openOrders, cart, app, invoices}) => {
-    const {currentCustomer} = user;
-    const {company, account, currentCart} = customer;
-    const {cartNo} = cart;
-    const {documentTitle} = app;
-    const {ARDivisionNo, CustomerNo, loading} = account;
-    return {
-        currentCustomer,
-        company,
-        ARDivisionNo,
-        CustomerNo,
-        loading,
-        carts,
-        openOrders,
-        cartNo,
-        documentTitle,
-        invoices,
-    }
-};
-
-const mapDispatchToProps = {
-    fetchAccount: fetchCustomerAccount,
-    fetchOpenOrders,
-    fetchInvoices,
-    selectCart,
-    newCart,
-    setDocumentTitle,
-};
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrdersContainer);

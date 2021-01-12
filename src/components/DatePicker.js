@@ -12,7 +12,7 @@ import isDate from 'date-fns/isDate';
 import {noop} from "../utils/general";
 
 
-class DatePicker extends Component {
+export default class DatePicker extends Component {
     static propTypes = {
         onChange: PropTypes.func.isRequired,
         value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
@@ -79,12 +79,10 @@ class DatePicker extends Component {
             <input type={disabled || readOnly ? 'text' : 'date'}
                    ref={forwardedRef}
                    className={classnames}
-                   value={!!value ? format(date, dateFormat) : ''}
+                   value={!value || value === '1970-01-01T00:00:00Z' ? '' : format(date, dateFormat)}
                    disabled={disabled} readOnly={readOnly}
                    min={!!minDate ? format(minDate, 'yyyy-MM-dd') : null}
                    onChange={this.onChange} />
         )
     }
 }
-
-export default DatePicker;

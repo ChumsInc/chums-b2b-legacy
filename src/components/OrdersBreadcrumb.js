@@ -6,7 +6,7 @@ import {
     PATH_CUSTOMER_ACCOUNT,
     PATH_SALES_ORDERS,
     PATH_PROFILE,
-    PATH_PROFILE_ACCOUNT
+    PATH_PROFILE_ACCOUNT, PATH_INVOICE
 } from "../constants/paths";
 import {matchPropTypes} from "../constants/myPropTypes";
 import {ORDER_TYPE_NAMES} from "../constants/orders";
@@ -35,17 +35,20 @@ class OrdersBreadcrumb extends Component {
     render() {
         const {profileId, isRepAccount, Company, ARDivisionNo, CustomerNo, ShipToCode, location, match} = this.props;
 
-        const {orderType, SalesOrderNo = null} = match.params;
+        const {orderType, SalesOrderNo = null, InvoiceType = null, InvoiceNo = null} = match.params;
 
         const profilePath = buildPath(PATH_PROFILE_ACCOUNT, {id: profileId});
         const accountPath = buildPath(PATH_CUSTOMER_ACCOUNT, {Company, ARDivisionNo, CustomerNo, ShipToCode});
         const orderPath = buildPath(PATH_SALES_ORDERS, {orderType});
+        const invoicePath = buildPath(PATH_SALES_ORDERS, {orderType: 'invoices'});
 
         const paths = [
             {title: 'Profile', pathname: PATH_PROFILE},
             !!isRepAccount ? {title: 'Account List', pathname: profilePath} : null,
             {title: `${ARDivisionNo}-${CustomerNo}`, pathname: accountPath},
-            {title: ORDER_TYPE_NAMES[orderType] || 'Orders', pathname: SalesOrderNo ? orderPath : location.pathname},
+            // !!orderType && !SalesOrderNo && !InvoiceNo ? {title:ORDER_TYPE_NAMES[orderType] || 'Orders', pathname: InvoiceNo ? invoicePath : location.pathname} : null,
+            !!SalesOrderNo ? {title: ORDER_TYPE_NAMES[orderType] || 'Orders', pathname: SalesOrderNo ? orderPath : location.pathname} : null,
+            !!InvoiceNo ? {title: ORDER_TYPE_NAMES.invoices, pathname: InvoiceNo ? invoicePath : location.pathname} : null,
         ].filter(p => p !== null);
         if (SalesOrderNo) {
             paths.push({title: `SO# ${SalesOrderNo}`, pathname: location.pathname})

@@ -106,6 +106,7 @@ class App extends Component {
 
     render() {
         const {loggedIn, currentCustomer} =this.props;
+        console.log('App', {loggedIn});
         return (
             <Fragment>
                 <Route component={Header}/>
@@ -144,6 +145,7 @@ class App extends Component {
                                 <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage} />
                                 <Route path={PATH_PROFILE_ACCOUNT} component={AccountList} />
                                 <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb} />
+                                <Route path={PATH_INVOICE} component={OrdersBreadcrumb} />
                                 <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer} />
                                 {!!currentCustomer.CustomerNo && (
                                     <Fragment>

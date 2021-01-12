@@ -17,6 +17,8 @@ const localProxy = {
 module.exports = merge(common, {
     mode: 'development',
     devServer: {
+        index: path.join(__dirname, 'public/index.html'),
+        historyApiFallback: true,
         contentBase: [path.join(__dirname, 'public'), __dirname],
         hot: true,
         inline: true,

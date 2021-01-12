@@ -11,17 +11,18 @@ import {
 } from "../constants/actions";
 import {handleError, setAlert} from "./app";
 
-export const selectInvoice = ({Company, InvoiceNo}) => (dispatch, getState) => {
+export const selectInvoice = ({Company, InvoiceNo, InvoiceType}) => (dispatch, getState) => {
     const {invoices} = getState();
     const [invoice = {
         Company,
-        InvoiceNo
-    }] = invoices.list.filter(inv => inv.Company === Company && inv.InvoiceNo === InvoiceNo);
+        InvoiceNo,
+        InvoiceType
+    }] = invoices.list.filter(inv => inv.Company === Company && inv.InvoiceNo === InvoiceNo && inv.InvoiceType === InvoiceType);
     dispatch({type: SELECT_INVOICE, invoice});
-    dispatch(fetchInvoice({Company, InvoiceNo}));
+    dispatch(fetchInvoice({Company, InvoiceNo, InvoiceType}));
 }
 
-export const fetchInvoice = ({Company, InvoiceNo}) => (dispatch, getState) => {
+export const fetchInvoice = ({Company, InvoiceNo, InvoiceType}) => (dispatch, getState) => {
     if (!InvoiceNo) {
         return;
     }
@@ -29,13 +30,13 @@ export const fetchInvoice = ({Company, InvoiceNo}) => (dispatch, getState) => {
     if (invoices.loading) {
         return;
     }
-
+    InvoiceType = InvoiceType || 'IN';
     // console.log('fetchInvoice', {Company, InvoiceNo});
     if (!Company) {
         Company = customer.company;
     }
 
-    const url = buildPath(API_PATH_INVOICE, {Company: sageCompanyCode(Company), InvoiceNo}) + '?images=1';
+    const url = buildPath(API_PATH_INVOICE, {Company: sageCompanyCode(Company), InvoiceNo, InvoiceType}) + '?images=1';
     dispatch({type: FETCH_INVOICE, status: FETCH_INIT});
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
