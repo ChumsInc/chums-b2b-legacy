@@ -32,7 +32,10 @@
     <script>CHUMS = {}; Chums = {}</script>
     <script async src="https://b2b.chums.com/version.js"></script>
     <!-- refresh state when needed from https://b2b.chums.com/api/preload/state.js -->
-    <script async src="https://b2b.chums.com/api/preload/state.js" ></script>
+    <script async src="https://b2b.chums.com/api/preload/state.js"></script>
+    <script async>
+        window.__PRELOADED_STATE__.app.version = CHUMS.version.versionNo;
+    </script>
 </head>
 <body>
 <div id="app"></div>

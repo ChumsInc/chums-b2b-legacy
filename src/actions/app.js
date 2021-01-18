@@ -18,7 +18,7 @@ import {
     SHOW_SEARCH,
     TOGGLE_XS_NAVBAR
 } from "../constants/actions";
-import {buildPath, fetchGET} from '../utils/fetch';
+import {buildPath, fetchGET, fetchPOST} from '../utils/fetch';
 import {API_PATH_HOME_SLIDES, API_PATH_SEARCH, API_PATH_VERSION} from "../constants/paths";
 import localStore from "../utils/LocalStore";
 import {STORE_USER_PREFS} from "../constants/stores";
@@ -127,3 +127,22 @@ export const fetchSlides = () => (dispatch, getState) => {
         });
 }
 
+export const logError = ({message, componentStack}) => (dispatch, getState) => {
+    try {
+        const {app, user} = getState();
+        const {versionNo = ''} = app.version;
+        const {id = 0} = user?.profile?.chums;
+        const url = '/api/error-reporting';
+        const body = {
+            message,
+            componentStack,
+            user_id: id,
+            version: versionNo,
+        };
+        fetchPOST(url, body)
+            .then(res => console.log(res))
+            .catch(err => console.log(err.message));
+    } catch(err) {
+        console.log("()", err.message);
+    }
+}

@@ -15,8 +15,9 @@ import Alert from "../common-components/Alert";
 import CartItemDetail from "./CartItemDetail";
 import {noop} from '../utils/general';
 import HelmetTitle from "./HelmetTitle";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 import SeasonTeaser from "./SeasonTeaser";
+import ErrorBoundary from "../common-components/ErrorBoundary";
 
 
 const mapStateToProps = ({user, products, customer, app}) => {
@@ -123,7 +124,7 @@ class ProductPage extends Component {
         this.onSelectVariant = this.onSelectVariant.bind(this);
         this.onSelectColor = this.onSelectColor.bind(this);
         this.onChangeQuantity = this.onChangeQuantity.bind(this);
-        this.elementRef = createRef(null);
+        this.elementRef = createRef();
     }
 
     componentDidMount() {
@@ -136,8 +137,8 @@ class ProductPage extends Component {
     }
 
 
-    componentDidUpdate(prevProps, prevState) {
-        const {loading, documentTitle, product, keyword} = this.props;
+    componentDidUpdate(prevProps, prevState, snapShot) {
+        const {loading, documentTitle, product, keyword, selectedProduct, location} = this.props;
         if (prevProps.keyword !== keyword) {
             this.props.fetchProduct(keyword);
             return;
@@ -145,6 +146,17 @@ class ProductPage extends Component {
         if (!loading && documentTitle !== product.name) {
             this.props.setDocumentTitle(product.name);
         }
+
+        if (location?.state?.variant) {
+            const {variant} = location.state;
+            if (!!variant && product.variants && selectedProduct.keyword !== variant) {
+                const [_variant] = product.variants.filter(v => v.product.keyword === variant);
+                if (!!_variant) {
+                    this.props.selectVariant(_variant);
+                }
+            }
+        }
+
     }
 
     onSelectVariant(variant) {
@@ -241,9 +253,11 @@ class ProductPage extends Component {
                                 </Alert>
                             )}
                             {!!loggedIn && !!hasCustomer && !!cartItem.itemCode && !!availableForSale && (
-                                <AddToCartForm quantity={quantity} itemCode={cartItem.itemCode} setGlobalCart
-                                               season_code={season_code} season_available={season_available}
-                                               onChangeQuantity={this.onChangeQuantity} onDone={noop}/>
+                                <ErrorBoundary>
+                                    <AddToCartForm quantity={quantity} itemCode={cartItem.itemCode} setGlobalCart
+                                                   season_code={season_code} season_available={season_available}
+                                                   onChangeQuantity={this.onChangeQuantity} onDone={noop}/>
+                                </ErrorBoundary>
                             )}
                             {!!loggedIn && !!cartItem.itemCode && (
                                 <CartItemDetail {...cartItem} showMSRP={msrp.length > 1}
@@ -273,4 +287,4 @@ class ProductPage extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ProductPage));

@@ -9,6 +9,7 @@ import CategoryPage2 from "./CategoryPage";
 import ProductPage from "./ProductPage";
 import {PATH_PRODUCT} from "../constants/paths";
 import {buildPath} from "../utils/fetch";
+import ErrorBoundary from "../common-components/ErrorBoundary";
 
 class ProductRouter extends Component {
 
@@ -56,16 +57,16 @@ class ProductRouter extends Component {
         }
 
         if (keyword && keyword.redirect_to_parent > 0) {
-            const [kw] = keywords
-                .filter(kw => kw.pagetype === 'product')
-                .filter(kw => kw.id === keyword.redirect_to_parent);
+            const [kw] = keywords.filter(kw => kw.pagetype === 'product').filter(kw => kw.id === keyword.redirect_to_parent);
             if (kw) {
-                const path = {
-                    category: kw.parent ? kw.parent : kw.keyword,
-                    product: kw.parent ? kw.product : undefined
-                };
-                console.log('redirect to: ', path);
-                return (<Redirect to={buildPath(PATH_PRODUCT, path)} />);
+                const pathname = buildPath(PATH_PRODUCT, {
+                    category: (kw.parent ? kw.parent : kw.keyword),
+                    product: (kw.parent ? kw.keyword : undefined)
+                });
+                const state = {variant: keyword.keyword};
+                console.log('redirect to: ', {pathname, state});
+                // this.props.history.replace(path, [{variant: keyword.keyword}])
+                return (<Redirect to={{pathname, state}} />);
             }
         }
 
@@ -74,7 +75,11 @@ class ProductRouter extends Component {
                 {!!keywordsLoading && <ProgressBar label="Loading Keywords" />}
                 {!keyword.pagetype && <Alert message={"Product not found!"}/>}
                 {keyword.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
-                {keyword.pagetype === 'product' && <ProductPage keyword={keyword.keyword}/>}
+                {keyword.pagetype === 'product' && (
+                    <ErrorBoundary>
+                        <ProductPage keyword={keyword.keyword}/>
+                    </ErrorBoundary>
+                )}
             </div>
         );
     }

@@ -2,18 +2,26 @@ import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {getSearchResults, setSearchTerm, showSearch} from "../actions/app";
 import {connect} from 'react-redux';
-import onClickOutside from 'react-onclickoutside';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import ProgressBar from "./ProgressBar";
 import {Link, withRouter} from 'react-router-dom';
 import {buildPath} from "../utils/fetch";
-import {CONTENT_PATH_SEARCH_IMAGE, PATH_CATEGORY, PATH_PRODUCT} from "../constants/paths";
+import {CONTENT_PATH_SEARCH_IMAGE, PATH_CATEGORY, PATH_PAGE, PATH_PRODUCT} from "../constants/paths";
 
-const itemLink = ({parent, keyword}) => {
-    return !!parent
-        ? buildPath(PATH_PRODUCT, {category: parent, product: keyword})
-        : buildPath(PATH_CATEGORY, {category: keyword});
+const itemLink = ({parent, keyword, pagetype}) => {
+    switch (pagetype) {
+    case 'category':
+        return buildPath(PATH_CATEGORY, {category: keyword});
+    case 'page':
+        return buildPath(PATH_PAGE, {keyword});
+    case 'product':
+        return buildPath(PATH_PRODUCT, {category: parent, product: keyword})
+    default:
+        return !!parent
+            ? buildPath(PATH_PRODUCT, {category: parent, product: keyword})
+            : buildPath(PATH_CATEGORY, {category: keyword});
+    }
 }
 
 const SearchPlaceholder = ({onClick}) => {
@@ -40,7 +48,7 @@ const SearchInput = ({value, inputRef, onChange, hidden = false, onKeyPress, onF
 
 const SearchResult = ({active, keyword, parent, title, image = 'missing.png', pagetype = '', additional_data = {}, onClick}) => {
     const src = buildPath(CONTENT_PATH_SEARCH_IMAGE, {image: image || 'missing.png'});
-    const link = itemLink({parent, keyword});
+    const link = itemLink({parent, keyword, pagetype});
     return (
         <div className={classNames({'dropdown-item': true, active})} onClick={onClick}>
             <Link to={link} className="search-result">
@@ -104,10 +112,16 @@ class SiteSearch extends Component {
         this.childRef = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
         this.close = this.close.bind(this);
+        this.openSearch = this.openSearch.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
 
         this.closeTimer = null;
     }
+
+    componentDidMount() {
+        document.body.addEventListener('click', this.handleClickOutside);
+    }
+
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         const {results, loading, term} = this.props;
@@ -119,17 +133,19 @@ class SiteSearch extends Component {
 
     componentWillUnmount() {
         clearTimeout(this.closeTimer);
+        document.body.removeEventListener('click', this.handleClickOutside);
     }
 
     handleClickOutside(ev) {
-        console.log('handleClickOutside');
-        this.close();
+        // console.log('handleClickOutside', ev.target);
+        if (!!ev.target && !ev.target.closest('.global-search-container')) {
+            this.close();
+        }
+        // this.close();
     }
 
     onClickSearchIcon() {
-        this.setState({showInput: true}, () => {
-            this.childRef.current.focus();
-        });
+        this.openSearch();
     }
 
     setSearchTerm(value) {
@@ -141,7 +157,17 @@ class SiteSearch extends Component {
         this.props.getSearchResults(value);
     }
 
+    openSearch() {
+        if (!this.state.showInput) {
+            document.body.addEventListener('click', this.handleClickOutside);
+            this.setState({showInput: true}, () => {
+                this.childRef.current.focus();
+            });
+        }
+    }
+
     close() {
+        document.body.removeEventListener('click', this.handleClickOutside);
         this.setState({showInput: false});
         this.props.showSearch(false);
     }
@@ -174,7 +200,7 @@ class SiteSearch extends Component {
     onSelect() {
         const {currentItem} = this.state;
         const {results, history} = this.props;
-        console.log(currentItem, results[currentItem]);
+        // console.log(currentItem, results[currentItem]);
         const item = results[currentItem];
         if (item) {
             history.push(itemLink(item));
@@ -184,7 +210,7 @@ class SiteSearch extends Component {
 
     onKeyPress(ev) {
         const {results, show} = this.props;
-        console.log('onKeyPress', ev.key);
+        // console.log('onKeyPress', ev.key);
         switch (ev.key) {
         case 'Enter':
             if (results.length && !show) {
@@ -222,7 +248,7 @@ class SiteSearch extends Component {
         return (
             <Fragment>
                 <div className="global-search-padder"/>
-                <div className="global-search-container">
+                <div className="global-search-container" onClick={this.openSearch}>
                     <div className="form-inline">
                         <div className="form-group search-input">
                             <SearchPlaceholder onClick={this.onClickSearchIcon}/>
@@ -251,4 +277,4 @@ class SiteSearch extends Component {
     }
 }
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(onClickOutside(SiteSearch)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(SiteSearch));

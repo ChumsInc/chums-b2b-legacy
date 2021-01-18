@@ -16,6 +16,7 @@ import ProgressBar from "./ProgressBar";
 import CustomerLink from "./CustomerLink";
 import Breadcrumb from "./Breadcrumb";
 import {PATH_PROFILE, DOCUMENT_TITLES} from "../constants/paths";
+import ErrorBoundary from "../common-components/ErrorBoundary";
 
 
 const ACCOUNT_LIST_FIELDS = [
@@ -181,28 +182,30 @@ class AccountList extends Component {
 
         return (
             <div>
-                <Breadcrumb paths={paths}/>
-                <h2>Account List: {userAccount.SalespersonName}
-                    <small>({longAccountNumber(userAccount)})</small>
-                </h2>
-                <div className="form-inline mb-1">
-                    <FormGroupTextInput onChange={this.setFilter} value={filter} label="Filter Accounts"/>
-                    {allowSelectReps && repList.list.length > 0
-                    && (
-                        <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
-                    )}
-                    <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
-                        Refresh List
-                    </button>
-                </div>
-                {customerList.loading && <ProgressBar striped={true}/>}
-                <SortableTable data={filteredAccounts} fields={ACCOUNT_LIST_FIELDS} defaultSort={'CustomerName'}
-                               rowsPerPage={rowsPerPage}
-                               onChangeRowsPerPage={(rowsPerPage) => this.props.setRowsPerPage(rowsPerPage)}
-                               page={page} onChangePage={(page) => this.setState({page})}
-                               keyField={longAccountNumber}
-                               rowClassName={row => ({'table-active': compareCustomerAccountNumber(row, currentCustomer) === 0})}
-                               filtered={filteredAccounts.length < customerList.list.length}/>
+                <ErrorBoundary>
+                    <Breadcrumb paths={paths}/>
+                    <h2>Account List: {userAccount.SalespersonName}
+                        <small>({longAccountNumber(userAccount)})</small>
+                    </h2>
+                    <div className="form-inline mb-1">
+                        <FormGroupTextInput onChange={this.setFilter} value={filter} label="Filter Accounts"/>
+                        {allowSelectReps && repList.list.length > 0
+                        && (
+                            <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
+                        )}
+                        <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
+                            Refresh List
+                        </button>
+                    </div>
+                    {customerList.loading && <ProgressBar striped={true}/>}
+                    <SortableTable data={filteredAccounts} fields={ACCOUNT_LIST_FIELDS} defaultSort={'CustomerName'}
+                                   rowsPerPage={rowsPerPage}
+                                   onChangeRowsPerPage={(rowsPerPage) => this.props.setRowsPerPage(rowsPerPage)}
+                                   page={page} onChangePage={(page) => this.setState({page})}
+                                   keyField={longAccountNumber}
+                                   rowClassName={row => ({'table-active': compareCustomerAccountNumber(row, currentCustomer) === 0})}
+                                   filtered={filteredAccounts.length < customerList.list.length}/>
+                </ErrorBoundary>
             </div>
         );
 

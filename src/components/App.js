@@ -27,7 +27,7 @@ import Header from "./Header";
 import Login from "./LoginPage";
 import AlertList from "../common-components/AlertList";
 import HomeV2 from "./HomeV2";
-import ProductsHome from "./ProductRouter";
+import ProductRouter from "./ProductRouter";
 import {connect} from 'react-redux';
 import LifestyleImage from "./LifestyleImage";
 import {fetchProfile} from '../actions/user';
@@ -49,6 +49,7 @@ import GA_RouteHandler from "./GA_RouteHandler";
 import DocumentTitle from "./DocumentTitle";
 import ContentPage from "./ContentPage";
 import InvoicePage from "./InvoicePage";
+import ErrorBoundary from "../common-components/ErrorBoundary";
 
 
 class App extends Component {
@@ -121,11 +122,13 @@ class App extends Component {
                         <AlertList/>
 
                         {/* The login and signup paths will redirect away to home when the user is logged in */}
-                        <Route path={PATH_LOGIN} component={Login}/>
-                        <Route path={PATH_SIGNUP} component={SignUp}/>
-                        <Route path={PATH_SET_PASSWORD} component={ResetPassword}/>
+                        <ErrorBoundary>
+                            <Route path={PATH_LOGIN} component={Login}/>
+                            <Route path={PATH_SIGNUP} component={SignUp}/>
+                            <Route path={PATH_SET_PASSWORD} component={ResetPassword}/>
+                        </ErrorBoundary>
 
-                        <Route path={PATH_PRODUCT} component={ProductsHome}/>
+                        <Route path={PATH_PRODUCT} component={ProductRouter}/>
                         {!loggedIn && (
                             <Route path={PATH_RESOURCES_CHUMS_REPS}>
                                 <Redirect to={PATH_PAGE_RESOURCES} />
@@ -149,8 +152,13 @@ class App extends Component {
                                 <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer} />
                                 {!!currentCustomer.CustomerNo && (
                                     <Fragment>
-                                    <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage} />
-                                    <Route exact path={PATH_INVOICE} component={InvoicePage} />
+                                        <ErrorBoundary>
+                                            <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage} />
+                                        </ErrorBoundary>
+                                        <ErrorBoundary>
+                                            <Route exact path={PATH_INVOICE} component={InvoicePage} />
+
+                                        </ErrorBoundary>
                                     </Fragment>
                                 )}
                                 {!currentCustomer.CustomerNo && (

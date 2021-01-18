@@ -12,6 +12,7 @@ import {NAV_ORDERS, PATH_SALES_ORDER} from "../constants/paths";
 import {NEW_CART, ORDER_TYPE, ORDER_TYPE_NAMES} from "../constants/orders";
 import {buildPath} from "../utils/fetch";
 import {fetchInvoices} from '../actions/invoices';
+import ErrorBoundary from "../common-components/ErrorBoundary";
 
 const mapStateToProps = ({user, customer, carts, openOrders, cart, app, invoices}) => {
     const {currentCustomer} = user;
@@ -153,17 +154,19 @@ class OrdersContainer extends Component {
         return (
             <Fragment>
                 <Tabs tabList={NAV_ORDERS} onSelect={(tab) => this.setState({tab})} activeTab={tab}/>
-                {tab === ORDER_TYPE.cart && (
-                    <OrdersList orders={carts} currentCart={cartNo} orderType={ORDER_TYPE.cart}
-                                onNewCart={this.onNewCart}
-                                onReload={this.reloadOpenOrders} onSelect={this.onSelectCart}/>
-                )}
-                {tab === ORDER_TYPE.open && (
-                    <OrdersList onReload={this.reloadOpenOrders} orders={openOrders} orderType={ORDER_TYPE.open}/>
-                )}
-                {tab === ORDER_TYPE.invoices && (
-                    <OrdersList onReload={this.reloadInvoices} orders={invoices} orderType={ORDER_TYPE.invoices}/>
-                )}
+                <ErrorBoundary>
+                    {tab === ORDER_TYPE.cart && (
+                        <OrdersList orders={carts} currentCart={cartNo} orderType={ORDER_TYPE.cart}
+                                    onNewCart={this.onNewCart}
+                                    onReload={this.reloadOpenOrders} onSelect={this.onSelectCart}/>
+                    )}
+                    {tab === ORDER_TYPE.open && (
+                        <OrdersList onReload={this.reloadOpenOrders} orders={openOrders} orderType={ORDER_TYPE.open}/>
+                    )}
+                    {tab === ORDER_TYPE.invoices && (
+                        <OrdersList onReload={this.reloadInvoices} orders={invoices} orderType={ORDER_TYPE.invoices}/>
+                    )}
+                </ErrorBoundary>
             </Fragment>
         )
     }

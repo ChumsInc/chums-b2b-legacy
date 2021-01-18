@@ -35,7 +35,7 @@ if (!window.__PRELOADED_STATE__) {
     window.__PRELOADED_STATE__ = {};
 }
 const preferences = {
-    version: (window.Chums || {}).version || {},
+    version: (window.CHUMS || {}).version || {},
     keywords: window.__PRELOADED_STATE__.keywords || [],
     slides: window.__PRELOADED_STATE__.slides || [],
     productMenu: window.__PRELOADED_STATE__.menu_chums || [],
