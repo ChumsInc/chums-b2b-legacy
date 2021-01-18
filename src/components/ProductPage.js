@@ -138,7 +138,7 @@ class ProductPage extends Component {
 
 
     componentDidUpdate(prevProps, prevState, snapShot) {
-        const {loading, documentTitle, product, keyword, selectedProduct, location} = this.props;
+        const {loading, documentTitle, product, keyword, selectedProduct, location, cartItem, colorCode} = this.props;
         if (prevProps.keyword !== keyword) {
             this.props.fetchProduct(keyword);
             return;
@@ -154,13 +154,17 @@ class ProductPage extends Component {
                 if (!!_variant) {
                     this.props.selectVariant(_variant);
                 }
+                this.props.history.replace({
+                    pathname: this.props.location.pathname,
+                    state: {}
+                });
             }
         }
-
     }
 
     onSelectVariant(variant) {
-        this.props.selectVariant(variant);
+        const {colorCode} = this.props;
+        this.props.selectVariant(variant, colorCode);
     }
 
     onSelectColor(colorCode) {

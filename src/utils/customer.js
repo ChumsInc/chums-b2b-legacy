@@ -13,18 +13,6 @@ export const companyName = (code = '') => {
     }
 };
 
-export const companyPriority = (code) => {
-    switch(companyCode(code)) {
-    case 'chums':
-        return 1;
-    case 'bc':
-        return 2;
-    default:
-        return 3;
-    }
-};
-
-
 export const companyCode = (code = '') => {
     switch (code.toLowerCase()) {
     case 'chums':
@@ -50,6 +38,19 @@ export const sageCompanyCode = (code = '') => {
         return code;
     }
 };
+export const companyPriority = (code) => {
+    switch(companyCode(code)) {
+    case 'chums':
+        return 1;
+    case 'bc':
+        return 2;
+    default:
+        return 3;
+    }
+};
+
+
+
 
 export const longCustomerNo = ({ARDivisionNo, CustomerNo, ShipToCode}) => ShipToCode
     ? `${ARDivisionNo}-${CustomerNo}:${ShipToCode}`
