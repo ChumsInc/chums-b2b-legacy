@@ -107,7 +107,7 @@ class App extends Component {
 
     render() {
         const {loggedIn, currentCustomer} =this.props;
-        console.log('App', {loggedIn});
+        // console.log('App', {loggedIn});
         return (
             <Fragment>
                 <Route component={Header}/>

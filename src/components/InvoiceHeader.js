@@ -87,6 +87,7 @@ const mapDispatchToProps = {
 class InvoiceHeader extends Component {
     static propTypes = {
         invoice: PropTypes.shape({
+            Company: PropTypes.string.isRequired,
             InvoiceNo: PropTypes.string,
             SalesOrderNo: PropTypes.string,
         }),
@@ -168,14 +169,15 @@ class InvoiceHeader extends Component {
     }
 
     onDuplicateOrder() {
-        const {Company, SalesOrderNo} = this.props.invoice;
+        const {Company = 'chums', SalesOrderNo} = this.props.invoice;
+        console.log('onDuplicateOrder()', {Company, SalesOrderNo});
         const {newCartName} = this.state;
         this.props.duplicateOrder({SalesOrderNo, newCartName})
             .then(SalesOrderNo => {
                 if (!SalesOrderNo) {
                     return;
                 }
-                console.log(`redirect to ${SalesOrderNo}`, SalesOrderNo);
+                console.log(`redirect to ${SalesOrderNo}`, {Company, SalesOrderNo});
                 this.setState({confirmDuplicate: false, newCartName: ''}, () => {
                     this.props.history.push(buildPath(PATH_SALES_ORDER, {
                         orderType: ORDER_TYPE.cart,
