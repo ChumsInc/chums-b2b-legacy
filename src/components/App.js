@@ -25,7 +25,8 @@ import {
 } from "../constants/paths";
 import Header from "./Header";
 import Login from "./LoginPage";
-import AlertList from "../common-components/AlertList";
+// import AlertList from "../common-components/AlertList";
+import {AlertList} from 'chums-ducks';
 import HomeV2 from "./HomeV2";
 import ProductRouter from "./ProductRouter";
 import {connect} from 'react-redux';

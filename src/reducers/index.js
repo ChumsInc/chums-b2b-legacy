@@ -1,4 +1,5 @@
 import {combineReducers} from 'redux';
+import {alertReducer} from 'chums-ducks';
 import app from './app';
 import user from './user';
 import products from './products';
@@ -14,6 +15,7 @@ import page from './page';
 import promo_code from "./promo_code";
 
 export default combineReducers({
+    alerts: alertReducer,
     app,
     user,
     products,
