@@ -12,7 +12,7 @@ import path from 'path';
 import fs from 'fs';
 import express from 'express';
 import favicon from 'serve-favicon';
-import compression from 'compression';
+// import compression from 'compression';
 import http from 'http';
 import React from 'react'
 import { createStore } from 'redux'
@@ -33,7 +33,7 @@ const categoryProductRegexp = pathToRegexp('/products/:category?/:product?');
 
 const app = express();
 
-app.use(compression());
+// app.use(compression());
 // serve our static stuff like index.css
 app.use(favicon(path.join(__dirname, './public', 'favicon.ico')));
 app.use('/css', express.static('./public/css', {fallthrough: false}));

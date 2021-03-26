@@ -19,8 +19,6 @@ var _express = _interopRequireDefault(require("express"));
 
 var _serveFavicon = _interopRequireDefault(require("serve-favicon"));
 
-var _compression = _interopRequireDefault(require("compression"));
-
 var _http = _interopRequireDefault(require("http"));
 
 var _react = _interopRequireDefault(require("react"));
@@ -81,8 +79,8 @@ var debug = require('debug')('chums:index');
 
 debug.enabled = true;
 var categoryProductRegexp = (0, _pathToRegexp.pathToRegexp)('/products/:category?/:product?');
-var app = (0, _express["default"])();
-app.use((0, _compression["default"])()); // serve our static stuff like index.css
+var app = (0, _express["default"])(); // app.use(compression());
+// serve our static stuff like index.css
 
 app.use((0, _serveFavicon["default"])(_path["default"].join(__dirname, './public', 'favicon.ico')));
 app.use('/css', _express["default"]["static"]('./public/css', {

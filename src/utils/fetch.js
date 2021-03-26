@@ -129,6 +129,9 @@ export function fetchGET(url, options = {}) {
                     if (response.name) {
                         err.name = response.name;
                     }
+                    if (response.debug) {
+                        err.debug = response.debug;
+                    }
                     console.log(response.name || '', response.error);
                     return reject(err);
                 }
@@ -155,6 +158,9 @@ export function fetchPOST(url, data) {
                     if (response.name) {
                         err.name = response.name;
                     }
+                    if (response.debug) {
+                        err.debug = response.debug;
+                    }
                     console.log(response.name || '', response.error);
                     return reject(err);
                 }
@@ -180,6 +186,9 @@ export function fetchDELETE(url) {
                     const err = new Error(response.error);
                     if (response.name) {
                         err.name = response.name;
+                    }
+                    if (response.debug) {
+                        err.debug = response.debug;
                     }
                     console.log(response.name || '', response.error);
                     return reject(err);

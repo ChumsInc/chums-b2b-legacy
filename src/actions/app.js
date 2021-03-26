@@ -39,6 +39,7 @@ export const dismissAlert = (id) => ({type: DISMISS_ALERT, id});
  */
 export const handleError = (err, context = '') => {
     console.trace(err.message);
+    console.log(err.debug);
     return {
         type: SET_ALERT,
         props: {type: ALERT_TYPES.danger, title: err.name, message: err.message, context}
@@ -127,17 +128,18 @@ export const fetchSlides = () => (dispatch, getState) => {
         });
 }
 
-export const logError = ({message, componentStack}) => (dispatch, getState) => {
+export const logError = ({message, componentStack, debug}) => (dispatch, getState) => {
     try {
         const {app, user} = getState();
         const {versionNo = ''} = app.version;
-        const {id = 0} = user?.profile?.chums;
+        const {id = 0} = user?.profile;
         const url = '/api/error-reporting';
         const body = {
             message,
-            componentStack,
+            componentStack: componentStack,
             user_id: id,
             version: versionNo,
+            debug,
         };
         fetchPOST(url, body)
             .then(res => console.log(res))

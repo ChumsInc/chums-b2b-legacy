@@ -27,7 +27,7 @@ import {
     API_PATH_SAVE_CART,
     CART_ACTIONS
 } from "../constants/paths";
-import {handleError, setAlert} from "./app";
+import {handleError, logError, setAlert} from "./app";
 import parseDate from "date-fns/parseJSON";
 import {fetchOpenOrders, fetchSalesOrder} from "./salesOrder";
 import {sageCompanyCode, shipToAddressFromBillingAddress} from "../utils/customer";
@@ -102,6 +102,9 @@ export const fetchCurrentCart = () => (dispatch, getState) => {
         .catch(err => {
             dispatch({type: FETCH_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, FETCH_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         });
 };
 
@@ -144,6 +147,9 @@ export const saveNewCart = ({cartName, itemCode, quantity = 1, comment = ''}) =>
         .catch(err => {
             dispatch({type: SAVE_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, SAVE_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         })
 };
 /**
@@ -207,6 +213,9 @@ export const saveCart = () => (dispatch, getState) => {
         .catch(err => {
             dispatch({type: SAVE_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, SAVE_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         });
 
 };
@@ -255,6 +264,9 @@ export const promoteCart = () => (dispatch, getState) => {
         .catch(err => {
             dispatch({type: PROMOTE_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, PROMOTE_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         })
 };
 
@@ -278,6 +290,9 @@ export const removeCart = (cart) => (dispatch, getState) => {
         .catch(err => {
             dispatch({type: DELETE_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, DELETE_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         });
 };
 
@@ -331,6 +346,9 @@ export const saveCartItem = ({
         .catch(err => {
             dispatch({type: SAVE_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, SAVE_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         });
 };
 
@@ -355,6 +373,9 @@ export const addCommentLine = ({SalesOrderNo, LineKey = '', CommentText = ''}) =
         .catch(err => {
             dispatch({type: SAVE_CART_FAILURE});
             dispatch(handleError(err));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         });
 };
 
@@ -374,6 +395,9 @@ export const deleteCartItem = ({SalesOrderNo, LineKey}) => (dispatch, getState) 
         .catch(err => {
             dispatch({type: SAVE_CART, status: FETCH_FAILURE});
             dispatch(handleError(err, SAVE_CART));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         })
 };
 
@@ -390,6 +414,9 @@ export const getItemAvailability = ({ItemCode}) => (dispatch, getState) => {
         .catch(err => {
             dispatch({type: FETCH_ITEM_AVAILABILITY, status: FETCH_FAILURE});
             dispatch(handleError(err, FETCH_ITEM_AVAILABILITY));
+            if (err.debug) {
+                dispatch(logError({message: err.message, debug: err.debug}));
+            }
         });
 };
 
