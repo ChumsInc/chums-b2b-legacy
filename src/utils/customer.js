@@ -180,7 +180,7 @@ export const buildRecentAccounts = (recentAccounts = [], customer) => {
 };
 
 export const shipToAddressFromBillingAddress = (customer) => {
-    const [EmailAddress] = customer.EmailAddress.split(/;[ ]*/);
+    const [EmailAddress] = (customer.EmailAddress || '').split(/;[ ]*/);
     return {
         ShipToCode: '',
         ShipToName: customer.CustomerName,

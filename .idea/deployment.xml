@@ -9,20 +9,6 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="BRYCE (1)">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="BRYCE node.is">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="HOVENWEEP">
         <serverdata>
           <mappings>
@@ -34,69 +20,19 @@
           </excludedPaths>
         </serverdata>
       </paths>
-      <paths name="NODE-DEV">
+      <paths name="MUKUNTUWEAP">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="SHASTA">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="STEVE-11">
-        <serverdata>
-          <mappings>
-            <mapping deploy="b2b.chums.com" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/b2b-v2" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
-            <excludedPath path="b2b.chums.com\node_modules" />
-            <excludedPath path="b2b.chums.com\public\css\.sass-cache" />
+            <excludedPath path="/b2b-v2/node_modules" />
             <excludedPath local="true" path="$PROJECT_DIR$/node_modules" />
             <excludedPath local="true" path="$PROJECT_DIR$/public/css/.sass-cache" />
           </excludedPaths>
         </serverdata>
       </paths>
-      <paths name="Udacity Project 1">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="b2b.chums.com">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="gutenprog.com">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
       <paths name="oraibi.chums.com">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="second-mesa.chums.com">
-        <serverdata>
-          <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="second-mesa.chums.com (1)">
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />

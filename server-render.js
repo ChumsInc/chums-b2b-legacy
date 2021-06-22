@@ -88,7 +88,7 @@ async function handleRender(req, res) {
         return;
     }
 
-    if (/^\/($|products|home|login|logout|signup|pages|profile|account|orders|invoices)/.test(req.path) === false) {
+    if (/^\/($|products|home|login|logout|signup|pages|profile|account|orders|invoices|set-password)/.test(req.path) === false) {
         debug('handleRender() invalid path => 404', req.path);
         await res.status(404).json({error: 'invalid url not found'});
         return;
@@ -130,7 +130,7 @@ async function handleRender(req, res) {
                 }
             }
             if (keyword && keyword.pagetype === 'product') {
-                const {products} = await loadJSON(`http://localhost:${API_PORT}/products/keyword/:product`.replace(':product', encodeURIComponent(search)));
+                const {products} = await loadJSON(`http://localhost:${API_PORT}/products/v2/keyword/:product`.replace(':product', encodeURIComponent(search)));
                 const product = {};
                 const [prod] = products;
                 if (!!prod.status) {

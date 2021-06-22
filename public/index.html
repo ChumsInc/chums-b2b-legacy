@@ -34,7 +34,9 @@
     <!-- refresh state when needed from https://b2b.chums.com/api/preload/state.js -->
     <script async src="https://b2b.chums.com/api/preload/state.js"></script>
     <script async>
-        window.__PRELOADED_STATE__.app.version = CHUMS.version.versionNo;
+        if (window?.__PRELOADED_STATE__?.app) {
+            window.__PRELOADED_STATE__.app.version = CHUMS.version.versionNo;
+        }
     </script>
 </head>
 <body>

@@ -198,6 +198,11 @@ label.color-swatch.color-swatch--155,
 .color-swatch.color-swatch--155 {
   background-color: #ceada6;
 }
+label.color-swatch.color-swatch--silicone-155,
+.tag--swatch.color-swatch--silicone-155,
+.color-swatch.color-swatch--silicone-155 {
+  background-color: #a6563d;
+}
 label.color-swatch.color-swatch--156,
 .tag--swatch.color-swatch--156,
 .color-swatch.color-swatch--156 {
@@ -302,6 +307,11 @@ label.color-swatch.color-swatch--dual-250,
 .tag--swatch.color-swatch--dual-250,
 .color-swatch.color-swatch--dual-250 {
   background-image: url("/images/swatches/2020/250-swatch-angle.jpg");
+}
+label.color-swatch.color-swatch--baja-257,
+.tag--swatch.color-swatch--baja-257,
+.color-swatch.color-swatch--baja-257 {
+  background-color: #276bb8;
 }
 label.color-swatch.color-swatch--264,
 .tag--swatch.color-swatch--264,
@@ -473,6 +483,11 @@ label.color-swatch.color-swatch--370,
 .color-swatch.color-swatch--370 {
   background-color: #4aa6b0;
 }
+label.color-swatch.color-swatch--374,
+.tag--swatch.color-swatch--374,
+.color-swatch.color-swatch--374 {
+  background-image: url("/images/swatches/2020/swatch-374.jpg");
+}
 label.color-swatch.color-swatch--390,
 .tag--swatch.color-swatch--390,
 .color-swatch.color-swatch--390 {
@@ -536,17 +551,17 @@ label.color-swatch.color-swatch--504,
 label.color-swatch.color-swatch--512,
 .tag--swatch.color-swatch--512,
 .color-swatch.color-swatch--512 {
-  background-image: url("/images/swatches/2020/512-swatch.jpg");
+  background-image: url("/images/swatches/2020/swatch-512.jpg");
 }
 label.color-swatch.color-swatch--514,
 .tag--swatch.color-swatch--514,
 .color-swatch.color-swatch--514 {
-  background-image: url("/images/swatches/2020/514-swatch.jpg");
+  background-image: url("/images/swatches/2020/swatch-514.jpg");
 }
 label.color-swatch.color-swatch--515,
 .tag--swatch.color-swatch--515,
 .color-swatch.color-swatch--515 {
-  background-image: url("/images/swatches/2020/515-swatch.jpg");
+  background-image: url("/images/swatches/2020/swatch-515.png");
 }
 label.color-swatch.color-swatch--560,
 .tag--swatch.color-swatch--560,
@@ -623,6 +638,11 @@ label.color-swatch.color-swatch--ltd-701,
 .color-swatch.color-swatch--ltd-701 {
   background-image: url("/images/swatches/2020/swatch-ltd-701.jpg");
 }
+label.color-swatch.color-swatch--baja-701,
+.tag--swatch.color-swatch--baja-701,
+.color-swatch.color-swatch--baja-701 {
+  background-image: url("/images/swatches/2020/swatch-701.png");
+}
 label.color-swatch.color-swatch--702,
 .tag--swatch.color-swatch--702,
 .color-swatch.color-swatch--702 {
@@ -642,6 +662,11 @@ label.color-swatch.color-swatch--ltd-707,
 .tag--swatch.color-swatch--ltd-707,
 .color-swatch.color-swatch--ltd-707 {
   background-image: url("/images/swatches/2020/swatch-ltd-707.jpg");
+}
+label.color-swatch.color-swatch--baja-708,
+.tag--swatch.color-swatch--baja-708,
+.color-swatch.color-swatch--baja-708 {
+  background-color: #000000;
 }
 label.color-swatch.color-swatch--710,
 .tag--swatch.color-swatch--710,
@@ -857,6 +882,16 @@ label.color-swatch.color-swatch--872,
 .tag--swatch.color-swatch--872,
 .color-swatch.color-swatch--872 {
   background-image: url("/images/swatches/2020/swatch-colorado.jpg");
+}
+label.color-swatch.color-swatch--874,
+.tag--swatch.color-swatch--874,
+.color-swatch.color-swatch--874 {
+  background-image: url("/images/swatches/2020/swatch-874.jpg");
+}
+label.color-swatch.color-swatch--875,
+.tag--swatch.color-swatch--875,
+.color-swatch.color-swatch--875 {
+  background-image: url("/images/swatches/2020/swatch-875.jpg");
 }
 label.color-swatch.color-swatch--mariner-879,
 .tag--swatch.color-swatch--mariner-879,
