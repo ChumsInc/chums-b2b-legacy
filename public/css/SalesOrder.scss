@@ -1,5 +1,6 @@
 @import "variables.scss";
 
+
 tr.kit-component {
   td {
     color: $kit-component;
@@ -9,7 +10,7 @@ tr.kit-component {
   }
 
   td:first-child {
-    padding-left: $table-cell-padding * 2;
+    padding-left: $table-cell-padding-x * 2;
   }
 
   td:nth-child(2):before {

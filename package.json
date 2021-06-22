@@ -1,6 +1,6 @@
 {
   "name": "chums-b2b",
-  "version": "2.0.69",
+  "version": "2.0.71",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.5.3",
-    "chums-ducks": "github:UtahGooner/chums-ducks",
     "classnames": "^2.2.6",
     "compression": "^1.7.4",
     "credit-card-type": "^9.1.0",
