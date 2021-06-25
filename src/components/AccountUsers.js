@@ -11,10 +11,10 @@ import UserIcon from "./UserIcon";
 
 const AccountUser = ({id, name, email, accountType, onClick = noop}) => {
     return (
-        <tr onClick={() => onClick()}>
-            <td onClick={() => onClick()}><UserIcon accountType={accountType} /></td>
-            <td onClick={() => onClick()}>{name}</td>
-            <td onClick={() => onClick()}>{email}</td>
+        <tr onClick={() => onClick(id)}>
+            <td onClick={() => onClick(id)}><UserIcon accountType={accountType} /></td>
+            <td onClick={() => onClick(id)}>{name}</td>
+            <td onClick={() => onClick(id)}>{email}</td>
         </tr>
     )
 };
@@ -65,8 +65,8 @@ class AccountUsers extends Component {
         this.onReload = this.onReload.bind(this);
     }
 
-    onSelectUser({id}) {
-        this.props.selectAccountUser(id);
+    onSelectUser(id) {
+        // this.props.selectAccountUser(id);
     }
 
     onCreateUser() {

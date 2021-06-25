@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 import {
+    FETCH_CUSTOMER,
     FETCH_INIT,
     FETCH_PROMO_CODE,
     FETCH_SUCCESS,
@@ -45,7 +46,7 @@ const requiredItems = (state = '', action) => {
         return [];
     case FETCH_PROMO_CODE:
         if (status === FETCH_SUCCESS) {
-            return promo_code.requirements.ItemCodes || [];
+            return promo_code.requirements?.ItemCodes || [];
         }
         return state;
     default:
@@ -54,11 +55,16 @@ const requiredItems = (state = '', action) => {
 }
 
 const validCodes = (state = [], action) => {
-    const {type, status, list} = action;
+    const {type, status, list, promoCodes = []} = action;
     switch (type) {
     case FETCH_VALID_PROMO_CODES:
         if (status === FETCH_SUCCESS) {
             return [...list];
+        }
+        return state;
+    case FETCH_CUSTOMER:
+        if (status === FETCH_SUCCESS) {
+            return [...promoCodes];
         }
         return state;
     default:

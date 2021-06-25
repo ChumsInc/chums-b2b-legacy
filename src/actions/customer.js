@@ -92,7 +92,7 @@ export const fetchCustomerAccount = ({fetchOrders = false, force = false} = {}) 
     dispatch({type: FETCH_CUSTOMER, status: FETCH_INIT, customer: {Company, ARDivisionNo, CustomerNo}});
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
-            const {contacts, customer, pricing, shipTo, users, paymentCards} = res.result;
+            const {contacts, customer, pricing, shipTo, users, paymentCards, promoCodes} = res.result;
             const {products} = getState();
             let cartItem = products.cartItem;
             const customerPrice = getPrices({product: products.selectedProduct, priceCodes: pricing});
@@ -106,13 +106,13 @@ export const fetchCustomerAccount = ({fetchOrders = false, force = false} = {}) 
                 type: FETCH_CUSTOMER,
                 status: FETCH_SUCCESS,
                 Company, customer, contacts, pricing, shipTo, customerPrice, users, paymentCards,
-                cartItem,
+                cartItem, promoCodes,
             });
             if (fetchOrders) {
                 dispatch(fetchOpenOrders({Company, ARDivisionNo, CustomerNo}));
                 dispatch(fetchInvoices({Company, ARDivisionNo, CustomerNo}));
             }
-            dispatch(fetchValidPromoCodes());
+            // dispatch(fetchValidPromoCodes());
         })
         .catch(err => {
             dispatch(handleError(err, FETCH_CUSTOMER));

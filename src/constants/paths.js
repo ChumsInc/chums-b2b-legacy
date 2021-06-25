@@ -54,29 +54,28 @@ export const API_PATH_USER_SIGN_UP = '/api/user/b2b/signup/:email';
 export const API_PATH_HOME_SLIDES = '/api/features/slides/active';
 
 // account and account list paths
-export const API_PATH_ACCOUNT_USERS = '/node-dev/b2b/users/:Company/:ARDivisionNo-:CustomerNo';
-export const API_PATH_CUSTOMER = '/node-dev/b2b/account/:Company/:ARDivisionNo-:CustomerNo';
-export const API_PATH_CUSTOMER_LIST = '/node-dev/b2b/account-list/:Company/:SalespersonDivisionNo-:SalespersonNo';
-export const API_PATH_REP_LIST = '/node-dev/sales/rep/list/:Company/condensed';
+export const API_PATH_ACCOUNT_USERS = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo';
+export const API_PATH_CUSTOMER = '/api/sales/b2b/account/:Company/:ARDivisionNo-:CustomerNo';
+export const API_PATH_CUSTOMER_LIST = '/api/sales/b2b/account-list/:Company/:SalespersonDivisionNo-:SalespersonNo';
+export const API_PATH_REP_LIST = '/api/sales/rep/list/:Company/condensed';
 export const API_PATH_SAVE_ADDRESS = '/sage/b2b/billto.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
 export const API_PATH_SAVE_SHIPTO_ADDRESS = '/sage/b2b/shipto.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo-:ShipToCode';
 export const API_PATH_SET_PRIMARY_SHIPTO = '/sage/b2b/set-primary-shipto.php\\?co=:Company';
 
-
 // cart and order paths
-export const API_PATH_CART_IMAGE = '/node-dev/product-images/find/80/:ItemCode';
+export const API_PATH_CART_IMAGE = '/api/images/products/find/80/:ItemCode';
 export const API_PATH_DELETE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
 export const API_PATH_OPEN_ORDERS = '/node-sage/api/:Company/salesorder/open/:ARDivisionNo-:CustomerNo';
-export const API_PATH_PAST_ORDERS = '/node-dev/b2b/invoices/:Company/:ARDivisionNo-:CustomerNo';
-export const API_PATH_INVOICES = '/node-dev/b2b/invoices/:Company/:ARDivisionNo-:CustomerNo';
+export const API_PATH_PAST_ORDERS = '/api/sales/b2b/invoices/:Company/:ARDivisionNo-:CustomerNo';
+export const API_PATH_INVOICES = '/api/sales/b2b/invoices/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_PROMOTE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo-:ShipToCode?';
 export const API_PATH_SALES_ORDER = '/node-sage/api/:Company/salesorder/:SalesOrderNo';
 export const API_PATH_INVOICE = '/node-sage/api/:Company/invoice/:InvoiceType/:InvoiceNo';
 export const API_PATH_SAVE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
 export const API_PATH_SEND_ORDER_EMAIL = '/node-sage/api/:Company/salesorder/:SalesOrderNo/email';
 export const API_PATH_CART_ACTION = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
-export const API_PATH_PROMO_CODE = '/node-dev/b2b/promo/:code\\?valid=1';
-export const API_PATH_VALID_PROMO_CODES = '/node-dev/b2b/promo/?valid=1';
+export const API_PATH_PROMO_CODE = '/api/sales/b2b/promo/:code\\?valid=1';
+export const API_PATH_VALID_PROMO_CODES = '/api/sales/b2b/promo/?valid=1';
 
 // product paths
 export const API_PATH_KEYWORDS = '/api/keywords';
