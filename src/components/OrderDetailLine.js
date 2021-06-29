@@ -140,24 +140,24 @@ export default class OrderDetailLine extends Component {
                     <td className="right">
                         <div className="btn-group-vertical action-buttons">
                             {!readOnly && (
-                                <button type="button" className="btn btn-sm btn-outline-secondary"
+                                <button type="button" className="btn btn-sm btn-outline-danger mb-1"
                                         title="Remove from cart"
                                         onClick={this.onDelete}>
-                                    <span className="material-icons">remove_shopping_cart</span>
+                                    <span className="bi-x-circle-fill" />
                                 </button>
                             )}
                             {!readOnly && (
-                                <button type="button" className="btn btn-sm btn-outline-secondary"
+                                <button type="button" className="btn btn-sm btn-outline-secondary mb-1"
                                         title="Add Comment"
                                         onClick={() => this.setState({addComment: true})}>
-                                    <span className="material-icons">create</span>
+                                    <span className="bi-pencil-fill" />
                                 </button>
                             )}
                             {!(ProductType === 'D' || InactiveItem === 'Y') && (
-                                <button type="button" className="btn btn-sm btn-outline-secondary"
+                                <button type="button" className="btn btn-sm btn-outline-primary"
                                         title="Add to cart"
                                         onClick={this.onAddToCart}>
-                                    <span className="material-icons">shopping_cart</span>
+                                    <span className="bi-bag-fill" />
                                 </button>
                             )}
                         </div>

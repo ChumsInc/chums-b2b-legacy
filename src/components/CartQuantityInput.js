@@ -3,29 +3,33 @@ import TextInput from "../common-components/TextInput";
 
 const CartQuantityInput = ({quantity, onChange, onAddToCart, min = 1}) => {
     return (
-        <div className="input-group input-group-sm number-input-group cart-qty-input">
-            <div className="input-group-prepend">
-                <button type="button" className="btn btn-sm btn-outline-secondary"
-                        onClick={() => onChange(quantity - 1)} disabled={quantity <= min}>
-                    <span className="material-icons">remove</span>
-                </button>
-            </div>
-            <TextInput type="number" pattern="[1-9][0-9]*" onChange={({value}) => onChange(value)}
-                       required value={quantity || (min === 0 ? 0 : '')} min={min}/>
-            <div className="input-group-append">
-                <button type="button" className="btn btn-sm btn-outline-secondary"
-                        onClick={() => onChange(quantity + 1)}>
-                    <span className="material-icons">add</span>
-                </button>
-            </div>
-            {/* Handle as a regular button with action */}
-            {!!onAddToCart && (
-                <div className="input-group-append">
-                    <button type="submit" className="btn btn-sm btn-primary" disabled={quantity === 0}>
-                        <span className="material-icons" title="Add to cart">shopping_cart</span>
-                    </button>
+        <div className="row g-3">
+            <div className="col">
+                <div className="input-group number-input-group cart-qty-input">
+                    <TextInput type="number" pattern="[1-9][0-9]*" onChange={({value}) => onChange(value)}
+                               required value={quantity || (min === 0 ? 0 : '')} min={min}/>
+                    <div className="row g-0 cart-qty--buttons">
+                        <button type="button" className="btn btn-sm btn-outline-secondary"
+                                title="increment"
+                                onClick={() => onChange(quantity + 1)}>
+                            <span className="bi-caret-up-fill" />
+                        </button>
+                        <button type="button" className="btn btn-sm btn-outline-secondary"
+                                title="decrement"
+                                onClick={() => onChange(quantity - 1)} disabled={quantity <= min}>
+                            <span className="bi-caret-down-fill"/>
+                        </button>
+                    </div>
                 </div>
-            )}
+            </div>
+            <div className="col-auto">
+                {/* Handle as a regular button with action */}
+                {!!onAddToCart && (
+                    <button type="submit" className="btn btn-sm btn-primary" disabled={quantity === 0}>
+                        <span className="me-3">Add to cart</span><span className="bi-bag-fill" title="Add to cart" />
+                    </button>
+                )}
+            </div>
         </div>
     )
 };

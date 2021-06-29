@@ -5,32 +5,32 @@ footer.site-footer {
   position: absolute;
   bottom: 0;
   //padding-top: $mountain-footer-height;
-  height: calc(#{$footer-links-height} + 2 * #{$footer-contact-padding} + 4 * 1.5rem);
-  @include media-breakpoint-down(xs) {
-    height: calc(#{$footer-links-height} + 2 * #{$footer-contact-padding} + #{$social-icon-size});
+  height: calc(#{$footer-links-height} + 2 * #{$footer-contact-padding} + #{$social-icon-size});
+  @include media-breakpoint-up(sm) {
+    height: calc(#{$footer-links-height} + 2 * #{$footer-contact-padding} + 4 * 1.5rem);
   }
   width: 100%;
 
   .contact-container {
-    height: calc(2 * #{$footer-contact-padding} + 4 * 1.5rem);
-    @include media-breakpoint-down(xs) {
-      height: calc(2 * #{$footer-contact-padding} + #{$social-icon-size});
-    }
+    height: calc(2 * #{$footer-contact-padding} + #{$social-icon-size});
     width: 100%;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+    flex-direction: column;
     background-color: $footer-bg-color;
     color: $footer-color;
-    align-items: center;
-    @include media-breakpoint-down(xs) {
-      justify-content: space-around;
+    justify-content: space-around;
+    @include media-breakpoint-up(sm) {
+      height: calc(2 * #{$footer-contact-padding} + 4 * 1.5rem);
+      justify-content: space-between;
+      align-items: center;
+      flex-direction: row;
     }
 
 
     .contact-address {
-      @include media-breakpoint-down(xs) {
-        display: none;
+      display: none;
+      @include media-breakpoint-up(sm) {
+        display: block;
       }
       padding: $footer-contact-padding;
       address {

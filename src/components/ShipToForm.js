@@ -141,7 +141,7 @@ class ShipToForm extends Component {
         return (
             <div>
                 {!!loading && <ProgressBar striped={true}/>}
-                <div className="form-row">
+                <div className="row g-3">
                     <div className="col-md-6">
                         <FormGroupTextInput colWidth={8} label="Default Delivery Location" className="form-control-plaintext"
                                             value={primaryShipToName || 'Billing Address'} readOnly disabled/>
@@ -151,12 +151,10 @@ class ShipToForm extends Component {
                             <div className="input-group input-group-sm">
                                 <ShipToSelect value={shipToCode} onChange={this.onChangeShipToCode}
                                               defaultName={shipToAddresses.length === 0 ? 'N/A' : 'Select One'}/>
-                                <div className="input-group-append">
-                                    <button className="input-group-text btn-outline-secondary" disabled={readOnly}
-                                            onClick={() => this.setState({showNewShipTo: true, shipToCode: ''})}>
-                                        <span className="material-icons">add</span>
-                                    </button>
-                                </div>
+                                <button className="input-group-text btn-outline-secondary" disabled={readOnly}
+                                        onClick={() => this.setState({showNewShipTo: true, shipToCode: ''})}>
+                                    <span className="bi-plus-lg"/>
+                                </button>
                             </div>
                         </FormGroup>
                     </div>
@@ -191,7 +189,7 @@ class ShipToForm extends Component {
                 <hr/>
                 {shipToCode && (
                     <form onSubmit={this.onSubmit}>
-                        <div className="form-row">
+                        <div className="row g-3">
                             <div className="col-md-6">
                                 <FormGroupTextInput colWidth={8} label="Location Name"
                                                     value={selectedShipTo.ShipToName || ''} field="ShipToName"
@@ -202,7 +200,7 @@ class ShipToForm extends Component {
                             <div className="col-md-6">
                                 <FormGroup colWidth={8}>
                                     {PrimaryShipToCode !== selectedShipTo.ShipToCode && (
-                                        <button type="button" className="btn btn-sm btn-outline-secondary mr-1"
+                                        <button type="button" className="btn btn-sm btn-outline-secondary me-1"
                                                 disabled={selectedShipTo.changed || readOnly}
                                                 onClick={this.onSetDefaultShipTo}>
                                             Set as default delivery location
@@ -220,14 +218,14 @@ class ShipToForm extends Component {
                                                  showStoreMapOption
                                                  readOnly={readOnly} onChange={this.onChange}/>
                         <ContactFormFields onChange={this.onChange} {...selectedShipTo} readOnly={readOnly}/>
-                        <div className="form-row">
+                        <div className="row g-3">
                             <div className="col-md-6"/>
                             <div className="col-md-6">
                                 <FormGroup colWidth={8} label={' '}>
-                                    <button type="submit" className="btn btn-sm btn-primary mr-1"
+                                    <button type="submit" className="btn btn-sm btn-primary me-1"
                                             disabled={readOnly || loading || !selectedShipTo.changed}>Save
                                     </button>
-                                    <button type="button" className="btn btn-sm btn-outline-secondary mr-1"
+                                    <button type="button" className="btn btn-sm btn-outline-secondary me-1"
                                             onClick={fetchCustomerAccount}>
                                         Reload
                                     </button>

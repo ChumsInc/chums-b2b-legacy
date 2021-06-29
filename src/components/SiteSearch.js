@@ -27,7 +27,7 @@ const itemLink = ({parent, keyword, pagetype}) => {
 const SearchPlaceholder = ({onClick}) => {
     return (
         <div onClick={() => onClick()}>
-            <div className="material-icons">search</div>
+            <div className="bi-search me-1" />
         </div>
     );
 };
@@ -249,8 +249,8 @@ class SiteSearch extends Component {
             <Fragment>
                 <div className="global-search-padder"/>
                 <div className="global-search-container" onClick={this.openSearch}>
-                    <div className="form-inline">
-                        <div className="form-group search-input">
+                    <div className="row g-3">
+                        <div className="col-auto search-input align-items-baseline">
                             <SearchPlaceholder onClick={this.onClickSearchIcon}/>
                             <SearchInput value={term} onChange={this.setSearchTerm}
                                          inputRef={this.childRef} hidden={!showInput}

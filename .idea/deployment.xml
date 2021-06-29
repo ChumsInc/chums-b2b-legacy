@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="HOVENWEEP">
+  <component name="PublishConfigData" serverName="MUKUNTUWEAP">
     <serverData>
       <paths name="ARCHES">
         <serverdata>
@@ -23,10 +23,10 @@
       <paths name="MUKUNTUWEAP">
         <serverdata>
           <mappings>
-            <mapping deploy="/b2b-v2" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/b2b-next" local="$PROJECT_DIR$" web="/" />
           </mappings>
           <excludedPaths>
-            <excludedPath path="/b2b-v2/node_modules" />
+            <excludedPath path="/b2b-next/node_modules" />
             <excludedPath local="true" path="$PROJECT_DIR$/node_modules" />
             <excludedPath local="true" path="$PROJECT_DIR$/public/css/.sass-cache" />
           </excludedPaths>

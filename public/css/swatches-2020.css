@@ -558,6 +558,11 @@ label.color-swatch.color-swatch--514,
 .color-swatch.color-swatch--514 {
   background-image: url("/images/swatches/2020/swatch-514.jpg");
 }
+label.color-swatch.color-swatch--ss514,
+.tag--swatch.color-swatch--ss514,
+.color-swatch.color-swatch--ss514 {
+  background-image: url("/images/swatches/2021/swatch-ss-angled-514.jpg");
+}
 label.color-swatch.color-swatch--515,
 .tag--swatch.color-swatch--515,
 .color-swatch.color-swatch--515 {
@@ -597,6 +602,11 @@ label.color-swatch.color-swatch--605,
 .tag--swatch.color-swatch--605,
 .color-swatch.color-swatch--605 {
   background-image: url("/images/swatches/2020/swatch-ratchet-605.jpg");
+}
+label.color-swatch.color-swatch--ss605,
+.tag--swatch.color-swatch--ss605,
+.color-swatch.color-swatch--ss605 {
+  background-image: url("/images/swatches/2021/swatch-ss-angled-605.jpg");
 }
 label.color-swatch.color-swatch--mariner-605,
 .tag--swatch.color-swatch--mariner-605,
@@ -972,6 +982,11 @@ label.color-swatch.color-swatch--898,
 .tag--swatch.color-swatch--898,
 .color-swatch.color-swatch--898 {
   background-image: url("/images/swatches/2020/swatch-898.jpg");
+}
+label.color-swatch.color-swatch--ss903,
+.tag--swatch.color-swatch--ss903,
+.color-swatch.color-swatch--ss903 {
+  background-image: url("/images/swatches/2021/swatch-ss-angled-903.jpg");
 }
 label.color-swatch.color-swatch--ltd-911,
 .tag--swatch.color-swatch--ltd-911,

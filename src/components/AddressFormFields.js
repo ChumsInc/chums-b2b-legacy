@@ -49,7 +49,7 @@ export default class AddressFormFields extends Component {
 
         return (
             <Fragment>
-                <div className="form-row">
+                <div className="row g-3">
                     <div className={classNames({'col-md-6': cols === 2, 'col-12': cols === 1})}>
                         <FormGroupTextInput onChange={onChange} value={AddressLine1 || ''} field="AddressLine1"
                                             required readOnly={readOnly}
@@ -80,7 +80,7 @@ export default class AddressFormFields extends Component {
                                             maxLength={20}
                                             label="City"/>
                         <FormGroup colWidth={colWidth} label="State / Zip">
-                            <div className="form-row mb-0">
+                            <div className="row g-1 mb-0">
                                 <div className="col-md-6 mb-2 mb-md-0">
                                     {requiresStateCode && (
                                         <StateSelect value={State || ''} countryCode={CountryCode} field="State"

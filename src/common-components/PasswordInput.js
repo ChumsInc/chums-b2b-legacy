@@ -111,13 +111,12 @@ class PasswordInput extends Component {
                     <TextInput type={visible ? 'text' : 'password'} value={value} field={field}
                                className={validation.className}
                                onChange={this.onChange} {...rest}/>
-                    <div className="input-group-append">
-                        <button type="button" className="btn btn-outline-secondary"
-                                onMouseDown={this.onToggleVisible} onMouseUp={this.onToggleVisible}
-                                onTouchStart={this.onToggleVisible} onTouchEnd={this.onToggleVisible}>
-                            <span className="material-icons">visibility</span>
-                        </button>
-                    </div>
+                    <button type="button" className="btn btn-outline-secondary"
+                            title="Show password"
+                            onMouseDown={this.onToggleVisible} onMouseUp={this.onToggleVisible}
+                            onTouchStart={this.onToggleVisible} onTouchEnd={this.onToggleVisible}>
+                        <span className="bi-eye-fill" />
+                    </button>
                 </div>
                 {message && <small className="form-text text-muted">{message}</small>}
             </Fragment>

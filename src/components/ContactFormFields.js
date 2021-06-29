@@ -25,7 +25,7 @@ export default class ContactFormFields extends Component {
     render() {
         const {EmailAddress, TelephoneNo, TelephoneExt, onChange, allowMultipleEmailAddresses, readOnly} = this.props;
         return (
-            <div className="form-row">
+            <div className="row g-3">
                 <div className="col-md-6">
                     <EmailAddressEditor colWidth={8} label="Email Address"
                                         required={true} readOnly={readOnly}

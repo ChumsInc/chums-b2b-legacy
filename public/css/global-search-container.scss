@@ -27,17 +27,25 @@
   padding: 0 0.5rem;
   flex: 1 1 auto;
   position: relative;
+
   .search-input {
     display: flex;
     flex-wrap: nowrap;
   }
 
   .form-control {
+    &::placeholder {
+      color: darken($navbar-top-bar-color, 30%);;
+    }
     &.hidden {
+      &::placeholder {
+        color: darken($navbar-top-bar-color, 10%);
+      }
       border-color: transparent;
       background-color: transparent;
     }
   }
+
 
   .dropdown-container {
     position: absolute;

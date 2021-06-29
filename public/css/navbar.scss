@@ -293,31 +293,32 @@
       z-index: 1050;
 
       img {
-        height: auto;
-        width: 100%;
-        text-align: center;
-        display: block;
+        height: 40px;
+        width: auto;
+        top: 10px;
+        left: 0;
+        right: 0;
         margin: -10px  auto auto;
         transition: all 0.35s ease-in-out;
         //margin-top: ;
 
-        @include media-breakpoint-down(xs) {
-          display: none;
-          position: fixed;
+        @include media-breakpoint-up(sm) {
+          display: block;
+          //position: fixed;
           top: 10px;
           left: 0;
           right: 0;
-          width: auto;
-          height: 40px;
-        }
-        &.scrolled {
-          position: fixed;
-          top: 5px;
-          margin-top: 0;
-          left: 0;
-          right: 0;
-          width: auto;
-          height: 40px;
+          width: 100%;
+          height: auto;
+          &.scrolled {
+            position: fixed;
+            top: 5px;
+            margin-top: 0;
+            left: 0;
+            right: 0;
+            width: auto;
+            height: 40px;
+          }
         }
       }
 
@@ -429,10 +430,12 @@
       box-shadow: 0 10px 10px rgba(0,0,0,0.5);
       border-top: 1px solid rgba(0,0,0,0.25);
       > .navbar-nav {
-        padding-top: 1rem;
+        padding: 1rem;
         @extend .container;
-        @include media-breakpoint-down(xs) {
-          padding: 1rem;
+        @include media-breakpoint-up(sm) {
+          padding-top: 1rem;
+          display: flex;
+          flex-direction: row;
         }
       }
     }

@@ -203,36 +203,38 @@ textarea.cart-comment {
 
 .cart-qty-input {
   flex-wrap: nowrap;
+  flex-direction: row;
+  .cart-qty--buttons {
+    display: flex;
+    flex-direction: column;
+    button {
+      flex: 0 0 auto;
+      height: 50%;
+      line-height: 0.25rem;
+      font-size: 0.5rem;
+      width: 2rem;
+    }
+  }
   input.form-control {
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
     min-width: 4rem;
-    width: 4rem;
+    width: 100%;
     text-align: right;
   }
 
-  @include media-breakpoint-down(xs) {
-    flex-direction: column;
-    justify-content: stretch;
-    .input-group-prepend,
-    .input-group-append,
-    .form-control {
-      flex: 1 1 auto;
-      width: 100%;
-      margin-left: 0;
-      margin-right: 0;
-      margin-top: -1px;
-      text-align: right;
-      &:first-child {
-        margin-top: 0;
-      }
-      .btn {
-        width: 100%;
-      }
-    }
-  }
+  justify-content: stretch;
 }
 
 .add-cart-item {
-  @include media-breakpoint-down(xs) {
-    display: block;
+  display: block;
+  @include media-breakpoint-up(xs) {
+
+    display: flex;
+    flex-direction: row;
+
   }
 }

@@ -124,7 +124,7 @@ class NavBar extends Component {
             <div className="chums-navbar-container">
                 <div className={classNames("chums-navbar navbar-expand-sm", {'has-messages': hasMessages})}>
                     <div className={classNames("chums-navbar-collapse collapse", {show: showNavBar})}>
-                        <div className="nav-item main-logo">
+                        <div className="nav-item main-logo navbar-brand">
                             <h1>
                                 <Link to="/" className="nav-link home-link">
                                     <img className={classNames({scrolled})}

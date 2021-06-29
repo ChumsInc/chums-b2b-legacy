@@ -90,14 +90,6 @@ class InvoiceDetail extends Component {
                             <th className="center">Action</th>
                         </tr>
                         </thead>
-                        <tfoot>
-                        <OrderFooter renderForDetail={true}
-                                     DiscountAmt={DiscountAmt} DepositAmt={DepositAmt}
-                                     FreightAmt={FreightAmt} ShipVia={ShipVia}
-                                     NonTaxableAmt={NonTaxableSalesAmt} TaxableAmt={TaxableSalesAmt}
-                                     SalesTaxAmt={SalesTaxAmt} TaxSchedule={TaxSchedule} orderType={ORDER_TYPE.invoices}
-                        />
-                        </tfoot>
                         <tbody>
                         {Detail
                             .sort((a, b) => Number(a.DetailSeqNo) - Number(b.DetailSeqNo))
@@ -110,6 +102,14 @@ class InvoiceDetail extends Component {
                             ))
                         }
                         </tbody>
+                        <tfoot>
+                        <OrderFooter renderForDetail={true}
+                                     DiscountAmt={DiscountAmt} DepositAmt={DepositAmt}
+                                     FreightAmt={FreightAmt} ShipVia={ShipVia}
+                                     NonTaxableAmt={NonTaxableSalesAmt} TaxableAmt={TaxableSalesAmt}
+                                     SalesTaxAmt={SalesTaxAmt} TaxSchedule={TaxSchedule} orderType={ORDER_TYPE.invoices}
+                        />
+                        </tfoot>
                     </table>
                 </div>
 

@@ -16,7 +16,7 @@ export default class Select extends PureComponent {
 
     static defaultProps = {
         options: [],
-        className: 'form-control-sm'
+        className: 'form-select-sm'
     };
 
     constructor(props) {
@@ -32,7 +32,7 @@ export default class Select extends PureComponent {
     render() {
         const {field, value, onChange, className, options, children, readOnly, disabled, ...rest} = this.props;
         return (
-            <select className={classNames("form-control", className)}
+            <select className={classNames("form-select", className)}
                     value={value} disabled={readOnly || disabled}
                     onChange={this.onChange} {...rest}>
                 {children}
