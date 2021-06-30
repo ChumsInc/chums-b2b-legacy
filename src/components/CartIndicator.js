@@ -54,8 +54,8 @@ class CartIndicator extends Component {
         const {loggedIn, Company, cartNo, cartName, cartTotal, cartQuantity, loading} = this.props;
         if (!loggedIn) {
             return (
-                <div className="nav-link">
-                    <span className="material-icons">shopping_cart</span>
+                <div className="nav-link mx-3 cart-icon">
+                    <span className="bi-person-square" />
                 </div>
             );
         }
@@ -65,19 +65,19 @@ class CartIndicator extends Component {
             : null;
         return !!cartNo
             ? (
-                <Link to={path} className="nav-link">
+                <Link to={path} className="nav-link cart-icon">
                     <div>
-                        {!!cartName && (<span className="cart-name ml-1">"{cartName}"</span>)}
-                        <span className="material-icons ml-1" title={cartName}>shopping_cart</span>
-                        {!!cartQuantity && <span className="ml-1">({numeral(cartQuantity).format('0,0')})</span>}
-                        {!!cartTotal && (<span className="ml-1">{numeral(cartTotal).format('$0,0.00')}</span>)}
+                        {!!cartName && (<span className="cart-name ms-1">"{cartName}"</span>)}
+                        <span className="bi-bag-fill ms-1" title={cartName} />
+                        {!!cartQuantity && <span className="ms-1">({numeral(cartQuantity).format('0,0')})</span>}
+                        {!!cartTotal && (<span className="ms-1">{numeral(cartTotal).format('$0,0.00')}</span>)}
                     </div>
                     {loading && <ProgressBar striped={true} style={{height: '1px', fontSize: 0}} />}
                 </Link>
             )
             : (
-                <div className="nav-link text-warning" title="No cart!">
-                    <span className="material-icons">shopping_cart</span>
+                <div className="nav-link mx-3 text-warning" title="No cart!">
+                    <span className="bi-bag" />
                 </div>
             );
     }

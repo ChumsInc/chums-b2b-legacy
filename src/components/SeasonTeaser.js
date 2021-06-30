@@ -2,8 +2,8 @@ import React from 'react';
 
 const SeasonTeaser = ({season_teaser}) => {
     return (
-        <div className="badge badge-light season-teaser">
-            <span className="material-icons material-icons-sm mr-1">new_releases</span>{season_teaser}
+        <div className="season-teaser">
+            <span className="bi-info-circle-fill me-3 season-teaser--icon" />{season_teaser}
         </div>
     );
 };

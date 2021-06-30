@@ -59,16 +59,23 @@ class CartAddItem extends Component {
     render() {
         const {itemCode, quantity} = this.state;
         return (
-            <form onSubmit={this.onSubmit} className="add-cart-item">
-                <FormGroupTextInput field="ItemCode" value={itemCode} label="Item SKU" colWidth={8}
-                                    onChange={({value}) => this.setState({itemCode: value})}/>
-                <FormGroupTextInput field="QuantityOrdered" value={quantity || ''} colWidth={8}
-                                    label="Quantity" type="number" min={1}
-                                    onChange={({value}) => this.setState({quantity: Number(value)})}/>
-                <FormGroup colWidth={8}>
+            <form onSubmit={this.onSubmit} className="add-cart-item row g-3">
+                <div className="col-auto">
+                    <FormGroupTextInput field="ItemCode" value={itemCode} label="Item SKU" colWidth={8}
+                                        onChange={({value}) => this.setState({itemCode: value})}/>
+                </div>
+                <div className="col-auto">
+                    <FormGroupTextInput field="QuantityOrdered" value={quantity || ''} colWidth={8}
+                                        label="Quantity" type="number" min={1}
+                                        onChange={({value}) => this.setState({quantity: Number(value)})}/>
+
+                </div>
+                <div className="col-auto">
                     <button type="submit" className="btn btn-sm btn-outline-primary" disabled={itemCode === ''}>
-                        Add Item <span className="material-icons">shopping_cart</span>
+                        Add Item <span className="bi-bag-fill" />
                     </button>
+                </div>
+                <FormGroup colWidth={8}>
                 </FormGroup>
             </form>
         );

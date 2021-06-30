@@ -86,7 +86,7 @@ export default class ShipToAddressForm extends Component {
         return (
             <div>
                 {!!loading && <ProgressBar striped={true}/>}
-                <form className="form-row" onSubmit={this.onSubmit}>
+                <form className="row g-3" onSubmit={this.onSubmit}>
                     <div className="col-md-6">
                         <EmailAddressEditor colWidth={8} label="Email Address"
                                             required={true}
@@ -99,11 +99,9 @@ export default class ShipToAddressForm extends Component {
                                 <TextInput onChange={onChange} value={TelephoneNo || ''} field="TelephoneNo"
                                            autocomplete="tel"
                                            placeholder="Tel #"/>
-                                <div className="input-group-append">
-                                    <TextInput onChange={onChange} value={TelephoneExt || ''} field="TelephoneExt"
-                                               className="telephone-ext" autocomplete="tel-extension"
-                                               placeholder="Ext."/>
-                                </div>
+                                <TextInput onChange={onChange} value={TelephoneExt || ''} field="TelephoneExt"
+                                           className="telephone-ext" autocomplete="tel-extension"
+                                           placeholder="Ext."/>
                             </div>
                         </FormGroup>
                     </div>
@@ -128,7 +126,7 @@ export default class ShipToAddressForm extends Component {
                                             autocomplete="address-level2"
                                             label="City"/>
                         <FormGroup colWidth={8} label="State / Zip">
-                            <div className="form-row mb-0">
+                            <div className="row g-3 mb-0">
                                 <div className="col-md-6 mb-2 mb-md-0">
                                 {requiresStateCode && (
                                     <StateSelect value={ShipToState || ''} countryCode={ShipToCountryCode}

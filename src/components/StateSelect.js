@@ -58,7 +58,7 @@ export default class StateSelect extends Component {
         }
 
         return (
-            <select className="form-control form-control-sm" {...rest} onChange={this.onChange.bind(this)}>
+            <select className="form-select form-select-sm" {...rest} onChange={this.onChange.bind(this)}>
                 <option value=''>Select One</option>
                 {['USA', 'US'].includes(countryCode)
                     && STATES_USA.map(({code, name}) => <option key={code} value={code}>{name}</option> )}

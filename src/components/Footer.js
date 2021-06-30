@@ -20,17 +20,17 @@ const Footer = () => {
                 <div className="social-icons">
                     <div className="icon">
                         <a href="http://www.twitter.com/ChumsUSA" target="_blank" className="twitter-icon" rel="noreferrer">
-                            <span>Follow @ChumsUSA on Twitter</span>
+                            <span className="visually-hidden">Follow @ChumsUSA on Twitter</span>
                         </a>
                     </div>
                     <div className="icon">
                         <a href="https://www.facebook.com/Chumsusa" target="_blank" className="facebook-icon" rel="noreferrer">
-                            <span>Like Chums on Facebook</span>
+                            <span className="visually-hidden">Like Chums on Facebook</span>
                         </a>
                     </div>
                     <div className="icon">
                         <a href="http://instagram.com/chumsusa" target="_blank" className="instagram-icon" rel="noreferrer">
-                            <span>Like Chums on Instagram</span>
+                            <span className="visually-hidden">Like Chums on Instagram</span>
                         </a>
                     </div>
                 </div>

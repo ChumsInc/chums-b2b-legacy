@@ -66,14 +66,14 @@ class LoginLocal extends Component {
 
                     </FormGroup>
                 )}
-                {!forgotPassword && (<button type="submit" className="btn btn-sm btn-primary mr-1">Sign In</button>)}
+                {!forgotPassword && (<button type="submit" className="btn btn-sm btn-primary me-3">Sign In</button>)}
                 {!forgotPassword && (
                     <button type="button" className="btn btn-sm btn-outline-secondary"
                             onClick={() => this.onChange({field: 'forgotPassword', value: true})}>
                         Forgot Password
                     </button>
                 )}
-                {!!forgotPassword && (<button type="submit" className="btn btn-sm btn-primary mr-1">Reset Password</button>)}
+                {!!forgotPassword && (<button type="submit" className="btn btn-sm btn-primary me-3">Reset Password</button>)}
                 {!!forgotPassword && (<button type="button" className="btn btn-sm btn-outline-secondary"
                                               onClick={() => this.onChange({field: 'forgotPassword', value: false})}>Cancel</button>)}
                 {forgotPassword && (

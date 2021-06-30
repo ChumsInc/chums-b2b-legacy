@@ -8,10 +8,8 @@ import numeral from 'numeral';
 
 const AlertDismisser = ({onDismiss}) => {
     return (
-        <button type="button" className="close" aria-label="Close"
-                onClick={() => onDismiss()}>
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" className="btn-close" aria-label="Close"
+                onClick={() => onDismiss()} />
     )
 };
 

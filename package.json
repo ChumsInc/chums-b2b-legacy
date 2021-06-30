@@ -1,6 +1,6 @@
 {
   "name": "chums-b2b",
-  "version": "2.0.72",
+  "version": "2.0.73",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "author": "Steve Montgomery, Chums Inc",
   "license": "ISC",
   "dependencies": {
-    "bootstrap": "^4.5.3",
+    "bootstrap": "^5.0.2",
     "bootstrap-icons": "^1.5.0",
     "classnames": "^2.2.6",
     "compression": "^1.7.4",

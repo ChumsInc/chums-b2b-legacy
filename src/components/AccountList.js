@@ -17,6 +17,7 @@ import CustomerLink from "./CustomerLink";
 import Breadcrumb from "./Breadcrumb";
 import {PATH_PROFILE, DOCUMENT_TITLES} from "../constants/paths";
 import ErrorBoundary from "../common-components/ErrorBoundary";
+import TextInput from "../common-components/TextInput";
 
 
 const ACCOUNT_LIST_FIELDS = [
@@ -187,15 +188,24 @@ class AccountList extends Component {
                     <h2>Account List: {userAccount.SalespersonName}
                         <small>({longAccountNumber(userAccount)})</small>
                     </h2>
-                    <div className="form-inline mb-1">
-                        <FormGroupTextInput onChange={this.setFilter} value={filter} label="Filter Accounts"/>
+                    <div className="row g-3 mb-1 align-items-baseline">
+                        <div className="col-auto">
+                            Filter Accounts
+                        </div>
+                        <div className="col">
+                            <TextInput type="search" placeholder="Search" onChange={this.setFilter} value={filter}/>
+                        </div>
                         {allowSelectReps && repList.list.length > 0
                         && (
-                            <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
+                            <div className="col-auto">
+                                <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
+                            </div>
                         )}
-                        <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
-                            Refresh List
-                        </button>
+                        <div className="col-auto">
+                            <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
+                                Refresh List
+                            </button>
+                        </div>
                     </div>
                     {customerList.loading && <ProgressBar striped={true}/>}
                     <SortableTable data={filteredAccounts} fields={ACCOUNT_LIST_FIELDS} defaultSort={'CustomerName'}

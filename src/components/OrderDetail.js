@@ -134,7 +134,7 @@ class OrderDetail extends Component {
                     </div>
                 )}
 
-                <div className="table-responsive">
+                <div className="table-responsive-sm">
                     <table className="table table-hover table-sm table-sticky">
                         <thead>
                         <tr className="order-detail">

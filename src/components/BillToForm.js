@@ -85,7 +85,7 @@ class BillToForm extends Component {
         return (
             <div>
                 {!!loading && <ProgressBar striped={true}/>}
-                <div className="form-row">
+                <div className="row">
                     <div className="col-md-6">
                         <FormGroup colWidth={8} label="Account Number">
                             <input type="text" className="form-control-plaintext"
@@ -106,12 +106,12 @@ class BillToForm extends Component {
                 <h4>Billing Contact &amp; Address</h4>
                 <form onSubmit={this.onSubmit}>
                     <AddressFormFields {...account}
-                        readOnly={readOnly}
                                        showStoreMapOption
+                        readOnly={readOnly}
                                        onChange={this.onChange}/>
                     <ContactFormFields {...account} allowMultipleEmailAddresses={true}
                                        readOnly={readOnly} onChange={this.onChange}/>
-                    <div className="form-row">
+                    <div className="row">
                         <div className="col-md-6"/>
                         <div className="col-md-6">
                             <FormGroup colWidth={8} label={' '}>
