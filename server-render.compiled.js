@@ -83,10 +83,16 @@ var app = (0, _express["default"])(); // app.use(compression());
 // serve our static stuff like index.css
 
 app.use((0, _serveFavicon["default"])(_path["default"].join(__dirname, './public', 'favicon.ico')));
+app.get('/chums.css.map', function (req, res) {
+  res.redirect('/css/chums.css.map');
+});
 app.use('/css', _express["default"]["static"]('./public/css', {
   fallthrough: false
 }));
 app.use('/js', _express["default"]["static"]('./public/js', {
+  fallthrough: false
+}));
+app.use('/build', _express["default"]["static"]('./public/build', {
   fallthrough: false
 }));
 app.use('/images', _express["default"]["static"]('./public/images', {
@@ -108,7 +114,7 @@ function _loadManifest() {
           case 0:
             _context3.prev = 0;
             _context3.next = 3;
-            return _fs["default"].promises.readFile('./public/js/manifest.json');
+            return _fs["default"].promises.readFile('./public/build/manifest.json');
 
           case 3:
             manifestFile = _context3.sent;
@@ -415,9 +421,9 @@ function _handleRender() {
             css = _context5.sent;
             manifest = {
               manifestFiles: manifestFiles,
-              vendors: "/js".concat(manifestFiles['vendors.js']),
-              chums: "/js".concat(manifestFiles['chums.js']),
-              bundle: "/js".concat(manifestFiles['main.js']),
+              vendors: "/build".concat(manifestFiles['vendors.js']),
+              chums: "/build".concat(manifestFiles['chums.js']),
+              bundle: "/build".concat(manifestFiles['main.js']),
               swatchTimestamp: Math.floor(swatchMTime).toString(36),
               cssTimestamp: Math.floor(cssMTime).toString(36)
             };

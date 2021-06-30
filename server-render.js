@@ -36,9 +36,12 @@ const app = express();
 // app.use(compression());
 // serve our static stuff like index.css
 app.use(favicon(path.join(__dirname, './public', 'favicon.ico')));
+app.get('/chums.css.map', (req, res) => {
+    res.redirect('/css/chums.css.map');
+})
 app.use('/css', express.static('./public/css', {fallthrough: false}));
 app.use('/js', express.static('./public/js', {fallthrough: false}));
-app.use('/js', express.static('./public/build', {fallthrough: false}));
+app.use('/build', express.static('./public/build', {fallthrough: false}));
 app.use('/images', express.static('./public/images', {fallthrough: false}));
 app.set('view engine', 'pug');
 app.set('trust proxy', true);
@@ -186,9 +189,9 @@ async function handleRender(req, res) {
 
         const manifest = {
             manifestFiles,
-            vendors: `/js${manifestFiles['vendors.js']}`,
-            chums: `/js${manifestFiles['chums.js']}`,
-            bundle: `/js${manifestFiles['main.js']}`,
+            vendors: `/build${manifestFiles['vendors.js']}`,
+            chums: `/build${manifestFiles['chums.js']}`,
+            bundle: `/build${manifestFiles['main.js']}`,
             swatchTimestamp: Math.floor(swatchMTime).toString(36),
             cssTimestamp: Math.floor(cssMTime).toString(36),
         };

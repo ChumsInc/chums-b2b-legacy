@@ -77,9 +77,9 @@ class Html extends Component {
             <body>
             <div id="app" dangerouslySetInnerHTML={{__html: html}} />
             <script dangerouslySetInnerHTML={{__html: `window.__PRELOADED_STATE__ = ${preloadedState}`}} />
-            <script src={path.join('/js', manifestFiles['vendors.js'])} />
-            <script src={path.join('/js', manifestFiles['chums.js'])} />
-            <script src={path.join('/js', manifestFiles['main.js'])} />
+            <script src={path.join('/build', manifestFiles['vendors.js'])} />
+            <script src={path.join('/build', manifestFiles['chums.js'])} />
+            <script src={path.join('/build', manifestFiles['main.js'])} />
             </body>
             </html>
         );
