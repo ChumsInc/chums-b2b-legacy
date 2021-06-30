@@ -38,13 +38,14 @@ const app = express();
 app.use(favicon(path.join(__dirname, './public', 'favicon.ico')));
 app.use('/css', express.static('./public/css', {fallthrough: false}));
 app.use('/js', express.static('./public/js', {fallthrough: false}));
+app.use('/js', express.static('./public/build', {fallthrough: false}));
 app.use('/images', express.static('./public/images', {fallthrough: false}));
 app.set('view engine', 'pug');
 app.set('trust proxy', true);
 
 async function loadManifest() {
     try {
-        const manifestFile = await fs.promises.readFile('./public/js/manifest.json');
+        const manifestFile = await fs.promises.readFile('./public/build/manifest.json');
         const manifestJSON = Buffer.from(manifestFile).toString();
 
         let manifestFiles = {};

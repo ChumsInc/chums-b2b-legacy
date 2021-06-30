@@ -6,3 +6,5 @@
 /public/js/*.txt
 /public/js/*.json
 /public/images/
+/public/build/
+/.idea/
