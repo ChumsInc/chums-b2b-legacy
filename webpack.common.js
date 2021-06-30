@@ -43,7 +43,7 @@ module.exports = {
         }
     },
     output: {
-        path: path.join(__dirname, 'public/js'),
+        path: path.join(__dirname, 'public/build'),
         filename: "[name].js",
         sourceMapFilename: '[file].map',
         publicPath: '/',
