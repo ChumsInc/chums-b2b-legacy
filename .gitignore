@@ -1,7 +1,5 @@
 /node_modules/
 /public/css/.sass-cache/
-/public/js/*.js
-/public/js/*.js.map
-/public/js/*.txt
+/public/js/*
 /public/images/
 /.idea
