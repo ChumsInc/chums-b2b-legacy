@@ -1,10 +1,10 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import FormGroupEmailAddress from "../common-components/FormGroupEmailAddress";
 
 
 const splitEmailAddresses = (emailAddress = '') => {
-    return emailAddress.split(';')
+    return (emailAddress || '').split(';')
         .map(addr => addr.trim())
         .filter(addr => addr !== '');
 };
@@ -73,14 +73,14 @@ export default class EmailAddressEditor extends Component {
 
     componentDidMount() {
         if (this.props.allowMultiple) {
-            const emailAddresses = [...splitEmailAddresses(this.props.value), ''];
+            const emailAddresses = [...splitEmailAddresses(this.props.value || ''), ''];
             this.setState({emailAddresses});
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.props.allowMultiple && this.props.value !== prevProps.value) {
-            const emailAddresses = [...splitEmailAddresses(this.props.value)];
+            const emailAddresses = [...splitEmailAddresses(this.props.value || '')];
             this.setState({emailAddresses});
         }
     }
