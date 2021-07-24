@@ -101,7 +101,8 @@ export const fetchSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState)
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
             const [salesOrder] = res.result;
-            if (!salesOrder) {
+            if (!salesOrder || !salesOrder.SalesOrderNo) {
+                dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
                 dispatch(setAlert({message: 'That sales order was not found!', context: FETCH_SALES_ORDER}));
                 // dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
                 return;
