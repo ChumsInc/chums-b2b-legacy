@@ -14,7 +14,10 @@ const TextInput = React.forwardRef((props, ref) => {
         case 'number':
             return Number(ev.target.value);
         default:
-            return ev.target.value;
+            // console.log(ev.target.value);
+            return ev.target.value
+                .replace(/[\u2018\u2019]/g, "'")
+                .replace(/[\u201C\u201D]/g, '"');
         }
     };
 
