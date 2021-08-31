@@ -9,7 +9,7 @@ import {
     PRICE_FIELDS,
     SELECT_COLOR,
     SELECT_VARIANT,
-    SELL_AS_COLOR,
+    SELL_AS_COLOR, SELL_AS_MIX,
     SET_CART_ITEM_QUANTITY
 } from "../constants/actions";
 import {handleError} from "./app";
@@ -127,6 +127,12 @@ export const selectColor = (colorCode) => (dispatch, getState) => {
         [cartItem] = selectedProduct.items
             .filter(item => item.colorCode === colorCode)
             .map(item => ({...colorCartItem(item), quantity, season_code, season_available}));
+    } else if (selectedProduct.sellAs === SELL_AS_MIX) {
+        const [colorName] = selectedProduct.mix.items.filter(item => item.color.code === colorCode)
+            .map(item => item.color.name);
+        if (colorName) {
+            cartItem.colorName = colorName;
+        }
     }
 
     cartItem.price = user.loggedIn

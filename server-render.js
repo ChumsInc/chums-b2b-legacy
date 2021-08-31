@@ -12,13 +12,11 @@ import path from 'path';
 import fs from 'fs';
 import express from 'express';
 import favicon from 'serve-favicon';
-// import compression from 'compression';
 import http from 'http';
 import React from 'react'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-
-import reducers from './src/reducers';
+import reducers from './src/ducks/index';
 import App from './src/components/App';
 import Html from "./src/HTML";
 import {renderToString} from 'react-dom/server';

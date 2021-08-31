@@ -4,7 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import {BrowserRouter, Route} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
-import reducer from './reducers';
+import reducer from './ducks';
 import App from "./components/App";
 import {auth} from "./utils/IntranetAuthService";
 import localStore from "./utils/LocalStore";

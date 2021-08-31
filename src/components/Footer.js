@@ -1,5 +1,5 @@
 import React from 'react';
-import AppVersion from "../common-components/AppVersion";
+import AppVersion from "../ducks/version/AppVersion";
 
 const Footer = () => {
     const date = new Date();

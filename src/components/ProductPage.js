@@ -217,17 +217,26 @@ class ProductPage extends Component {
                                                  loggedIn={loggedIn}/>
                             )}
                             {selectedProduct.sellAs === SELL_AS_MIX && !!selectedProduct.mix && (
-                                <SwatchSet items={selectedProduct.mix.items}
-                                           swatch_format={selectedProduct.additionalData.swatch_format || '?'}
-                                           sellAs={selectedProduct.sellAs} selectedColorCode={colorCode}
-                                           onSelect={this.onSelectColor}/>
+                                <>
+                                    <div>
+                                        <span className="me-3">Selected Color:</span>
+                                        <strong>{cartItem.colorName}</strong>
+                                    </div>
+                                    <SwatchSet items={selectedProduct.mix.items}
+                                               swatch_format={selectedProduct.additionalData.swatch_format || '?'}
+                                               sellAs={selectedProduct.sellAs} selectedColorCode={colorCode}
+                                               onSelect={this.onSelectColor}/>
+                                </>
                             )}
                             {selectedProduct.sellAs === SELL_AS_COLOR && !!selectedProduct.items && (
-                                <SwatchSet swatch_format={selectedProduct.additionalData.swatch_format || '?'}
-                                           items={selectedProduct.items}
-                                           sellAs={selectedProduct.sellAs}
-                                           selectedColorCode={colorCode}
-                                           onSelect={this.onSelectColor}/>
+                                <>
+                                    <div><span className="me-3">Color:</span><strong>{cartItem.colorName}</strong></div>
+                                    <SwatchSet swatch_format={selectedProduct.additionalData.swatch_format || '?'}
+                                               items={selectedProduct.items}
+                                               sellAs={selectedProduct.sellAs}
+                                               selectedColorCode={colorCode}
+                                               onSelect={this.onSelectColor}/>
+                                </>
                             )}
                             {!cartItem.itemCode && (
                                 <Alert message="Please select an color" title=""/>

@@ -7,8 +7,13 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
+            },
+            {
                 test: /\.js$/,
-                exclude: '/node_modules/',
+                exclude: /node_modules/,
                 use: ['babel-loader']
             },
             {
@@ -17,8 +22,19 @@ module.exports = {
                     {loader: 'style-loader'},
                     {loader: 'css-loader'},
                 ],
+            },
+            {
+                test: /\.s[ac]ss$/i,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'sass-loader',
+                ],
             }
         ]
+    },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
     },
     plugins: [
         new BundleAnalyzerPlugin(),

@@ -27,7 +27,7 @@ var _redux = require("redux");
 
 var _reactRedux = require("react-redux");
 
-var _reducers = _interopRequireDefault(require("./src/reducers"));
+var _index = _interopRequireDefault(require("./src/ducks/index"));
 
 var _App = _interopRequireDefault(require("./src/components/App"));
 
@@ -386,7 +386,7 @@ function _handleRender() {
 
           case 69:
             _context5.prev = 69;
-            store = (0, _redux.createStore)(_reducers["default"], initialState);
+            store = (0, _redux.createStore)(_index["default"], initialState);
             html = (0, _server.renderToString)( /*#__PURE__*/_react["default"].createElement(_reactRedux.Provider, {
               store: store
             }, /*#__PURE__*/_react["default"].createElement(_reactRouterDom.StaticRouter, {

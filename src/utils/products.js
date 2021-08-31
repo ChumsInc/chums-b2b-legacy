@@ -69,11 +69,14 @@ export const getPrices = ({product, priceCodes = []}) => {
     return getPrice({product, priceField: PRICE_FIELDS.standard, priceCodes});
 };
 
-export const defaultCartItem = ({sellAs, itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, items, defaultColor, cartItemCode, season_code, season_available}, preferredColor) => {
+export const defaultCartItem = ({sellAs, itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, items, defaultColor, cartItemCode, season_code, season_available, mix}, preferredColor) => {
     switch (sellAs) {
     case SELL_AS_SELF:
-    case SELL_AS_MIX:
         return {itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, quantity: 1, season_code, season_available};
+    case SELL_AS_MIX:
+        const [colorName = ''] = mix.items.filter(item => item.color.code === defaultColor)
+            .map(item => item.color.name);
+        return {itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, quantity: 1, season_code, season_available, colorName, defaultColor};
     default:
         let cartItem = {};
         if (preferredColor) {
