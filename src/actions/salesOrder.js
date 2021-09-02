@@ -118,9 +118,9 @@ export const fetchSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState)
             } else {
                 const {promo_code} = getState();
                 dispatch({type: SET_CART, cart: salesOrder});
-                if (((promo_code.code || '') !== (salesOrder.UDF_PROMO_DEAL || '')) && !promo_code.loading) {
-                    dispatch(applyPromoCode({Company, SalesOrderNo, discountCode: promo_code.code}));
-                }
+                // if (((promo_code.code || '') !== (salesOrder.UDF_PROMO_DEAL || '')) && !promo_code.loading) {
+                //     dispatch(applyPromoCode({Company, SalesOrderNo, discountCode: promo_code.code}));
+                // }
             }
         })
         .catch(err => {

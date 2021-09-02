@@ -2,20 +2,28 @@ import {combineReducers} from 'redux';
 import {
     FETCH_CUSTOMER,
     FETCH_INIT,
-    FETCH_PROMO_CODE,
+    FETCH_PROMO_CODE, FETCH_SALES_ORDER,
     FETCH_SUCCESS,
     FETCH_VALID_PROMO_CODES,
     SET_PROMO_CODE
 } from "../constants/actions";
 
 const code = (state = '', action) => {
-    const {type, status, promo_code, code} = action;
+    const {type, status, promo_code, code, salesOrder} = action;
     switch (type) {
     case SET_PROMO_CODE:
         return code;
     case FETCH_PROMO_CODE:
         if (status === FETCH_SUCCESS) {
             return promo_code.promo_code || '';
+        }
+        return state;
+    case FETCH_SALES_ORDER:
+        if (status === FETCH_INIT) {
+            return '';
+        }
+        if (status === FETCH_SUCCESS) {
+            return salesOrder.UDF_PROMO_DEAL || '';
         }
         return state;
     default:

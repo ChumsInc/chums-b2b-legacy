@@ -249,6 +249,7 @@ export const promoteCart = () => (dispatch, getState) => {
         PaymentType: header.PaymentType,
         ShipToCode: header.ShipToCode,
         Comment: comment.join(' '),
+        promo_code: header.UDF_PROMO_DEAL || promo_code.promo_code || '',
     };
 
     const url = buildPath(API_PATH_PROMOTE_CART, header);

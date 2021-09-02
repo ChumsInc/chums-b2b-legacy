@@ -49,8 +49,8 @@ export const fetchPromoCode = (code) => (dispatch, getState) => {
                 const promo_code = res.promo_codes[0] || {code: '', description: `'${code}' is not currently a valid code`};
                 dispatch({type: FETCH_PROMO_CODE, status: FETCH_SUCCESS, promo_code});
                 const {cart, salesOrder} = getState();
-                if (!!cart.cartNo && cart.cartNo === salesOrder.salesOrderNo && salesOrder.UDF_PROMO_DEAL !== promo_code.code) {
-                    dispatch(applyPromoCode({Company: salesOrder.header.Company, SalesOrderNo: salesOrder.header.SalesOrderNo, discountCode: promo_code.code}));
+                if (!!promo_code.promo_code && salesOrder.header.UDF_PROMO_DEAL !== promo_code.promo_code) {
+                    dispatch(applyPromoCode({Company: salesOrder.header.Company, SalesOrderNo: salesOrder.header.SalesOrderNo, discountCode: promo_code.promo_code}));
                 }
             })
             .catch(err => {
