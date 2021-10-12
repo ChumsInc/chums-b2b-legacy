@@ -1,4 +1,4 @@
-import {PRICE_FIELDS, SELECT_COLOR, SELL_AS_COLOR, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
+import {PRICE_FIELDS, SELL_AS_COLOR, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
 import {calcPrice, priceRecord} from "./customer";
 
 export const hasVariants = (product) => product.variants !== undefined && product.variants.length > 0;
@@ -30,7 +30,7 @@ export const getItemPrice = ({item, priceField = PRICE_FIELDS.standard, priceCod
         return item.msrp;
     }
     const priceCode = priceRecord({pricing: priceCodes, priceCode: item.priceCode, itemCode: item.itemCode});
-    return calcPrice({stdPrice:item[priceField], ...priceCode}) * item.salesUMFactor;
+    return calcPrice({stdPrice: item[priceField], ...priceCode}) * item.salesUMFactor;
 };
 
 export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCodes = []}) => {
@@ -69,14 +69,63 @@ export const getPrices = ({product, priceCodes = []}) => {
     return getPrice({product, priceField: PRICE_FIELDS.standard, priceCodes});
 };
 
-export const defaultCartItem = ({sellAs, itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, items, defaultColor, cartItemCode, season_code, season_available, mix}, preferredColor) => {
+export const defaultCartItem = ({
+                                    sellAs,
+                                    itemCode,
+                                    stdPrice,
+                                    salesUM,
+                                    salesUMFactor,
+                                    QuantityAvailable,
+                                    msrp,
+                                    items,
+                                    defaultColor,
+                                    cartItemCode,
+                                    season_code,
+                                    season_available,
+                                    mix
+                                }, preferredColor) => {
     switch (sellAs) {
     case SELL_AS_SELF:
-        return {itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, quantity: 1, season_code, season_available};
+        return {
+            itemCode,
+            stdPrice,
+            salesUM,
+            salesUMFactor,
+            QuantityAvailable,
+            msrp,
+            quantity: 1,
+            season_code,
+            season_available
+        };
     case SELL_AS_MIX:
         const [colorName = ''] = mix.items.filter(item => item.color.code === defaultColor)
             .map(item => item.color.name);
-        return {itemCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, quantity: 1, season_code, season_available, colorName, defaultColor};
+        const additionalData = {};
+        const [image_filename] = mix.items
+            .filter(item => item.color.code === defaultColor)
+            .map(item => {
+                if (item.additionalData && item.additionalData.image_filename) {
+                    return item.additionalData.image_filename;
+                }
+                return null;
+            });
+        if (image_filename) {
+            additionalData.image_filename = image_filename || undefined;
+        }
+        return {
+            itemCode,
+            stdPrice,
+            salesUM,
+            salesUMFactor,
+            QuantityAvailable,
+            msrp,
+            quantity: 1,
+            season_code,
+            season_available,
+            colorName,
+            defaultColor,
+            additionalData
+        };
     default:
         let cartItem = {};
         if (preferredColor) {
@@ -101,7 +150,11 @@ export const getCartItem = (selectedProduct = {}, cartItem = {}, pricing = []) =
         cartItem.price = customerPrice[0];
     }
     if (user.loggedIn) {
-        cartItem.priceCodeRecord = priceRecord({pricing: customer.pricing, priceCode: cartItem.priceCode, itemCode: cartItem.itemCode});
+        cartItem.priceCodeRecord = priceRecord({
+            pricing: customer.pricing,
+            priceCode: cartItem.priceCode,
+            itemCode: cartItem.itemCode
+        });
         cartItem.priceLevel = customer.account.PriceLevel;
     }
     return {
@@ -110,14 +163,39 @@ export const getCartItem = (selectedProduct = {}, cartItem = {}, pricing = []) =
     }
 }
 
-export const colorCartItem = ({itemCode, colorName, priceCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, additionalData, season_code, season_available}) => {
-    return {itemCode, colorName, priceCode, stdPrice, salesUM, salesUMFactor, QuantityAvailable, msrp, quantity: 1, additionalData, season_code, season_available}
+export const colorCartItem = ({
+                                  itemCode,
+                                  colorName,
+                                  priceCode,
+                                  stdPrice,
+                                  salesUM,
+                                  salesUMFactor,
+                                  QuantityAvailable,
+                                  msrp,
+                                  additionalData,
+                                  season_code,
+                                  season_available
+                              }) => {
+    return {
+        itemCode,
+        colorName,
+        priceCode,
+        stdPrice,
+        salesUM,
+        salesUMFactor,
+        QuantityAvailable,
+        msrp,
+        quantity: 1,
+        additionalData,
+        season_code,
+        season_available
+    }
 };
 
 
 export const sortVariants = (a, b) => a.priority === b.priority
-        ? (a.title === b.title ? 0 : (a.title > b.title ? 1 : -1))
-        : (a.priority > b.priority ? 1 : -1);
+    ? (a.title === b.title ? 0 : (a.title > b.title ? 1 : -1))
+    : (a.priority > b.priority ? 1 : -1);
 
 /**
  *

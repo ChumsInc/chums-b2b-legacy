@@ -128,11 +128,24 @@ export const selectColor = (colorCode) => (dispatch, getState) => {
             .filter(item => item.colorCode === colorCode)
             .map(item => ({...colorCartItem(item), quantity, season_code, season_available}));
     } else if (selectedProduct.sellAs === SELL_AS_MIX) {
-        const [colorName] = selectedProduct.mix.items.filter(item => item.color.code === colorCode)
+        if (cartItem.additionalData === undefined) {
+            cartItem.additionalData = {};
+        }
+        const [colorName] = selectedProduct.mix.items
+            .filter(item => item.color.code === colorCode)
             .map(item => item.color.name);
         if (colorName) {
             cartItem.colorName = colorName;
         }
+        const [image_filename] = selectedProduct.mix.items
+            .filter(item => item.color.code === colorCode)
+            .map(item => {
+                if (item.additionalData && item.additionalData.image_filename) {
+                    return item.additionalData.image_filename;
+                }
+                return null;
+            });
+        cartItem.additionalData.image_filename = image_filename || undefined;
     }
 
     cartItem.price = user.loggedIn
