@@ -6,3 +6,4 @@
 /public/build/
 /.idea/
 /dist/
+/.env
