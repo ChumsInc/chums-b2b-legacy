@@ -298,6 +298,11 @@ label.color-swatch.color-swatch--228,
 .color-swatch.color-swatch--228 {
   background-color: #2557C5;
 }
+label.color-swatch.color-swatch--249,
+.tag--swatch.color-swatch--249,
+.color-swatch.color-swatch--249 {
+  background-color: #38373d;
+}
 label.color-swatch.color-swatch--250,
 .tag--swatch.color-swatch--250,
 .color-swatch.color-swatch--250 {
@@ -557,6 +562,11 @@ label.color-swatch.color-swatch--512,
 .tag--swatch.color-swatch--512,
 .color-swatch.color-swatch--512 {
   background-image: url("/images/swatches/2020/swatch-512.jpg");
+}
+label.color-swatch.color-swatch--513,
+.tag--swatch.color-swatch--513,
+.color-swatch.color-swatch--513 {
+  background-color: #35535F;
 }
 label.color-swatch.color-swatch--514,
 .tag--swatch.color-swatch--514,
@@ -987,6 +997,11 @@ label.color-swatch.color-swatch--898,
 .tag--swatch.color-swatch--898,
 .color-swatch.color-swatch--898 {
   background-image: url("/images/swatches/2020/swatch-898.jpg");
+}
+label.color-swatch.color-swatch--899,
+.tag--swatch.color-swatch--899,
+.color-swatch.color-swatch--899 {
+  background-color: #B95100;
 }
 label.color-swatch.color-swatch--ss903,
 .tag--swatch.color-swatch--ss903,
