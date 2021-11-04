@@ -303,6 +303,11 @@ label.color-swatch.color-swatch--250,
 .color-swatch.color-swatch--250 {
   background-color: #00a3e0;
 }
+label.color-swatch.color-swatch--silicone-250,
+.tag--swatch.color-swatch--silicone-250,
+.color-swatch.color-swatch--silicone-250 {
+  background-color: #7bc5a4;
+}
 label.color-swatch.color-swatch--dual-250,
 .tag--swatch.color-swatch--dual-250,
 .color-swatch.color-swatch--dual-250 {
