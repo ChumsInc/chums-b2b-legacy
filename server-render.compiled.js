@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 
+var _debug = _interopRequireDefault(require("debug"));
+
 require("core-js/proposals");
 
 require("regenerator-runtime/runtime");
@@ -45,7 +47,7 @@ var _products2 = require("./src/utils/products");
 
 var _package = require("./package.json");
 
-var _url = _interopRequireDefault(require("url"));
+var _deepmerge = _interopRequireDefault(require("deepmerge"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -61,9 +63,9 @@ function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Sy
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -74,9 +76,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 process.env.DEBUG = '*';
 var API_PORT = process.env.API_PORT || '8081';
 var PORT = process.env.PORT || 8084;
-
-var debug = require('debug')('chums:index');
-
+var debug = (0, _debug["default"])('chums:index');
 debug.enabled = true;
 var categoryProductRegexp = (0, _pathToRegexp.pathToRegexp)('/products/:category?/:product?');
 var app = (0, _express["default"])(); // app.use(compression());
@@ -186,7 +186,7 @@ function handleRender(_x, _x2) {
 
 function _handleRender() {
   _handleRender = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(req, res) {
-    var result, initialState, _yield$loadJSON, slides, messages, _keywords, menu_chums, menu_bc, keywords, parsedProduct, keyword, search, _keywords$filter, _keywords$filter2, found, _keywords$filter3, _keywords$filter4, _yield$loadJSON2, products, product, _products, prod, variant, msrp, salesUM, cartItem, _yield$loadJSON3, categories, _categories, _categories$, category, _category$id, id, _category$title, title, _category$pageText, pageText, _category$lifestyle, lifestyle, _category$children, children, store, html, helmet, preloadedState, _yield$fs$promises$st, swatchMTime, _yield$fs$promises$st2, cssMTime, manifestFiles, css, manifest, site;
+    var result, defaultState, initialState, state, keywords, parsedProduct, keyword, search, _keywords$filter, _keywords$filter2, found, _keywords$filter3, _keywords$filter4, _yield$loadJSON, products, product, _products, prod, variant, msrp, salesUM, cartItem, _yield$loadJSON2, categories, _categories, _categories$, category, _category$id, id, _category$title, title, _category$pageText, pageText, _category$lifestyle, lifestyle, _category$children, children, store, html, helmet, preloadedState, _yield$fs$promises$st, swatchMTime, _yield$fs$promises$st2, cssMTime, manifestFiles, css, manifest, site;
 
     return regeneratorRuntime.wrap(function _callee5$(_context5) {
       while (1) {
@@ -249,61 +249,70 @@ function _handleRender() {
             return _context5.abrupt("return");
 
           case 23:
-            initialState = {
+            defaultState = {
+              app: {
+                keywords: [],
+                messages: [],
+                productMenu: {},
+                slides: []
+              },
+              menu: {
+                loaded: false,
+                productMenu: {}
+              },
+              messages: {
+                list: []
+              },
+              page: {
+                list: []
+              },
+              keywords: [],
               products: {
-                app: {},
                 keywords: []
+              },
+              slides: {
+                list: [],
+                loaded: false
               }
             };
-            _context5.prev = 24;
-            _context5.next = 27;
-            return loadJSON("http://localhost:".concat(API_PORT, "/preload/state"));
+            initialState = _objectSpread({}, defaultState);
+            _context5.prev = 25;
+            _context5.next = 28;
+            return loadJSON("http://localhost:".concat(API_PORT, "/preload/state/formatted"));
 
-          case 27:
-            _yield$loadJSON = _context5.sent;
-            slides = _yield$loadJSON.slides;
-            messages = _yield$loadJSON.messages;
-            _keywords = _yield$loadJSON.keywords;
-            menu_chums = _yield$loadJSON.menu_chums;
-            menu_bc = _yield$loadJSON.menu_bc;
-            initialState = {
-              app: {
-                slides: slides,
-                messages: messages,
-                productMenu: menu_chums,
-                productMenuBC: menu_bc,
-                keywords: _keywords
-              },
-              products: {
-                keywords: _keywords
-              } // pages: {list: keywords.filter(kw => kw.pagetype === 'page')}
+          case 28:
+            state = _context5.sent;
+            initialState = (0, _deepmerge["default"])(defaultState, state); // initialState = {
+            //     app: {slides, messages, productMenu: menu_chums, productMenuBC: menu_bc, keywords},
+            //     products: {keywords},
+            //     // pages: {list: keywords.filter(kw => kw.pagetype === 'page')}
+            // };
 
-            };
-            _context5.next = 42;
+            _context5.next = 38;
             break;
 
-          case 36:
-            _context5.prev = 36;
-            _context5.t1 = _context5["catch"](24);
+          case 32:
+            _context5.prev = 32;
+            _context5.t1 = _context5["catch"](25);
             debug("handleRender() err: ", _context5.t1.message);
-            _context5.next = 41;
+            _context5.next = 37;
             return res.json({
               error: _context5.t1.message
             });
 
-          case 41:
+          case 37:
             return _context5.abrupt("return");
 
-          case 42:
+          case 38:
             keywords = initialState.products.keywords;
             parsedProduct = categoryProductRegexp.exec(req.path);
 
             if (!parsedProduct) {
-              _context5.next = 69;
+              _context5.next = 65;
               break;
             }
 
-            _context5.prev = 45;
+            _context5.prev = 41;
             search = parsedProduct[2] ? parsedProduct[2] : parsedProduct[1];
 
             if (search) {
@@ -325,16 +334,16 @@ function _handleRender() {
             }
 
             if (!(keyword && keyword.pagetype === 'product')) {
-              _context5.next = 56;
+              _context5.next = 52;
               break;
             }
 
-            _context5.next = 51;
+            _context5.next = 47;
             return loadJSON("http://localhost:".concat(API_PORT, "/products/v2/keyword/:product").replace(':product', encodeURIComponent(search)));
 
-          case 51:
-            _yield$loadJSON2 = _context5.sent;
-            products = _yield$loadJSON2.products;
+          case 47:
+            _yield$loadJSON = _context5.sent;
+            products = _yield$loadJSON.products;
             product = {};
             _products = _slicedToArray(products, 1), prod = _products[0];
 
@@ -353,18 +362,18 @@ function _handleRender() {
               initialState.products = _objectSpread(_objectSpread({}, initialState.products), product);
             }
 
-          case 56:
+          case 52:
             if (!(keyword && keyword.pagetype === 'category')) {
-              _context5.next = 64;
+              _context5.next = 60;
               break;
             }
 
-            _context5.next = 59;
+            _context5.next = 55;
             return loadJSON("http://localhost:".concat(API_PORT, "/products/category/:category").replace(':category', encodeURIComponent(search)));
 
-          case 59:
-            _yield$loadJSON3 = _context5.sent;
-            categories = _yield$loadJSON3.categories;
+          case 55:
+            _yield$loadJSON2 = _context5.sent;
+            categories = _yield$loadJSON2.categories;
             _categories = _slicedToArray(categories, 1), _categories$ = _categories[0], category = _categories$ === void 0 ? {} : _categories$;
             _category$id = category.id, id = _category$id === void 0 ? '' : _category$id, _category$title = category.title, title = _category$title === void 0 ? '' : _category$title, _category$pageText = category.pageText, pageText = _category$pageText === void 0 ? '' : _category$pageText, _category$lifestyle = category.lifestyle, lifestyle = _category$lifestyle === void 0 ? null : _category$lifestyle, _category$children = category.children, children = _category$children === void 0 ? [] : _category$children;
             initialState.category = {
@@ -375,17 +384,17 @@ function _handleRender() {
               children: children
             };
 
-          case 64:
-            _context5.next = 69;
+          case 60:
+            _context5.next = 65;
             break;
 
-          case 66:
-            _context5.prev = 66;
-            _context5.t2 = _context5["catch"](45);
+          case 62:
+            _context5.prev = 62;
+            _context5.t2 = _context5["catch"](41);
             console.trace("handleRender() preload product", _context5.t2.message);
 
-          case 69:
-            _context5.prev = 69;
+          case 65:
+            _context5.prev = 65;
             store = (0, _redux.createStore)(_index["default"], initialState);
             html = (0, _server.renderToString)( /*#__PURE__*/_react["default"].createElement(_reactRedux.Provider, {
               store: store
@@ -397,27 +406,27 @@ function _handleRender() {
 
             helmet = _reactHelmet.Helmet.renderStatic();
             preloadedState = store.getState();
-            _context5.next = 76;
+            _context5.next = 72;
             return _fs["default"].promises.stat("./public/css/swatches-2020.css");
 
-          case 76:
+          case 72:
             _yield$fs$promises$st = _context5.sent;
             swatchMTime = _yield$fs$promises$st.mtimeMs;
-            _context5.next = 80;
+            _context5.next = 76;
             return _fs["default"].promises.stat("./public/css/chums.css");
 
-          case 80:
+          case 76:
             _yield$fs$promises$st2 = _context5.sent;
             cssMTime = _yield$fs$promises$st2.mtimeMs;
-            _context5.next = 84;
+            _context5.next = 80;
             return loadManifest();
 
-          case 84:
+          case 80:
             manifestFiles = _context5.sent;
-            _context5.next = 87;
+            _context5.next = 83;
             return loadMainCSS();
 
-          case 87:
+          case 83:
             css = _context5.sent;
             manifest = {
               manifestFiles: manifestFiles,
@@ -437,27 +446,27 @@ function _handleRender() {
               swatchTimestamp: Math.floor(swatchMTime).toString(36)
             }));
             res.send("<!DOCTYPE html>".concat(site));
-            _context5.next = 99;
+            _context5.next = 95;
             break;
 
-          case 93:
-            _context5.prev = 93;
-            _context5.t3 = _context5["catch"](69);
+          case 89:
+            _context5.prev = 89;
+            _context5.t3 = _context5["catch"](65);
             debug("handleRender()", _context5.t3.message);
-            _context5.next = 98;
+            _context5.next = 94;
             return res.status(500).json({
               error: _context5.t3.message
             });
 
-          case 98:
+          case 94:
             return _context5.abrupt("return", _context5.t3);
 
-          case 99:
+          case 95:
           case "end":
             return _context5.stop();
         }
       }
-    }, _callee5, null, [[2, 12], [24, 36], [45, 66], [69, 93]]);
+    }, _callee5, null, [[2, 12], [25, 32], [41, 62], [65, 89]]);
   }));
   return _handleRender.apply(this, arguments);
 }

@@ -2,9 +2,7 @@ process.env.DEBUG = '*';
 const API_PORT = process.env.API_PORT || '8081';
 const PORT = process.env.PORT || 8084;
 
-const debug = require('debug')('chums:index');
-debug.enabled = true;
-
+import Debug from 'debug';
 import "core-js/proposals"
 import "regenerator-runtime/runtime";
 import "@babel/register";
@@ -25,7 +23,11 @@ import {StaticRouter} from 'react-router-dom';
 import {pathToRegexp} from 'path-to-regexp';
 import {hasVariants, defaultVariant, getMSRP, defaultCartItem, getSalesUM, getDefaultColor} from './src/utils/products';
 import {version as versionNo} from './package.json';
-import url from 'url';
+import deepmerge from 'deepmerge';
+
+const debug = Debug('chums:index');
+debug.enabled = true;
+
 
 const categoryProductRegexp = pathToRegexp('/products/:category?/:product?');
 
@@ -96,7 +98,7 @@ async function handleRender(req, res) {
         return;
     }
 
-    let initialState = {
+    const defaultState = {
         app: {
             keywords: [],
             messages: [],
@@ -122,13 +124,15 @@ async function handleRender(req, res) {
             loaded: false,
         }
     };
+    let initialState = {...defaultState};
     try {
-        const {slides, messages, keywords, menu_chums, menu_bc} = await loadJSON(`http://localhost:${API_PORT}/preload/state`);
-        initialState = {
-            app: {slides, messages, productMenu: menu_chums, productMenuBC: menu_bc, keywords},
-            products: {keywords},
-            // pages: {list: keywords.filter(kw => kw.pagetype === 'page')}
-        };
+        const state = await loadJSON(`http://localhost:${API_PORT}/preload/state/formatted`);
+        initialState = deepmerge(defaultState, state);
+        // initialState = {
+        //     app: {slides, messages, productMenu: menu_chums, productMenuBC: menu_bc, keywords},
+        //     products: {keywords},
+        //     // pages: {list: keywords.filter(kw => kw.pagetype === 'page')}
+        // };
     } catch(err) {
         debug("handleRender() err: ", err.message);
         await res.json({error: err.message});
