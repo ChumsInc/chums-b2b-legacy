@@ -1,0 +1,18 @@
+/* Error: Undefined variable.
+ *    ,
+ * 74 | @mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {
+ *    |                                                   ^^^^^^^^^^^^^^^^^
+ *    '
+ *   ..\..\node_modules\bootstrap\scss\mixins\_breakpoints.scss 74:51  media-breakpoint-down()
+ *   global-search-container.scss 21:3                                 root stylesheet */
+
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
+  display: block;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Undefined variable.\a    \2577 \a 74 \2502  @mixin media-breakpoint-down($name, $breakpoints: $grid-breakpoints) {\a    \2502                                                    ^^^^^^^^^^^^^^^^^\a    \2575 \a   ..\\..\\node_modules\\bootstrap\\scss\\mixins\\_breakpoints.scss 74:51  media-breakpoint-down()\a   global-search-container.scss 21:3                                 root stylesheet";
+}

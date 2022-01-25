@@ -97,9 +97,29 @@ async function handleRender(req, res) {
     }
 
     let initialState = {
+        app: {
+            keywords: [],
+            messages: [],
+            productMenu: {},
+            slides: []
+        },
+        menu: {
+            loaded: false,
+            productMenu: {},
+        },
+        messages: {
+            list: []
+        },
+        page: {
+            list: [],
+        },
+        keywords: [],
         products: {
-            app: {},
-            keywords: []
+            keywords: [],
+        },
+        slides: {
+            list: [],
+            loaded: false,
         }
     };
     try {
