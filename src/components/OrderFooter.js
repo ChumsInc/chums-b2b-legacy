@@ -43,7 +43,7 @@ class OrderFooter extends Component {
             shippingAccount, PaymentType, ShipVia, renderForDetail} = this.props;
         const subTotal = NonTaxableAmt + TaxableAmt;
         const total = subTotal + FreightAmt + SalesTaxAmt - DepositAmt - DiscountAmt;
-        const freightTBD = !(orderType === ORDER_TYPE.invoices || (getShippingMethod(ShipVia).allowCustomerAccount && shippingAccount.enabled));
+        const freightTBD = !(orderType === ORDER_TYPE.invoices || (getShippingMethod(ShipVia).allowCustomerAccount && shippingAccount.enabled) || getPaymentType(PaymentType).prepaid);
         const colSpan = renderForDetail ? 3 : 1;
         return (
             <Fragment>
