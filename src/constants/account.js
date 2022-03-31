@@ -151,7 +151,7 @@ export const PRICE_METHODS = {
 
 
 export const SHIPPING_METHODS = {
-    'CHEAPEST': {code: 'CHEAPEST', description: 'Ship cheapest way possible', allowCustomerAccount: false, carrier: 'fedex'},
+    // 'CHEAPEST': {code: 'CHEAPEST', description: 'Ship cheapest way possible', allowCustomerAccount: false, carrier: 'fedex'},
     '1FEX_GROUND': {code: '1FEX_GROUND', description: 'FedEX Ground', allowCustomerAccount: true, carrier: 'fedex'},
     '1UPS_GROUND': {code: '1UPS_GROUND', description: 'UPS Ground', allowCustomerAccount: true, carrier: 'ups'},
     'APP': {code: 'APP', description: 'USPS Priority', allowCustomerAccount: false, carrier: 'usps'},
@@ -169,7 +169,7 @@ export const SHIPPING_METHODS = {
     '1UPS_NEXT_DAY': {code: '1UPS_NEXT_DAY', description: 'UPS Next Day Air', allowCustomerAccount: true, carrier: 'ups'},
     '1UPS_NEXT_DAY_S': {code: '1UPS_NEXT_DAY_S', description: 'UPS Next Day SAVER', allowCustomerAccount: true, carrier: 'ups'},
 
-    'TO BE DECIDED': {code: 'TO BE DECIDED', description: 'To Be Decided', allowCustomerAccount: false},
+    'TO BE DECIDED': {code: 'TO BE DECIDED', description: 'To Be Decided', allowCustomerAccount: false, carrier: ''},
 };
 
 export const DEFAULT_SHIPPING_ACCOUNT = {enabled: false, value: ''};

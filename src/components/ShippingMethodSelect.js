@@ -77,17 +77,46 @@ export default class ShippingMethodSelect extends Component {
     render() {
         const {value, shippingAccount, readOnly, required, allowCustomerAccount: _allowCustomerAccount} = this.props;
         const {code = '', description = '', allowCustomerAccount = false} = SHIPPING_METHODS[value] || {};
+        const shipTypes = ['', 'fedex', 'ups', 'usps'];
         return (
             <div>
                 <Select value={value} onChange={this.onChange} readOnly={readOnly} required={required} field="ShipVia">
                     {!readOnly && (<option value="">Select Shipping Method</option>)}
                     {!!readOnly && (<option value="" />)}
                     {Object.keys(SHIPPING_METHODS)
+                        .filter(key => SHIPPING_METHODS[key].carrier === '')
                         .map(key => {
                             return (
                                 <option key={key} value={key}>{SHIPPING_METHODS[key].description}</option>
                             )
                         })}
+                    <optgroup label="Fed Ex">
+                        {Object.keys(SHIPPING_METHODS)
+                            .filter(key => SHIPPING_METHODS[key].carrier === 'fedex')
+                            .map(key => {
+                                return (
+                                    <option key={key} value={key}>{SHIPPING_METHODS[key].description}</option>
+                                )
+                            })}
+                    </optgroup>
+                    <optgroup label="UPS">
+                        {Object.keys(SHIPPING_METHODS)
+                            .filter(key => SHIPPING_METHODS[key].carrier === 'ups')
+                            .map(key => {
+                                return (
+                                    <option key={key} value={key}>{SHIPPING_METHODS[key].description}</option>
+                                )
+                            })}
+                    </optgroup>
+                    <optgroup label="US Postal Service">
+                        {Object.keys(SHIPPING_METHODS)
+                            .filter(key => SHIPPING_METHODS[key].carrier === 'usps')
+                            .map(key => {
+                                return (
+                                    <option key={key} value={key}>{SHIPPING_METHODS[key].description}</option>
+                                )
+                            })}
+                    </optgroup>
                 </Select>
                 {_allowCustomerAccount && allowCustomerAccount && (
                     <CustomerShippingAccount {...shippingAccount}
