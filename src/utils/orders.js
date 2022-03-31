@@ -5,6 +5,7 @@ import getHours from 'date-fns/getHours';
 import setDay from 'date-fns/setDay';
 import setHours from 'date-fns/setHours';
 import startOfDay from 'date-fns/startOfDay';
+import addBusinessDays from 'date-fns/addBusinessDays';
 import format from 'date-fns/format';
 import differenceInBusinessDays from 'date-fns/differenceInBusinessDays';
 
@@ -57,6 +58,10 @@ const isInWorkWeek = (date) => {
 export const minShipDate = () => {
     const d = new Date();
     let printDate = setHours(startOfDay(d), 24 + 8); // tomorrow morning at 8am
+
+    //changed to 5 business days per Andrew, 3/31/2022
+    return addBusinessDays(printDate, 5);
+
     if (!isInWorkWeek(printDate)) {
         printDate = setDay(printDate, printDate.getDay() === 0 ? 1 : 8); //next monday
     }
