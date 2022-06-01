@@ -1,3 +1,8 @@
+label.color-swatch.color-swatch--missing,
+.tag--swatch.color-swatch--missing,
+.color-swatch.color-swatch--missing {
+  background-image: url("//b2b.chums.com/images/products/80/missing.png");
+}
 label.color-swatch.color-swatch--leather-100,
 .tag--swatch.color-swatch--leather-100,
 .color-swatch.color-swatch--leather-100 {

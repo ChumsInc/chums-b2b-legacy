@@ -2,7 +2,7 @@
 label.color-swatch,
 .tag--swatch,
 .color-swatch {
-
+  &.color-swatch--missing {background-image: url('//b2b.chums.com/images/products/80/missing.png');}
   &.color-swatch--leather-100 {background-image: url('//b2b.chums.com/images/swatches/2020/swatch-leather-100.jpg');}
   &.color-swatch--suede-100 {background-color: #000000;}
   &.color-swatch--100 {background-color: #000000;} 		//black

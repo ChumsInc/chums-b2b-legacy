@@ -687,15 +687,15 @@ progress {
   display: flex;
   flex-wrap: wrap;
   margin-top: calc(-1 * var(--bs-gutter-y));
-  margin-right: calc(-.5 * var(--bs-gutter-x));
-  margin-left: calc(-.5 * var(--bs-gutter-x));
+  margin-right: calc(-0.5 * var(--bs-gutter-x));
+  margin-left: calc(-0.5 * var(--bs-gutter-x));
 }
 .row > * {
   flex-shrink: 0;
   width: 100%;
   max-width: 100%;
-  padding-right: calc(var(--bs-gutter-x) * .5);
-  padding-left: calc(var(--bs-gutter-x) * .5);
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-top: var(--bs-gutter-y);
 }
 
@@ -6478,15 +6478,15 @@ textarea.form-control-lg {
 }
 
 .ratio-4x3 {
-  --bs-aspect-ratio: calc(3 / 4 * 100%);
+  --bs-aspect-ratio: 75%;
 }
 
 .ratio-16x9 {
-  --bs-aspect-ratio: calc(9 / 16 * 100%);
+  --bs-aspect-ratio: 56.25%;
 }
 
 .ratio-21x9 {
-  --bs-aspect-ratio: calc(9 / 21 * 100%);
+  --bs-aspect-ratio: 42.8571428571%;
 }
 
 .fixed-top, .site-header #navbarToggleXSDropDown, .site-header .top-bar {
@@ -11760,7 +11760,7 @@ h2.multi-size, .multi-size.h2, h3.multi-size, .multi-size.h3, h4.multi-size, .mu
   color: rgba(255, 255, 255, 0.8);
 }
 .site-header .link:hover {
-  color: white;
+  color: rgb(255, 255, 255);
 }
 .site-header .highlight {
   margin-right: 8px;
@@ -11853,7 +11853,7 @@ h2.multi-size, .multi-size.h2, h3.multi-size, .multi-size.h3, h4.multi-size, .mu
   text-transform: uppercase;
 }
 .site-header .chums-navbar-common a:not(.dropdown-item):hover, .site-header .chums-subnavbar > .chums-subnavbar-collapse a:not(.dropdown-item):hover, .site-header .chums-navbar-collapse a:not(.dropdown-item):hover, .site-header .chums-navbar a:not(.dropdown-item):hover, .site-header .chums-navbar-dropdown .chums-subnav a:not(.dropdown-item):hover, .site-header .top-bar a:not(.dropdown-item):hover {
-  color: white;
+  color: rgb(255, 255, 255);
 }
 .site-header .chums-navbar-common a.dropdown-item:hover, .site-header .chums-subnavbar > .chums-subnavbar-collapse a.dropdown-item:hover, .site-header .chums-navbar-collapse a.dropdown-item:hover, .site-header .chums-navbar a.dropdown-item:hover, .site-header .chums-navbar-dropdown .chums-subnav a.dropdown-item:hover, .site-header .top-bar a.dropdown-item:hover {
   background-color: #e6e6e6;
@@ -13444,10 +13444,10 @@ a.external {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  border: 0.25rem solid #ce0e2d;
+  border: 0.25rem solid rgb(206, 14, 45);
   background-color: rgba(255, 255, 255, 0.9);
   padding: 0.5rem 1.5rem;
-  color: #ce0e2d;
+  color: rgb(206, 14, 45);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
