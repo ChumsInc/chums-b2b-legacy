@@ -4,7 +4,6 @@ import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import classNames from 'classnames';
 import {fetchSlides} from '../actions/app';
-import ResponsiveImage, {SLIDE_SIZE_NAMES, SLIDE_SIZES} from './ResponsiveImage'
 
 
 const HomeSlide = ({className, mainImage, title, actionURL, mainOverlay, cssClass, target = ''}) => {
@@ -22,10 +21,6 @@ const HomeSlide = ({className, mainImage, title, actionURL, mainOverlay, cssClas
                 {!!mainOverlay && (
                     <div className="overlay" dangerouslySetInnerHTML={{__html: mainOverlay}}/>
                 )}
-
-                {/*{(!!mainImage && !mainOverlay) &&  (*/}
-                {/*    <ResponsiveImage src={mainImage} alt={title} sizes={SLIDE_SIZES} sizeNames={SLIDE_SIZE_NAMES}/>*/}
-                {/*)}*/}
             </a>
         )
     }
@@ -37,10 +32,6 @@ const HomeSlide = ({className, mainImage, title, actionURL, mainOverlay, cssClas
             {!!mainOverlay && (
                 <div className="overlay" dangerouslySetInnerHTML={{__html: mainOverlay}}/>
             )}
-
-            {/*{(!!mainImage && !mainOverlay) &&  (*/}
-            {/*    <ResponsiveImage src={mainImage} alt={title} sizes={SLIDE_SIZES} sizeNames={SLIDE_SIZE_NAMES}/>*/}
-            {/*)}*/}
         </Link>
     )
 };
