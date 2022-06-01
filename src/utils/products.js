@@ -13,7 +13,7 @@ export const getSalesUM = (product) => {
     case SELL_AS_COLOR:
         const um = [];
         product.items
-            .filter(item => !(item.status === 0 || item.inactiveItem === 1 || item.productType === 'D' || !item.salesUM))
+            .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D' || !item.salesUM))
             .forEach(item => {
                 if (!um.includes(item.salesUM)) {
                     um.push(item.salesUM);
@@ -43,7 +43,7 @@ export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCode
     case SELL_AS_COLOR:
         const prices = [];
         product.items
-            .filter(item => !(item.status === 0 || item.inactiveItem === 1 || item.productType === 'D'))
+            .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D'))
             .filter(item => !!item[priceField])
             .forEach(item => {
                 const price = getItemPrice({item, priceField, priceCodes});
@@ -51,6 +51,9 @@ export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCode
                     prices.push(price);
                 }
             });
+        if (prices.length === 0) {
+            return [product.msrp];
+        }
         if (prices.length === 1) {
             return prices;
         }
