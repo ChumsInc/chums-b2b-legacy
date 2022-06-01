@@ -40,7 +40,7 @@ export default class SwatchSet extends Component {
                 <div className="swatch-set">
                     {items
                         .filter(item => sellAs === SELL_AS_MIX
-                            || !(item.status === 0 || item.inactiveItem === 1 || item.productType === 'D'))
+                            || !(!item.status || item.inactiveItem === 1 || item.productType === 'D'))
                         .map(item => (
                             <Swatch key={item.id} color={item.color}
                                     itemQuantity={item.itemQuantity || null}
