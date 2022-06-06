@@ -260,7 +260,7 @@ class ProductPage extends Component {
                                 <Alert type="alert-warning" message="Please log in to see prices and availability"
                                        title=""/>
                             )}
-                            {!!availableForSale && !!season_code && cartItem.QuantityAvailable <= 0 && (
+                            {!!availableForSale && !!season_code && !season_available && (
                                 <Alert type="alert-info" title="Pre-Season Order:">
                                     {season_description}
                                 </Alert>
