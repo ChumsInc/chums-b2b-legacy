@@ -3,6 +3,12 @@ import PropTypes from 'prop-types';
 import {SELL_AS_MIX} from "../constants/actions";
 import Swatch from "./Swatch";
 
+const isInactiveItem = (item) => {
+    return !item.status
+        || !!item.inactiveItem
+        || item.productType === 'D'
+}
+
 export default class SwatchSet extends Component {
     static propTypes = {
         sellAs: PropTypes.number,
@@ -15,9 +21,12 @@ export default class SwatchSet extends Component {
                 code: PropTypes.string,
                 name: PropTypes.string,
             }),
+            additionalData: PropTypes.shape({
+                swatch_code: PropTypes.string,
+            }),
             inactiveItem: PropTypes.number,
             productType: PropTypes.string,
-            status: PropTypes.number,
+            status: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
         })),
         swatch_format: PropTypes.string,
 
@@ -35,16 +44,16 @@ export default class SwatchSet extends Component {
 
     render() {
         const {sellAs, items, selectedColorCode, swatch_format, onSelect} = this.props;
+
         return (
             <div className="swatch-container">
                 <div className="swatch-set">
                     {items
-                        .filter(item => sellAs === SELL_AS_MIX
-                            || !(!item.status || item.inactiveItem === 1 || item.productType === 'D'))
+                        .filter(item => sellAs === SELL_AS_MIX || !isInactiveItem(item))
                         .map(item => (
                             <Swatch key={item.id} color={item.color}
                                     itemQuantity={item.itemQuantity || null}
-                                    swatchFormat={swatch_format}
+                                    swatchFormat={item?.additionalData?.swatch_code || swatch_format}
                                     active={selectedColorCode === item.color.code}
                                     onClick={(val) => onSelect(val)}/>
                         ))}
