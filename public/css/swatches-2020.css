@@ -833,9 +833,19 @@ label.color-swatch.color-swatch--660,
 .color-swatch.color-swatch--660 {
   background-image: url("//b2b.chums.com/images/swatches/2022/swatch-660.png");
 }
+label.color-swatch.color-swatch--ss660,
+.tag--swatch.color-swatch--ss660,
+.color-swatch.color-swatch--ss660 {
+  background-image: url("//b2b.chums.com/images/swatches/2022/swatch-660.png");
+}
 label.color-swatch.color-swatch--662,
 .tag--swatch.color-swatch--662,
 .color-swatch.color-swatch--662 {
+  background-image: url("//b2b.chums.com/images/swatches/2022/swatch-662.png");
+}
+label.color-swatch.color-swatch--ss662,
+.tag--swatch.color-swatch--ss662,
+.color-swatch.color-swatch--ss662 {
   background-image: url("//b2b.chums.com/images/swatches/2022/swatch-662.png");
 }
 label.color-swatch.color-swatch--701,
@@ -1137,6 +1147,11 @@ label.color-swatch.color-swatch--880,
 label.color-swatch.color-swatch--881,
 .tag--swatch.color-swatch--881,
 .color-swatch.color-swatch--881 {
+  background-image: url("//b2b.chums.com/images/swatches/2022/swatch-881.png");
+}
+label.color-swatch.color-swatch--ss881,
+.tag--swatch.color-swatch--ss881,
+.color-swatch.color-swatch--ss881 {
   background-image: url("//b2b.chums.com/images/swatches/2022/swatch-881.png");
 }
 label.color-swatch.color-swatch--mariner-879,
