@@ -82,7 +82,17 @@ class ProductPage extends Component {
         cartItem: PropTypes.shape({
             itemCode: PropTypes.string,
             quantity: PropTypes.number,
-            additionalData: PropTypes.object,
+            additionalData: PropTypes.shape({
+                image_filename: PropTypes.string,
+                season: PropTypes.shape({
+                    active: PropTypes.bool,
+                    code: PropTypes.string,
+                    description: PropTypes.string,
+                    product_available: PropTypes.bool,
+                    product_season_id: PropTypes.number,
+                    product_teaser: PropTypes.string,
+                })
+            }),
         }),
         pricing: PropTypes.array,
         hasCustomer: PropTypes.bool,
@@ -206,7 +216,9 @@ class ProductPage extends Component {
                                 <h1 className="product-name">{name}</h1>
                                 <h2 className="product-subtitle">{additionalData.subtitle || ''}</h2>
                             </div>
-                            {!!season_teaser && <SeasonTeaser season_teaser={season_teaser}/>}
+                            {!!(cartItem?.additionalData?.season?.product_teaser  || season_teaser) && (
+                                <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
+                            )}
                             <ProductInfo msrp={msrp} salesUM={salesUM}
                                          itemCode={cartItem.itemCode || !!selectedProduct.itemCode}
                                          upc={selectedProduct.upc}
@@ -241,14 +253,14 @@ class ProductPage extends Component {
                             {!cartItem.itemCode && (
                                 <Alert message="Please select an color" title=""/>
                             )}
-                            {(!availableForSale || !!dateAvailable) && (
+                            {!availableForSale && (
                                 <Alert type="alert-warning">
-                                    {!dateAvailable && (
-                                        <span><strong>{selectedProduct.name}</strong> is not available for sale.</span>
-                                    )}
-                                    {!!dateAvailable && (
-                                        <strong>{dateAvailable}</strong>
-                                    )}
+                                    <span><strong>{selectedProduct.name}</strong> is not available for sale.</span>
+                                </Alert>
+                            )}
+                            {!!dateAvailable && (
+                                <Alert type="alert-warning">
+                                    <strong>{dateAvailable}</strong>
                                 </Alert>
                             )}
                             {loggedIn && !hasCustomer && (
@@ -261,6 +273,11 @@ class ProductPage extends Component {
                                        title=""/>
                             )}
                             {!!availableForSale && !!season_code && !season_available && (
+                                <Alert type="alert-info" title="Pre-Season Order:">
+                                    {season_description}
+                                </Alert>
+                            )}
+                            {!!availableForSale && !!cartItem?.additionalData?.season?.code && !cartItem?.additionalData?.season?.product_available && (
                                 <Alert type="alert-info" title="Pre-Season Order:">
                                     {season_description}
                                 </Alert>
