@@ -34,6 +34,7 @@ class ProductSubNav extends Component {
             <div className="chums-subnavbar-collapse collapse show">
                 <ul className="navbar-nav navbar-products">
                     {items
+                        .filter(item => !!item.status)
                         .sort(sortPriority)
                         .map(item => (
                             <SubNavColumn key={item.id} url={item.url} title={item.title} subMenu={item.menu}
