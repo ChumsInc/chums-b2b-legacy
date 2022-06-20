@@ -469,6 +469,11 @@
         .nav-item.nav-col-4 {
           flex-basis: 20%;
         }
+        .nav-item.menu-section {
+          font-size: 1.25rem !important;
+          font-weight: bold !important;
+          color: black !important;
+        }
       }
       &.navbar-orders {
         .nav-item.nav-col-4 {

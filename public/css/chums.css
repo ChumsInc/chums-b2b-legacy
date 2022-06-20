@@ -12238,6 +12238,11 @@ h2.multi-size, .multi-size.h2, h3.multi-size, .multi-size.h3, h4.multi-size, .mu
 .site-header .chums-subnavbar > .chums-subnavbar-collapse .navbar-nav.navbar-products .nav-item.nav-col-4 {
   flex-basis: 20%;
 }
+.site-header .chums-subnavbar > .chums-subnavbar-collapse .navbar-nav.navbar-products .nav-item.menu-section {
+  font-size: 1.25rem !important;
+  font-weight: bold !important;
+  color: black !important;
+}
 .site-header .chums-subnavbar > .chums-subnavbar-collapse .navbar-nav .nav-item {
   padding: 0 1.5rem;
   flex-grow: 0;
@@ -12570,18 +12575,28 @@ body.scrolled .site-header .global-search-padder {
 .product-page .product-panel .variants-container, .product-page .product-minicart-panel .variants-container, .product-page .product-image-panel .variants-container, .product-page .product-info-panel .variants-container {
   margin-bottom: 1rem;
 }
-.product-page .product-panel .variants-container .btn-group, .product-page .product-minicart-panel .variants-container .btn-group, .product-page .product-image-panel .variants-container .btn-group, .product-page .product-info-panel .variants-container .btn-group {
-  display: flex;
-}
-.product-page .product-panel .variants-container .btn-group .variant-selector, .product-page .product-minicart-panel .variants-container .btn-group .variant-selector, .product-page .product-image-panel .variants-container .btn-group .variant-selector, .product-page .product-info-panel .variants-container .btn-group .variant-selector {
+.product-page .product-panel .variants-container .variant-selector, .product-page .product-minicart-panel .variants-container .variant-selector, .product-page .product-image-panel .variants-container .variant-selector, .product-page .product-info-panel .variants-container .variant-selector {
   width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
+.product-page .product-panel .variants-container .variant-selector:disabled, .product-page .product-minicart-panel .variants-container .variant-selector:disabled, .product-page .product-image-panel .variants-container .variant-selector:disabled, .product-page .product-info-panel .variants-container .variant-selector:disabled {
+  color: #212529;
+}
+.product-page .product-panel .variants-container .variant-selector div, .product-page .product-minicart-panel .variants-container .variant-selector div, .product-page .product-image-panel .variants-container .variant-selector div, .product-page .product-info-panel .variants-container .variant-selector div {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+.product-page .product-panel .variants-container .btn-group, .product-page .product-minicart-panel .variants-container .btn-group, .product-page .product-image-panel .variants-container .btn-group, .product-page .product-info-panel .variants-container .btn-group {
+  display: flex;
+}
 .product-page .product-panel .variants-container .btn-group .dropdown-menu, .product-page .product-minicart-panel .variants-container .btn-group .dropdown-menu, .product-page .product-image-panel .variants-container .btn-group .dropdown-menu, .product-page .product-info-panel .variants-container .btn-group .dropdown-menu {
-  margin-top: 3px;
+  margin-top: 40px;
   padding: 0;
   border: none;
   width: -moz-available;

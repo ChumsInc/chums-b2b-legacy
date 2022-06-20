@@ -3,17 +3,30 @@
   //max-height: 130px;
   //overflow: auto;
   margin-bottom: 1rem;
-  .btn-group {
+
+  .variant-selector {
+    width: 100%;
     display: flex;
-    .variant-selector {
-      width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    &:disabled {
+      color: #212529;
+    }
+    div {
       display: flex;
       flex-direction: row;
+      width: 100%;
       justify-content: space-between;
       align-items: center;
     }
+  }
+
+  .btn-group {
+    display: flex;
     .dropdown-menu {
-      margin-top: 3px;
+      margin-top: 40px;
       padding: 0;
       border: none;
       width: -moz-available;
