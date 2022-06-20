@@ -148,7 +148,7 @@ class ProductPage extends Component {
 
 
     componentDidUpdate(prevProps, prevState, snapShot) {
-        const {loading, documentTitle, product, keyword, selectedProduct, location, cartItem, colorCode} = this.props;
+        const {loading, documentTitle, product, keyword, selectedProduct, location} = this.props;
         if (prevProps.keyword !== keyword) {
             this.props.fetchProduct(keyword);
             return;
@@ -216,8 +216,9 @@ class ProductPage extends Component {
                                 <h1 className="product-name">{name}</h1>
                                 <h2 className="product-subtitle">{additionalData.subtitle || ''}</h2>
                             </div>
-                            {!!(cartItem?.additionalData?.season?.product_teaser  || season_teaser) && (
-                                <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
+                            {!!((cartItem?.additionalData?.season?.active && cartItem?.additionalData?.season?.product_teaser) || season_teaser) && (
+                                <SeasonTeaser
+                                    season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
                             )}
                             <ProductInfo msrp={msrp} salesUM={salesUM}
                                          itemCode={cartItem.itemCode || !!selectedProduct.itemCode}
@@ -272,12 +273,10 @@ class ProductPage extends Component {
                                 <Alert type="alert-warning" message="Please log in to see prices and availability"
                                        title=""/>
                             )}
-                            {!!availableForSale && !!season_code && !season_available && (
-                                <Alert type="alert-info" title="Pre-Season Order:">
-                                    {season_description}
-                                </Alert>
-                            )}
-                            {!!availableForSale && !!cartItem?.additionalData?.season?.code && !cartItem?.additionalData?.season?.product_available && (
+                            {(
+                                (!!availableForSale && !!season_code && !season_available)
+                                || (!!availableForSale && !!cartItem?.additionalData?.season?.code && !cartItem?.additionalData?.season?.product_available)
+                            ) && (
                                 <Alert type="alert-info" title="Pre-Season Order:">
                                     {season_description}
                                 </Alert>
