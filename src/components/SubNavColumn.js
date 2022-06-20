@@ -1,13 +1,14 @@
 import React from 'react';
 import {NavLink} from "react-router-dom";
+import classNames from "classnames";
 
 const defaultFormatter = (val) => val;
 const defaultSorter = (a, b) => a.title === b.title ? 0 : (a.title > b.title ? 1 : -1);
 const defaultSubMenu = {};
 
 
-const SubNavItem = ({title, description, url}) => (
-    <li className="nav-item" title={description}>
+const SubNavItem = ({title, description, url, className}) => (
+    <li className={classNames("nav-item", className)} title={description}>
         <NavLink to={url}>{title}</NavLink>
     </li>
 );
@@ -18,7 +19,7 @@ const SubNavItemList = ({items = [], urlFormatter, itemSorter}) => {
             {items
                 .sort(itemSorter)
                 .map((item, index) => (
-                    <SubNavItem key={item.id || index} title={item.title} description={item.description}
+                    <SubNavItem key={item.id || index} title={item.title} description={item.description} className={item.className}
                                 url={urlFormatter(item.url)}/>
                 ))}
         </ul>
