@@ -1,7 +1,7 @@
 import {PRICE_FIELDS, SELL_AS_COLOR, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
 import {calcPrice, priceRecord} from "./customer";
 
-export const hasVariants = (product) => product.variants !== undefined && product.variants.length > 0;
+export const hasVariants = (product) => product.variants !== undefined && product.variants.filter(v => !!v.status).length > 0 ;
 export const defaultVariant = (product) => {
     const activeVariants = product.variants.filter(v => !!v.status);
     const [variant = activeVariants[0]] = activeVariants.filter(v => !!v.isDefaultVariant);

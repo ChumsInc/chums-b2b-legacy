@@ -81,6 +81,9 @@ class VariantSelector extends Component {
         const {productId, variants, selectedVariantId, priceCodes, loggedIn} = this.props;
         const [variant = {}] = variants.filter(v => v.id === selectedVariantId);
 
+        if (!variant.product) {
+            return null;
+        }
         const prices = loggedIn
             ? getPrices({product: variant.product, priceCodes})
             : getMSRP(variant.product);
