@@ -41,10 +41,17 @@ const defaults = {
     authType: '',
 };
 
+const exisitingToken = auth.getToken();
+let existingTokenExpires = 0;
+if (exisitingToken) {
+    const decoded = jwtDecode(exisitingToken);
+    existingTokenExpires = decoded?.exp ?? 0;
+}
 const userDefaults = {
     ...defaults,
     isLoggedIn: auth.loggedIn(),
-    token: auth.getToken(),
+    token: exisitingToken,
+    tokenExpires: existingTokenExpires,
     authType: localStore.getItem(STORE_AUTHTYPE) || defaults.authType,
 };
 
@@ -53,6 +60,9 @@ if (userDefaults.isLoggedIn) {
     userDefaults.profile = auth.getProfile() || defaults.profile;
     userDefaults.token = auth.getToken();
     userDefaults.authType = localStore.getItem(STORE_AUTHTYPE) || defaults.authType;
+
+    const decoded = jwtDecode(userDefaults.token);
+    userDefaults.tokenExpires = decoded?.exp ?? 0;
 
     if (userDefaults.profile) {
         const {chums} = userDefaults.profile;
@@ -98,7 +108,7 @@ const token = (state = userDefaults.token, action) => {
     }
 };
 
-const tokenExpires = (state = 0, action) => {
+const tokenExpires = (state = userDefaults.tokenExpires, action) => {
     const {type, status, user, loggedIn, token} = action;
     switch (type) {
     case SET_LOGGED_IN:
