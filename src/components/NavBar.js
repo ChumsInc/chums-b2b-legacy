@@ -13,6 +13,7 @@ import DropDownToggle from "./DropDownToggle";
 import {SUB_NAV_TYPES} from "../constants/app";
 import NavBarSubNavContainer from "./NavBarSubNavContainer";
 import {withRouter} from "react-router";
+import GoogleSignInOneTap from "./GoogleSignInOneTap";
 
 
 const NavItem = ({path, title = '', active = false}) => {
@@ -123,6 +124,7 @@ class NavBar extends Component {
         return (
             <div className="chums-navbar-container">
                 <div className={classNames("chums-navbar navbar-expand-sm", {'has-messages': hasMessages})}>
+                    {/*<GoogleSignInOneTap />*/}
                     <div className={classNames("chums-navbar-collapse collapse", {show: showNavBar})}>
                         <div className="nav-item main-logo navbar-brand">
                             <h1>

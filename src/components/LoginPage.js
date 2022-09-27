@@ -1,16 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {Redirect} from 'react-router-dom';
-import {GoogleLogin} from 'react-google-login';
 import {loginGoogleUser, loginUser, logout} from "../actions/user";
 import {setDocumentTitle} from "../actions/app";
 import {connect} from 'react-redux';
 import LoginLocal from "./LoginLocal";
-import {PATH_HOME, DOCUMENT_TITLES, PATH_SET_PASSWORD} from "../constants/paths";
-import {GOOGLE_CLIENT_ID} from "../constants/app";
+import {DOCUMENT_TITLES, PATH_HOME} from "../constants/paths";
 import Alert from '../common-components/Alert';
-
-
+import GoogleSignInButton from "./GoogleSignInButton";
 
 
 class LoginPage extends Component {
@@ -97,7 +94,7 @@ class LoginPage extends Component {
         const {loginUser, loggedIn} = this.props;
 
         if (!!loggedIn) {
-            return (<Redirect to={PATH_HOME} />)
+            return (<Redirect to={PATH_HOME}/>)
         }
 
         // const {error} = this.props.user;
@@ -108,7 +105,7 @@ class LoginPage extends Component {
                     <h3>Hey there friend! This site is for authorized Chums dealers only. Please login / sign up
                         here.
                     </h3>
-                    <hr />
+                    <hr/>
                     <h4>Not an authorized dealer? Feel as though you've lost your way? {' '}
                         <a href="https://www.chums.com">Click here to shop chums.com</a>
                     </h4>
@@ -118,11 +115,7 @@ class LoginPage extends Component {
                         <div className="col-sm-6">
                             <h3>Login with Google</h3>
                             <div><small>Login with a trusted provider.</small></div>
-                            <GoogleLogin clientId={GOOGLE_CLIENT_ID}
-                                         theme="dark"
-                                         buttonText="Login with Google"
-                                         onSuccess={this.responseGoogle}
-                                         onFailure={this.responseGoogle} />
+                            <GoogleSignInButton/>
                         </div>
                         <div className="col-sm-6">
                             <LoginLocal onSubmit={loginUser}/>

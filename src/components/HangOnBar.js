@@ -11,6 +11,7 @@ import {connect} from 'react-redux';
 import {toggleXSNavBar, fetchVersion} from '../actions/app';
 import Marquee from "./Marquee";
 import {VERSION_REFRESH_MESSAGE} from "../constants/app";
+import GoogleSignInOneTap from "./GoogleSignInOneTap";
 
 
 const mapStateToProps = ({app}) => {
@@ -69,6 +70,7 @@ class HangOnBar extends Component {
                         </li>
                         <li className="nav-item cart">
                             <div className="current-customer-indicator">
+                                <GoogleSignInOneTap />
                                 <CustomerNavbarLink/>
                                 <CartIndicator/>
                             </div>

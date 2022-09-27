@@ -1,27 +1,24 @@
 import React, {Component, Fragment} from 'react';
-import {BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
+import {Redirect, Route} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Footer from './Footer';
 import {
-    PATH_CATEGORY,
     PATH_CUSTOMER_ACCOUNT,
     PATH_HOME,
+    PATH_INVOICE,
     PATH_LOGIN,
     PATH_LOGOUT,
-    PATH_SALES_ORDERS,
+    PATH_PAGE,
+    PATH_PAGE_RESOURCES,
     PATH_PRODUCT,
     PATH_PROFILE,
     PATH_PROFILE_ACCOUNT,
+    PATH_RESOURCES_CHUMS_REPS,
     PATH_SALES_ORDER,
     PATH_SALES_ORDER_BREADCRUMB,
-    PATH_SIGNUP,
+    PATH_SALES_ORDERS,
     PATH_SET_PASSWORD,
-    PATH_PAGE,
-    PATH_PAGE_RESOURCES,
-    PATH_PAGE_REP_RESOURCES,
-    PATH_RESOURCES_CHUMS_REPS,
-    PATH_RESOURCES_BC_REPS,
-    PATH_INVOICE
+    PATH_SIGNUP
 } from "../constants/paths";
 import Header from "./Header";
 import Login from "./LoginPage";
@@ -39,12 +36,9 @@ import OrdersContainer from "./OrdersContainer";
 import SalesOrderPage from "./SalesOrderPage";
 import OrdersBreadcrumb from "./OrdersBreadcrumb";
 import SignUp from "./SignUp";
-import AppGoogleLogin from "./AppGoogleLogin";
 import AppUpdateLocalLogin from "./AppUpdateLocalLogin";
 import Logout from "./Logout";
-import PasswordForm from "./PasswordForm";
 import ResetPassword from "./ResetPassword";
-import NullComponent from "./NullComponent";
 import GA_RouteHandler from "./GA_RouteHandler";
 import DocumentTitle from "./DocumentTitle";
 import ContentPage from "./ContentPage";
@@ -106,19 +100,18 @@ class App extends Component {
     }
 
     render() {
-        const {loggedIn, currentCustomer} =this.props;
+        const {loggedIn, currentCustomer} = this.props;
         // console.log('App', {loggedIn});
         return (
             <Fragment>
                 <Route component={Header}/>
                 <main>
-                    <DocumentTitle />
+                    <DocumentTitle/>
                     <Route component={LifestyleImage}/>
                     <Route path={PATH_HOME} component={HomeV2}/>
                     <Route path="/" exact component={HomeV2}/>
                     <div className="container main-container">
-                        <AppGoogleLogin />
-                        {!!loggedIn && <AppUpdateLocalLogin />}
+                        {!!loggedIn && <AppUpdateLocalLogin/>}
                         <AlertList/>
 
                         {/* The login and signup paths will redirect away to home when the user is logged in */}
@@ -131,45 +124,45 @@ class App extends Component {
                         <Route path={PATH_PRODUCT} component={ProductRouter}/>
                         {!loggedIn && (
                             <Route path={PATH_RESOURCES_CHUMS_REPS}>
-                                <Redirect to={PATH_PAGE_RESOURCES} />
+                                <Redirect to={PATH_PAGE_RESOURCES}/>
                             </Route>
                         )}
-                        <Route path={PATH_PAGE} component={ContentPage} />
+                        <Route path={PATH_PAGE} component={ContentPage}/>
                         {!loggedIn && (
                             <Fragment>
-                                <Route exact path={PATH_SALES_ORDERS} component={Login} />
-                                <Route exact path={PATH_SALES_ORDER} component={Login} />
+                                <Route exact path={PATH_SALES_ORDERS} component={Login}/>
+                                <Route exact path={PATH_SALES_ORDER} component={Login}/>
                             </Fragment>
                         )}
                         {!!loggedIn && (
                             <Fragment>
                                 <Route path={PATH_LOGOUT} component={Logout}/>
-                                <Route exact path={PATH_PROFILE} component={ProfilePage} />
-                                <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage} />
-                                <Route path={PATH_PROFILE_ACCOUNT} component={AccountList} />
-                                <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb} />
-                                <Route path={PATH_INVOICE} component={OrdersBreadcrumb} />
-                                <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer} />
+                                <Route exact path={PATH_PROFILE} component={ProfilePage}/>
+                                <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage}/>
+                                <Route path={PATH_PROFILE_ACCOUNT} component={AccountList}/>
+                                <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb}/>
+                                <Route path={PATH_INVOICE} component={OrdersBreadcrumb}/>
+                                <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer}/>
                                 {!!currentCustomer.CustomerNo && (
                                     <Fragment>
                                         <ErrorBoundary>
-                                            <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage} />
+                                            <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage}/>
                                         </ErrorBoundary>
                                         <ErrorBoundary>
-                                            <Route exact path={PATH_INVOICE} component={InvoicePage} />
+                                            <Route exact path={PATH_INVOICE} component={InvoicePage}/>
 
                                         </ErrorBoundary>
                                     </Fragment>
                                 )}
                                 {!currentCustomer.CustomerNo && (
-                                    <Route exact path={PATH_SALES_ORDER} component={AccountList} />
+                                    <Route exact path={PATH_SALES_ORDER} component={AccountList}/>
                                 )}
                             </Fragment>
                         )}
                     </div>
                 </main>
                 <Footer/>
-                <Route component={GA_RouteHandler} />
+                <Route component={GA_RouteHandler}/>
             </Fragment>
         )
     }

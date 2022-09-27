@@ -26,3 +26,19 @@ export function isTokenExpired(token) {
     }
     return !(date.valueOf() > new Date().valueOf());
 }
+
+export const getSignInProfile = (token) => {
+    const decoded = decode(token);
+    if (!decoded) {
+        return {};
+    }
+    const {sub, picture, email, name, given_name, family_name} = decoded;
+    return {
+        googleId: sub,
+        imageUrl: picture,
+        email,
+        name,
+        givenName: given_name,
+        familyName: family_name,
+    }
+}

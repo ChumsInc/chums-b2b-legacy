@@ -19,7 +19,7 @@
         "isolatedModules": true,
         "noEmit": false,
         "jsx": "react",
-        "declaration": true,
+        "declaration": false,
         "noImplicitAny": true,
         "sourceMap": true
     },

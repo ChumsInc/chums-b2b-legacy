@@ -31,7 +31,7 @@ import {
 } from '../constants/stores';
 
 import {auth} from '../utils/IntranetAuthService';
-import {getTokenExpirationDate, getProfile} from "../utils/jwtHelper";
+import {getTokenExpirationDate, getProfile, getSignInProfile} from "../utils/jwtHelper";
 import {getFirstCustomer, getFirstUserAccount, getUserAccount, isValidCustomer} from "../utils/customer";
 import {fetchCustomerAccount, setCustomerAccount} from "./customer";
 import {
@@ -137,6 +137,39 @@ export const selectUserAccountIfNeeded = (user) => (dispatch, getState) => {
         dispatch(setUserAccount({...getUserAccount(user.accounts, firstCustomer.id || firstUserAccount.id || 0)}));
     }
 };
+
+export const signInWithGoogle = (token) => async (dispatch, getState) => {
+    try {
+
+        dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
+        const res = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
+        const {user = {}, roles = [], accounts = []} = res;
+        user.roles = roles;
+        user.accounts = accounts;
+        auth.setToken(token);
+
+        const profile = getSignInProfile(token);
+        auth.setProfile({...profile, chums: {user}});
+        localStore.setItem(STORE_AUTHTYPE, AUTH_GOOGLE);
+        const expirationDate = getTokenExpirationDate(token);
+        const now = new Date();
+        const retry = expirationDate - now - 60000;
+        clearTimeout(reauthTimer);
+
+
+        dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
+        dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
+        dispatch(fetchRepList());
+
+        dispatch(selectUserAccountIfNeeded(user));
+    } catch(err) {
+        console.trace(err);
+        auth.logout();
+        dispatch(setLoggedIn({loggedIn: false}));
+        dispatch({type: FETCH_USER_PROFILE, status: FETCH_FAILURE, message: err.message});
+        dispatch(handleError(err, FETCH_USER_PROFILE));
+    }
+}
 
 export const loginGoogleUser = (googleUser) => (dispatch, getState) => {
     const authResponse = googleUser.getAuthResponse();

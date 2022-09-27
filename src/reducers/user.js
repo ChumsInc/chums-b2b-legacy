@@ -24,6 +24,7 @@ import {auth} from '../utils/IntranetAuthService';
 import localStore from "../utils/LocalStore";
 import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_RECENT_ACCOUNTS, STORE_USER_ACCOUNT} from "../constants/stores";
 import {buildRecentAccounts, getFirstCustomer, getFirstUserAccount, getUserAccount,} from "../utils/customer";
+import jwtDecode from "jwt-decode";
 
 
 const defaults = {
@@ -96,6 +97,22 @@ const token = (state = userDefaults.token, action) => {
         return state;
     }
 };
+
+const tokenExpires = (state = 0, action) => {
+    const {type, status, user, loggedIn, token} = action;
+    switch (type) {
+    case SET_LOGGED_IN:
+        if (!loggedIn) {
+            return 0;
+        }
+        if (token) {
+            const decoded = jwtDecode(token);
+            return decoded?.exp ?? 0;
+        }
+    default:
+        return state;
+    }
+}
 
 const profile = (state = userDefaults.profile, action) => {
     const {type, status, user, props, loggedIn} = action;
@@ -338,6 +355,7 @@ const loading = (state = false, action) => {
 
 export default combineReducers({
     token,
+    tokenExpires,
     profile,
     accounts,
     roles,
