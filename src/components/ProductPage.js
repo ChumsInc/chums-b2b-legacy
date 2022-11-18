@@ -32,7 +32,7 @@ const mapStateToProps = ({user, products, customer, app}) => {
     const season_code = selectedProduct.season_code || (cartItem.additionalData.season || {}).code;
     const season_available = selectedProduct.season_available || (cartItem.additionalData.season || {}).product_available;
     const season_description = selectedProduct.season_description || (cartItem.additionalData.season || {}).description;
-    const season_teaser = selectedProduct.season_teaser || (cartItem.additionalData.season || {}).teaser;
+    const season_teaser = (selectedProduct.season_teaser  && !!selectedProduct.season_active) || (cartItem.additionalData.season || {}).teaser;
 
     return {
         loggedIn,
@@ -216,7 +216,7 @@ class ProductPage extends Component {
                                 <h1 className="product-name">{name}</h1>
                                 <h2 className="product-subtitle">{additionalData.subtitle || ''}</h2>
                             </div>
-                            {!!((cartItem?.additionalData?.season?.active && cartItem?.additionalData?.season?.product_teaser) || season_teaser) && (
+                            {!!((cartItem?.additionalData?.season?.active && cartItem?.additionalData?.season?.product_teaser) || (season_teaser)) && (
                                 <SeasonTeaser
                                     season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
                             )}

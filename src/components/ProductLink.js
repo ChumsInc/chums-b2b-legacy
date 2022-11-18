@@ -18,7 +18,7 @@ const ProductLink = ({title, description, product, imageUrl, className=''}) => {
                 <ProductImage image={imageUrl || product.image} colorCode={product.defaultColor} title={title} altText={title}
                               size="400" className="main-image"/>
                 <div className="product-title">{title}</div>
-                {!!product.season_teaser && <SeasonTeaser season_teaser={product.season_teaser} />}
+                {!!product.season_teaser && !!product.season_active && <SeasonTeaser season_teaser={product.season_teaser} />}
                 <div className="description">
                     <div dangerouslySetInnerHTML={{__html: description}}/>
                 </div>

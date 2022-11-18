@@ -24,7 +24,7 @@ export default class SwatchSet extends Component {
             additionalData: PropTypes.shape({
                 swatch_code: PropTypes.string,
             }),
-            inactiveItem: PropTypes.number,
+            inactiveItem: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]) ,
             productType: PropTypes.string,
             status: PropTypes.oneOfType([PropTypes.number, PropTypes.bool]),
         })),
