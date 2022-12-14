@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {buildPath} from "../utils/fetch";
 import {CONTENT_PATH_PRODUCT_IMAGE} from "../constants/paths";
+import ProductImage from "./ProductImage";
 
 
 const SCROLL_RIGHT = -1;
@@ -26,12 +27,14 @@ const CarouselClassName = {
 };
 
 
-const CarouselIndicator = ({index, active, onClick}) => (
-    <li className={classNames({active})} onClick={() => onClick(index)}/>);
+const CarouselIndicator = ({index, active, onClick, children}) => (
+    <li className={classNames({active})} onClick={() => onClick(index)}>{children}</li>);
 const CarouselIndicators = ({images, active, onClick}) => (
     <ol className="carousel-indicators">
         {images.map((img, index) => (
-            <CarouselIndicator key={index} index={index} active={active === index} onClick={(id) => onClick(id)}/>
+            <CarouselIndicator key={index} index={index} active={active === index} onClick={(id) => onClick(id)}>
+                <img src={buildPath(CONTENT_PATH_PRODUCT_IMAGE, {size: '80', image: img})} width="80" height="80" />
+            </CarouselIndicator>
         ))}
     </ol>
 );
