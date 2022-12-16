@@ -27,7 +27,7 @@
 }
 
 /*!
- * Bootstrap  v5.2.2 (https://getbootstrap.com/)
+ * Bootstrap  v5.2.3 (https://getbootstrap.com/)
  * Copyright 2011-2022 The Bootstrap Authors
  * Copyright 2011-2022 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
@@ -6130,7 +6130,6 @@ textarea.form-control-lg {
   display: block;
 }
 
-/* rtl:begin:ignore */
 .carousel-item-next:not(.carousel-item-start),
 .active.carousel-item-end {
   transform: translateX(100%);
@@ -6141,7 +6140,6 @@ textarea.form-control-lg {
   transform: translateX(-100%);
 }
 
-/* rtl:end:ignore */
 .carousel-fade .carousel-item {
   opacity: 0;
   transition-property: opacity;
@@ -13320,11 +13318,14 @@ body.scrolled .site-header .global-search-padder {
   width: 100%;
   height: auto;
 }
-.product-page .product-panel var .carousel-control-next:hover .carousel-control-next-icon, .product-page .product-minicart-panel var .carousel-control-next:hover .carousel-control-next-icon, .product-page .product-image-panel var .carousel-control-next:hover .carousel-control-next-icon, .product-page .product-info-panel var .carousel-control-next:hover .carousel-control-next-icon {
-  background-color: rgba(255, 255, 255, 0.75);
+.product-page .product-panel .carousel-control-next:hover .carousel-control-next-icon, .product-page .product-minicart-panel .carousel-control-next:hover .carousel-control-next-icon, .product-page .product-image-panel .carousel-control-next:hover .carousel-control-next-icon, .product-page .product-info-panel .carousel-control-next:hover .carousel-control-next-icon {
+  background-color: rgba(255, 255, 255, 0.85);
 }
 .product-page .product-panel .carousel-control-prev:hover .carousel-control-prev-icon, .product-page .product-minicart-panel .carousel-control-prev:hover .carousel-control-prev-icon, .product-page .product-image-panel .carousel-control-prev:hover .carousel-control-prev-icon, .product-page .product-info-panel .carousel-control-prev:hover .carousel-control-prev-icon {
   background-color: rgba(255, 255, 255, 0.85);
+}
+.product-page .product-panel .carousel-indicators, .product-page .product-minicart-panel .carousel-indicators, .product-page .product-image-panel .carousel-indicators, .product-page .product-info-panel .carousel-indicators {
+  position: unset;
 }
 .product-page .product-panel .carousel-indicators li, .product-page .product-minicart-panel .carousel-indicators li, .product-page .product-image-panel .carousel-indicators li, .product-page .product-info-panel .carousel-indicators li {
   cursor: pointer;

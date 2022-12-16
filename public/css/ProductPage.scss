@@ -163,11 +163,10 @@ $product-minicart-panel-width: 200px;
     }
   }
 
-  var
   .carousel-control-next {
     &:hover {
       .carousel-control-next-icon {
-        background-color: rgba(255,255,255,0.75);
+        background-color: rgba(255,255,255,0.85);
       }
       //background: linear-gradient(to left, rgba(0, 0, 0, 0.25), transparent);
     }
@@ -181,6 +180,9 @@ $product-minicart-panel-width: 200px;
     }
   }
 
+  .carousel-indicators {
+    position: unset;
+  }
   .carousel-indicators li {
     //background-color: rgba(0, 0, 0, 0.25);
     cursor: pointer;
