@@ -240,3 +240,4 @@ export const parseColor = (str, colorCode = '') => {
     });
     return str.replace(/\*/g, '');
 };
+
