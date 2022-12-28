@@ -1,4 +1,4 @@
-import React, {Component, Fragment} from 'react';
+import React, {Component, Fragment, useEffect} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Footer from './Footer';
@@ -25,7 +25,7 @@ import Login from "./LoginPage";
 import AlertList from "../common-components/AlertList";
 import HomeV2 from "./HomeV2";
 import ProductRouter from "./ProductRouter";
-import {connect} from 'react-redux';
+import {connect, useDispatch, useSelector} from 'react-redux';
 import LifestyleImage from "./LifestyleImage";
 import {fetchProfile} from '../actions/user';
 import {fetchCustomerAccount} from '../actions/customer';
@@ -44,9 +44,107 @@ import DocumentTitle from "./DocumentTitle";
 import ContentPage from "./ContentPage";
 import InvoicePage from "./InvoicePage";
 import ErrorBoundary from "../common-components/ErrorBoundary";
+import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../selectors/user";
+import {selectCustomerLoading} from "../selectors/customer";
 
 
-class App extends Component {
+const App = () => {
+    const dispatch = useDispatch();
+    const loggedIn = useSelector(selectLoggedIn);
+    const currentCustomer = useSelector(selectCurrentCustomer);
+    const customerLoading = useSelector(selectCustomerLoading);
+    const userLoading = useSelector(selectUserLoading);
+
+    useEffect(() => {
+        if (!loggedIn) {
+            return;
+        }
+        if (!userLoading) {
+            dispatch(fetchProfile());
+        }
+        if (!customerLoading) {
+            dispatch(fetchCustomerAccount({fetchOrders: true, reload: true}));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!loggedIn) {
+            return;
+        }
+        if (!userLoading) {
+            dispatch(fetchProfile());
+        }
+        if (!customerLoading) {
+            dispatch(fetchCustomerAccount({fetchOrders: true, reload: true}));
+        }
+    }, [loggedIn]);
+
+    return (
+        <Fragment>
+            <Route component={Header}/>
+            <main>
+                <DocumentTitle/>
+                <Route component={LifestyleImage}/>
+                <Route path={PATH_HOME} component={HomeV2}/>
+                <Route path="/" exact component={HomeV2}/>
+                <div className="container main-container">
+                    {!!loggedIn && <AppUpdateLocalLogin/>}
+                    <AlertList/>
+
+                    {/* The login and signup paths will redirect away to home when the user is logged in */}
+                    <ErrorBoundary>
+                        <Route path={PATH_LOGIN} component={Login}/>
+                        <Route path={PATH_SIGNUP} component={SignUp}/>
+                        <Route path={PATH_SET_PASSWORD} component={ResetPassword}/>
+                    </ErrorBoundary>
+
+                    <Route path={PATH_PRODUCT} component={ProductRouter}/>
+                    {!loggedIn && (
+                        <Route path={PATH_RESOURCES_CHUMS_REPS}>
+                            <Redirect to={PATH_PAGE_RESOURCES}/>
+                        </Route>
+                    )}
+                    <Route path={PATH_PAGE} component={ContentPage}/>
+                    {!loggedIn && (
+                        <Fragment>
+                            <Route exact path={PATH_SALES_ORDERS} component={Login}/>
+                            <Route exact path={PATH_SALES_ORDER} component={Login}/>
+                        </Fragment>
+                    )}
+                    {!!loggedIn && (
+                        <Fragment>
+                            <Route path={PATH_LOGOUT} component={Logout}/>
+                            <Route exact path={PATH_PROFILE} component={ProfilePage}/>
+                            <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage}/>
+                            <Route path={PATH_PROFILE_ACCOUNT} component={AccountList}/>
+                            <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb}/>
+                            <Route path={PATH_INVOICE} component={OrdersBreadcrumb}/>
+                            <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer}/>
+                            {!!currentCustomer.CustomerNo && (
+                                <Fragment>
+                                    <ErrorBoundary>
+                                        <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage}/>
+                                    </ErrorBoundary>
+                                    <ErrorBoundary>
+                                        <Route exact path={PATH_INVOICE} component={InvoicePage}/>
+
+                                    </ErrorBoundary>
+                                </Fragment>
+                            )}
+                            {!currentCustomer.CustomerNo && (
+                                <Route exact path={PATH_SALES_ORDER} component={AccountList}/>
+                            )}
+                        </Fragment>
+                    )}
+                </div>
+            </main>
+            <Footer/>
+            <Route component={GA_RouteHandler}/>
+        </Fragment>
+    )
+}
+
+class OldApp extends Component {
     static propTypes = {
         loggedIn: PropTypes.bool,
         userAccount: PropTypes.shape({

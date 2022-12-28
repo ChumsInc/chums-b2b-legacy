@@ -8,12 +8,12 @@ import {ORDER_TYPE} from "../constants/orders";
 class OrderFooter extends Component {
     static propTypes = {
         orderType: PropTypes.string,
-        SalesTaxAmt: PropTypes.number,
-        DepositAmt: PropTypes.number,
-        TaxableAmt: PropTypes.number,
-        NonTaxableAmt: PropTypes.number,
-        FreightAmt: PropTypes.number,
-        DiscountAmt: PropTypes.number,
+        SalesTaxAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        DepositAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        TaxableAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        NonTaxableAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        FreightAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        DiscountAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         TaxSchedule: PropTypes.string,
         PaymentType: PropTypes.string,
         ShipVia: PropTypes.string,

@@ -29,7 +29,6 @@ import localStore from "../utils/LocalStore";
 import {STORE_CURRENT_CART} from "../constants/stores";
 import {customerFromState, selectCart} from "./cart";
 import {NEW_CART} from "../constants/orders";
-import {applyPromoCode} from "./promo_codes";
 
 
 export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatch, getState) => {

@@ -33,13 +33,13 @@ const mapDispatchToProps = {
 class InvoiceDetail extends Component {
     static propTypes = {
         Detail: PropTypes.arrayOf(orderDetailPropType),
-        SalesTaxAmt: PropTypes.number,
+        SalesTaxAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         TaxSchedule: PropTypes.string,
-        DepositAmt: PropTypes.number,
-        TaxableSalesAmt: PropTypes.number,
-        NonTaxableSalesAmt: PropTypes.number,
-        FreightAmt: PropTypes.number,
-        DiscountAmt: PropTypes.number,
+        DepositAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        TaxableSalesAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        NonTaxableSalesAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        FreightAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        DiscountAmt: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     };
 
     static defaultProps = {

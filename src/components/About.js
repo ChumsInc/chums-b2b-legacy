@@ -1,13 +1,12 @@
-/**
- * Created by steve on 8/30/2016.
- */
-
 import React from 'react';
+import DocumentTitle from "./DocumentTitle";
 
-export default class About extends React.Component {
-    render() {
-        return (
-            <div>About</div>
-        );
-    }
+const About = () => {
+    return (
+        <div>
+            <DocumentTitle documentTitle="About Chums B2B" />
+            <h2>About Chums B2B</h2>
+        </div>
+    )
 }
+export default About;

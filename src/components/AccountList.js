@@ -7,17 +7,17 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {customerListPropType, repListPropType, userAccountPropType} from "../constants/myPropTypes";
 import {fetchCustomerList, fetchRepList, setUserAccount} from '../actions/user';
-import {setRowsPerPage, setDocumentTitle} from '../actions/app';
+import {setRowsPerPage} from '../actions/app';
 import SortableTable from "../common-components/SortableTable";
 import {compareCustomerAccountNumber, longAccountNumber, longRepNo} from "../utils/customer";
-import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import RepSelect from "./RepSelect";
 import ProgressBar from "./ProgressBar";
 import CustomerLink from "./CustomerLink";
 import Breadcrumb from "./Breadcrumb";
-import {PATH_PROFILE, DOCUMENT_TITLES} from "../constants/paths";
+import {DOCUMENT_TITLES, PATH_PROFILE} from "../constants/paths";
 import ErrorBoundary from "../common-components/ErrorBoundary";
 import TextInput from "../common-components/TextInput";
+import DocumentTitle from "./DocumentTitle";
 
 
 const ACCOUNT_LIST_FIELDS = [
@@ -54,7 +54,6 @@ class AccountList extends Component {
         fetchRepList: PropTypes.func.isRequired,
         setUserAccount: PropTypes.func.isRequired,
         setRowsPerPage: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -92,7 +91,7 @@ class AccountList extends Component {
     }
 
     componentDidMount() {
-        const {match, accounts, userAccount, setUserAccount, fetchCustomerList, customerList, documentTitle} = this.props;
+        const {match, accounts, userAccount, setUserAccount, fetchCustomerList, customerList} = this.props;
         const id = Number(match.params.id || 0);
         if (!!id && userAccount.id !== id) {
             const [acct = userAccount] = accounts
@@ -102,23 +101,15 @@ class AccountList extends Component {
         if (customerList.list.length === 0) {
             fetchCustomerList();
         }
-        const newDocumentTitle = DOCUMENT_TITLES.accountList.replace(':name', userAccount.SalespersonName || '');
-        if (documentTitle !== newDocumentTitle) {
-            this.props.setDocumentTitle(newDocumentTitle);
-        }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const {match, accounts, userAccount, setUserAccount, documentTitle} = this.props;
+        const {match, accounts, userAccount, setUserAccount} = this.props;
         const id = Number(match.params.id || 0);
         if (!!id && userAccount.id !== id) {
             const [acct = userAccount] = accounts
                 .filter(acct => acct.id === id);
             setUserAccount(acct);
-        }
-        const newDocumentTitle = DOCUMENT_TITLES.accountList.replace(':name', userAccount.SalespersonName || '');
-        if (documentTitle !== newDocumentTitle) {
-            this.props.setDocumentTitle(newDocumentTitle);
         }
     }
 
@@ -173,7 +164,15 @@ class AccountList extends Component {
     }
 
     render() {
-        const {customerList, userAccount, repList, location, allowSelectReps, currentCustomer, rowsPerPage} = this.props;
+        const {
+            customerList,
+            userAccount,
+            repList,
+            location,
+            allowSelectReps,
+            currentCustomer,
+            rowsPerPage
+        } = this.props;
         const filteredAccounts = this.filterAccounts();
         const {filter, page, filterRep} = this.state;
         const paths = [
@@ -181,9 +180,12 @@ class AccountList extends Component {
             {title: 'Account List', pathname: location.pathname}
         ];
 
+        const documentTitle = DOCUMENT_TITLES.accountList.replace(':name', userAccount.SalespersonName || '');
+
         return (
             <div>
                 <ErrorBoundary>
+                    <DocumentTitle documentTitle={documentTitle}/>
                     <Breadcrumb paths={paths}/>
                     <h2>Account List: {userAccount.SalespersonName}
                         <small>({longAccountNumber(userAccount)})</small>
@@ -196,11 +198,11 @@ class AccountList extends Component {
                             <TextInput type="search" placeholder="Search" onChange={this.setFilter} value={filter}/>
                         </div>
                         {allowSelectReps && repList.list.length > 0
-                        && (
-                            <div className="col-auto">
-                                <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
-                            </div>
-                        )}
+                            && (
+                                <div className="col-auto">
+                                    <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
+                                </div>
+                            )}
                         <div className="col-auto">
                             <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
                                 Refresh List
@@ -235,7 +237,6 @@ const mapDispatchToProps = {
     setUserAccount,
     fetchRepList,
     setRowsPerPage,
-    setDocumentTitle,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AccountList);

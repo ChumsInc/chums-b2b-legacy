@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 import {fetchCustomerAccount, setCustomerAccount} from '../actions/customer';
-import {setDocumentTitle} from '../actions/app';
 import {fetchSalesOrder} from '../actions/salesOrder';
 import {newCart, selectCart} from '../actions/cart';
 import {matchPropTypes} from "../constants/myPropTypes";
@@ -18,10 +17,8 @@ import OrderHeader from "./OrderHeader";
 import OrderDetail from "./OrderDetail";
 import SendEmailModal from "./SendEmailModal";
 import CheckoutProgress from "./CheckoutProgress";
-import {buildPath} from "../utils/fetch";
-import {PATH_SALES_ORDER} from "../constants/paths";
 import Alert from "../common-components/Alert";
-
+import DocumentTitle from "./DocumentTitle";
 
 
 const mapStateToProps = ({customer, user, salesOrder, cart, app}) => {
@@ -56,7 +53,6 @@ const mapDispatchToProps = {
     newCart,
     selectCart,
     setCustomerAccount,
-    setDocumentTitle,
 };
 
 class SalesOrderPage extends Component {
@@ -90,7 +86,6 @@ class SalesOrderPage extends Component {
         newCart: PropTypes.func.isRequired,
         selectCart: PropTypes.func.isRequired,
         setCustomerAccount: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -128,22 +123,29 @@ class SalesOrderPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {salesOrderNo, match, processing, isCurrentCart, documentTitle, isCart, ARDivisionNo, CustomerNo, currentCustomer, attempts} = this.props;
+        const {
+            salesOrderNo,
+            match,
+            processing,
+            isCurrentCart,
+            documentTitle,
+            isCart,
+            ARDivisionNo,
+            CustomerNo,
+            currentCustomer,
+            attempts
+        } = this.props;
         const {params} = match;
         const {Company, SalesOrderNo} = params;
         const newDocumentTitle = `${isCart ? 'Cart' : 'Order'} Info #${salesOrderNo}`;
 
         if (SalesOrderNo === NEW_CART && !isCurrentCart) {
-            this.props.setDocumentTitle(newDocumentTitle);
             return this.props.selectCart({Company, SalesOrderNo});
         }
         if (SalesOrderNo !== NEW_CART && SalesOrderNo !== salesOrderNo && !processing && attempts < 4) {
             return this.props.fetchSalesOrder(params);
         }
 
-        if (documentTitle !== newDocumentTitle) {
-            this.props.setDocumentTitle(newDocumentTitle);
-        }
 
         // if (isCart && !processing) {
         //     if (currentCustomer.ARDivisionNo !== ARDivisionNo && currentCustomer.CustomerName !== CustomerNo) {
@@ -161,8 +163,10 @@ class SalesOrderPage extends Component {
             return <Redirect to={redirect}/>
         }
 
+        const documentTitle = `${isCart ? 'Cart' : 'Order'} Info #${salesOrderNo}`;
         return (
             <div className="sales-order-page">
+                <DocumentTitle documentTitle={documentTitle}/>
                 <h2>{isCart ? 'Cart' : 'Sales Order'} #{salesOrderNo}</h2>
                 {OrderStatus === 'X' && (
                     <Alert type="alert-danger" title="Note:">

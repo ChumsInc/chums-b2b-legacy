@@ -70,7 +70,7 @@ export const API_PATH_PAST_ORDERS = '/api/sales/b2b/invoices/:Company/:ARDivisio
 export const API_PATH_INVOICES = '/api/sales/b2b/invoices/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_PROMOTE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo-:ShipToCode?';
 export const API_PATH_SALES_ORDER = '/node-sage/api/:Company/salesorder/:SalesOrderNo';
-export const API_PATH_INVOICE = '/node-sage/api/:Company/invoice/:InvoiceType/:InvoiceNo';
+export const API_PATH_INVOICE = '/api/sales/invoice/:Company/:InvoiceType/:InvoiceNo';
 export const API_PATH_SAVE_CART = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
 export const API_PATH_SEND_ORDER_EMAIL = '/node-sage/api/:Company/salesorder/:SalesOrderNo/email';
 export const API_PATH_CART_ACTION = '/sage/b2b/cart-quote.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';

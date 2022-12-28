@@ -40,7 +40,7 @@ export const fetchInvoice = ({Company, InvoiceNo, InvoiceType}) => (dispatch, ge
     dispatch({type: FETCH_INVOICE, status: FETCH_INIT});
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
-            const invoice = res.result;
+            const invoice = res.invoice;
             if (!invoice || !invoice.InvoiceNo) {
                 dispatch(setAlert({message: 'That invoice was not found!', context: FETCH_INVOICE}));
                 return;

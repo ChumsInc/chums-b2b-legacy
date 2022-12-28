@@ -2,8 +2,9 @@ import React, {Component, Fragment} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {fetchCategory} from '../actions/category';
-import {setDocumentTitle, setLifestyle} from '../actions/app';
+import {setLifestyle} from '../actions/app';
 import CategoryPageElement from "./CategoryPageElement";
+import DocumentTitle from "./DocumentTitle";
 
 class CategoryPage extends Component {
 
@@ -18,7 +19,6 @@ class CategoryPage extends Component {
         appLifestyle: PropTypes.string,
 
         fetchCategory: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
         setLifestyle: PropTypes.func.isRequired,
     };
 
@@ -48,9 +48,6 @@ class CategoryPage extends Component {
             return;
         }
 
-        if (!loading && documentTitle !== title) {
-            this.props.setDocumentTitle(title);
-        }
         if (lifestyle !== prevProps.lifestyle && lifestyle !== appLifestyle) {
             this.props.setLifestyle(lifestyle);
         }
@@ -65,6 +62,7 @@ class CategoryPage extends Component {
         const {title, keyword, lifestyle, loading, children, pageText} = this.props;
         return (
             <div className="category-panel">
+                <DocumentTitle documentTitle={title} />
                 <h2>{title}</h2>
                 {!!pageText && <div dangerouslySetInnerHTML={{__html: pageText}}/>}
                 <div className="row">
@@ -95,7 +93,6 @@ const mapStateToProps = ({category, app}) => {
 
 const mapDispatchToProps = {
     fetchCategory,
-    setDocumentTitle,
     setLifestyle,
 };
 

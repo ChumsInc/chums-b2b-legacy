@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 import {fetchCustomerAccount, setCustomerAccount} from '../actions/customer';
-import {setDocumentTitle} from '../actions/app';
 import {fetchInvoice, selectInvoice} from '../actions/invoices';
 import {matchPropTypes} from "../constants/myPropTypes";
 import ProgressBar from "./ProgressBar";
@@ -18,6 +17,7 @@ import SendEmailModal from "./SendEmailModal";
 import CheckoutProgress from "./CheckoutProgress";
 import InvoiceHeader from "./InvoiceHeader";
 import InvoiceDetail from "./InvoiceDetail";
+import DocumentTitle from "./DocumentTitle";
 
 const invoiceTypeDescription = ({InvoiceType}) => {
     switch (InvoiceType) {
@@ -56,7 +56,6 @@ const mapDispatchToProps = {
     fetchInvoice,
     selectInvoice,
     setCustomerAccount,
-    setDocumentTitle,
 };
 
 class InvoicePage extends Component {
@@ -73,7 +72,6 @@ class InvoicePage extends Component {
         fetchAccount: PropTypes.func.isRequired,
         fetchInvoice: PropTypes.func.isRequired,
         setCustomerAccount: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -109,7 +107,6 @@ class InvoicePage extends Component {
         if (!loading && (invoice.InvoiceNo !== InvoiceNo || invoice.InvoiceType !== InvoiceType)) {
             this.props.selectInvoice({Company, InvoiceNo, InvoiceType});
         }
-        this.props.setDocumentTitle(this.documentTitle());
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -118,9 +115,6 @@ class InvoicePage extends Component {
         const newDocumentTitle = this.documentTitle();
         if (!loading && (invoice.InvoiceNo !== InvoiceNo || invoice.InvoiceType !== InvoiceType)) {
             this.props.selectInvoice({Company, InvoiceNo, InvoiceType});
-        }
-        if (documentTitle !== newDocumentTitle) {
-            this.props.setDocumentTitle(this.documentTitle());
         }
     }
 
@@ -135,6 +129,7 @@ class InvoicePage extends Component {
 
         return (
             <div className="sales-order-page">
+                <DocumentTitle documentTitle={this.documentTitle()} />
                 <h2>{this.documentTitle()}</h2>
                 {invoice.InvoiceType !== 'IN' && (<h4>{invoiceTypeDescription(invoice)}</h4>)}
                 {!!invoice.SalesOrderNo && (<h3>Sales Order #{invoice.SalesOrderNo}</h3>)}

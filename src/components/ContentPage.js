@@ -5,7 +5,8 @@ import {contentPageShape} from "../constants/myPropTypes";
 import {fetchPage} from '../actions/page';
 import ProgressBar from "./ProgressBar";
 import ContentPage404 from "./ContentPage404";
-import {setLifestyle, setDocumentTitle} from '../actions/app';
+import {setLifestyle} from '../actions/app';
+import DocumentTitle from "./DocumentTitle";
 
 class ContentPage extends Component {
     static propTypes = {
@@ -24,7 +25,6 @@ class ContentPage extends Component {
         }),
         fetchPage: PropTypes.func.isRequired,
         setLifestyle: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -48,9 +48,6 @@ class ContentPage extends Component {
         if (!loading && lifestyle !== appLifestyle) {
             this.props.setLifestyle(lifestyle);
         }
-        if (!loading && documentTitle !== title) {
-            this.props.setDocumentTitle(title);
-        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -62,16 +59,15 @@ class ContentPage extends Component {
         if (!loading && lifestyle !== appLifestyle) {
             this.props.setLifestyle(lifestyle);
         }
-        if (!loading && documentTitle !== title) {
-            this.props.setDocumentTitle(title);
-        }
     }
 
 
     render() {
         const {loading, keyword, title, content, status} = this.props;
+        const documentTitle = loading ? `Loading: ${title}` : title;
         return (
             <div className={'page-' + keyword}>
+                <DocumentTitle documentTitle={documentTitle} />
                 <h1>{title || (!!loading ? 'Loading' : '')}</h1>
                 {!!loading && <ProgressBar striped={true} />}
                 {status === 404 && <ContentPage404/>}
@@ -90,7 +86,6 @@ const mapStateToProps = ({page, app}) => {
 const mapDispatchToProps = {
     fetchPage,
     setLifestyle,
-    setDocumentTitle,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContentPage) 

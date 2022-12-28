@@ -4,7 +4,6 @@ import Tabs from "../common-components/Tabs";
 import {connect} from 'react-redux';
 import {cartsPropType, locationPathType} from "../constants/myPropTypes";
 import {fetchCustomerAccount} from '../actions/customer';
-import {setDocumentTitle} from '../actions/app';
 import {fetchOpenOrders} from '../actions/salesOrder';
 import {newCart, selectCart} from '../actions/cart';
 import OrdersList from "./OrdersList";
@@ -13,6 +12,7 @@ import {NEW_CART, ORDER_TYPE, ORDER_TYPE_NAMES} from "../constants/orders";
 import {buildPath} from "../utils/fetch";
 import {fetchInvoices} from '../actions/invoices';
 import ErrorBoundary from "../common-components/ErrorBoundary";
+import DocumentTitle from "./DocumentTitle";
 
 const mapStateToProps = ({user, customer, carts, openOrders, cart, app, invoices}) => {
     const {currentCustomer} = user;
@@ -40,7 +40,6 @@ const mapDispatchToProps = {
     fetchInvoices,
     selectCart,
     newCart,
-    setDocumentTitle,
 };
 
 class OrdersContainer extends Component {
@@ -74,7 +73,6 @@ class OrdersContainer extends Component {
         fetchInvoices: PropTypes.func.isRequired,
         selectCart: PropTypes.func.isRequired,
         newCart: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -119,9 +117,6 @@ class OrdersContainer extends Component {
         if (tab !== orderType && ORDER_TYPE[orderType] !== undefined) {
             this.setState({tab: orderType});
         }
-        if (!loading && documentTitle !== ORDER_TYPE_NAMES[tab]) {
-            this.props.setDocumentTitle(ORDER_TYPE_NAMES[tab]);
-        }
     }
 
     reloadOpenOrders() {
@@ -153,6 +148,7 @@ class OrdersContainer extends Component {
         const {carts, cartNo, openOrders, invoices} = this.props;
         return (
             <Fragment>
+                <DocumentTitle documentTitle={ORDER_TYPE_NAMES[tab]} />
                 <Tabs tabList={NAV_ORDERS} onSelect={(tab) => this.setState({tab})} activeTab={tab}/>
                 <ErrorBoundary>
                     {tab === ORDER_TYPE.cart && (

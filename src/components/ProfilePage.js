@@ -2,13 +2,13 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {changeUser, fetchProfile, logout, setUserAccount} from "../actions/user";
-import {setDocumentTitle} from "../actions/app";
 import AccountSelector from "./AccountSelector";
 import {userAccountPropType} from "../constants/myPropTypes";
 import {isSameCustomer} from "../utils/customer";
 import UserProfile from "./UserProfile";
 import ProgressBar from "./ProgressBar";
 import {DOCUMENT_TITLES} from '../constants/paths';
+import DocumentTitle from "./DocumentTitle";
 
 
 
@@ -23,7 +23,6 @@ const mapDispatchToProps = {
     setUserAccount,
     fetchProfile,
     changeUser,
-    setDocumentTitle,
 };
 
 
@@ -42,7 +41,6 @@ class ProfilePage extends Component {
         setUserAccount: PropTypes.func.isRequired,
         fetchProfile: PropTypes.func.isRequired,
         changeUser: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -57,20 +55,6 @@ class ProfilePage extends Component {
         this.onSelect = this.onSelect.bind(this);
     }
 
-    componentDidMount() {
-        const {documentTitle} = this.props;
-        if (documentTitle !== DOCUMENT_TITLES.profile) {
-            this.props.setDocumentTitle(DOCUMENT_TITLES.profile);
-        }
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        const {documentTitle} = this.props;
-        if (documentTitle !== DOCUMENT_TITLES.profile) {
-            this.props.setDocumentTitle(DOCUMENT_TITLES.profile);
-        }
-    }
-
 
     onSelect(id) {
         this.props.setUserAccount(id);
@@ -83,6 +67,7 @@ class ProfilePage extends Component {
 
         return (
             <div className="profile-page">
+                <DocumentTitle documentTitle={DOCUMENT_TITLES.profile} />
                 <UserProfile/>
                 {loading && <ProgressBar striped label="Updating Profile"/>}
                 {!!customerAccounts.length && <h4>Customer Accounts</h4>}

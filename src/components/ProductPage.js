@@ -2,7 +2,6 @@ import React, {Component, createRef} from 'react';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {clearProduct, fetchProduct, selectColor, selectVariant, setCartItemQuantity} from '../actions/products';
-import {setDocumentTitle} from '../actions/app';
 import classNames from "classnames";
 import ProductImage from "./ProductImage";
 import {parseImageFilename2} from '../common/image';
@@ -18,6 +17,7 @@ import HelmetTitle from "./HelmetTitle";
 import {Link, withRouter} from "react-router-dom";
 import SeasonTeaser from "./SeasonTeaser";
 import ErrorBoundary from "../common-components/ErrorBoundary";
+import DocumentTitle from "./DocumentTitle";
 
 
 const mapStateToProps = ({user, products, customer, app}) => {
@@ -64,7 +64,6 @@ const mapDispatchToProps = {
     selectColor,
     setCartItemQuantity,
     clearProduct,
-    setDocumentTitle,
 };
 
 class ProductPage extends Component {
@@ -110,7 +109,6 @@ class ProductPage extends Component {
         selectColor: PropTypes.func.isRequired,
         setCartItemQuantity: PropTypes.func.isRequired,
         clearProduct: PropTypes.func.isRequired,
-        setDocumentTitle: PropTypes.func.isRequired,
     };
 
     static defaultProps = {
@@ -155,9 +153,6 @@ class ProductPage extends Component {
         if (prevProps.keyword !== keyword) {
             this.props.fetchProduct(keyword);
             return;
-        }
-        if (!loading && documentTitle !== product.name) {
-            this.props.setDocumentTitle(product.name);
         }
 
         if (location?.state?.variant) {
@@ -204,7 +199,7 @@ class ProductPage extends Component {
             : parseImageFilename2({image, colorCode: colorCode || defaultColor});
         return (
             <div className={classNames('product-page', {loading})} ref={this.elementRef}>
-                <HelmetTitle title={name} description={product.description}/>
+                <DocumentTitle documentTitle={product?.name ?? ''} />
                 <div className="product-panel">
                     <div className="row">
                         <div className="col-12 col-md-6 col-lg-7">
