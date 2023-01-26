@@ -107,7 +107,7 @@ export default class EmailAddressEditor extends Component {
             : (
                 <FormGroupEmailAddress label={label} colWidth={colWidth}
                                        readOnly={readOnly}
-                                       value={value} onChange={this.onChange}
+                                       value={value ?? ''} onChange={this.onChange}
                                        maxLength={maxLength} required={required}/>
             )
     }
