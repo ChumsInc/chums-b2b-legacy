@@ -1,10 +1,10 @@
 /* Error: Undefined mixin.
  *    ,
- * 24 | /       @include media-breakpoint-up(sm) {
- * 25 | |         flex: 0 0 25%;
- * 26 | \       }
+ * 25 | /       @include media-breakpoint-up(sm) {
+ * 26 | |         flex: 0 0 25%;
+ * 27 | \       }
  *    '
- *   ProductPage.scss 24:7  root stylesheet */
+ *   ProductPage.scss 25:7  root stylesheet */
 
 body::before {
   font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
@@ -14,5 +14,5 @@ body::before {
   padding: 1em;
   margin-bottom: 1em;
   border-bottom: 2px solid black;
-  content: "Error: Undefined mixin.\a    \2577 \a 24 \2502  \250c        @include media-breakpoint-up(sm) {\a 25 \2502  \2502          flex: 0 0 25%;\a 26 \2502  \2514        }\a    \2575 \a   ProductPage.scss 24:7  root stylesheet";
+  content: "Error: Undefined mixin.\a    \2577 \a 25 \2502  \250c        @include media-breakpoint-up(sm) {\a 26 \2502  \2502          flex: 0 0 25%;\a 27 \2502  \2514        }\a    \2575 \a   ProductPage.scss 25:7  root stylesheet";
 }
