@@ -75,13 +75,13 @@ export default class CartItemDetail extends PureComponent {
                     {canViewAvailable && (
                         <tr className={classNames({'table-danger': QuantityAvailable <= 0})}>
                             <th>Available Today</th>
-                            <td>{numeral(QuantityAvailable).format('0,0')}</td>
+                            <td>{numeral(QuantityAvailable / salesUMFactor).format('0,0')} ({salesUM})</td>
                         </tr>
                     )}
                     </tbody>
                 </table>
-                {QuantityAvailable < 0 && (
-                    <Alert type="alert-warning" title="Note:">Product is not available for immediate delivery.</Alert>
+                {QuantityAvailable < (quantity * salesUMFactor) && (
+                    <Alert type="alert-warning" title="Note: " >Product is not available for immediate delivery.</Alert>
                 )}
             </Fragment>
         );
