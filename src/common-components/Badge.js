@@ -21,14 +21,14 @@ export default class Badge extends Component {
     render() {
         const {type, text, backgroundColor, children, url, className} = this.props;
         const badgeClassNames = classNames('badge badge-pill', className, {
-            'badge-primary': type === 'primary',
-            'badge-success': type === 'success',
-            'badge-info': type === 'info' || type === undefined,
-            'badge-secondary': type === 'secondary',
-            'badge-danger': type === 'danger' || type === 'error',
-            'badge-warning': type === 'warning',
-            'badge-light': type === 'light',
-            'badge-dark': type === 'dark',
+            'bg-primary': type === 'primary',
+            'bg-success': type === 'success',
+            'bg-info': type === 'info' || type === undefined,
+            'bg-secondary': type === 'secondary',
+            'bg-danger': type === 'danger' || type === 'error',
+            'bg-warning': type === 'warning',
+            'bg-light': type === 'light',
+            'bg-dark': type === 'dark',
         });
         if (!!url) {
             return (
