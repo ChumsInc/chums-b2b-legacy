@@ -6,6 +6,8 @@ import {itemPrice} from "../utils/customer";
 import CartItemInfo from "./CartItemInfo";
 import CartItemDetail from "./CartItemDetail";
 import AddToCartForm from "./AddToCartForm";
+import Alert from "../common-components/Alert";
+import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 
 
 
@@ -16,6 +18,7 @@ class AddToCartContainer extends Component {
         customerPrice: PropTypes.number,
         comment: PropTypes.string,
         itemAvailability: PropTypes.object,
+        TaxSchedule: PropTypes.string,
 
         getItemAvailability: PropTypes.func,
         onClose: PropTypes.func,
@@ -51,7 +54,7 @@ class AddToCartContainer extends Component {
     }
 
     render() {
-        const {itemAvailability, customerPrice, itemCode, comment} = this.props;
+        const {itemAvailability, customerPrice, itemCode, comment, TaxSchedule} = this.props;
         const {quantity} = this.state;
         const {
             ItemCode, ItemCodeDesc, SalesUnitOfMeasure, StandardUnitOfMeasure, SuggestedRetailPrice,
@@ -62,6 +65,7 @@ class AddToCartContainer extends Component {
                 <div className="my-3">
                     <CartItemInfo ItemCode={ItemCode} ItemCodeDesc={ItemCodeDesc}/>
                 </div>
+                {!TaxSchedule && (<MissingTaxScheduleAlert />)}
                 <AddToCartForm itemCode={itemCode} quantity={quantity} comment={comment}
                                onChangeQuantity={this.onChangeQuantity}
                                onDone={() => this.props.onClose()}/>
@@ -79,11 +83,13 @@ class AddToCartContainer extends Component {
 const mapStateToProps = ({cart, customer}) => {
     const {itemAvailability} = cart;
     const {pricing} = customer;
+    const {TaxSchedule} = customer.account;
     const {ItemCode, PriceCode, StandardUnitPrice} = itemAvailability;
     const customerPrice = itemPrice({pricing, itemCode: ItemCode, priceCode: PriceCode, stdPrice: StandardUnitPrice});
     return {
         itemAvailability,
-        customerPrice
+        customerPrice,
+        TaxSchedule,
     };
 };
 

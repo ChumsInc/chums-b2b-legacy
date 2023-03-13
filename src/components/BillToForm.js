@@ -13,6 +13,7 @@ import ProgressBar from "./ProgressBar";
 import Alert from "../common-components/Alert";
 import FormGroup from "../common-components/FormGroup";
 import ContactFormFields from "./ContactFormFields";
+import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 
 class BillToForm extends Component {
     static propTypes = {
@@ -27,6 +28,7 @@ class BillToForm extends Component {
             EmailAddress: PropTypes.string,
             TelephoneNo: PropTypes.string,
             TelephoneExt: PropTypes.string,
+            TaxSchedule: PropTypes.string,
         }),
         readOnly: PropTypes.bool,
         loading: PropTypes.bool,
@@ -49,6 +51,7 @@ class BillToForm extends Component {
             EmailAddress: '',
             TelephoneNo: '',
             TelephoneExt: '',
+            TaxSchedule: null,
         },
         readOnly: true,
         loading: false,
@@ -102,6 +105,7 @@ class BillToForm extends Component {
                     </div>
                 </div>
 
+                {!account.TaxSchedule && (<MissingTaxScheduleAlert />)}
                 <hr/>
                 <h4>Billing Contact &amp; Address</h4>
                 <form onSubmit={this.onSubmit}>

@@ -47,6 +47,7 @@ class AddToCartForm extends Component {
         setGlobalCart: PropTypes.bool,
         season_code: PropTypes.string,
         season_available: PropTypes.bool,
+        disabled: PropTypes.bool,
 
         onDone: PropTypes.func.isRequired,
         onChangeQuantity: PropTypes.func.isRequired,
@@ -72,6 +73,7 @@ class AddToCartForm extends Component {
         setGlobalCart: false,
         season_code: '',
         season_available: false,
+        disabled: false,
     };
 
 
@@ -126,6 +128,9 @@ class AddToCartForm extends Component {
 
     onAddToCart(ev) {
         ev.preventDefault();
+        if (this.props.disabled) {
+            return;
+        }
         const {itemCode, saveNewCart, saveCartItem, onDone, quantity, cartMessage, setGlobalCart, season_code, season_available} = this.props;
         const cartNo = setGlobalCart ? this.props.cartNo : this.state.cartNo;
         const cartName = setGlobalCart ? this.props.cartName : this.state.cartName;
@@ -159,6 +164,7 @@ class AddToCartForm extends Component {
                 )}
                 <FormGroup colWidth={8} label="Quantity">
                     <CartQuantityInput quantity={quantity} onChange={this.onChangeQuantity}
+                                       disabled={this.props.disabled}
                                        onAddToCart={this.onAddToCart}/>
                 </FormGroup>
                 {loading && <ProgressBar striped height={5}/>}

@@ -1,7 +1,7 @@
 import React from 'react';
 import TextInput from "../common-components/TextInput";
 
-const CartQuantityInput = ({quantity, onChange, onAddToCart, min = 1}) => {
+const CartQuantityInput = ({quantity, onChange, onAddToCart, min = 1, disabled = undefined}) => {
     return (
         <div className="row g-3">
             <div className="col">
@@ -25,7 +25,7 @@ const CartQuantityInput = ({quantity, onChange, onAddToCart, min = 1}) => {
             <div className="col-auto">
                 {/* Handle as a regular button with action */}
                 {!!onAddToCart && (
-                    <button type="submit" className="btn btn-sm btn-primary" disabled={quantity === 0}>
+                    <button type="submit" className="btn btn-sm btn-primary" disabled={disabled || quantity === 0}>
                         <span className="me-3">Add to cart</span><span className="bi-bag-fill" title="Add to cart" />
                     </button>
                 )}

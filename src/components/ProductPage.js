@@ -18,12 +18,15 @@ import {Link, withRouter} from "react-router-dom";
 import SeasonTeaser from "./SeasonTeaser";
 import ErrorBoundary from "../common-components/ErrorBoundary";
 import DocumentTitle from "./DocumentTitle";
+import customer from "../reducers/customer";
+import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 
 
 const mapStateToProps = ({user, products, customer, app}) => {
     const {loggedIn} = user;
     const {product, loading, selectedProduct, colorCode, msrp, salesUM, customerPrice, variantId, cartItem} = products;
     const {pricing, account} = customer;
+    const {TaxSchedule} = account;
     const hasCustomer = !!account.CustomerNo;
     const {documentTitle} = app;
     if (!cartItem.additionalData) {
@@ -55,6 +58,7 @@ const mapStateToProps = ({user, products, customer, app}) => {
         season_available,
         season_description,
         season_teaser,
+        TaxSchedule
     }
 };
 
@@ -103,6 +107,7 @@ class ProductPage extends Component {
         season_active: PropTypes.bool,
         season_available: PropTypes.bool,
         season_description: PropTypes.string,
+        TaxSchedule: PropTypes.string,
 
         fetchProduct: PropTypes.func.isRequired,
         selectVariant: PropTypes.func.isRequired,
@@ -128,6 +133,7 @@ class ProductPage extends Component {
         season_code: null,
         season_available: false,
         season_description: '',
+        TaxSchedule: null,
     };
 
     constructor(props) {
@@ -188,7 +194,7 @@ class ProductPage extends Component {
         const {
             loggedIn, product, selectedProduct, loading, colorCode, msrp, salesUM, variantId,
             cartItem, pricing, hasCustomer, canViewAvailable, season_code, season_available, season_description,
-            season_teaser,
+            season_teaser, TaxSchedule
         } = this.props;
         const {images = [], name = '', additionalData = {}, variants = []} = product;
         const {image, defaultColor, availableForSale, dateAvailable} = selectedProduct;
@@ -276,10 +282,14 @@ class ProductPage extends Component {
                                     {season_description}
                                 </Alert>
                             )}
+                            {!loading && !TaxSchedule && (
+                                <MissingTaxScheduleAlert />
+                            )}
                             {!!loggedIn && !!hasCustomer && !!cartItem.itemCode && !!availableForSale && (
                                 <ErrorBoundary>
                                     <AddToCartForm quantity={quantity} itemCode={cartItem.itemCode} setGlobalCart
                                                    season_code={season_code} season_available={season_available}
+                                                   disabled={!TaxSchedule}
                                                    onChangeQuantity={this.onChangeQuantity} onDone={noop}/>
                                 </ErrorBoundary>
                             )}
