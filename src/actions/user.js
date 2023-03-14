@@ -16,7 +16,7 @@ import {
     FETCH_LOCAL_LOGIN,
     ALERT_TYPES,
     FETCH_USER_SIGNUP,
-    UPDATE_LOGIN, SET_CUSTOMER,
+    UPDATE_LOGIN, SET_CUSTOMER, CLEAR_USER_ACCOUNT,
 } from "../constants/actions";
 
 import {handleError, setAlert} from './app';
@@ -268,6 +268,8 @@ export const logout = () => (dispatch, getState) => {
         });
 };
 
+export const clearUserAccount = () => ({type: CLEAR_USER_ACCOUNT});
+
 export const setUserAccount = (userAccount) => (dispatch, getState) => {
     const {user} = getState();
     if (userAccount.id === user.userAccount.id) {
@@ -316,6 +318,10 @@ export const fetchProfile = () => (dispatch, getState) => {
             const {user = {}, roles = [], accounts = []} = res;
             user.roles = roles;
             user.accounts = accounts;
+            const currentAccount = localStore.getItem(STORE_USER_ACCOUNT);
+            if (!!currentAccount && user.accounts.filter(acct => acct.id === currentAccount.id).length === 0) {
+                dispatch(clearUserAccount())
+            }
             dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
             dispatch(selectUserAccountIfNeeded(user));
         })

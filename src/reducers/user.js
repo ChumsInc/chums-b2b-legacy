@@ -1,7 +1,7 @@
 import {combineReducers} from 'redux';
 import {
     CHANGE_USER,
-    CHANGE_USER_PASSWORD,
+    CHANGE_USER_PASSWORD, CLEAR_USER_ACCOUNT,
     FETCH_CUSTOMER,
     FETCH_FAILURE,
     FETCH_INIT,
@@ -196,6 +196,9 @@ const roles = (state = userDefaults.roles, action) => {
 const userAccount = (state = userDefaults.userAccount, action) => {
     const {type, userAccount, loggedIn} = action;
     switch (type) {
+    case CLEAR_USER_ACCOUNT:
+        localStore.removeItem(STORE_USER_ACCOUNT);
+        return {};
     case SET_USER_ACCOUNT:
         localStore.setItem(STORE_USER_ACCOUNT, userAccount);
         return {...userAccount};
