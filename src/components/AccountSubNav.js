@@ -100,7 +100,9 @@ class AccountSubNav extends Component {
                     // .filter(acct => compareCustomerAccountNumber(acct, currentCustomer) !== 0)
                     .map((acct, index) => {
                         return {
-                            id: `cust-${acct.Company}-${acct.ARDivisionNo}-${acct.CustomerNo}`,
+                            id: !!acct.ShipToCode
+                                ? `cust-${acct.Company}-${acct.ARDivisionNo}-${acct.CustomerNo}-${acct.ShipToCode}`
+                                : `cust-${acct.Company}-${acct.ARDivisionNo}-${acct.CustomerNo}`,
                             title: (<CustomerNavTitle {...acct}/>),
                             url: buildPath(PATH_CUSTOMER_ACCOUNT, acct),
                             priority: index,
