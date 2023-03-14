@@ -84,7 +84,7 @@ export default class AddressFormFields extends Component {
                                 <div className="col-md-6 mb-2 mb-md-0">
                                     {requiresStateCode && (
                                         <StateSelect value={State || ''} countryCode={CountryCode} field="State"
-                                                     required readOnly={readOnly}
+                                                     required readOnly={readOnly} disabled={readOnly}
                                                      autoComplete="address-level1"
                                                      onChange={onChange}/>
                                     )}
@@ -113,7 +113,7 @@ export default class AddressFormFields extends Component {
                         </FormGroup>
                         <FormGroup colWidth={colWidth} label="Country">
                             <CountrySelect value={CountryCode} field="CountryCode" onChange={onChange}
-                                           autoComplete="country-code"
+                                           autoComplete="country-code" disabled={readOnly}
                                            required readOnly={readOnly}/>
                         </FormGroup>
                     </div>
