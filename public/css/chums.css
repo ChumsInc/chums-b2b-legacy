@@ -14154,4 +14154,8 @@ a.external {
   align-items: center;
 }
 
+table.table tr.table-active .btn-outline-secondary, table.table tr.table-active .product-page .product-panel .variants-container .variant, .product-page .product-panel .variants-container table.table tr.table-active .variant, table.table tr.table-active .product-page .product-info-panel .variants-container .variant, .product-page .product-info-panel .variants-container table.table tr.table-active .variant, table.table tr.table-active .product-page .product-image-panel .variants-container .variant, .product-page .product-image-panel .variants-container table.table tr.table-active .variant, table.table tr.table-active .product-page .product-minicart-panel .variants-container .variant, .product-page .product-minicart-panel .variants-container table.table tr.table-active .variant {
+  background-color: var(--bs-btn-bg);
+}
+
 /*# sourceMappingURL=chums.css.map */

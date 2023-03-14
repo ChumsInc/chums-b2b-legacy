@@ -496,3 +496,9 @@ a {
   }
 }
 
+
+table.table tr.table-active {
+  .btn-outline-secondary {
+    background-color: var(--bs-btn-bg);
+  }
+}
