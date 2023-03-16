@@ -129,7 +129,7 @@ export default class OrdersList extends Component {
     };
 
     state = {
-        page: 1,
+        page: 0,
         rowsPerPage: 10,
         filter: '',
     };
@@ -175,14 +175,19 @@ export default class OrdersList extends Component {
                 {!!loading && <ProgressBar striped={true} className="mb-1"/>}
                 <OrderFilter filter={filter}
                              onChange={(filter) => this.setState({filter})}
-                             allowNew={orderType === ORDER_TYPE.cart} onNew={onNewCart}
-                             onReload={this.onReload}/>
+                             onReload={this.onReload}>
+                    {orderType === ORDER_TYPE.cart && (
+                        <div className="col-auto">
+                            <button className="btn btn-sm btn-outline-primary mr-1" onClick={onNewCart}>New Cart</button>
+                        </div>
+                    )}
+                </OrderFilter>
                 <SortableTable data={filteredList} fields={fields}
                                responsive
                                keyField={keyField[orderType]}
                                defaultSort={{field: defaultSort[orderType], asc: false}}
                                rowsPerPage={rowsPerPage}
-                               onChangeRowsPerPage={(rowsPerPage) => this.setState({rowsPerPage, page: 1})}
+                               onChangeRowsPerPage={(rowsPerPage) => this.setState({rowsPerPage, page: 0})}
                                page={page} onChangePage={(page) => this.setState({page})}
                                onChangeSort={() => this.setState({page: 1})}
                 />
