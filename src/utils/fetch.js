@@ -41,7 +41,7 @@ function checkStatus(response) {
 
 }
 
-const getAuthHeader = () => {
+export const getAuthHeader = () => {
     const token = auth.getToken();
     return token ? {Authorization: `Bearer ${token}`} : {};
 };
@@ -72,11 +72,27 @@ export const fetchOptions = {
             body: JSON.stringify(object)
         };
     },
+    PutJSON: (object) => {
+        return {
+            credentials: 'same-origin',
+            method: 'put',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                ...getAuthHeader(),
+            },
+            body: JSON.stringify(object)
+        };
+    },
     Delete: () => {
         return {
             credentials: 'same-origin',
             method: 'DELETE',
-            ...getAuthHeader(),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                ...getAuthHeader(),
+            }
         };
     }
 };
@@ -176,6 +192,35 @@ export function fetchPOST(url, data) {
     });
 }
 
+export function fetchPUT(url, data) {
+    return new Promise((resolve, reject) => {
+        fetch(url, fetchOptions.PutJSON(data))
+            .then(response => checkStatus(response))
+            .then(response => response.json())
+            .then(response => {
+                if (response.error) {
+                    const err = new Error(response.error);
+                    if (response.name) {
+                        err.name = response.name;
+                    }
+                    if (response.debug) {
+                        err.debug = response.debug;
+                    }
+                    console.log(response.name || '', response.error);
+                    return reject(err);
+                }
+                resolve(response);
+            })
+            .catch(err => {
+                if (err.message.toLowerCase() === 'failed to fetch') {
+                    err.message = 'Failed to fetch; Perhaps your connection is down?';
+                }
+                console.log(err.message);
+                reject(err);
+            });
+    });
+}
+
 export function fetchDELETE(url) {
     return new Promise((resolve, reject) => {
         fetch(url, fetchOptions.Delete())
@@ -204,3 +249,5 @@ export function fetchDELETE(url) {
             });
     });
 }
+
+

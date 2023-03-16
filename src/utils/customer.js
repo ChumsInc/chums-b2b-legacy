@@ -196,3 +196,8 @@ export const shipToAddressFromBillingAddress = (customer) => {
         EmailAddress,
     }
 };
+
+
+export const customerUserSorter = (a, b) => {
+    return a.email.toLowerCase() > b.email.toLowerCase() ? 1 : -1;
+}

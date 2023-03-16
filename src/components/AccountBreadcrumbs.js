@@ -20,7 +20,9 @@ const AccountBreadcrumbs = () => {
                 pathname: PATH_PROFILE_ACCOUNT.replace(':id', userAccount.id)
             }
             : null,
-        {title: `${customerAccount.ARDivisionNo}-${customerAccount.CustomerNo}`, pathname: location.pathname},
+        !!customerAccount
+            ? {title: `${customerAccount.ARDivisionNo}-${customerAccount.CustomerNo}`, pathname: location.pathname}
+            : null,
     ].filter(p => p !== null);
 
     if (countUserAccounts < 2) {

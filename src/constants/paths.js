@@ -54,6 +54,7 @@ export const API_PATH_USER_SIGN_UP = '/api/user/b2b/signup/:email';
 export const API_PATH_HOME_SLIDES = '/api/features/slides/active';
 
 // account and account list paths
+export const API_PATH_ACCOUNT_USER = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo/:id';
 export const API_PATH_ACCOUNT_USERS = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_CUSTOMER = '/api/sales/b2b/account/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_CUSTOMER_LIST = '/api/sales/b2b/account-list/:Company/:SalespersonDivisionNo-:SalespersonNo';

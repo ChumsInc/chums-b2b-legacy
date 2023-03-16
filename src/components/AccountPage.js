@@ -6,7 +6,7 @@ import {setCustomerTab} from '../actions/app';
 import Tabs from "../common-components/Tabs";
 import ShipToForm from "./ShipToForm";
 import {CUSTOMER_TABS} from "../constants/app";
-import AccountUsers from "./AccountUsers";
+import AccountUsers from "./AccountUsers/AccountUsers";
 import AccountBreadcrumbs from "./AccountBreadcrumbs";
 import {selectCustomerAccount} from "../selectors/customer";
 import {selectCustomerTab} from "../selectors/app";
@@ -20,7 +20,7 @@ const AccountPage = () => {
     const params = useParams();
 
     useEffect(() => {
-        if (params.ARDivisionNo === customer?.ARDivisionNo && params.CustomerNo === customer.CustomerNo) {
+        if (params.ARDivisionNo === customer?.ARDivisionNo && params.CustomerNo === customer?.CustomerNo) {
             return;
         }
         dispatch(setCustomerAccount({...params}))

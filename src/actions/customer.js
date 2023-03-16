@@ -1,4 +1,4 @@
-import {buildPath, fetchGET, fetchPOST} from '../utils/fetch';
+import {buildPath, fetchDELETE, fetchGET, fetchPOST, fetchPUT} from '../utils/fetch';
 import {
     CANCEL_CREATE_ACCOUNT_USER,
     CHANGE_ACCOUNT_FIELD,
@@ -24,6 +24,7 @@ import {
 } from "../utils/customer";
 import {fetchOpenOrders} from "./salesOrder";
 import {
+    API_PATH_ACCOUNT_USER,
     API_PATH_ACCOUNT_USERS,
     API_PATH_CUSTOMER,
     API_PATH_SAVE_ADDRESS,
@@ -34,8 +35,9 @@ import {defaultCartItem, getPrices} from "../utils/products";
 import localStore from "../utils/LocalStore";
 import {STORE_RECENT_ACCOUNTS} from "../constants/stores";
 import {setUserAccount} from "./user";
-import {fetchValidPromoCodes} from "./promo_codes";
 import {fetchInvoices} from "./invoices";
+import {selectLoggedIn} from "../selectors/user";
+
 
 export const changeAccount = (props) => ({type: CHANGE_ACCOUNT_FIELD, props});
 export const changeShipTo = (shipToCode, props) => ({type: CHANGE_SHIPTO, shipToCode, props});
@@ -60,6 +62,31 @@ export const saveUser = (user) => (dispatch, getState) => {
             dispatch(handleError(err, FETCH_ACCOUNT_USERS));
         })
 };
+
+export const updateUser = (user) => async (dispatch, getState) => {
+    try {
+        const {customer} = getState();
+        const {Company, ARDivisionNo, CustomerNo} = customer.account;
+        const url = buildPath(API_PATH_ACCOUNT_USER, {Company, ARDivisionNo, CustomerNo, id: user.id});
+        const {users} = await fetchPUT(url, user);
+        dispatch({type: FETCH_ACCOUNT_USERS, status: FETCH_SUCCESS, users});
+    } catch (err) {
+        dispatch({type: FETCH_ACCOUNT_USERS, status: FETCH_FAILURE});
+        dispatch(handleError(err, FETCH_ACCOUNT_USERS));
+    }
+}
+export const deleteUser = (user) => async (dispatch, getState) => {
+    try {
+        const {customer} = getState();
+        const {Company, ARDivisionNo, CustomerNo} = customer.account;
+        const url = buildPath(API_PATH_ACCOUNT_USER, {Company, ARDivisionNo, CustomerNo, id: user.email});
+        const {users} = await fetchDELETE(url);
+        dispatch({type: FETCH_ACCOUNT_USERS, status: FETCH_SUCCESS, users});
+    } catch (err) {
+        dispatch({type: FETCH_ACCOUNT_USERS, status: FETCH_FAILURE});
+        dispatch(handleError(err, FETCH_ACCOUNT_USERS));
+    }
+}
 
 
 export const setCustomerAccount = (customer) => (dispatch, getState) => {
@@ -121,14 +148,16 @@ export const fetchCustomerAccount = ({fetchOrders = false, force = false} = {}) 
 };
 
 
-export const saveBillingAddress = () => (dispatch, getState) => {
-    const {customer} = getState();
-    const {account, company: Company} = customer;
+export const saveBillingAddress = (account) => (dispatch, getState) => {
+    const state = getState();
+    if (!selectLoggedIn(state)) {
+        return;
+    }
     const {
         ARDivisionNo, CustomerNo, CustomerName, AddressLine1, AddressLine2, AddressLine3,
         City, State, ZipCode, CountryCode, EmailAddress, Reseller, TelephoneNo, TelephoneExt
     } = account;
-    const url = buildPath(API_PATH_SAVE_ADDRESS, {Company: sageCompanyCode(Company), ARDivisionNo, CustomerNo});
+    const url = buildPath(API_PATH_SAVE_ADDRESS, {Company: sageCompanyCode('CHI'), ARDivisionNo, CustomerNo});
     const data = {
         Name: CustomerName,
         AddressLine1,
@@ -153,18 +182,17 @@ export const saveBillingAddress = () => (dispatch, getState) => {
         });
 };
 
-export const saveShipToAddress = (shipToCode) => (dispatch, getState) => {
-    const {customer} = getState();
-    const {Company} = customer.account;
-    const [{
+export const saveShipToAddress = (shipToAddress) => (dispatch, getState) => {
+    const state = getState();
+    if (!selectLoggedIn(state) || !shipToAddress.ShipToCode) {
+        return;
+    }
+    const {
         ARDivisionNo, CustomerNo, ShipToCode, ShipToName, ShipToAddress1, ShipToAddress2 = '', ShipToAddress3 = '',
         ShipToCity, ShipToState, ShipToZipCode, ShipToCountryCode, TelephoneNo, TelephoneExt = '', EmailAddress,
         ContactCode = '', Reseller = 'N',
-    }] = customer.shipToAddresses.filter(st => st.ShipToCode === shipToCode);
-    if (!ShipToCode) {
-        return;
-    }
-    const url = buildPath(API_PATH_SAVE_SHIPTO_ADDRESS, {Company, ARDivisionNo, CustomerNo, ShipToCode});
+    } = shipToAddress;
+    const url = buildPath(API_PATH_SAVE_SHIPTO_ADDRESS, {Company: 'CHI', ARDivisionNo, CustomerNo, ShipToCode});
     const data = {
         Name: ShipToName,
         AddressLine1: ShipToAddress1,

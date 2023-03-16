@@ -14,6 +14,9 @@
   "author": "Steve Montgomery, Chums Inc",
   "license": "ISC",
   "dependencies": {
+    "@mui/base": "^5.0.0-alpha.121",
+    "@reduxjs/toolkit": "^1.9.3",
+    "b2b-types": "github:UtahGooner/b2b-types",
     "bootstrap": "^5.0.2",
     "bootstrap-icons": "^1.5.0",
     "classnames": "^2.2.6",
