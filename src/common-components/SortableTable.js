@@ -7,6 +7,7 @@ import FormGroup from "./FormGroup";
 import {getClassName, noop} from '../utils/general';
 import SortableTableHeader from "./SortableTableHeader";
 import SortableTableFooter from "./SortableTableFooter";
+import TablePagination from "./TablePagination";
 
 
 const TableRowField = ({col, row}) => {
@@ -94,7 +95,7 @@ export default class SortableTable extends Component {
             field: '',
             asc: true
         },
-        page: 1,
+        page: 0,
         rowsPerPage: 25,
         filtered: false,
         rowClassName: '',
@@ -110,7 +111,7 @@ export default class SortableTable extends Component {
             field: '',
             asc: true,
         },
-        page: 1,
+        page: 0,
         perPage: 25,
     };
 
@@ -185,11 +186,12 @@ export default class SortableTable extends Component {
                 <div className={classNames({'table-responsive': !!responsive})}>
                     <table className={classNames("table table-sm table-hover table-sortable table-sticky", className)}>
                         <SortableTableHeader fields={fields} sort={sort} onClickSort={this.onClickSort}/>
-                        {!!hasFooter &&
-                        <SortableTableFooter fields={fields} footerData={footerData} page={page} pages={pages}/>}
+                        {!!hasFooter && (
+                            <SortableTableFooter fields={fields} footerData={footerData} page={page} pages={pages}/>
+                        )}
                         <tbody>
                         {rows
-                            .filter((row, index) => Math.ceil((index + 1) / rowsPerPage) === page)
+                            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                             .map(row => {
                                 const key = typeof keyField === "function" ? keyField(row) : row[keyField];
                                 return (
@@ -202,15 +204,13 @@ export default class SortableTable extends Component {
                         </tbody>
                     </table>
                 </div>
-                <div className="page-display form-inline">
-                    <RowsPerPage value={rowsPerPage} onChange={this.props.onChangeRowsPerPage}/>
-                    <FormGroup label="Pages">
-                        {rows.length > 0 && (
-                            <Pagination activePage={Math.min(page, pages)} pages={pages}
-                                        onSelect={this.handlePageChange} filtered={filtered}/>
-                        )}
-                        {rows.length === 0 && <strong>No records.</strong>}
-                    </FormGroup>
+                <div className="page-display row g-3">
+                    <div className="col-auto">
+                        <RowsPerPage value={rowsPerPage} onChange={this.props.onChangeRowsPerPage} className="f"/>
+                    </div>
+                    <div className="col">
+                        <TablePagination page={page} onChangePage={this.handlePageChange} rowsPerPage={rowsPerPage} count={data.length} showFirst showLast />
+                    </div>
                 </div>
             </Fragment>
         );
