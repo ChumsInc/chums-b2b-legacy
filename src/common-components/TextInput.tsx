@@ -1,15 +1,21 @@
-import React, {Fragment} from 'react';
+import React, {ChangeEvent, Fragment, InputHTMLAttributes} from 'react';
 import classNames from 'classnames';
 import {noop} from '../utils/general';
+import {TextInputChangeHandler} from "../generic-types";
 
-
-const TextInput = React.forwardRef((props, ref) => {
-    const {onChange = noop, field, className = '', helpText = null, ...rest} = props;
+export interface TextInputProps<T = any> extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+    field: keyof T|null;
+    onChange: (args:TextInputChangeHandler<T>) => void;
+    helpText?:string|null;
+}
+const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>((props, ref) => {
+    const {type, value, onChange = noop, field, className = '', helpText = null, ...rest} = props;
     const _className = {
         'form-control': !className.split(' ').includes('form-control-plaintext'),
         'form-control-sm': !className.split(' ').includes('form-control-lg'),
     };
-    const changeValue = (ev) => {
+
+    const changeValue = (ev:ChangeEvent<HTMLInputElement>) => {
         switch (props.type) {
         case 'number':
             return Number(ev.target.value);
@@ -23,10 +29,10 @@ const TextInput = React.forwardRef((props, ref) => {
 
     const pattern = rest.pattern || "^[\x20-\xFF]*$"; // matches space to ÿ (seems to be the valid limit in Sage)
     let invalidCharacterMessage = null;
-    if (!rest.pattern) {
+    if (type === 'string' && !rest.pattern) {
         try {
             const re = new RegExp(pattern);
-            if (!re.test(props.value)) {
+            if (typeof value === 'string' && !re.test(value)) {
                 invalidCharacterMessage = (<span><strong>Yikes:</strong> Your input contains invalid characters</span>);
             }
         } catch(err) {
@@ -35,13 +41,13 @@ const TextInput = React.forwardRef((props, ref) => {
 
 
     return (
-        <Fragment>
-            <input className={classNames(_className, className)}
+        <>
+            <input type={type} value={value} className={classNames(_className, className)}
                    pattern={pattern}
                    onChange={ev => onChange({field, value: changeValue(ev)})} ref={ref} {...rest} />
             {helpText && <small className="form-text text-muted">{helpText}</small>}
             {invalidCharacterMessage && <small className="form-text text-danger">{invalidCharacterMessage}</small>}
-        </Fragment>
+        </>
     );
 });
 
