@@ -4,8 +4,8 @@ import FormGroup from "./FormGroup";
 
 const RowsPerPage = ({value = 25, onChange}) => {
     return (
-        <FormGroup label="Rows per Page" >
-            <Select value={value} field="rowsPerPage" onChange={({value}) => onChange(Number(value))}>
+        <FormGroup label="Rows per Page" inline>
+            <Select value={value} className="" field="rowsPerPage" onChange={({value}) => onChange(Number(value))}>
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
