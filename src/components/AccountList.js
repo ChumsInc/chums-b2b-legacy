@@ -41,7 +41,6 @@ class AccountList extends Component {
         userAccount: userAccountPropType,
         customerList: customerListPropType,
         repList: repListPropType,
-        allowSelectReps: PropTypes.bool,
         currentCustomer: PropTypes.shape({
             Company: PropTypes.string,
             ARDivisionNo: PropTypes.string,
@@ -78,7 +77,7 @@ class AccountList extends Component {
 
     state = {
         filter: '',
-        page: 1,
+        page: 0,
         rowsPerPage: 10,
         filterRep: '',
     };
@@ -117,6 +116,9 @@ class AccountList extends Component {
     onLoadAccountList() {
         const {userAccount, repList, fetchCustomerList, fetchRepList, allowSelectReps} = this.props;
         const {filterRep} = this.state;
+        if (filterRep) {
+            return fetchCustomerList(filterRep);
+        }
         if (allowSelectReps) {
             const [rep = userAccount] = repList.list.filter(rep => longRepNo(rep) === filterRep);
             fetchCustomerList(rep);
@@ -128,23 +130,21 @@ class AccountList extends Component {
 
 
     onSelectRep({value}) {
-        const {userAccount, repList, fetchCustomerList} = this.props;
-        const [rep = userAccount] = repList.list.filter(rep => longRepNo(rep) === value);
-        fetchCustomerList(rep);
         this.setState({filterRep: value});
     }
 
     setFilter({value}) {
-        this.setState({filter: value, page: 1});
+        this.setState({filter: value, page: 0});
     }
 
     filterAccounts() {
         const {customerList} = this.props;
-        const {filter} = this.state;
+        const {filter, filterRep} = this.state;
         try {
             const filterRegex = new RegExp('\\b' + filter, 'i');
             return customerList
                 .list
+                .filter(acct => !filterRep || acct.SalespersonNo === filterRep)
                 .filter(acct => {
                     return this.filter === ''
                         || filterRegex.test(acct.key)
@@ -167,9 +167,7 @@ class AccountList extends Component {
         const {
             customerList,
             userAccount,
-            repList,
             location,
-            allowSelectReps,
             currentCustomer,
             rowsPerPage
         } = this.props;
@@ -197,12 +195,9 @@ class AccountList extends Component {
                         <div className="col">
                             <TextInput type="search" placeholder="Search" onChange={this.setFilter} value={filter}/>
                         </div>
-                        {allowSelectReps && repList.list.length > 0
-                            && (
-                                <div className="col-auto">
-                                    <RepSelect reps={repList.list} value={filterRep} onSelect={this.onSelectRep}/>
-                                </div>
-                            )}
+                        <div className="col-auto">
+                            <RepSelect value={filterRep} onChange={this.onSelectRep}/>
+                        </div>
                         <div className="col-auto">
                             <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
                                 Refresh List
@@ -227,9 +222,8 @@ class AccountList extends Component {
 
 const mapStateToProps = ({user, app}) => {
     const {userAccount, customerList, repList, accounts, currentCustomer} = user;
-    const allowSelectReps = /[%_]+/.test(userAccount.SalespersonNo);
     const {rowsPerPage, documentTitle} = app;
-    return {userAccount, customerList, repList, accounts, allowSelectReps, currentCustomer, rowsPerPage, documentTitle};
+    return {userAccount, customerList, repList, accounts, currentCustomer, rowsPerPage, documentTitle};
 };
 
 const mapDispatchToProps = {

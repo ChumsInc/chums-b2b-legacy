@@ -337,11 +337,13 @@ export const fetchProfile = () => (dispatch, getState) => {
 export const fetchRepList = () => (dispatch, getState) => {
     const {user} = getState();
     const {userAccount, roles} = user;
-    if (!userAccount || !userAccount.Company) {
+    if (!userAccount || !userAccount.ARDivisionNo) {
+        console.log('fetchRepList()', userAccount)
         return;
     }
-    const [role] = roles.filter(role => role.role === 'rep');
+    const [role] = roles.filter(role => role === 'rep' || role.role === 'rep');
     if (!role) {
+        console.log('fetchRepList()', roles)
         return;
     }
 

@@ -37,7 +37,9 @@ const defaults = {
     userAccount: {},
     customer: {},
     customerList: {list: []},
-    repList: {list: []},
+    repList: {
+        list: []
+    },
     authType: '',
 };
 
@@ -259,25 +261,54 @@ const customerList = (state = defaults.customerList, action) => {
     }
 };
 
-const repList = (state = defaults.repList, action) => {
+const repListValues = (state = defaults.repList.list ?? [], action) => {
     const {type, status, list, loggedIn} = action;
     switch (type) {
     case FETCH_REP_LIST:
-        return {
-            ...state,
-            loading: status === FETCH_INIT,
-            list: status === FETCH_SUCCESS ? [...list] : state.list,
-        };
+        return status === FETCH_SUCCESS ? [...list] : state;
     case RECEIVE_REP_LIST:
-        return {list: [...list]};
+        return [...list];
     case FETCH_REP_LIST_FAILURE:
-        return {list: []};
+        return []
     case SET_LOGGED_IN:
         return loggedIn === true ? state : defaults.repList;
     default:
         return state;
+
     }
-};
+}
+
+const repListLoading = (state = false, action) => {
+    const {type, status} = action;
+    switch (type) {
+    case FETCH_REP_LIST:
+        return status === FETCH_INIT;
+    case RECEIVE_REP_LIST:
+        return false
+    case FETCH_REP_LIST_FAILURE:
+        return false
+    default:
+        return state;
+    }
+}
+
+const repListLoaded = (state = false, action) => {
+    const {type, status} = action;
+    switch (type) {
+    case FETCH_REP_LIST:
+        return status === FETCH_SUCCESS;
+    case RECEIVE_REP_LIST:
+        return true
+    default:
+        return state;
+    }
+
+}
+const repList = combineReducers({
+    list: repListValues,
+    loading: repListLoading,
+    loaded: repListLoaded,
+});
 
 const signUp = (state = {}, action) => {
     const {type, status, props = {}} = action;
