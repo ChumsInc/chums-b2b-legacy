@@ -10,7 +10,7 @@ export interface OrderFilterProps {
 }
 
 const OrderFilter = ({filter = '', onChange, onReload, children}: OrderFilterProps) => {
-    const changeHandler = (arg: TextInputChangeHandler) => onChange(arg.value.toString());
+    const changeHandler = (arg: TextInputChangeHandler) => onChange(arg.value?.toString() ?? '');
 
     return (
         <div className="row g-3 mb-1">

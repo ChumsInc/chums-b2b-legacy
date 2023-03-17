@@ -4,8 +4,8 @@ import {orderHeaderPropType, paymentCardShape, shipToAddressPropType} from "../c
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import ShipToSelect from "./ShipToSelect";
 import FormGroup from "../common-components/FormGroup";
-import DatePicker from "./DatePicker";
-import {ShipToAddress} from "./Address";
+import DatePicker from "../common-components/DatePicker";
+import ShipToAddress from "./Address/ShipToAddress";
 import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "../constants/orders";
 import PaymentSelect from "./PaymentSelect";
 import parseDate from 'date-fns/parseJSON';
@@ -43,6 +43,8 @@ import Button, {
 } from "../common-components/Button";
 import ConfirmDeleteCart from "./ConfirmDeleteCart";
 import MaterialIcon from "../common-components/MaterialIcon";
+import OrderHeaderShipTo from "./OrderHeaderShipTo";
+import CustomerPONoField from "./Cart/CustomerPONoField";
 
 const SaveChangedButton = ({changed, onClick, disabled}) => {
     return (
@@ -249,10 +251,10 @@ class OrderHeader extends Component {
         this.props.setShippingAccount(props);
     }
 
-    onChangeShipTo({value}) {
+    onChangeShipTo(shipToCode) {
         // we can ignore the extra props since this.props.saveCart only sends changes to Cart Name, ShipToCode,
         // and ConfirmTo. After saving the cart, the reloaded sales order replaces the existing data.
-        const [props] = this.props.shipToAddresses.filter(st => st.ShipToCode === value);
+        const [props] = this.props.shipToAddresses.filter(st => st.ShipToCode === shipToCode);
         this.onChange(props);
     }
 
@@ -336,8 +338,6 @@ class OrderHeader extends Component {
         const isPast = orderType === ORDER_TYPE.past;
         const isNewCart = isCart && SalesOrderNo === NEW_CART;
 
-        const poLabel = isCart && cartProgress < CART_PROGRESS_STATES.payment ? 'Cart Name' : 'Purchase Order #';
-
         const cancelHidden = (isCart && cartProgress < CART_PROGRESS_STATES.delivery)
             || UDF_CANCEL_DATE === null
             || parseDate(UDF_CANCEL_DATE).valueOf() === 0;
@@ -367,11 +367,7 @@ class OrderHeader extends Component {
                             </FormGroup>
                         )}
                         {(!isCart || cartProgress === CART_PROGRESS_STATES.cart) && (
-                            <FormGroupTextInput colWidth={8} label={poLabel} onChange={this.onChangeField}
-                                                maxLength={30}
-                                                value={CustomerPONo || ''} field="CustomerPONo" readOnly={!isCart}>
-                                {CustomerPONo === '' ? (<Alert message="A cart name is required"/>) : ''}
-                            </FormGroupTextInput>
+                            <CustomerPONoField />
                         )}
                         {isOpen && (
                             <FormGroup colWidth={8} label="Ship Date">
@@ -395,13 +391,7 @@ class OrderHeader extends Component {
                         )}
                     </div>
                     <div className="col-md-6">
-                        <FormGroup colWidth={8} label="Ship To">
-                            <ShipToSelect value={ShipToCode || ''} defaultName="Default Address" readOnly={!isCart}
-                                          onChange={this.onChangeShipTo}/>
-                        </FormGroup>
-                        <FormGroup colWidth={8} label="Address">
-                            <ShipToAddress {...header} className="form-control form-control-sm"/>
-                        </FormGroup>
+                        <OrderHeaderShipTo />
 
                         {isPast && (
                             <FormGroup colWidth={8} label="Invoice Date / No">
