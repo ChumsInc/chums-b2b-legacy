@@ -16,7 +16,7 @@ export default class FormGroup extends PureComponent {
 
     static defaultProps = {
         inline: false,
-        colWidth: 0,
+        colWidth: 8,
         className: '',
         labelClassName: '',
         hidden: false,
