@@ -1,10 +1,14 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import Alert from "../common-components/Alert";
+import {selectCustomerAccount, selectCustomerLoading} from "../selectors/customer";
 
 const MissingTaxScheduleAlert = () => {
-    const customer = useSelector(state => state.customer.account);
-    if (!customer || !!customer.TaxSchedule) {
+    const customer = useSelector(selectCustomerAccount);
+    const loading = useSelector(selectCustomerLoading);
+
+
+    if (!customer || !!customer.TaxSchedule || loading) {
         return null;
     }
     return (
