@@ -1,18 +1,13 @@
-/**
- * Created by steve on 1/31/2017.
- */
-
-import React, { Component, Fragment } from 'react';
-import PropTypes from 'prop-types';
+import React, {Component} from "react";
+import PropTypes from "prop-types";
+import {noop} from "../utils/general";
+import parse from "date-fns/parseJSON";
+import parseISO from "date-fns/parseISO";
+import isDate from "date-fns/isDate";
 import classNames from 'classnames';
 import format from 'date-fns/format';
-import parse from 'date-fns/parseJSON';
-import parseISO from 'date-fns/parseISO';
-import isDate from 'date-fns/isDate';
-import {noop} from "../utils/general";
 
-
-export default class DatePicker extends Component {
+export default class OldDatePicker extends Component {
     static propTypes = {
         onChange: PropTypes.func.isRequired,
         value: PropTypes.oneOfType([PropTypes.string, PropTypes.number, PropTypes.instanceOf(Date)]),
