@@ -57,6 +57,7 @@ class LoginLocal extends Component {
 
                 {forgotPassword && (<h3>Reset Your Password</h3>)}
                 <FormGroupTextInput onChange={this.onChange} value={email} field="email" type="email"
+                                    autoComplete="username"
                                     label="E-Mail Address" placeholder="Your email address" required/>
                 {!forgotPassword && (
                     <FormGroup label="Password">
