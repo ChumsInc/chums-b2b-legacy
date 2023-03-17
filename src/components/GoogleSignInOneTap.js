@@ -3,10 +3,12 @@ import {GOOGLE_CLIENT_ID} from "../constants/app";
 import {signInWithGoogle} from "../actions/user";
 import {useDispatch, useSelector} from "react-redux";
 import {loadScript} from "../utils/general";
+import {selectLoggedIn} from "../selectors/user";
 
 
 const GoogleSignInOneTap = () => {
     const dispatch = useDispatch();
+    const isLoggedIn = useSelector(selectLoggedIn);
     const oneTapRef = useRef(null);
     const expires = useSelector(state => state?.user?.tokenExpires ?? 0);
     const [expired, setExpired] = useState(expires === 0 || (new Date(expires * 1000) < new Date()));
@@ -14,15 +16,13 @@ const GoogleSignInOneTap = () => {
 
 
     useEffect(() => {
-        loadScript('https://accounts.google.com/gsi/client')
-            .then(() => {
-                if (window.google) {
-                    window.google.accounts?.id?.initialize({
-                        client_id: GOOGLE_CLIENT_ID,
-                        callback: handleGoogleResponse,
-                    });
-                }
+        if (!isLoggedIn && window.google) {
+            google.accounts?.id?.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleResponse,
             });
+            google.accounts.id.prompt()
+        }
         return () => window.clearInterval(tHandle);
     }, []);
 
@@ -42,6 +42,10 @@ const GoogleSignInOneTap = () => {
             window.google.accounts.id.prompt();
         }
     }, [expired]);
+
+    if (isLoggedIn) {
+        return null;
+    }
 
     const handleGoogleResponse = (response) => {
         console.log('GoogleSignInOneTap.handleGoogleResponse()', response);

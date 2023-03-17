@@ -2,29 +2,23 @@ import React, {useEffect, useRef} from 'react';
 import {GOOGLE_CLIENT_ID} from "../constants/app";
 import {signInWithGoogle} from "../actions/user";
 import {useDispatch} from "react-redux";
-import {loadScript} from "../utils/general";
 
 const GoogleSignInButton = () => {
     const dispatch = useDispatch();
     const googleButtonRef = useRef(null);
 
     useEffect(() => {
-        loadScript('https://accounts.google.com/gsi/client')
-            .then(() => {
-                console.log(window.google);
-                if (window.google && googleButtonRef.current) {
-                    window.google.accounts.id.initialize({
-                        client_id: GOOGLE_CLIENT_ID,
-                        callback: handleGoogleResponse,
-
-                    })
-                    window.google.accounts.id.renderButton(
-                        googleButtonRef.current,
-                        {text: 'signin_with', theme: 'filled_blue', shape: 'rectangular', size: 'large', type: 'standard'}
-                    );
-                    window.google.accounts.id.prompt()
-                }
+        if (window.google && googleButtonRef.current) {
+            window.google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleResponse,
             })
+            window.google.accounts.id.renderButton(
+                googleButtonRef.current,
+                {text: 'signin_with', theme: 'filled_blue', shape: 'rectangular', size: 'large', type: 'standard'}
+            );
+            window.google.accounts.id.prompt()
+        }
     }, [])
 
     const handleGoogleResponse = (response) => {
@@ -33,7 +27,7 @@ const GoogleSignInButton = () => {
     }
 
     return (
-        <div ref={googleButtonRef} />
+        <div ref={googleButtonRef}/>
     )
 }
 
