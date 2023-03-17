@@ -41,6 +41,12 @@ export const customerFromState = ({user}) => {
     return {Company: sageCompanyCode(Company), ARDivisionNo, CustomerNo, ShipToCode};
 };
 
+/**
+ *
+ * @param {Partial<SalesOrderHeader>} props
+ * @param checkoutInProcess
+ * @return {{type: string, checkoutInProcess: boolean, props}}
+ */
 export const updateCart = (props, checkoutInProcess = false) => ({type: UPDATE_CART, props, checkoutInProcess});
 export const updateCartItem = ({LineKey, prop}) => ({type: UPDATE_CART_ITEM, LineKey, prop});
 
