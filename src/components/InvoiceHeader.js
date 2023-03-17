@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import {orderHeaderPropType, paymentCardShape, shipToAddressPropType} from "../constants/myPropTypes";
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
-import DatePicker from "./DatePicker";
-import {ShipToAddress} from "./Address";
+import DatePicker from "../common-components/DatePicker";
+import ShipToAddress from "./Address/ShipToAddress";
 import {CART_PROGRESS_STATES, ORDER_TYPE} from "../constants/orders";
 import parseDate from 'date-fns/parseJSON';
 import {duplicateOrder, sendOrderEmail} from "../actions/salesOrder";
@@ -259,7 +259,7 @@ class InvoiceHeader extends Component {
                     </div>
                     <div className="col-md-6">
                         <FormGroup colWidth={8} label="Ship To Address">
-                            <ShipToAddress {...invoice} className="form-control form-control-sm"/>
+                            <ShipToAddress address={invoice} className="form-control form-control-sm"/>
                         </FormGroup>
                         {!!UDF_PROMO_DEAL && (
                             <FormGroup colWidth={8} label="Promo Code">

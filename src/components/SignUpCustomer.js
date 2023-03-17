@@ -104,7 +104,7 @@ class SignUpCustomer extends Component {
                                                     can be found in a recent order or invoice."/>
                     )}
                     {!hasAccount && (
-                        <AddressFormFields onChange={this.onChange} {...this.state} showStoreMapOption={false} cols={1}/>
+                        <AddressFormFields onChange={this.onChange} address={this.state} colWidth={8}/>
                     )}
                     <FormGroupTextInput colWidth={8} label="Your Telephone #" type="tel" autoComplete="tel"
                                         value={telephone} field="telephone" onChange={this.onChange}/>
