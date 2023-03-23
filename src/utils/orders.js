@@ -1,13 +1,7 @@
 import {ORDER_TYPE} from "../constants/orders";
-import addHours from 'date-fns/addHours';
-import getISODay from 'date-fns/getISODay';
-import getHours from 'date-fns/getHours';
-import setDay from 'date-fns/setDay';
 import setHours from 'date-fns/setHours';
 import startOfDay from 'date-fns/startOfDay';
-import addBusinessDays from 'date-fns/addBusinessDays';
-import format from 'date-fns/format';
-import differenceInBusinessDays from 'date-fns/differenceInBusinessDays';
+import dayjs from "dayjs";
 
 
 export const calcOrderType = ({OrderType, OrderStatus}) => {
@@ -50,47 +44,54 @@ export const filterOrderFromState = (state, salesOrderNo) => {
 };
 
 const isInWorkWeek = (date) => {
-    const day = getISODay(date);
+    const day = dayjs(date).day();
     return (day > 0 && day < 5)
-        || (day === 5 && getHours(date) < 12);
+        || (day === 5 && dayjs(date).hour() < 12);
 };
 
-export const minShipDate = () => {
-    const d = new Date();
-    let printDate = setHours(startOfDay(d), 24 + 8); // tomorrow morning at 8am
-
-    //changed to 5 business days per Andrew, 3/31/2022
-    return addBusinessDays(printDate, 5);
-
-    if (!isInWorkWeek(printDate)) {
-        printDate = setDay(printDate, printDate.getDay() === 0 ? 1 : 8); //next monday
+/**
+ *
+ * @param {string|number|Date|dayjs.Dayjs} date
+ * @return {string}
+ */
+const nextWorkDay = (date = new Date()) => {
+    const d = dayjs(date).add(1, 'day');
+    const day = d.day();
+    switch (day) {
+    case 0: // sunday
+            // set date to monday
+        return d.day(1).toISOString();
+    case 6: // saturday
+            // set date to next monday
+        return d.day(8).toISOString();
+    default:
+        return d.toISOString();
     }
-    const pickDate = addHours(printDate, 4); //print by noon
-    let shipDate = addHours(pickDate, 24); // ship by noon the next day
-    if (!isInWorkWeek(shipDate)) {
-        shipDate = setDay(shipDate, 8); // next monday
-    }
-    return shipDate;
 }
-export const nextShipDate = (d = new Date()) => {
-    const min = minShipDate();
-    if (!isInWorkWeek(d)) {
-        d = setDay(d, d.getDay() === 0 ? 1 : 8); //next monday
+const addWorkDays = (date, days) => {
+    if (days < 1) {
+        return date;
     }
-    if (d.valueOf() >= min.valueOf()) {
-        return d;
+    let d = dayjs(date);
+    for (let i = 0; i < days; i += 1) {
+        d = dayjs(nextWorkDay(d));
+    }
+    return d.toISOString();
+}
+export const minShipDate = () => {
+    const printDate = dayjs().startOf('day').add(24 + 8, 'hours'); // tomorrow morning at 8am
+    //changed to 5 business days per Andrew, 3/31/2022
+    return addWorkDays(printDate, 5);
+}
+
+export const nextShipDate = (shipDate = new Date()) => {
+    const min = minShipDate();
+    if (!isInWorkWeek(shipDate)) {
+        const isSunday = dayjs(shipDate).day() === 0;
+        shipDate = dayjs(shipDate).day(isSunday ? 1 : 8).toDate();
+    }
+    if (dayjs(shipDate).valueOf() >= dayjs(min).valueOf()) {
+        return shipDate;
     }
     return min;
-
-    let printDate = setHours(startOfDay(d), 24 + 8); // tomorrow morning at 8am
-    if (!isInWorkWeek(printDate)) {
-        printDate = setDay(printDate, 8); //next monday
-    }
-    const pickDate = addHours(printDate, 4); //print by noon
-    let shipDate = addHours(pickDate, 24); // ship by noon the next day
-    if (!isInWorkWeek(shipDate)) {
-        shipDate = setDay(shipDate, 8); // next monday
-    }
-    return shipDate;
-
 };

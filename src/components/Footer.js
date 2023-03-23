@@ -19,7 +19,7 @@ const Footer = () => {
                 </div>
                 <div className="social-icons">
                     <div className="icon">
-                        <a href="http://www.twitter.com/ChumsUSA" target="_blank" className="twitter-icon" rel="noreferrer">
+                        <a href="https://www.twitter.com/ChumsUSA" target="_blank" className="twitter-icon" rel="noreferrer">
                             <span className="visually-hidden">Follow @ChumsUSA on Twitter</span>
                         </a>
                     </div>
@@ -29,7 +29,7 @@ const Footer = () => {
                         </a>
                     </div>
                     <div className="icon">
-                        <a href="http://instagram.com/chumsusa" target="_blank" className="instagram-icon" rel="noreferrer">
+                        <a href="https://instagram.com/chumsusa" target="_blank" className="instagram-icon" rel="noreferrer">
                             <span className="visually-hidden">Like Chums on Instagram</span>
                         </a>
                     </div>

@@ -68,7 +68,7 @@ class Html extends Component {
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&display=swap" media="screen" />
                     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" media="screen" />
                     <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css" />
-
+                    <script src="https://accounts.google.com/gsi/client" async defer />
                     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-3648826-6" />
                     <script dangerouslySetInnerHTML={{__html: InlineJSHeadContent(manifestFiles)}}  />
                     {/*<InlineJSHeadContent manifestFiles={manifestFiles}/>*/}

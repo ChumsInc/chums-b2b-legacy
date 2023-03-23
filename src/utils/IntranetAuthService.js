@@ -35,8 +35,7 @@ export class AuthService extends EventEmitter {
     loggedIn() {
         // Checks if there is a saved token AND it's still valid
         const token = this.getToken();
-        const loggedIn = !!token && !isTokenExpired(token);
-        return loggedIn;
+        return !!token && !isTokenExpired(token);
     }
 
     setGoogleUser(googleUser) {

@@ -37,23 +37,12 @@ export default class StateSelect extends Component {
     }
 
     render() {
-        let options = [];
         const {countryCode, field, ...rest} = this.props;
         if (countryCode === 'USA' || countryCode === 'US') {
-            options = STATES_USA.map(state => {
-                return (
-                    <option key={state.code} value={state.code}>{state.name}</option>
-                );
-            });
         } else if (countryCode === 'CAN' || countryCode === 'CA') {
-            options = TERRITORIES_CANADA.map(territory => {
-                return (
-                    <option key={territory.code} value={territory.code}>{territory.name}</option>
-                );
-            });
         } else {
             return (
-                <input {...otherProps} onChange={this.onChange.bind(this)} />
+                <input {...rest} onChange={this.onChange.bind(this)} />
             )
         }
 

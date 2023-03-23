@@ -2,7 +2,6 @@ import React, {useEffect, useRef, useState} from 'react';
 import {GOOGLE_CLIENT_ID} from "../constants/app";
 import {signInWithGoogle} from "../actions/user";
 import {useDispatch, useSelector} from "react-redux";
-import {loadScript} from "../utils/general";
 import {selectLoggedIn} from "../selectors/user";
 
 
@@ -29,10 +28,12 @@ const GoogleSignInOneTap = () => {
     useEffect(() => {
         window.clearInterval(tHandle);
         if (expires > 0) {
+            const now = new Date();
+            const checkTime = new Date(expires * 1000).valueOf() - now.valueOf();
             const timer = window.setInterval(() => {
                 const expired = new Date(expires * 1000).valueOf() <= new Date().valueOf();
                 setExpired(expired);
-            }, 1000);
+            }, Math.max(checkTime - 60000, 1000));
             setTHandle(timer);
         }
     }, [expires]);
@@ -53,7 +54,7 @@ const GoogleSignInOneTap = () => {
     }
 
     return (
-        <span ref={oneTapRef} />
+        <span ref={oneTapRef}/>
     )
 }
 

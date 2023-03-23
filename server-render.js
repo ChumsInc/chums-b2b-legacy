@@ -14,7 +14,7 @@ import http from 'http';
 import React from 'react'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import reducers from './src/ducks/index';
+import reducers from './src/ducks';
 import App from './src/components/App';
 import Html from "./src/HTML";
 import {renderToString} from 'react-dom/server';

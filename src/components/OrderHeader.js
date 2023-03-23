@@ -210,8 +210,7 @@ class OrderHeader extends Component {
         this.props.fetchSalesOrder({Company, SalesOrderNo});
     }
 
-    onSetShipDate(value) {
-
+    onSetShipDate({value}) {
         this.props.setShipDate(nextShipDate(value));
     }
 

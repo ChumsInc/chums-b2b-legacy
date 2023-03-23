@@ -26,14 +26,8 @@ export default class UPCA {
         if (upc.length !== 11 && upc.length !== 12) {
             return upc;
         }
-
-        return upc.substr(0, 1)
-            + " "
-            + upc.substr(1, 5)
-            + " "
-            + upc.substr(6, 5)
-            + " "
-            + UPCA.checkdigit(upc);
+        const [full, p1, p2, p3] = /(\d)(\d{5})(\d{5})(\d)/.exec(upc) ?? [];
+        return [p1, p2, p3, UPCA.checkdigit(upc)].join(' ');
     }
 
     static checkdigit(upc) {
@@ -41,7 +35,7 @@ export default class UPCA {
             console.log('UPCA.checkdigit() UPC must be a string', upc);
             return upc;
         }
-        upc = UPCA.raw(upc.trim()).substr(0, 11);
+        upc = UPCA.raw(upc.trim()).slice(0, 11);
 
         if (upc.length === 5) {
             upc = UPCA.CHUMS + upc;

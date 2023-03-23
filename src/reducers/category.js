@@ -45,7 +45,7 @@ const pageText = (state = '', action) => {
 };
 
 const lifestyle = (state = null, action) => {
-    const {type, category} = action;
+    const {type, status, category} = action;
     switch (type) {
     case FETCH_CATEGORY:
         if (status === FETCH_SUCCESS) {

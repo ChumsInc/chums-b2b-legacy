@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 import app from '../reducers/app';
 import user from '../reducers/user';
 import products from '../reducers/products';
@@ -12,22 +12,25 @@ import salesOrder from '../reducers/salesOrder';
 import cart from '../reducers/cart';
 import page from '../reducers/page';
 import promo_code from "../reducers/promo_code";
-import { default as versionReducer } from './version';
-var rootReducer = combineReducers({
-    app: app,
-    user: user,
-    products: products,
-    category: category,
-    customer: customer,
-    cart: cart,
-    carts: carts,
-    openOrders: openOrders,
-    pastOrders: pastOrders,
-    salesOrder: salesOrder,
-    page: page,
-    promo_code: promo_code,
-    invoices: invoices,
+import {default as versionReducer} from './version/index';
+
+
+const rootReducer = combineReducers({
+    app,
+    user,
+    products,
+    category,
+    customer,
+    cart,
+    carts,
+    openOrders,
+    pastOrders,
+    salesOrder,
+    page,
+    promo_code,
+    invoices,
     version: versionReducer
 });
+
+// export type RootState = ReturnType<typeof rootReducer>
 export default rootReducer;
-//# sourceMappingURL=index.js.map

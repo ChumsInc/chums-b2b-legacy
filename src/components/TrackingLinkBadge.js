@@ -16,7 +16,7 @@ const trackingURL = ({TrackingID, StarshipShipVia}) => {
     // console.log('trackingURL', {StarshipShipVia, carrier});
     switch (carrier) {
     case 'ups':
-        return `http://wwwapps.ups.com/WebTracking/processInputRequest?TypeOfInquiryNumber=T&InquiryNumber1=${TrackingID}`;
+        return `https://wwwapps.ups.com/WebTracking/processInputRequest?TypeOfInquiryNumber=T&InquiryNumber1=${TrackingID}`;
     case 'fedex':
         return `https://www.fedex.com/fedextrack/?tracknumbers=${TrackingID}`;
     case 'usps':
