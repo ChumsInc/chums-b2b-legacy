@@ -20,6 +20,7 @@ import ErrorBoundary from "../common-components/ErrorBoundary";
 import DocumentTitle from "./DocumentTitle";
 import customer from "../reducers/customer";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
+import SizeIconList from "./SizeIconList";
 
 
 const mapStateToProps = ({user, products, customer, app}) => {
@@ -78,6 +79,9 @@ class ProductPage extends Component {
         product: PropTypes.shape({
             id: PropTypes.number,
             images: PropTypes.array,
+            additionalData: PropTypes.shape({
+                size: PropTypes.string,
+            })
         }),
         variantId: PropTypes.number,
         selectedProduct: PropTypes.object,
@@ -88,6 +92,7 @@ class ProductPage extends Component {
             itemCode: PropTypes.string,
             quantity: PropTypes.number,
             additionalData: PropTypes.shape({
+                size: PropTypes.string,
                 image_filename: PropTypes.string,
                 season: PropTypes.shape({
                     active: PropTypes.bool,
@@ -196,7 +201,7 @@ class ProductPage extends Component {
             cartItem, pricing, hasCustomer, canViewAvailable, season_code, season_available, season_description,
             season_teaser, TaxSchedule
         } = this.props;
-        const {images = [], name = '', additionalData = {}, variants = []} = product;
+        const {images = [], name = '', variants = []} = product;
         const {image, defaultColor, availableForSale, dateAvailable} = selectedProduct;
         const {quantity} = cartItem;
 
@@ -221,7 +226,18 @@ class ProductPage extends Component {
                         <div className="col-12 col-md-6 col-lg-5">
                             <div className="product-title">
                                 <h1 className="product-name">{name}</h1>
-                                <h2 className="product-subtitle">{additionalData.subtitle || ''}</h2>
+                                <div className="row g-3">
+                                    {!!product.additionalData?.subtitle && (
+                                        <div className="col-auto">
+                                            <h2 className="product-subtitle">{product.additionalData.subtitle || ''}</h2>
+                                        </div>
+                                    )}
+                                    {!!product.additionalData?.size && (
+                                        <div className="col-auto">
+                                            <SizeIconList size={product.additionalData.size} />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
                             <ProductInfo msrp={msrp} salesUM={salesUM}
