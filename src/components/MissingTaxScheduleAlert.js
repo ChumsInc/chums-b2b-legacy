@@ -8,9 +8,10 @@ const MissingTaxScheduleAlert = () => {
     const loading = useSelector(selectCustomerLoading);
 
 
-    if (!customer || !!customer.TaxSchedule || loading) {
+    if (!customer || !customer.CustomerNo || loading || !!customer.TaxSchedule) {
         return null;
     }
+
     return (
         <Alert type="alert-warning">
             <strong className="me-1">Warning:</strong>
