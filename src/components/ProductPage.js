@@ -203,9 +203,12 @@ class ProductPage extends Component {
         const productImage = !!((cartItem.additionalData || {}).image_filename)
             ? cartItem.additionalData.image_filename
             : parseImageFilename2({image, colorCode: colorCode || defaultColor});
+
+        const documentTitle = product.name + (product?.additionalData?.subtitle ? ` - ${product.additionalData.subtitle}` : '');
+
         return (
             <div className={classNames('product-page', {loading})} ref={this.elementRef}>
-                <DocumentTitle documentTitle={product?.name ?? ''} />
+                <DocumentTitle documentTitle={documentTitle} />
                 <div className="product-panel">
                     <div className="row">
                         <div className="col-12 col-md-6 col-lg-7">
