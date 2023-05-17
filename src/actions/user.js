@@ -338,12 +338,12 @@ export const fetchRepList = () => (dispatch, getState) => {
     const {user} = getState();
     const {userAccount, roles} = user;
     if (!userAccount || !userAccount.ARDivisionNo) {
-        console.log('fetchRepList()', userAccount)
+        // console.log('fetchRepList()', userAccount)
         return;
     }
     const [role] = roles.filter(role => role === 'rep' || role.role === 'rep');
     if (!role) {
-        console.log('fetchRepList()', roles)
+        // console.log('fetchRepList()', roles)
         return;
     }
 
@@ -425,7 +425,7 @@ export const submitNewUser = ({email, name, account, accountName, telephone, add
     const body = {email, name, account, accountName, telephone, address};
     fetchPOST(url, body)
         .then(({error, message, success, result}) => {
-            console.log({error, message, success, result});
+            // console.log({error, message, success, result});
             dispatch({type: FETCH_USER_SIGNUP, status: FETCH_SUCCESS});
             if (success) {
                 return dispatch(setAlert({
@@ -451,7 +451,7 @@ export const resetPassword = ({email}) => (dispatch) => {
     dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_INIT});
     fetchPOST(API_PATH_PASSWORD_RESET, {email})
         .then(({success, result}) => {
-            console.log({success, result});
+            // console.log({success, result});
             dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_SUCCESS});
             dispatch(setAlert({
                 type: ALERT_TYPES.success,
