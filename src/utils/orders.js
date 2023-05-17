@@ -2,6 +2,9 @@ import {ORDER_TYPE} from "../constants/orders";
 import setHours from 'date-fns/setHours';
 import startOfDay from 'date-fns/startOfDay';
 import dayjs from "dayjs";
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone'
+
 
 
 export const calcOrderType = ({OrderType, OrderStatus}) => {
@@ -79,9 +82,16 @@ const addWorkDays = (date, days) => {
     return d.toISOString();
 }
 export const minShipDate = () => {
-    const printDate = dayjs().startOf('day').add(24 + 8, 'hours'); // tomorrow morning at 8am
-    //changed to 5 business days per Andrew, 3/31/2022
-    return addWorkDays(printDate, 5);
+    const _dayjs = dayjs;
+    _dayjs.extend(utc);
+    _dayjs.extend(timezone);
+
+    let _printDate = _dayjs().tz('America/Denver');
+    if (_printDate.hour() >= 12) {
+        _printDate = _dayjs().startOf('day').add(24 + 8, 'hours');
+    }
+
+    return addWorkDays(_printDate, 5);
 }
 
 export const nextShipDate = (shipDate = new Date()) => {
