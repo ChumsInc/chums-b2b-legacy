@@ -12,6 +12,7 @@ import {selectCustomerAccount} from "../selectors/customer";
 import {selectCustomerTab} from "../selectors/app";
 import {useParams} from "react-router";
 import DocumentTitle from "./DocumentTitle";
+import AccountTabs from "./AccountTabs";
 
 const AccountPage = () => {
     const dispatch = useDispatch();
@@ -36,7 +37,7 @@ const AccountPage = () => {
             <DocumentTitle documentTitle={customer?.CustomerName ?? ''}/>
             <AccountBreadcrumbs/>
             <h2>{customer.CustomerName}</h2>
-            <Tabs tabList={CUSTOMER_TABS} activeTab={customerTab} onSelect={selectHandler}/>
+            <AccountTabs />
 
             {customerTab === CUSTOMER_TABS[0].id && <BillToForm/>}
             {customerTab === CUSTOMER_TABS[1].id && <ShipToForm/>}
