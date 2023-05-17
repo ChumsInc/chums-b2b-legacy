@@ -1,4 +1,4 @@
-const webpack = require('webpack');
+// const webpack = require('webpack');
 const path = require('path');
 
 module.exports = {
@@ -37,9 +37,9 @@ module.exports = {
     },
     plugins: [
         // new BundleAnalyzerPlugin(),
-        new webpack.ProvidePlugin({
-            process: 'process/browser',
-        }),
+        // new webpack.ProvidePlugin({
+        //     process: 'process/browser',
+        // }),
     ],
     optimization: {
         splitChunks: {
