@@ -104,14 +104,14 @@ class UserProfile extends Component {
                             <FormGroupTextInput colWidth={8} type="email" label="Email Address"
                                                 value={email} field="email" onChange={this.onChangeUser}/>
                             <FormGroup colWidth={8}>
-                                <button type="submit" className="btn btn-sm btn-primary mr-1 mb-1" disabled={!changed}>
+                                <button type="submit" className="btn btn-sm btn-primary me-1 mb-1" disabled={!changed}>
                                     Save Changes
                                 </button>
-                                <button type="button" className="btn btn-sm btn-outline-primary mr-1 mb-1"
+                                <button type="button" className="btn btn-sm btn-outline-primary me-1 mb-1"
                                         onClick={this.onUpdateProfile}>Refresh
                                 </button>
                                 {canChangePassword && (
-                                    <button type="button" className="btn btn-sm btn-outline-secondary mr-1 mb-1"
+                                    <button type="button" className="btn btn-sm btn-outline-secondary me-1 mb-1"
                                             onClick={this.onShowChangePasswordForm}>
                                         Change Password
                                     </button>

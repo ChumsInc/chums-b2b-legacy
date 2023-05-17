@@ -35,7 +35,7 @@ const SearchPlaceholder = ({onClick}) => {
 const SearchInput = ({value, inputRef, onChange, hidden = false, onKeyPress, onFocus}) => {
     const style = {display: hidden ? 'none' : undefined};
     return (
-        <input type="search" className={classNames("form-control form-control-sm ml-1", {hidden})}
+        <input type="search" className={classNames("form-control form-control-sm ms-1", {hidden})}
                placeholder="SEARCH" ref={inputRef}
                value={value}
                onChange={(ev) => onChange(ev.target.value)}

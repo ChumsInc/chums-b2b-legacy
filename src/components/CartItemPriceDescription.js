@@ -11,19 +11,19 @@ const CartItemPriceDescription = ({priceCodeRecord = {}, priceLevel = ''}) => {
         switch (priceCodeRecord.PricingMethod) {
         case 'P':
             return (
-                <small className="ml-1 customer-pricing">
+                <small className="ms-1 customer-pricing">
                     (Negotiated Discount: {numeral(priceCodeRecord.DiscountMarkup1).format('$0.00')})
                 </small>
             )
         case 'D':
             return (
-                <small className="ml-1 customer-pricing">
+                <small className="ms-1 customer-pricing">
                     (Negotiated Discount: {numeral(priceCodeRecord.DiscountMarkup1 / 100).format('0%')})
                 </small>
             )
         case 'O':
             return (
-                <small className="ml-1 customer-pricing">
+                <small className="ms-1 customer-pricing">
                     (Negotiated Price: {numeral(priceCodeRecord.DiscountMarkup1).format('$0.00')})
                 </small>
             )
@@ -33,7 +33,7 @@ const CartItemPriceDescription = ({priceCodeRecord = {}, priceLevel = ''}) => {
     }
 
     if (!!PRICE_LEVELS[priceLevel]) {
-        return (<small className="ml-1 customer-pricing">({PRICE_LEVELS[priceLevel]} pricing)</small>);
+        return (<small className="ms-1 customer-pricing">({PRICE_LEVELS[priceLevel]} pricing)</small>);
     }
     return null;
 }

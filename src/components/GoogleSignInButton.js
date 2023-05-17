@@ -22,7 +22,7 @@ const GoogleSignInButton = () => {
     }, [])
 
     const handleGoogleResponse = (response) => {
-        console.log('handleGoogleResponse()', response);
+        // console.log('handleGoogleResponse()', response);
         dispatch(signInWithGoogle(response.credential));
     }
 

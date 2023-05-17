@@ -1,11 +1,13 @@
 import React from 'react';
-import Select from "./Select";
-import FormGroup from "./FormGroup";
 
 const RowsPerPage = ({value = 25, onChange}) => {
+    const changeHandler = (ev) => {
+        onChange(Number(ev.target.value));
+    }
     return (
-        <FormGroup label="Rows per Page" inline>
-            <Select value={value} className="" field="rowsPerPage" onChange={({value}) => onChange(Number(value))}>
+        <div className="input-group input-group-sm">
+            <label className="input-group-text">Rows Per Page</label>
+            <select value={value} className="form-select form-select-sm" onChange={changeHandler}>
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
@@ -13,8 +15,8 @@ const RowsPerPage = ({value = 25, onChange}) => {
                 <option value={250}>250</option>
                 <option value={500}>500</option>
                 <option value={1000}>1000</option>
-            </Select>
-        </FormGroup>
+            </select>
+        </div>
     )
 };
 

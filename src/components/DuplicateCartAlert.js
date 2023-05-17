@@ -22,8 +22,8 @@ const DuplicateCartAlert = ({SalesOrderNo, newCartName, loading = false, onSetCa
             </Alert>
             {!loading && (
                 <div className="right">
-                    <Button color="btn-primary" onClick={onConfirm} className="mr-3">Duplicate Order</Button>
-                    <Button color="btn-outline-secondary" onClick={onCancel} className="mr-3">Cancel</Button>
+                    <Button color="btn-primary" onClick={onConfirm} className="me-3">Duplicate Order</Button>
+                    <Button color="btn-outline-secondary" onClick={onCancel} className="me-3">Cancel</Button>
                 </div>
             )}
             {loading && <ProgressBar striped={true}/>}

@@ -26,7 +26,7 @@ const sortPriority = (a, b) => a.priority === b.priority
 const CustomerNavTitle = ({Company, ARDivisionNo, CustomerNo, CustomerName}) => {
     return (
         <Fragment>
-            <span className="mr-3 account-number">{ARDivisionNo}-{CustomerNo}</span>
+            <span className="me-3 account-number">{ARDivisionNo}-{CustomerNo}</span>
             <span>{CustomerName}</span>
         </Fragment>
     )
@@ -35,7 +35,7 @@ const CustomerNavTitle = ({Company, ARDivisionNo, CustomerNo, CustomerName}) => 
 const RepNavTitle = ({Company, SalespersonDivisionNo, SalespersonNo, SalespersonName}) => {
     return (
         <Fragment>
-            <span className="mr-3 account-number">{longRepNo({SalespersonDivisionNo, SalespersonNo})}</span>
+            <span className="mr-e account-number">{longRepNo({SalespersonDivisionNo, SalespersonNo})}</span>
             <span>{SalespersonName}</span>
         </Fragment>
     )

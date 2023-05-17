@@ -15,7 +15,7 @@ const OrderFilter = ({filter = '', onChange, onReload, children}) => {
                            placeholder={'Order or PO #'}/>
             </div>
             <div className="col-auto">
-                <button className="btn btn-sm btn-primary mr-1" onClick={() => onReload()}>Refresh</button>
+                <button className="btn btn-sm btn-primary me-1" onClick={() => onReload()}>Refresh</button>
             </div>
             {children}
         </div>

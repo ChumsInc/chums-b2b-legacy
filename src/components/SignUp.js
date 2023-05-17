@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import SignUpCustomer from "./SignUpCustomer";
 import {Redirect, useHistory} from "react-router-dom";
 import {DOCUMENT_TITLES, PATH_HOME, PATH_SET_PASSWORD} from "../constants/paths";
-import {parse as parseQueryString} from "query-string";
+import queryString from "query-string";
 import MAPPolicy from "./MAPPolicy";
 import UsagePolicy from "./UsagePolicy";
 import DocumentTitle from "./DocumentTitle";
@@ -14,7 +14,7 @@ const SignUp = () => {
     const loggedIn = useSelector(selectLoggedIn);
 
     useEffect(() => {
-        const {h: hash, key} = parseQueryString(document.location.search || '');
+        const {h: hash, key} = queryString.parse(document.location.search || '');
         if (!loggedIn && !!hash && !!key) {
             history.push(PATH_SET_PASSWORD + document.location.search);
         }

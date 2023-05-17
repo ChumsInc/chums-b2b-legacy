@@ -102,13 +102,13 @@ const BillToForm = () => {
                             <div className="row g-3">
                                 <div className="col-4"/>
                                 <div className="col-auto">
-                                    <button type="submit" className="btn btn-sm btn-primary mr-1"
+                                    <button type="submit" className="btn btn-sm btn-primary me-1"
                                             disabled={readOnly || loading}>
                                         Save
                                     </button>
                                 </div>
                                 <div className="col-auto">
-                                    <button type="button" className="btn btn-sm btn-outline-secondary mr-1"
+                                    <button type="button" className="btn btn-sm btn-outline-secondary me-1"
                                             onClick={reloadHandler}>
                                         Reload
                                     </button>

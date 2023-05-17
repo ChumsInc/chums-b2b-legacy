@@ -177,7 +177,7 @@ class InvoiceHeader extends Component {
                 if (!SalesOrderNo) {
                     return;
                 }
-                console.log(`redirect to ${SalesOrderNo}`, {Company, SalesOrderNo});
+                // console.log(`redirect to ${SalesOrderNo}`, {Company, SalesOrderNo});
                 this.setState({confirmDuplicate: false, newCartName: ''}, () => {
                     this.props.history.push(buildPath(PATH_SALES_ORDER, {
                         orderType: ORDER_TYPE.cart,

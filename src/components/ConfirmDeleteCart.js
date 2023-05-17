@@ -6,7 +6,7 @@ const ConfirmDeleteCart = ({SalesOrderNo, onConfirm, onCancel}) => {
         <ModalAlert onClose={onCancel} title="Confirm">
             <div className="mb-3">Are you sure you want to delete Cart #{SalesOrderNo}?</div>
             <div className="right">
-                <button type="button" className="btn btn-sm btn-danger mr-1"
+                <button type="button" className="btn btn-sm btn-danger me-1"
                         onClick={onConfirm}>Delete Cart
                 </button>
                 <button type="button" className="btn btn-sm btn-outline-secondary"

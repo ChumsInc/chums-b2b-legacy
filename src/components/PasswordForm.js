@@ -5,7 +5,7 @@ import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import PropTypes from "prop-types";
 import {changeUserPassword} from "../actions/user";
 import {connect} from "react-redux";
-import queryString from "query-string";
+
 
 class PasswordForm extends Component{
     static propTypes = {
@@ -88,11 +88,11 @@ class PasswordForm extends Component{
                                    placeholder="New Password (confirm)"/>
                 </FormGroup>
                 <FormGroup colWidth={8}>
-                    <button type="submit" className="btn btn-sm btn-primary mr-1 mb-1"
+                    <button type="submit" className="btn btn-sm btn-primary me-1 mb-1"
                             disabled={!okToSubmit}>
                         {requireOldPassword ? 'Change Password' : 'Set Password'}
                     </button>
-                    <button type="reset" className="btn btn-sm btn-outline-secondary mr-1 mb-1" onClick={this.onCancelChange}>Cancel</button>
+                    <button type="reset" className="btn btn-sm btn-outline-secondary me-1 mb-1" onClick={this.onCancelChange}>Cancel</button>
                 </FormGroup>
             </form>
         )

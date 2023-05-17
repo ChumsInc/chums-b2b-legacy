@@ -178,7 +178,7 @@ export default class OrdersList extends Component {
                              onReload={this.onReload}>
                     {orderType === ORDER_TYPE.cart && (
                         <div className="col-auto">
-                            <button className="btn btn-sm btn-outline-primary mr-1" onClick={onNewCart}>New Cart</button>
+                            <button className="btn btn-sm btn-outline-primary me-1" onClick={onNewCart}>New Cart</button>
                         </div>
                     )}
                 </OrderFilter>

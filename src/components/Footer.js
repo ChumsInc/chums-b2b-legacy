@@ -36,7 +36,7 @@ const Footer = () => {
                 </div>
             </div>
             <div className="bottom-links-container">
-                <div className="ml-1"><AppVersion /></div>
+                <div className="ms-1"><AppVersion /></div>
                 <div className="bottom-links">
                     <a href="//www.chums.com/page/jobs" target="_blank" rel="noreferrer">CAREERS</a>
                     <a href="//www.chums.com/page/customization" target="_blank" rel="noreferrer">CUSTOMIZE</a>

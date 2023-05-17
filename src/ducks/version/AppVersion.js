@@ -41,7 +41,7 @@ const AppVersion = () => {
             {changed && (
                 <div onClick={onUpdate} className="app__version-popup">
                     <strong>Update Available! Click here to refresh</strong>
-                    <span className="ml-3 close" onClick={onDismissUpdate}/>
+                    <span className="ms-3 close" onClick={onDismissUpdate}/>
                 </div>
             )}
         </div>

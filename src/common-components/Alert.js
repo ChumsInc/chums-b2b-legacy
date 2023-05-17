@@ -64,10 +64,10 @@ export default class Alert extends Component {
         return (
             <div className={_className}>
                 {!!context && (<strong className="mr-1">[{context}]</strong>)}
-                <strong className="mr-1">{title || ''}</strong>
+                <strong className="me-1">{title || ''}</strong>
                 {message || children}
                 {count > 1 && (
-                    <Badge className="ml-3"
+                    <Badge className="ms-3"
                            type={(type || '').replace('alert-', '')}>
                         {numeral(count).format('0,0')}
                     </Badge>

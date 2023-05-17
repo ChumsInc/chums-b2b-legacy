@@ -39,7 +39,7 @@ class CustomerNavbarLink extends Component {
     render() {
         const {loggedIn, loading, Company, ARDivisionNo, CustomerNo, CustomerName} = this.props;
         if (!loggedIn) {
-            return (<Link to={PATH_LOGIN} className="nav-link mr-3">Please Log In</Link>);
+            return (<Link to={PATH_LOGIN} className="nav-link me-3">Please Log In</Link>);
         }
 
         // we've not selected a customer yet, so return null

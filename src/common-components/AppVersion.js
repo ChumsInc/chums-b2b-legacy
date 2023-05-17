@@ -78,7 +78,7 @@ class AppVersion extends Component {
                 {!!updateAvailable && !dismissed && (
                     <div onClick={this.onClickUpdate} className="app__version-popup">
                         <strong>Update Available! Click here to refresh</strong>
-                        <span className="ml-3 close" onClick={this.onDismissUpdates}>&times;</span>
+                        <span className="ms-3 close" onClick={this.onDismissUpdates}>&times;</span>
                     </div>
                 )}
             </div>

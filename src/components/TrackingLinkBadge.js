@@ -28,10 +28,10 @@ const trackingURL = ({TrackingID, StarshipShipVia}) => {
 const TrackingLinkBadge = ({TrackingID, StarshipShipVia, Weight}) => {
     const url = trackingURL({TrackingID, StarshipShipVia});
     return (
-        <Badge type="info" className="mr-1" url={url}>
+        <Badge type="info" className="me-1" url={url}>
             {TrackingID}
             {!!Weight && (
-                <span className="ml-1">({Weight} lb{Weight === 1 ? '' : 's'})</span>
+                <span className="ms-1">({Weight} lb{Weight === 1 ? '' : 's'})</span>
             )}
         </Badge>
     )
