@@ -17,7 +17,7 @@ var _http = _interopRequireDefault(require("http"));
 var _react = _interopRequireDefault(require("react"));
 var _redux = require("redux");
 var _reactRedux = require("react-redux");
-var _index = _interopRequireDefault(require("./src/ducks"));
+var _ducks = _interopRequireDefault(require("./src/ducks"));
 var _App = _interopRequireDefault(require("./src/components/App"));
 var _HTML = _interopRequireDefault(require("./src/HTML"));
 var _server = require("react-dom/server");
@@ -314,7 +314,7 @@ function _handleRender() {
           console.trace("handleRender() preload product", _context5.t2.message);
         case 65:
           _context5.prev = 65;
-          store = (0, _redux.createStore)(_index["default"], initialState);
+          store = (0, _redux.createStore)(_ducks["default"], initialState);
           html = (0, _server.renderToString)( /*#__PURE__*/_react["default"].createElement(_reactRedux.Provider, {
             store: store
           }, /*#__PURE__*/_react["default"].createElement(_reactRouterDom.StaticRouter, {
