@@ -17,9 +17,7 @@ import {
     API_PATH_INVOICE,
     API_PATH_OPEN_ORDERS,
     API_PATH_PAST_ORDERS,
-    API_PATH_SALES_ORDER,
     API_PATH_SAVE_CART,
-    API_PATH_SEND_ORDER_EMAIL,
     CART_ACTIONS
 } from "../constants/paths";
 import {isValidCustomer, sageCompanyCode} from "../utils/customer";
@@ -27,8 +25,12 @@ import {handleError, setAlert} from "./app";
 import {isCartOrder} from "../utils/orders";
 import localStore from "../utils/LocalStore";
 import {STORE_CURRENT_CART} from "../constants/stores";
-import {customerFromState, selectCart} from "./cart";
+import {customerFromState, setCurrentCart} from "./cart";
 import {NEW_CART} from "../constants/orders";
+import {selectCustomerAccount} from "../selectors/customer";
+import {fetchSalesOrder, postOrderEmail} from "../api/sales-order";
+import {selectCartNo} from "../selectors/cart";
+import {selectIsSendingEmail, selectProcessing} from "../selectors/salesOrder";
 
 
 export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatch, getState) => {
@@ -52,7 +54,7 @@ export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatc
                 .filter(so => isCartOrder(so));
             const [cart] = carts.filter(so => cartNo === '' || so.SalesOrderNo === cartNo);
             if (cart) {
-                dispatch(selectCart(cart, true));
+                dispatch(setCurrentCart(cart, true));
             }
         })
         .catch(err => {
@@ -82,50 +84,59 @@ export const fetchPastOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatc
             dispatch({type: FETCH_INVOICES, status: FETCH_FAILURE, message: err.message});
         });
 };
-
-export const fetchSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState) => {
+/**
+ *
+ * @param {string} SalesOrderNo
+ * @return {(function(*, *): Promise<void>)|*}
+ */
+export const loadSalesOrder = (SalesOrderNo) => async (dispatch, getState) => {
     if (!SalesOrderNo || SalesOrderNo === NEW_CART) {
         return;
     }
+    const state = getState();
+    const customerAccount = selectCustomerAccount(state);
+    const cartNo = selectCartNo(state);
+    const processing = selectProcessing(state);
     const {cart, customer} = getState();
 
-    if (!Company) {
-        Company = customer.company;
+    if (processing || !customerAccount?.CustomerNo) {
+        return;
     }
-    const {cartNo} = cart;
-    const isCart = cartNo === SalesOrderNo;
 
-    const url = buildPath(API_PATH_SALES_ORDER, {Company: sageCompanyCode(Company), SalesOrderNo}) + '?images=1';
-    dispatch({type: FETCH_SALES_ORDER, status: FETCH_INIT, isCart});
-    fetchGET(url, {cache: 'no-cache'})
-        .then(res => {
-            const [salesOrder] = res.result;
-            if (!salesOrder || !salesOrder.SalesOrderNo) {
-                dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
-                dispatch(setAlert({message: 'That sales order was not found!', context: FETCH_SALES_ORDER}));
-                // dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
-                return;
-            }
-            dispatch({type: FETCH_SALES_ORDER, status: FETCH_SUCCESS, salesOrder, isCart});
-            // check to see if the cart was promoted to an order.
-            const isStillCart = [salesOrder]
-                .filter(so => so.SalesOrderNo === cartNo)
-                .filter(so => isCartOrder(so))
-                .length === 1;
-            if (!isStillCart) {
-                dispatch({type: SET_CART, cart: {}});
-            } else {
-                const {promo_code} = getState();
-                dispatch({type: SET_CART, cart: salesOrder});
-                // if (((promo_code.code || '') !== (salesOrder.UDF_PROMO_DEAL || '')) && !promo_code.loading) {
-                //     dispatch(applyPromoCode({Company, SalesOrderNo, discountCode: promo_code.code}));
-                // }
-            }
-        })
-        .catch(err => {
+    const isCart = cartNo === SalesOrderNo;
+    const {ARDivisionNo, CustomerNo} = customerAccount;
+
+    try {
+        dispatch({type: FETCH_SALES_ORDER, status: FETCH_INIT, isCart});
+        const salesOrder = await fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo});
+        if (!salesOrder || !salesOrder.SalesOrderNo) {
             dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
-            dispatch(handleError(err, FETCH_SALES_ORDER));
-        });
+            dispatch(setAlert({message: 'That sales order was not found!', context: FETCH_SALES_ORDER}));
+            // dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
+            return;
+        }
+        dispatch({type: FETCH_SALES_ORDER, status: FETCH_SUCCESS, salesOrder, isCart});
+        // check to see if the cart was promoted to an order.
+        const isStillCart = [salesOrder]
+            .filter(so => so.SalesOrderNo === cartNo)
+            .filter(so => isCartOrder(so))
+            .length === 1;
+        if (!isStillCart) {
+            dispatch({type: SET_CART, cart: {}});
+        } else {
+            const {promo_code} = getState();
+            dispatch({type: SET_CART, cart: salesOrder});
+            // if (((promo_code.code || '') !== (salesOrder.UDF_PROMO_DEAL || '')) && !promo_code.loading) {
+            //     dispatch(applyPromoCode({Company, SalesOrderNo, discountCode: promo_code.code}));
+            // }
+        }
+    } catch (err) {
+        if (err instanceof Error) {
+            console.debug("loadSalesOrder()", err.message);
+        }
+        dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
+        dispatch(handleError(err, FETCH_SALES_ORDER));
+    }
 };
 
 export const fetchInvoice = ({Company, InvoiceNo}) => (dispatch, getState) => {
@@ -145,24 +156,45 @@ export const fetchInvoice = ({Company, InvoiceNo}) => (dispatch, getState) => {
 };
 
 export const selectSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState) => {
-    const {carts, openOrders, pastOrders} = getState();
+    const state = getState();
+    const customer = selectCustomerAccount(state);
+    if (!customer) {
+        return;
+    }
+    const {ARDivisionNo, CustomerNo} = customer;
+    const {carts, openOrders, pastOrders} = state;
     const [salesOrder = {SalesOrderNo}] = [...carts.list, ...openOrders.list, pastOrders.list]
         .filter(so => so.SalespersonNo === SalesOrderNo);
     dispatch({type: SELECT_SO, salesOrder});
-    dispatch(fetchSalesOrder({Company, SalesOrderNo}));
+    dispatch(loadSalesOrder(SalesOrderNo));
 };
 
-export const sendOrderEmail = ({Company, SalesOrderNo}) => (dispatch, getState) => {
-    dispatch({type: SEND_ORDER_EMAIL, status: FETCH_INIT});
-    const url = buildPath(API_PATH_SEND_ORDER_EMAIL, {Company, SalesOrderNo});
-    fetchPOST(url)
-        .then(res => {
-            dispatch({type: SEND_ORDER_EMAIL, status: FETCH_SUCCESS, payload: {...res.result, confirmed: false}});
-        })
-        .catch(err => {
+export const sendOrderEmail = ({Company, SalesOrderNo}) => async (dispatch, getState) => {
+    const state = getState();
+    if (selectIsSendingEmail(state)) {
+        return;
+    }
+    const customer = selectCustomerAccount(state);
+    if (!customer || !customer.CustomerNo) {
+        return;
+    }
+
+    try {
+        dispatch({type: SEND_ORDER_EMAIL, status: FETCH_INIT});
+        const {ARDivisionNo, CustomerNo} = customer;
+        const result = await postOrderEmail({ARDivisionNo, CustomerNo, SalesOrderNo});
+        if (!result) {
             dispatch({type: SEND_ORDER_EMAIL, status: FETCH_FAILURE});
-            dispatch(handleError(err, SEND_ORDER_EMAIL));
-        });
+            dispatch(handleError(new Error('sending email returned null'), SEND_ORDER_EMAIL));
+        }
+        dispatch({type: SEND_ORDER_EMAIL, status: FETCH_SUCCESS, payload: {...result, confirmed: false}});
+    } catch (err) {
+        dispatch({type: SEND_ORDER_EMAIL, status: FETCH_FAILURE});
+        dispatch(handleError(err, SEND_ORDER_EMAIL));
+        if (err instanceof Error) {
+            console.debug("sendOrderEmail()", err.message);
+        }
+    }
 };
 
 export const confirmEmailSent = () => ({type: SEND_ORDER_EMAIL_ACK});

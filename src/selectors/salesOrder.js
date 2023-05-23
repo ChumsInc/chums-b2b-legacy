@@ -6,6 +6,7 @@ import {selectCartNo} from "./cart";
 export const selectSalesOrderNo = (state) => state.salesOrder.salesOrderNo;
 export const selectProcessing = (state) => state.salesOrder.processing;
 export const selectSendingEmailStatus = (state) => state.salesOrder.sendEmailStatus;
+export const selectIsSendingEmail = (state) => state.salesOrder.sendEmailStatus?.sending || false;
 export const selectAttempts = (state) => state.salesOrder.attempts;
 export const selectSalesOrderHeader = (state) => state.salesOrder.header ?? null;
 export const selectIsCart = (state) => {

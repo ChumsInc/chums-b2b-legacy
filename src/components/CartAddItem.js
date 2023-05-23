@@ -5,7 +5,7 @@ import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
 import {connect} from "react-redux";
 import {NEW_CART, ORDER_TYPE} from "../constants/orders";
-import {saveCartItem, saveNewCart, selectCart} from '../actions/cart';
+import {saveCartItem, saveNewCart, setCurrentCart} from '../actions/cart';
 import {buildPath} from "../utils/fetch";
 import {PATH_SALES_ORDER} from "../constants/paths";
 
@@ -87,7 +87,7 @@ const mapStateToProps = ({salesOrder}) => {
     return {SalesOrderNo, CustomerPONo};
 };
 
-const mapDispatchToProps = {saveCartItem, saveNewCart, selectCart};
+const mapDispatchToProps = {saveCartItem, saveNewCart, selectCart: setCurrentCart};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CartAddItem));
 

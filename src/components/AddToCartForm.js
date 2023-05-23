@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import CartSelect from "./CartSelect";
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
-import {newCart, saveCartItem, saveNewCart, selectCart, updateCart} from "../actions/cart";
+import {newCart, saveCartItem, saveNewCart, setCurrentCart, updateCart} from "../actions/cart";
 import FormGroup from "../common-components/FormGroup";
 import CartQuantityInput from "./CartQuantityInput";
 import ProgressBar from "./ProgressBar";
@@ -25,7 +25,7 @@ const mapStateToProps = ({cart, carts}) => {
 const mapDispatchToProps = {
     saveNewCart,
     saveCartItem,
-    selectCart,
+    selectCart: setCurrentCart,
     newCart,
     updateCart,
 };

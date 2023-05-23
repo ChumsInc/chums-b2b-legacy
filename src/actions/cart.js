@@ -29,12 +29,16 @@ import {
 } from "../constants/paths";
 import {handleError, logError, setAlert} from "./app";
 import parseDate from "date-fns/parseJSON";
-import {fetchOpenOrders, fetchSalesOrder} from "./salesOrder";
+import {fetchOpenOrders, loadSalesOrder} from "./salesOrder";
 import {sageCompanyCode, shipToAddressFromBillingAddress} from "../utils/customer";
 import {CREDIT_CARD_PAYMENT_TYPES} from "../constants/account";
 import localStore from "../utils/LocalStore";
 import {STORE_CURRENT_CART, STORE_CUSTOMER_SHIPPING_ACCOUNT} from "../constants/stores";
 import {NEW_CART} from "../constants/orders";
+import {selectCartsList} from "../selectors/carts";
+import {selectCustomerAccount} from "../selectors/customer";
+import {selectCartNo} from "../selectors/cart";
+import {fetchSalesOrder} from "../api/sales-order";
 
 export const customerFromState = ({user}) => {
     const {Company, ARDivisionNo, CustomerNo, ShipToCode = ''} = user.currentCustomer;
@@ -72,11 +76,17 @@ export const newCart = () => (dispatch, getState) => {
     // dispatch({type: SET_CART, cart});
 };
 
-export const selectCart = ({Company, SalesOrderNo, CustomerPONo}, skipLoad = false) => (dispatch, getState) => {
-    const {carts} = getState();
+export const setCurrentCart = ({Company, SalesOrderNo, CustomerPONo}, skipLoad = false) => (dispatch, getState) => {
+    const state = getState();
+    const carts = selectCartsList(state);
+    const account = selectCustomerAccount(state);
+    if (!account) {
+        return;
+    }
+    const {ARDivisionNo, CustomerNo} = account;
     // const [cart = {Company, SalesOrderNo, CustomerPONo}] = [...carts.list]
     //     .filter(so => so.SalesOrderNo === SalesOrderNo);
-    const [cart] = carts.list.filter(so => so.SalesOrderNo === SalesOrderNo);
+    const [cart] = carts.filter(so => so.SalesOrderNo === SalesOrderNo);
     if (!cart) {
         return;
     }
@@ -86,32 +96,29 @@ export const selectCart = ({Company, SalesOrderNo, CustomerPONo}, skipLoad = fal
         return;
     }
     if (!!SalesOrderNo) {
-        dispatch(fetchSalesOrder({Company, SalesOrderNo}));
+        dispatch(loadSalesOrder(SalesOrderNo));
     }
 };
 
 
-export const fetchCurrentCart = () => (dispatch, getState) => {
-    const {cart, customer} = getState();
-    const {company: Company} = customer;
-    const {cartNo: SalesOrderNo} = cart;
-    if (!Company || !SalesOrderNo) {
-        return;
+export const loadCurrentCart = () => async (dispatch, getState) => {
+    try {
+        const state = getState();
+        const customerAccount = selectCustomerAccount(state);
+        const cartNo = selectCartNo(state);
+        if (!customerAccount.CustomerNo || !cartNo) {
+            return;
+        }
+        const {ARDivisionNo, CustomerNo} = customerAccount;
+        const salesOrder = await fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo: cartNo});
+        dispatch({type: FETCH_CART, status: FETCH_SUCCESS, salesOrder});
+    } catch(err) {
+        dispatch({type: FETCH_CART, status: FETCH_FAILURE});
+        dispatch(handleError(err, FETCH_CART));
+        if (err.debug) {
+            dispatch(logError({message: err.message, debug: err.debug}));
+        }
     }
-    const url = buildPath(API_PATH_SALES_ORDER, {Company: sageCompanyCode(Company), SalesOrderNo});
-    dispatch({type: FETCH_CART, status: FETCH_INIT});
-    fetchGET(url, {cache: 'no-cache'})
-        .then(res => {
-            const [salesOrder] = res.result;
-            dispatch({type: FETCH_CART, status: FETCH_SUCCESS, salesOrder});
-        })
-        .catch(err => {
-            dispatch({type: FETCH_CART, status: FETCH_FAILURE});
-            dispatch(handleError(err, FETCH_CART));
-            if (err.debug) {
-                dispatch(logError({message: err.message, debug: err.debug}));
-            }
-        });
 };
 
 export const saveNewCart = ({cartName, itemCode, quantity = 1, comment = ''}) => (dispatch, getState) => {
@@ -146,7 +153,7 @@ export const saveNewCart = ({cartName, itemCode, quantity = 1, comment = ''}) =>
                     if (!cart) {
                         return;
                     }
-                    dispatch(selectCart(cart, true));
+                    dispatch(setCurrentCart(cart, true));
                 });
             return {SalesOrderNo, ...customer};
         })
@@ -213,7 +220,7 @@ export const saveCart = () => (dispatch, getState) => {
         .then(res => {
             if (res.success) {
                 dispatch({type: SAVE_CART, status: FETCH_SUCCESS});
-                dispatch(fetchSalesOrder(salesOrder.header));
+                dispatch(loadSalesOrder(salesOrder.header.SalesOrderNo));
             }
         })
         .catch(err => {
@@ -264,7 +271,7 @@ export const promoteCart = () => (dispatch, getState) => {
     return fetchPOST(url, data)
         .then(res => {
             dispatch({type: PROMOTE_CART, status: FETCH_SUCCESS, salesOrder: header});
-            dispatch(fetchSalesOrder(header));
+            dispatch(loadSalesOrder(header.SalesOrderNo));
             dispatch(fetchOpenOrders(header));
             return res.success;
         })
@@ -345,9 +352,9 @@ export const saveCartItem = ({
                 message: `Added to cart: ${ItemCode} (qty: ${QuantityOrdered})`
             });
             if (SalesOrderNo === salesOrder.salesOrderNo) {
-                dispatch(fetchSalesOrder({Company: customer.Company, SalesOrderNo}));
+                dispatch(loadSalesOrder(SalesOrderNo));
             } else {
-                dispatch(fetchCurrentCart());
+                dispatch(loadCurrentCart());
             }
         })
         .catch(err => {
@@ -375,7 +382,7 @@ export const addCommentLine = ({SalesOrderNo, LineKey = '', CommentText = ''}) =
     dispatch({type: SAVE_CART});
     return fetchPOST(url, data)
         .then(res => {
-            dispatch(fetchSalesOrder({SalesOrderNo}));
+            dispatch(loadSalesOrder(SalesOrderNo));
         })
         .catch(err => {
             dispatch({type: SAVE_CART_FAILURE});
@@ -392,12 +399,17 @@ export const deleteCartItem = ({SalesOrderNo, LineKey}) => (dispatch, getState) 
         SalesOrderNo,
         LineKey,
     };
-
+    const state = getState();
+    const currentCustomer = selectCustomerAccount(state);
+    if (!currentCustomer) {
+        return;
+    }
+    const {Company, ARDivisionNo, CustomerNo} = currentCustomer;
     const url = buildPath(API_PATH_SAVE_CART, customerFromState(getState()));
     dispatch({type: SAVE_CART});
     fetchPOST(url, data)
         .then(res => {
-            dispatch(fetchSalesOrder({SalesOrderNo}));
+            dispatch(loadSalesOrder(SalesOrderNo));
         })
         .catch(err => {
             dispatch({type: SAVE_CART, status: FETCH_FAILURE});

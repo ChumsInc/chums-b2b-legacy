@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {cartsPropType, locationPathType} from "../constants/myPropTypes";
 import {fetchCustomerAccount} from '../actions/customer';
 import {fetchOpenOrders} from '../actions/salesOrder';
-import {newCart, selectCart} from '../actions/cart';
+import {newCart, setCurrentCart} from '../actions/cart';
 import OrdersList from "./OrdersList";
 import {NAV_ORDERS, PATH_SALES_ORDER} from "../constants/paths";
 import {NEW_CART, ORDER_TYPE, ORDER_TYPE_NAMES} from "../constants/orders";
@@ -38,7 +38,7 @@ const mapDispatchToProps = {
     fetchAccount: fetchCustomerAccount,
     fetchOpenOrders,
     fetchInvoices,
-    selectCart,
+    selectCart: setCurrentCart,
     newCart,
 };
 

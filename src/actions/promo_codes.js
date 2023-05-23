@@ -9,7 +9,8 @@ import {
 } from "../constants/actions";
 import {handleError, setAlert} from "./app";
 import {customerFromState} from "./cart";
-import {fetchSalesOrder} from "./salesOrder";
+import {loadSalesOrder} from "./salesOrder";
+import {selectCustomerAccount} from "../selectors/customer";
 
 export const setPromoCode = (code) => ({type: SET_PROMO_CODE, code});
 
@@ -70,14 +71,19 @@ export const applyPromoCode = ({Company, SalesOrderNo, discountCode}) => (dispat
         promo_code: discountCode,
         SalesOrderNo,
     };
-
-    const url = buildPath(API_PATH_CART_ACTION, customerFromState(getState()));
+    const state = getState();
+    const account = selectCustomerAccount(state);
+    if (!account) {
+        return;
+    }
+    const {ARDivisionNo, CustomerNo} = account;
+    const url = buildPath(API_PATH_CART_ACTION, customerFromState(state));
     dispatch({type: FETCH_APPLY_PROMO_CODE, status: FETCH_INIT});
     return fetchPOST(url, data)
         .then(res => {
             console.log('applyPromoCode data', data);
             dispatch({type: FETCH_APPLY_PROMO_CODE, status: FETCH_SUCCESS});
-            dispatch(fetchSalesOrder({Company, SalesOrderNo}));
+            dispatch(loadSalesOrder(SalesOrderNo));
         })
         .catch(err => {
             dispatch({type: FETCH_APPLY_PROMO_CODE, status: FETCH_FAILURE});

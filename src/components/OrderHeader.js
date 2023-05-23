@@ -10,13 +10,13 @@ import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "../constants/orders";
 import PaymentSelect from "./PaymentSelect";
 import parseDate from 'date-fns/parseJSON';
 import classNames from 'classnames';
-import {duplicateOrder, fetchSalesOrder, sendOrderEmail} from "../actions/salesOrder";
+import {duplicateOrder, loadSalesOrder, sendOrderEmail} from "../actions/salesOrder";
 import {
     appendCommentLine,
     promoteCart,
     removeCart,
     saveCart,
-    selectCart,
+    setCurrentCart,
     setCartProgress,
     setShipDate,
     setShippingAccount,
@@ -81,11 +81,11 @@ const mapStateToProps = ({customer, user, pastOrders, cart, carts, openOrders, s
 
 const mapDispatchToProps = {
     duplicateOrder,
-    fetchSalesOrder,
+    loadSalesOrder,
     promoteCart,
     removeCart,
     saveCart,
-    selectCart,
+    setCurrentCart,
     sendOrderEmail,
     setCartProgress,
     setShipDate,
@@ -115,14 +115,14 @@ class OrderHeader extends Component {
         paymentCards: PropTypes.arrayOf(PropTypes.shape(paymentCardShape)),
 
         duplicateOrder: PropTypes.func.isRequired,
-        fetchSalesOrder: PropTypes.func.isRequired,
+        loadSalesOrder: PropTypes.func.isRequired,
         promoteCart: PropTypes.func.isRequired,
         removeCart: PropTypes.func.isRequired,
         saveCart: PropTypes.func.isRequired,
         setCartProgress: PropTypes.func.isRequired,
         setShipDate: PropTypes.func.isRequired,
         setShippingAccount: PropTypes.func.isRequired,
-        selectCart: PropTypes.func.isRequired,
+        setCurrentCart: PropTypes.func.isRequired,
         sendOrderEmail: PropTypes.func.isRequired,
         updateCart: PropTypes.func.isRequired,
         appendCommentLine: PropTypes.func.isRequired,
@@ -206,8 +206,8 @@ class OrderHeader extends Component {
     }
 
     onReload() {
-        const {Company, SalesOrderNo} = this.props.header;
-        this.props.fetchSalesOrder({Company, SalesOrderNo});
+        const {SalesOrderNo} = this.props.header;
+        this.props.loadSalesOrder(SalesOrderNo);
     }
 
     onSetShipDate({value}) {
@@ -326,7 +326,7 @@ class OrderHeader extends Component {
         const {confirmDelete, confirmDuplicate, newCartName} = this.state;
         const {
             orderType, isCart, isCurrentCart, shipDate, cartProgress, shippingAccount, defaultPaymentType, header,
-            changed, selectCart, cartLoading, paymentCards,
+            changed, setCurrentCart, cartLoading, paymentCards,
         } = this.props;
         const {
             Company, SalesOrderNo, OrderDate, ShipToCode, ShipVia, CustomerPONo, PaymentType, TermsCode, LastInvoiceDate, LastInvoiceNo,
@@ -494,7 +494,7 @@ class OrderHeader extends Component {
                     )}
                     {isCart && !isNewCart && !isCurrentCart && !changed && cartProgress === CART_PROGRESS_STATES.cart
                     && (
-                        <Button color={BTN_OUTLINE_SECONDARY} onClick={() => selectCart({Company, SalesOrderNo})}
+                        <Button color={BTN_OUTLINE_SECONDARY} onClick={() => setCurrentCart({Company, SalesOrderNo})}
                                 disabled={cartLoading}>
                             Make Current Cart
                             <MaterialIcon icon="shopping_cart"/>
