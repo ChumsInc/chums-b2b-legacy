@@ -1,5 +1,10 @@
 import decode from 'jwt-decode';
 
+export const getLocalAuthUserId = (token) => {
+    const decoded = decode(token);
+    return decoded?.user?.id ?? 0;
+}
+
 export const getProfile = (token) => {
     const decoded = decode(token);
     if (!decoded || !decoded.profile) {

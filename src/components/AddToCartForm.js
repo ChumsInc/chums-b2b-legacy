@@ -41,6 +41,7 @@ class AddToCartForm extends Component {
         cartName: PropTypes.string,
         itemCode: PropTypes.string,
         quantity: PropTypes.number,
+        price: PropTypes.number,
         comment: PropTypes.string,
         loading: PropTypes.bool,
         cartMessage: PropTypes.string,
@@ -67,6 +68,7 @@ class AddToCartForm extends Component {
         cartName: '',
         itemCode: '',
         quantity: 1,
+        price: 0,
         comment: '',
         loading: false,
         cartMessage: '',
@@ -131,7 +133,7 @@ class AddToCartForm extends Component {
         if (this.props.disabled) {
             return;
         }
-        const {itemCode, saveNewCart, saveCartItem, onDone, quantity, cartMessage, setGlobalCart, season_code, season_available} = this.props;
+        const {itemCode, saveNewCart, saveCartItem, onDone, quantity, cartMessage, setGlobalCart, season_code, season_available, price} = this.props;
         const cartNo = setGlobalCart ? this.props.cartNo : this.state.cartNo;
         const cartName = setGlobalCart ? this.props.cartName : this.state.cartName;
         let {comment} = this.state;
@@ -140,9 +142,9 @@ class AddToCartForm extends Component {
         }
 
         if (!!cartNo && cartNo !== NEW_CART) {
-            saveCartItem({SalesOrderNo: cartNo, ItemCode: itemCode, QuantityOrdered: quantity, CommentText: comment});
+            saveCartItem({SalesOrderNo: cartNo, ItemCode: itemCode, QuantityOrdered: quantity, CommentText: comment, price});
         } else {
-            saveNewCart({cartName, itemCode, quantity, comment});
+            saveNewCart({cartName, itemCode, quantity, comment, price});
         }
         onDone();
     }

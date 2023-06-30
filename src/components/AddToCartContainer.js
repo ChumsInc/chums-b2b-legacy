@@ -67,6 +67,7 @@ class AddToCartContainer extends Component {
                 </div>
                 {!TaxSchedule && (<MissingTaxScheduleAlert />)}
                 <AddToCartForm itemCode={itemCode} quantity={quantity} comment={comment}
+                               price={customerPrice}
                                onChangeQuantity={this.onChangeQuantity}
                                onDone={() => this.props.onClose()}/>
                 <CartItemDetail itemCode={ItemCode} quantity={quantity}

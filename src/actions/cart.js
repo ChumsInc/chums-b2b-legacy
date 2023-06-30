@@ -23,7 +23,6 @@ import {
     API_PATH_DELETE_CART,
     API_PATH_ITEM_AVAILABILITY,
     API_PATH_PROMOTE_CART,
-    API_PATH_SALES_ORDER,
     API_PATH_SAVE_CART,
     CART_ACTIONS
 } from "../constants/paths";
@@ -39,6 +38,7 @@ import {selectCartsList} from "../selectors/carts";
 import {selectCustomerAccount} from "../selectors/customer";
 import {selectCartNo} from "../selectors/cart";
 import {fetchSalesOrder} from "../api/sales-order";
+import {ga_addToCart, ga_purchase} from "./gtag";
 
 export const customerFromState = ({user}) => {
     const {Company, ARDivisionNo, CustomerNo, ShipToCode = ''} = user.currentCustomer;
@@ -112,7 +112,7 @@ export const loadCurrentCart = () => async (dispatch, getState) => {
         const {ARDivisionNo, CustomerNo} = customerAccount;
         const salesOrder = await fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo: cartNo});
         dispatch({type: FETCH_CART, status: FETCH_SUCCESS, salesOrder});
-    } catch(err) {
+    } catch (err) {
         dispatch({type: FETCH_CART, status: FETCH_FAILURE});
         dispatch(handleError(err, FETCH_CART));
         if (err.debug) {
@@ -121,7 +121,7 @@ export const loadCurrentCart = () => async (dispatch, getState) => {
     }
 };
 
-export const saveNewCart = ({cartName, itemCode, quantity = 1, comment = ''}) => (dispatch, getState) => {
+export const saveNewCart = ({cartName, itemCode, quantity = 1, comment = '', price = 0}) => (dispatch, getState) => {
     const {user, promo_code} = getState();
     if (!cartName) {
         dispatch(setAlert({message: 'Unable to save your cart without a cart name!'}));
@@ -141,6 +141,7 @@ export const saveNewCart = ({cartName, itemCode, quantity = 1, comment = ''}) =>
     const customer = customerFromState({user});
     const url = buildPath(API_PATH_SAVE_CART, customer);
     dispatch({type: SAVE_CART, status: FETCH_INIT, message: 'Creating new cart'});
+    ga_addToCart(itemCode, quantity, price);
     return fetchPOST(url, data)
         .then(res => {
             const {SalesOrderNo} = res;
@@ -235,7 +236,7 @@ export const saveCart = () => (dispatch, getState) => {
 
 export const promoteCart = () => (dispatch, getState) => {
     const {salesOrder, cart, promo_code} = getState();
-    const {header} = salesOrder;
+    const {header, detail} = salesOrder;
 
     if (!isCartOrder(header)) {
         return;
@@ -268,6 +269,7 @@ export const promoteCart = () => (dispatch, getState) => {
     const url = buildPath(API_PATH_PROMOTE_CART, header);
 
     dispatch({type: PROMOTE_CART, status: FETCH_INIT});
+    ga_purchase(header.SalesOrderNo, header.TaxableAmt + header.NonTaxableAmt - header.DiscountAmt, detail);
     return fetchPOST(url, data)
         .then(res => {
             dispatch({type: PROMOTE_CART, status: FETCH_SUCCESS, salesOrder: header});
@@ -316,7 +318,8 @@ export const saveCartItem = ({
                                  ItemCode,
                                  QuantityOrdered,
                                  CommentText = '',
-                                 ItemType
+                                 ItemType,
+                                 price = 0,
                              }) => (dispatch, getState) => {
     if (ItemType === '4' && ItemCode === '/C') {
         return dispatch(addCommentLine({SalesOrderNo, LineKey, CommentText}));
@@ -339,6 +342,9 @@ export const saveCartItem = ({
     };
     const url = buildPath(API_PATH_SAVE_CART, customer.account);
     dispatch({type: SAVE_CART, status: FETCH_INIT});
+    if (!LineKey) {
+        ga_addToCart(ItemCode, QuantityOrdered, price);
+    }
     fetchPOST(url, data)
         .then(result => {
             if (!result.success) {

@@ -156,7 +156,7 @@ export const selectColor = (colorCode) => (dispatch, getState) => {
         cartItem.priceLevel = customer.account.PriceLevel;
     }
     dispatch({type: SELECT_COLOR, colorCode, cartItem});
-    dispatch(ga_viewItem({cartItem, selectedProduct}));
+    ga_viewItem({cartItem, selectedProduct});
 };
 
 export const setCartItemQuantity = (quantity) => ({type: SET_CART_ITEM_QUANTITY, quantity});

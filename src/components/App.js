@@ -2,7 +2,6 @@ import React, {Fragment, useEffect} from 'react';
 import {Redirect, Route} from 'react-router-dom';
 import Footer from './Footer';
 import {
-    PATH_CART_CHECKOUT,
     PATH_CUSTOMER_ACCOUNT,
     PATH_HOME,
     PATH_INVOICE,
@@ -16,10 +15,6 @@ import {
     PATH_RESOURCES_CHUMS_REPS,
     PATH_SALES_ORDER,
     PATH_SALES_ORDER_BREADCRUMB,
-    PATH_SALES_ORDER_INVOICES,
-    PATH_SALES_ORDER_MASTER,
-    PATH_SALES_ORDER_OPEN,
-    PATH_SALES_ORDER_PAST,
     PATH_SALES_ORDERS,
     PATH_SET_PASSWORD,
     PATH_SIGNUP
@@ -43,7 +38,6 @@ import SignUp from "./SignUp";
 import AppUpdateLocalLogin from "./AppUpdateLocalLogin";
 import Logout from "./Logout";
 import ResetPassword from "./ResetPassword";
-import GA_RouteHandler from "./GA_RouteHandler";
 import DocumentTitle from "./DocumentTitle";
 import ContentPage from "./ContentPage";
 import InvoicePage from "./InvoicePage";
@@ -52,7 +46,6 @@ import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../selec
 import {selectCustomerLoading} from "../selectors/customer";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import CartPage from "./Cart/CartPage";
 
 
 const App = () => {
@@ -152,7 +145,6 @@ const App = () => {
                     </div>
                 </main>
                 <Footer/>
-                <Route component={GA_RouteHandler}/>
             </LocalizationProvider>
         </>
     )

@@ -22,6 +22,7 @@ import {buildPath, fetchGET, fetchPOST} from '../utils/fetch';
 import {API_PATH_HOME_SLIDES, API_PATH_SEARCH, API_PATH_VERSION} from "../constants/paths";
 import localStore from "../utils/LocalStore";
 import {STORE_USER_PREFS} from "../constants/stores";
+import {ga_search} from "./gtag";
 
 
 export const setAlert = ({
@@ -61,6 +62,7 @@ export const getSearchResults = (term) => (dispatch, getState) => {
     }
     const url = buildPath(API_PATH_SEARCH, {term});
     dispatch({type: FETCH_SEARCH_RESULTS, status: FETCH_INIT})
+    ga_search(term);
     fetchGET(url)
         .then(res => {
             dispatch({type: FETCH_SEARCH_RESULTS, status: FETCH_SUCCESS, list: res.result || []})

@@ -31,7 +31,7 @@ import {
 } from '../constants/stores';
 
 import {auth} from '../utils/IntranetAuthService';
-import {getTokenExpirationDate, getProfile, getSignInProfile} from "../utils/jwtHelper";
+import {getTokenExpirationDate, getProfile, getSignInProfile, getLocalAuthUserId} from "../utils/jwtHelper";
 import {getFirstCustomer, getFirstUserAccount, getUserAccount, isValidCustomer} from "../utils/customer";
 import {fetchCustomerAccount, setCustomerAccount} from "./customer";
 import {
@@ -47,6 +47,7 @@ import {
     API_PATH_PASSWORD_RESET, API_PATH_LOGIN_GOOGLE
 } from "../constants/paths";
 import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../constants/app";
+import {ga_login} from "./gtag";
 
 let reauthTimer = 0;
 
@@ -68,6 +69,7 @@ export const loginUser = ({email, password}) => (dispatch) => {
             auth.setProfile(getProfile(token));
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
             dispatch(fetchProfile());
+            ga_login(getLocalAuthUserId(token), 'Local Auth');
         })
         .catch(err => {
             dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_FAILURE});
@@ -160,8 +162,8 @@ export const signInWithGoogle = (token) => async (dispatch, getState) => {
         dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
         dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
         dispatch(fetchRepList());
-
         dispatch(selectUserAccountIfNeeded(user));
+        ga_login(user.id, 'Google');
     } catch(err) {
         console.trace(err);
         auth.logout();
@@ -198,8 +200,8 @@ export const loginGoogleUser = (googleUser) => (dispatch, getState) => {
             dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
             dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
             dispatch(fetchRepList());
-
             dispatch(selectUserAccountIfNeeded(user));
+            ga_login(user.id, 'Google');
         })
         .catch(err => {
             console.trace(err);

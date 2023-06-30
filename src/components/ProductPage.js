@@ -306,7 +306,8 @@ class ProductPage extends Component {
                             )}
                             {!!loggedIn && !!hasCustomer && !!cartItem.itemCode && !!availableForSale && (
                                 <ErrorBoundary>
-                                    <AddToCartForm quantity={quantity} itemCode={cartItem.itemCode} setGlobalCart
+                                    <AddToCartForm quantity={quantity} itemCode={cartItem.itemCode} price={cartItem.price}
+                                                   setGlobalCart
                                                    season_code={season_code} season_available={season_available}
                                                    disabled={!TaxSchedule}
                                                    onChangeQuantity={this.onChangeQuantity} onDone={noop}/>
