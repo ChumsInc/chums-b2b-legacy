@@ -272,7 +272,6 @@ class OrderHeader extends Component {
         const {cartProgress} = this.props;
         const {Company, SalesOrderNo, PaymentType} = this.props.header;
         if (cartProgress < CART_PROGRESS_STATES.confirm) {
-
             this.props.setCartProgress(cartProgress + 1);
             return;
         }

@@ -7,11 +7,10 @@ const InlineJSHeadContent = (manifestFiles = {}) => {
     const version = JSON.stringify(manifestFiles);
     return `
         window.dataLayer = window.dataLayer || [];
-        function gtag() {
-            dataLayer.push(arguments);
-        }
+        function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'UA-3648826-6');
+        
+        gtag('config', 'G-KMH9RBEF98');
         
         window.Chums = {version: ${version}};
         `;
@@ -69,7 +68,7 @@ class Html extends Component {
                     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" media="screen" />
                     <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css" />
                     <script src="https://accounts.google.com/gsi/client" async defer />
-                    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-3648826-6" />
+                    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMH9RBEF98" />
                     <script dangerouslySetInnerHTML={{__html: InlineJSHeadContent(manifestFiles)}}  />
                     {/*<InlineJSHeadContent manifestFiles={manifestFiles}/>*/}
                     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
