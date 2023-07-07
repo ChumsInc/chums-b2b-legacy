@@ -19,7 +19,6 @@ import ErrorBoundary from "../common-components/ErrorBoundary";
 import TextInput from "../common-components/TextInput";
 import DocumentTitle from "./DocumentTitle";
 
-
 const ACCOUNT_LIST_FIELDS = [
     {field: 'CustomerNo', title: 'Account', render: (row => <CustomerLink {...row} />)},
     {field: 'CustomerName', title: "Name"},

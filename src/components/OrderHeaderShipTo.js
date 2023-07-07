@@ -3,11 +3,11 @@ import {useDispatch, useSelector} from "react-redux";
 import FormGroup from "../common-components/FormGroup";
 import ShipToSelect from "./ShipToSelect";
 import ShipToAddress from "./Address/ShipToAddress";
-import {selectIsCart, selectSalesOrderHeader} from "../selectors/salesOrder";
-import {updateCart} from "../actions/cart";
-import {selectCartProgress} from "../selectors/cart";
+import {selectIsCart, selectSalesOrderHeader} from "../ducks/salesOrder/selectors";
+import {updateCart} from "../ducks/cart/actions";
+import {selectCartProgress} from "../ducks/cart/selectors";
 import {CART_PROGRESS_STATES} from "../constants/orders";
-import {selectCustomerShipToAddresses} from "../selectors/customer";
+import {selectCustomerShipToAddresses, selectPermittedShipToAddresses} from "../ducks/customer/selectors";
 import {isSalesOrderHeader} from "../utils/typeguards";
 import {SalesOrderHeader} from "b2b-types";
 
@@ -16,7 +16,7 @@ const OrderHeaderShipTo = () => {
     const orderHeader = useSelector(selectSalesOrderHeader);
     const isCart = useSelector(selectIsCart);
     const cartProgress = useSelector(selectCartProgress);
-    const shipToAddresses = useSelector(selectCustomerShipToAddresses);
+    const shipToAddresses = useSelector(selectPermittedShipToAddresses);
 
     const changeHandler = (shipToCode) => {
         const [shipTo] = shipToAddresses.filter(shipTo => shipTo.ShipToCode === shipToCode);

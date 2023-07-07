@@ -1,177 +1,154 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import CartSelect from "./CartSelect";
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
-import {newCart, saveCartItem, saveNewCart, setCurrentCart, updateCart} from "../actions/cart";
+import {newCart, saveCartItem, saveNewCart, setCurrentCart, updateCart} from "../ducks/cart/actions";
 import FormGroup from "../common-components/FormGroup";
 import CartQuantityInput from "./CartQuantityInput";
 import ProgressBar from "./ProgressBar";
 import Alert from "../common-components/Alert";
 import {NEW_CART} from "../constants/orders";
+import {selectCartsList, selectCartsLoading} from "../ducks/carts/selectors";
+import {
+    selectCartLoading,
+    selectCartMessage,
+    selectCartName,
+    selectCartNo,
+    selectItemAvailabilityLoading
+} from "../ducks/cart/selectors";
+import {
+    selectCustomerPermissions,
+    selectCustomerPermissionsLoaded,
+    selectCustomerPermissionsLoading
+} from "../selectors/user";
+import ShipToSelect from "./ShipToSelect";
+import {loadCustomerPermissions} from "../actions/user";
 
 
-const mapStateToProps = ({cart, carts}) => {
-    const {cartNo, cartName, loading, cartMessage} = cart;
-    return {
-        carts,
-        cartNo,
-        cartName,
-        loading,
-        cartMessage
-    };
-};
+const AddToCartForm = ({
+                           itemCode,
+                           quantity,
+                           comment,
+                           setGlobalCart,
+                           season_code,
+                           season_available,
+                           disabled,
+                           onDone,
+                           onChangeQuantity
+                       }) => {
+    const dispatch = useDispatch();
+    const cartsList = useSelector(selectCartsList);
+    const cartsLoading = useSelector(selectCartsLoading);
+    const cartNo = useSelector(selectCartNo);
+    const cartName = useSelector(selectCartName);
+    const loading = useSelector(selectCartLoading);
+    const cartMessage = useSelector(selectCartMessage);
+    const permissions = useSelector(selectCustomerPermissions);
+    const permissionsLoading = useSelector(selectCustomerPermissionsLoading);
+    const permissionsLoaded = useSelector(selectCustomerPermissionsLoaded);
+    const availabilityLoading = useSelector(selectItemAvailabilityLoading);
 
-const mapDispatchToProps = {
-    saveNewCart,
-    saveCartItem,
-    selectCart: setCurrentCart,
-    newCart,
-    updateCart,
-};
+    const [_comment, setComment] = useState(comment ?? '');
+    const [_cartName, setCartName] = useState(cartName ?? '');
+    const [_cartNo, setCartNo] = useState(cartNo ?? '');
+    const [shipToCode, setShipToCode] = useState('');
 
+    useEffect(() => {
+        if (!permissions && !permissionsLoading) {
+            dispatch(loadCustomerPermissions());
+        }
+    },[])
+    useEffect(() => {
+        setCartName(cartName ?? '');
+        setCartNo(cartNo ?? '');
+        setComment(comment ?? '');
+    }, [cartNo, cartName, comment]);
 
-class AddToCartForm extends Component {
-    static propTypes = {
-        carts: PropTypes.shape({
-            loading: PropTypes.bool,
-            list: PropTypes.array,
-        }),
-        cartNo: PropTypes.string,
-        cartName: PropTypes.string,
-        itemCode: PropTypes.string,
-        quantity: PropTypes.number,
-        comment: PropTypes.string,
-        loading: PropTypes.bool,
-        cartMessage: PropTypes.string,
-        setGlobalCart: PropTypes.bool,
-        season_code: PropTypes.string,
-        season_available: PropTypes.bool,
-        disabled: PropTypes.bool,
+    useEffect(() => {
+        if (permissions?.billTo) {
+            setShipToCode('');
+        }
+        setShipToCode(permissions?.shipTo[0] ?? '');
+    }, [permissions])
 
-        onDone: PropTypes.func.isRequired,
-        onChangeQuantity: PropTypes.func.isRequired,
-        selectCart: PropTypes.func.isRequired,
-        saveNewCart: PropTypes.func.isRequired,
-        saveCartItem: PropTypes.func.isRequired,
-        newCart: PropTypes.func.isRequired,
-        updateCart: PropTypes.func.isRequired,
-    };
-
-    static defaultProps = {
-        carts: {
-            list: [],
-            loading: false,
-        },
-        cartNo: '',
-        cartName: '',
-        itemCode: '',
-        quantity: 1,
-        comment: '',
-        loading: false,
-        cartMessage: '',
-        setGlobalCart: false,
-        season_code: '',
-        season_available: false,
-        disabled: false,
-    };
-
-
-    state = {
-        comment: '',
-        cartName: '',
-        cartNo: '',
-    };
-
-    constructor(props) {
-        super(props);
-        this.onSelectCart = this.onSelectCart.bind(this);
-        this.onNameCart = this.onNameCart.bind(this);
-        this.onAddToCart = this.onAddToCart.bind(this);
-        this.onChangeQuantity = this.onChangeQuantity.bind(this);
-    }
-
-    componentDidMount() {
-        const {comment, cartNo, cartName} = this.props;
-        this.setState({comment, cartName, cartNo});
-    }
-
-    onSelectCart({field, value}) {
-        const {cartName} = this.state;
-        const {carts, setGlobalCart} = this.props;
+    const cartChangeHandler = (ev) => {
+        const value = ev.target.value;
         if (value === NEW_CART && setGlobalCart) {
-            this.props.newCart();
+            dispatch(newCart());
             return;
         }
-        const [cart] = carts.list.filter(so => so.SalesOrderNo === value);
-        if (!!value && setGlobalCart) {
-            this.props.selectCart(cart);
-        }
-
-        this.setState({
-            cartNo: value,
-            cartName: value === NEW_CART ? (cart.cartName || '') : cartName
-        });
-    }
-
-    onNameCart({value}) {
-        if (!this.props.setGlobalCart) {
-            this.setState({cartName: value});
+        const [cart] = cartsList.filter(so => so.SalesOrderNo === value);
+        if (cart && setGlobalCart) {
+            dispatch(setCurrentCart(cart));
             return;
         }
-        this.props.updateCart({cartName: value});
+        console.log(value, cart);
+        setCartNo(value);
+        setCartName(value === NEW_CART ? '' : cart.CustomerPONo);
+        setShipToCode(value === NEW_CART ? '' : cart.ShipToCode);
     }
 
-    onChangeQuantity(quantity) {
-        this.props.onChangeQuantity(Number(quantity));
+    const onChangeCartName = ({value}) => {
+        setCartName(value)
     }
 
-    onAddToCart(ev) {
+    const quantityChangeHandler = (quantity) => {
+        onChangeQuantity(Number(quantity));
+    }
+
+    const submitHandler = (ev) => {
         ev.preventDefault();
-        if (this.props.disabled) {
+        if (disabled) {
             return;
         }
-        const {itemCode, saveNewCart, saveCartItem, onDone, quantity, cartMessage, setGlobalCart, season_code, season_available} = this.props;
-        const cartNo = setGlobalCart ? this.props.cartNo : this.state.cartNo;
-        const cartName = setGlobalCart ? this.props.cartName : this.state.cartName;
-        let {comment} = this.state;
+        let comment = '';
         if (!!season_code && !season_available) {
-            comment = [`PRE-SEASON ITEM: ${season_code}`, comment].filter(val => !!val).join('; ');
+            comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
-
-        if (!!cartNo && cartNo !== NEW_CART) {
-            saveCartItem({SalesOrderNo: cartNo, ItemCode: itemCode, QuantityOrdered: quantity, CommentText: comment});
-        } else {
-            saveNewCart({cartName, itemCode, quantity, comment});
+        if (!!_cartNo && _cartNo !== NEW_CART) {
+            dispatch(saveCartItem({
+                SalesOrderNo: _cartNo,
+                ItemCode: itemCode,
+                QuantityOrdered: quantity,
+                CommentText: comment,
+            }));
+            onDone();
+            return;
         }
+        dispatch(saveNewCart({
+            cartName: _cartName,
+            itemCode,
+            quantity,
+            comment,
+            shipToCode,
+        }));
         onDone();
     }
 
-    render() {
-        const {comment} = this.state;
-        const {carts, quantity, loading, cartMessage, setGlobalCart} = this.props;
-        const cartNo = setGlobalCart ? this.props.cartNo : this.state.cartNo;
-        const cartName = setGlobalCart ? this.props.cartName : this.state.cartName;
-
-        return (
-            <form onSubmit={this.onAddToCart} className="add-to-cart" method="post">
-                <FormGroup colWidth={8} label="Select Cart">
-                    <CartSelect cartList={carts.list} cartNo={cartNo} onChange={this.onSelectCart}/>
-                </FormGroup>
-                {(!cartNo || cartNo === NEW_CART) && (
-                    <FormGroupTextInput colWidth={8} label="Cart Name" onChange={this.onNameCart} value={cartName}
+    return (
+        <form onSubmit={submitHandler} className="add-to-cart" method="post">
+            {availabilityLoading && <ProgressBar striped label="Checking Availability" />}
+            <FormGroup colWidth={8} label="Select Cart">
+                <CartSelect cartList={cartsList} cartNo={_cartNo} onChange={cartChangeHandler}/>
+            </FormGroup>
+            {(!_cartNo || _cartNo === NEW_CART) && (
+                <>
+                    <FormGroupTextInput colWidth={8} label="Cart Name" onChange={onChangeCartName} value={_cartName}
                                         required helpText="Please name your cart."/>
-                )}
-                <FormGroup colWidth={8} label="Quantity">
-                    <CartQuantityInput quantity={quantity} onChange={this.onChangeQuantity}
-                                       disabled={this.props.disabled}
-                                       onAddToCart={this.onAddToCart}/>
-                </FormGroup>
-                {loading && <ProgressBar striped height={5}/>}
-                {!!cartMessage && <Alert type="alert-success">{cartMessage}</Alert>}
-            </form>
-        );
-    }
+                    <FormGroup colWidth={8} label="Ship To">
+                        <ShipToSelect value={shipToCode} onChange={code => setShipToCode(code)} />
+                    </FormGroup>
+                </>
+            )}
+            <FormGroup colWidth={8} label="Quantity">
+                <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
+                                   disabled={disabled}
+                                   onAddToCart={submitHandler}/>
+            </FormGroup>
+            {loading && <ProgressBar striped height={5}/>}
+            {!!cartMessage && <Alert type="alert-success">{cartMessage ?? null}</Alert>}
+        </form>
+    );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddToCartForm) 
+export default AddToCartForm;

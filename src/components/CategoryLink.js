@@ -13,10 +13,10 @@ const CategoryLink = ({title, keyword, description, status, imageUrl, className 
             <Link className="category" to={`/products/${keyword}`}>
                 <ProductImage image={imageUrl} title={title} altText={title} size="400" className="main-image"/>
                 <div className="product-title">{title}</div>
-                <div className="description">
-                    <div dangerouslySetInnerHTML={{__html: description}}/>
-                </div>
             </Link>
+            <div className="description">
+                <div dangerouslySetInnerHTML={{__html: description}}/>
+            </div>
         </div>
     );
 }

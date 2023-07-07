@@ -14,15 +14,11 @@ const CustomerShippingAccount = ({enabled, value, readOnly = false, disabled = f
 
     return (
         <div className="input-group input-group-sm">
-            <div className="input-group-prepend">
-                <div className="input-group-text">
-                    <span onClick={() => onClick()}>Use your account</span>
-                </div>
+            <div className="input-group-text">
+                <span onClick={() => onClick()}>Use your account</span>
             </div>
-            <div className="input-group-prepend">
-                <div className="input-group-text">
-                    <input type="checkbox" checked={enabled} onChange={() => onClick()} disabled={disabled || readOnly}/>
-                </div>
+            <div className="input-group-text">
+                <input type="checkbox" checked={enabled} onChange={() => onClick()} disabled={disabled || readOnly}/>
             </div>
             <TextInput onChange={({value}) => onChange(value)} value={enabled ? value : ''}
                        disabled={!enabled} readOnly={readOnly} required={true}

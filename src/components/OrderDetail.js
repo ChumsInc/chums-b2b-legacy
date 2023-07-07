@@ -4,7 +4,7 @@ import {orderDetailPropType} from "../constants/myPropTypes";
 import AddToCartModal from "./AddToCartModal";
 import OrderDetailLine from "./OrderDetailLine";
 import OrderFooter from "./OrderFooter";
-import {appendCommentLine, saveCartItem, updateCartItem} from "../actions/cart";
+import {appendCommentLine, saveCartItem, updateCartItem} from "../ducks/cart/actions";
 import {connect} from "react-redux";
 import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "../constants/orders";
 import OrderCommentInput from "./OrderCommentInput";
@@ -161,7 +161,7 @@ class OrderDetail extends Component {
                         }
 
                         <tbody>
-                        {detail
+                        {[...detail]
                             .sort((a, b) => Number(a.LineSeqNo) - Number(b.LineSeqNo))
                             .map(line => (
                                 <OrderDetailLine key={line.LineSeqNo} line={line}

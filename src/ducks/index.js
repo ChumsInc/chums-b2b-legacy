@@ -1,18 +1,17 @@
 import {combineReducers} from 'redux';
-import app from '../reducers/app';
+import app from './app';
 import user from '../reducers/user';
-import products from '../reducers/products';
-import category from '../reducers/category';
-import customer from '../reducers/customer';
-import carts from '../reducers/carts';
+import products from './products';
+import category from './category';
+import customer from './customer';
+import carts from './carts';
 import openOrders from '../reducers/openOrders';
-import pastOrders from '../reducers/pastOrders';
-import invoices from '../reducers/invoices';
-import salesOrder from '../reducers/salesOrder';
-import cart from '../reducers/cart';
+import invoices from './invoices';
+import cart from './cart';
 import page from '../reducers/page';
 import promo_code from "../reducers/promo_code";
 import {default as versionReducer} from './version/index';
+import salesOrderReducer from "./salesOrder";
 
 
 const rootReducer = combineReducers({
@@ -24,8 +23,7 @@ const rootReducer = combineReducers({
     cart,
     carts,
     openOrders,
-    pastOrders,
-    salesOrder,
+    salesOrder: salesOrderReducer,
     page,
     promo_code,
     invoices,

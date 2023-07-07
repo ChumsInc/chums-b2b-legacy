@@ -5,12 +5,11 @@ import {connect} from 'react-redux';
 import {cartsPropType, locationPathType} from "../constants/myPropTypes";
 import {fetchCustomerAccount} from '../actions/customer';
 import {fetchOpenOrders} from '../actions/salesOrder';
-import {newCart, setCurrentCart} from '../actions/cart';
+import {newCart, setCurrentCart} from '../ducks/cart/actions';
 import OrdersList from "./OrdersList";
 import {NAV_ORDERS, PATH_SALES_ORDER} from "../constants/paths";
 import {NEW_CART, ORDER_TYPE, ORDER_TYPE_NAMES} from "../constants/orders";
-import {buildPath} from "../utils/fetch";
-import {fetchInvoices} from '../actions/invoices';
+import {loadInvoices} from '../ducks/invoices/actions';
 import ErrorBoundary from "../common-components/ErrorBoundary";
 import DocumentTitle from "./DocumentTitle";
 
@@ -37,7 +36,7 @@ const mapStateToProps = ({user, customer, carts, openOrders, cart, app, invoices
 const mapDispatchToProps = {
     fetchAccount: fetchCustomerAccount,
     fetchOpenOrders,
-    fetchInvoices,
+    fetchInvoices: loadInvoices,
     selectCart: setCurrentCart,
     newCart,
 };
@@ -134,11 +133,10 @@ class OrdersContainer extends Component {
 
     onNewCart() {
         this.props.newCart();
-        const path = buildPath(PATH_SALES_ORDER, {
-            orderType: ORDER_TYPE.cart,
-            Company: this.props.company,
-            SalesOrderNo: NEW_CART
-        });
+        const path = PATH_SALES_ORDER
+            .replace(':orderType', ORDER_TYPE.cart)
+            .replace(':Company', this.props.company)
+            .replace(':SalesOrderNo', NEW_CART);
         this.props.history.push(path);
     }
 
@@ -148,7 +146,7 @@ class OrdersContainer extends Component {
         const {carts, cartNo, openOrders, invoices} = this.props;
         return (
             <Fragment>
-                <DocumentTitle documentTitle={ORDER_TYPE_NAMES[tab]} />
+                <DocumentTitle documentTitle={ORDER_TYPE_NAMES[tab]}/>
                 <Tabs tabList={NAV_ORDERS} onSelect={(tab) => this.setState({tab})} activeTab={tab}/>
                 <ErrorBoundary>
                     {tab === ORDER_TYPE.cart && (

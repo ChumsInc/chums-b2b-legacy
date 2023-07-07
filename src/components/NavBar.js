@@ -13,7 +13,8 @@ import DropDownToggle from "./DropDownToggle";
 import {SUB_NAV_TYPES} from "../constants/app";
 import NavBarSubNavContainer from "./NavBarSubNavContainer";
 import {withRouter} from "react-router";
-import GoogleSignInOneTap from "./GoogleSignInOneTap";
+import {selectVersionChanged} from "../ducks/version";
+import {selectHasMessages} from "../ducks/messages";
 
 
 const NavItem = ({path, title = '', active = false}) => {
@@ -29,15 +30,13 @@ const isPathProducts = new RegExp(`^/products`);
 const isPathProfile = new RegExp(`^/(profile|account)`);
 const isPathOrders = new RegExp('^/orders');
 
-const mapStateToProps = ({app, user}) => {
-    const {subNav, showNavBar, messages, version, search} = app;
+const mapStateToProps = (state) => {
+    const {app, user} = state;
+    const versionChanged = selectVersionChanged(state);
+    const hasMessages = selectHasMessages(state);
+    const {subNav, showNavBar, search} = app;
     const hideForSearch = search.show;
     const {loggedIn, accounts} = user;
-    const siteMessages = messages
-        .filter(m => m.type === 'site' || m.type === 'version')
-        .filter(m => m.start === null || (new Date(m.start).valueOf() < new Date().valueOf()))
-        .filter(m => m.end === null || (new Date(m.end).valueOf() > new Date().valueOf()));
-    const hasMessages = siteMessages.length > 0 || version.changed;
     return {showNavBar, subNav, loggedIn, accounts, hasMessages, hideForSearch};
 };
 

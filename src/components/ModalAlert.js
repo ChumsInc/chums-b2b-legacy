@@ -84,7 +84,6 @@ export default class ModalAlert extends Component {
         const {title, body, footer, children, size} = this.props;
         const {show} = this.state;
         const dialogClassName = {
-            'modal-dialog': true,
             'modal-sm': size === 'sm',
             'modal-lg': size === 'lg',
         };
@@ -92,13 +91,11 @@ export default class ModalAlert extends Component {
         return (
             <div className={classNames("modal fade", {show})} role="dialog" tabIndex={-1} style={{display: 'block'}}
                  onClick={this.close}>
-                <div className={classNames(dialogClassName)} role="document" onClick={this.onClickInside}>
+                <div className={classNames('modal-dialog', dialogClassName)} role="document" onClick={this.onClickInside}>
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5 className="modal-title">{title}</h5>
-                            <button type="button" className="close" aria-label="Close" onClick={this.close}>
-                                <span aria-hidden={true}>&times;</span>
-                            </button>
+                            <button type="button" className="btn-close" aria-label="Close" onClick={this.close} />
                         </div>
                         <div className="modal-body">
                             {children || body || 'Hey! Something happened'}

@@ -71,9 +71,16 @@ const nextWorkDay = (date = new Date()) => {
         return d.toISOString();
     }
 }
+
+/**
+ *
+ * @param {Date|string|number} date
+ * @param {number} days
+ * @return {string}
+ */
 const addWorkDays = (date, days) => {
     if (days < 1) {
-        return date;
+        return dayjs(date).toISOString();
     }
     let d = dayjs(date);
     for (let i = 0; i < days; i += 1) {
@@ -81,6 +88,11 @@ const addWorkDays = (date, days) => {
     }
     return d.toISOString();
 }
+
+/**
+ *
+ * @return {string}
+ */
 export const minShipDate = () => {
     const _dayjs = dayjs;
     _dayjs.extend(utc);
@@ -94,11 +106,16 @@ export const minShipDate = () => {
     return addWorkDays(_printDate, 5);
 }
 
+/**
+ *
+ * @param {Date|number|string} [shipDate]
+ * @return {string}
+ */
 export const nextShipDate = (shipDate = new Date()) => {
     const min = minShipDate();
     if (!isInWorkWeek(shipDate)) {
         const isSunday = dayjs(shipDate).day() === 0;
-        shipDate = dayjs(shipDate).day(isSunday ? 1 : 8).toDate();
+        shipDate = dayjs(shipDate).day(isSunday ? 1 : 8).toDate().toISOString();
     }
     if (dayjs(shipDate).valueOf() >= dayjs(min).valueOf()) {
         return shipDate;

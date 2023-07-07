@@ -11,34 +11,47 @@ import Alert from "../common-components/Alert";
 import ShipToAddressFormFields from "./ShipToAddressFormFields";
 import ContactFormFields from "./ContactFormFields";
 import ProgressBar from "./ProgressBar";
-import {selectCurrentCustomer, selectIsEmployee, selectIssRep} from "../selectors/user";
-import {selectCustomerLoading, selectCustomerShipToAddresses, selectPrimaryShipTo} from "../selectors/customer";
+import {
+    selectCanEdit,
+    selectCurrentCustomer,
+    selectCustomerPermissions, selectCustomerPermissionsLoaded,
+    selectCustomerPermissionsLoading,
+    selectIsEmployee,
+    selectIsRep
+} from "../selectors/user";
+import {
+    selectCustomerLoading,
+    selectCustomerShipToAddresses,
+    selectPermittedShipToAddresses,
+    selectPrimaryShipToCode
+} from "../ducks/customer/selectors";
 import StoreMapToggle from "./StoreMapToggle";
 
 const ShipToForm = () => {
     const dispatch = useDispatch();
-    const customer = useSelector(selectCurrentCustomer);
-    const shipToAddresses = useSelector(selectCustomerShipToAddresses);
-    const primaryShipTo = useSelector(selectPrimaryShipTo);
+    const shipToAddresses = useSelector(selectPermittedShipToAddresses);
+    const primaryShipTo = useSelector(selectPrimaryShipToCode);
     const loading = useSelector(selectCustomerLoading);
-    const isEmployee = useSelector(selectIsEmployee);
-    const isRep = useSelector(selectIssRep);
-    const readOnly = !(isEmployee || isRep);
-    const [shipToCode, setShipToCode] = useState(customer?.PrimaryShipToCode ?? null);
+    const canEdit = useSelector(selectCanEdit);
+    const permissions = useSelector(selectCustomerPermissions);
+
+    const [shipToCode, setShipToCode] = useState(primaryShipTo ?? null);
     const [shipTo, setShipTo] = useState(null);
+
+    const readOnly = !canEdit;
+
+    useEffect(() => {
+        setShipToCode(primaryShipTo ?? null);
+        const [shipTo] = shipToAddresses.filter(row => row.ShipToCode === primaryShipTo);
+        setShipTo(shipTo ?? null);
+    }, [shipToAddresses, primaryShipTo])
 
     useEffect(() => {
         const [shipTo] = shipToAddresses.filter(row => row.ShipToCode === shipToCode);
         setShipTo(shipTo ?? null);
     }, [shipToCode]);
 
-    useEffect(() => {
-        const [shipTo] = shipToAddresses.filter(row => row.ShipToCode === shipToCode);
-        setShipTo(shipTo ?? null)
-        if (!shipTo) {
-            setShipToCode(null)
-        }
-    }, [customer])
+
 
     const onNewShipToCustomer = () => {
     }
@@ -76,9 +89,13 @@ const ShipToForm = () => {
             {loading && <ProgressBar striped={true}/>}
             <div className="row g-3">
                 <div className="col-md-6">
-                    <FormGroupTextInput colWidth={8} label="Default Delivery Location"
-                                        className="form-control-plaintext"
-                                        value={primaryShipTo?.ShipToName ?? 'Billing Address'} readOnly disabled/>
+                    {permissions?.billTo && (
+                        <h4>
+                            <FormGroupTextInput colWidth={8} label="Default Delivery Location"
+                                                className="form-control-plaintext"
+                                                value={primaryShipTo?.ShipToName ?? 'Billing Address'} readOnly disabled/>
+                        </h4>
+                    )}
                 </div>
                 <div className="col-md-6">
                     {shipToAddresses.length > 0 && (
@@ -96,7 +113,6 @@ const ShipToForm = () => {
                 </div>
             </div>
             <hr/>
-            {!shipTo && shipToAddresses.length > 0}
             {!!shipTo && (
                 <form onSubmit={submitHandler}>
                     <div className="row g-3">
@@ -110,7 +126,7 @@ const ShipToForm = () => {
                             <FormGroup colWidth={8}>
                                 {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
                                     <button type="button" className="btn btn-sm btn-outline-secondary me-1"
-                                            disabled={shipTo.changed || readOnly}
+                                            disabled={shipTo.changed || readOnly || shipTo.ShipToCode === primaryShipTo}
                                             onClick={onSetDefaultShipTo}>
                                         Set as default delivery location
                                     </button>

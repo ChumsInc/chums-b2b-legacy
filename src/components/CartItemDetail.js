@@ -1,89 +1,73 @@
-import React, {PureComponent, Fragment} from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import numeral from "numeral";
 import Alert from "../common-components/Alert";
 import classNames from 'classnames';
 import CartItemPriceDescription from "./CartItemPriceDescription";
+import {useSelector} from "react-redux";
+import {selectCanViewAvailable} from "../selectors/user";
 
-export default class CartItemDetail extends PureComponent {
-    static propTypes = {
-        price: PropTypes.number,
-        salesUM: PropTypes.string,
-        quantity: PropTypes.number,
-        msrp: PropTypes.number,
-        stdUM: PropTypes.string,
-        salesUMFactor: PropTypes.number,
-        itemCode: PropTypes.string,
-        QuantityAvailable: PropTypes.number,
-        showMSRP: PropTypes.bool,
-        canViewAvailable: PropTypes.bool,
-        priceCodeRecord: PropTypes.shape({
-            DiscountMarkup: PropTypes.number,
-            ItemCode: PropTypes.string,
-            PriceCode: PropTypes.string,
-            PricingMethod: PropTypes.string,
-        }),
-        priceLevel: PropTypes.string,
-    };
+/**
+ *
+ * @param {CartItemDetailProps} cartItem
+ * @param {number[]} [msrp]
+ * @return {JSX.Element|null}
+ * @constructor
+ */
+const CartItemDetail = ({cartItem, msrp}) => {
+    const canViewAvailable = useSelector(selectCanViewAvailable);
 
-    static defaultProps = {
-        price: 0,
-        salesUM: 'EA',
-        quantity: 1,
-        msrp: 0,
-        stdUM: 'EA',
-        salesUMFactor: 1,
-        itemCode: '',
-        QuantityAvailable: 0,
-        showMSRP: false,
-        canViewAvailable: false
-    };
+    if (!cartItem || !cartItem.itemCode) {
+        return null;
+    }
 
-    render() {
-        const {price, salesUM, quantity, msrp, stdUM, salesUMFactor, itemCode, QuantityAvailable, showMSRP, canViewAvailable,
-            priceCodeRecord, priceLevel
-        } = this.props;
-        return (
-            <Fragment>
-                <table className="table table-sm user-pricing">
-                    <tbody>
-                    {!!showMSRP && (
+    const roi = cartItem.quantity * cartItem.salesUMFactor * (cartItem.msrp - (cartItem.price / cartItem.salesUMFactor));
+    const availableToday = cartItem.QuantityAvailable / cartItem.salesUMFactor;
+
+    return (
+        <>
+            <table className="table table-sm user-pricing">
+                <tbody>
+                {((!msrp || msrp.length > 1) || cartItem.salesUMFactor > 1)
+                    && cartItem.msrp > 0
+                    && (
                         <tr className="msrp">
                             <th>MSRP</th>
-                            <td>$ {numeral(msrp).format('0,0.00')} ({stdUM})</td>
+                            <td>$ {numeral(cartItem.msrp).format('0,0.00')} ({cartItem.stdUM})</td>
                         </tr>
                     )}
-                    <tr>
-                        <th>
-                            Your Price
-                            <CartItemPriceDescription priceCodeRecord={priceCodeRecord} priceLevel={priceLevel} />
-                        </th>
-                        <td>$ {numeral(price).format('0,0.00')} ({salesUM})</td>
+                <tr>
+                    <th>
+                        Your Price
+                        <CartItemPriceDescription priceCodeRecord={cartItem.priceCodeRecord}
+                                                  priceLevel={cartItem.priceLevel}/>
+                    </th>
+                    <td>$ {numeral(cartItem.price).format('0,0.00')} ({cartItem.salesUM})</td>
+                </tr>
+                <tr>
+                    <th>Ext Price</th>
+                    <td>$ {numeral(cartItem.price * cartItem.quantity).format('0,0.00')}</td>
+                </tr>
+                <tr>
+                    <th>ROI</th>
+                    <td>$ {numeral(roi).format('0,0.00')}</td>
+                </tr>
+                <tr className="item-code">
+                    <th>SKU</th>
+                    <td>{cartItem.itemCode}</td>
+                </tr>
+                {canViewAvailable && (
+                    <tr className={classNames({'table-danger': cartItem.QuantityAvailable <= 0})}>
+                        <th>Available Today</th>
+                        <td>{numeral(availableToday).format('0,0')} ({cartItem.salesUM})</td>
                     </tr>
-                    <tr>
-                        <th>Ext Price</th>
-                        <td>$ {numeral(price * quantity).format('0,0.00')}</td>
-                    </tr>
-                    <tr>
-                        <th>ROI</th>
-                        <td>$ {numeral(quantity * salesUMFactor * (msrp - (price / salesUMFactor))).format('0,0.00')}</td>
-                    </tr>
-                    <tr className="item-code">
-                        <th>SKU</th>
-                        <td>{itemCode}</td>
-                    </tr>
-                    {canViewAvailable && (
-                        <tr className={classNames({'table-danger': QuantityAvailable <= 0})}>
-                            <th>Available Today</th>
-                            <td>{numeral(QuantityAvailable / salesUMFactor).format('0,0')} ({salesUM})</td>
-                        </tr>
-                    )}
-                    </tbody>
-                </table>
-                {QuantityAvailable < (quantity * salesUMFactor) && (
-                    <Alert type="alert-warning" title="Note: " >Product is not available for immediate delivery.</Alert>
                 )}
-            </Fragment>
-        );
-    }
+                </tbody>
+            </table>
+            {cartItem.QuantityAvailable < (cartItem.quantity * cartItem.salesUMFactor) && (
+                <Alert type="alert-warning" title="Note: ">Product is not available for immediate delivery.</Alert>
+            )}
+        </>
+    )
 }
+
+export default CartItemDetail;

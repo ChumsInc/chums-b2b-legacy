@@ -1,13 +1,12 @@
 export const ALERT_TYPES = {
-    warning: 'alert-warning',
-    danger: 'alert-danger',
-    info: 'alert-info',
-    success: 'alert-success',
-    primary: 'alert-primary',
-    secondary: 'alert-secondary',
-    light: 'alert-light',
-    dark: 'alert-dark',
-    todo: 'alert-todo',
+    warning: 'warning',
+    danger: 'danger',
+    info: 'info',
+    success: 'success',
+    primary: 'primary',
+    secondary: 'secondary',
+    light: 'light',
+    dark: 'dark',
 };
 
 
@@ -62,6 +61,8 @@ export const CHANGE_USER_PASSWORD = 'CHANGE_USER_PASSWORD';
 export const CLEAR_USER_PASSWORD = 'CLEAR_USER_PASSWORD';
 export const FETCH_USER_SIGNUP = 'FETCH_USER_SIGNUP';
 
+export const FETCH_CUSTOMER_PERMISSIONS = 'FETCH_CUSTOMER_PERMISSIONS';
+
 
 
 // for customer action/reducer
@@ -86,7 +87,6 @@ export const FETCH_ORDERS_FAILURE = 'FETCH_ORDERS_FAILURE';
 export const RECEIVE_ORDERS = 'RECEIVE_ORDERS';
 
 export const SELECT_INVOICE = 'SELECT_INVOICE';
-export const FETCH_INVOICES = 'FETCH_INVOICES';
 export const FETCH_INVOICE = 'FETCH_INVOICE';
 export const RECEIVE_PAST_ORDERS = 'RECEIVE_PAST_ORDERS';
 
@@ -123,9 +123,6 @@ export const RECEIVE_ITEM_AVAILABILITY = 'RECEIVE_ITEM_AVAILABILITY';
 export const SEND_ORDER_EMAIL = 'SEND_ORDER_EMAIL';
 export const SEND_ORDER_EMAIL_ACK = 'SEND_ORDER_EMAIL_ACK';
 
-export const SET_CART_PROGRESS = 'SET_CART_PROGRESS';
-export const SET_SHIP_DATE = 'SET_SHIP_DATE';
-export const SET_SHIPPING_ACCOUNT = 'SET_SHIPPING_ACCOUNT';
 export const FETCH_PROMO_CODE = 'FETCH_PROMO_CODE';
 export const SET_PROMO_CODE = 'SET_PROMO_CODE';
 export const FETCH_APPLY_PROMO_CODE = 'FETCH_APPLY_PROMO_CODE';

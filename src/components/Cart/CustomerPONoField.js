@@ -1,9 +1,9 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {selectCartProgress} from "../../selectors/cart";
-import {selectIsCart, selectSalesOrderHeader} from "../../selectors/salesOrder";
+import {selectCartProgress} from "../../ducks/cart/selectors";
+import {selectIsCart, selectSalesOrderHeader} from "../../ducks/salesOrder/selectors";
 import {isSalesOrderHeader} from "../../utils/typeguards";
-import {updateCart} from "../../actions/cart";
+import {updateCart} from "../../ducks/cart/actions";
 import {CART_PROGRESS_STATES} from "../../constants/orders";
 import Alert from "../../common-components/Alert";
 import FormGroupTextInput from "../../common-components/FormGroupTextInput";

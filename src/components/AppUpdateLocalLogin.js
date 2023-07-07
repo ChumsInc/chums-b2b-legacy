@@ -1,56 +1,29 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
+import React, {useEffect} from 'react';
 import {updateLocalAuth} from "../actions/user";
-import {connect} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {AUTH_LOCAL} from "../constants/app";
+import {useAppDispatch} from "../app/configureStore";
+import {selectAuthType, selectLoggedIn} from "../selectors/user";
 
 
-class AppUpdateLocalLogin extends Component {
+const AppUpdateLocalLogin = () => {
+    const dispatch = useAppDispatch();
+    const loggedIn = useSelector(selectLoggedIn);
+    const authType = useSelector(selectAuthType);
 
-    static propTypes = {
-        loggedIn: PropTypes.bool,
-        authType: PropTypes.string,
-
-        updateLocalAuth: PropTypes.func.isRequired,
-    };
-
-    static defaultProps = {
-        loggedIn: false,
-        authType: '',
-    };
-
-    constructor(props) {
-        super(props);
-    }
-
-    componentDidMount() {
-        if (this.props.loggedIn) {
-            this.props.updateLocalAuth();
+    useEffect(() => {
+        if (loggedIn) {
+            dispatch(updateLocalAuth())
         }
+    }, [loggedIn]);
+
+    if (!loggedIn || authType !== AUTH_LOCAL) {
+        return null;
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.loggedIn && !prevProps.loggedIn) {
-            this.props.updateLocalAuth();
-        }
-    }
-
-
-    render() {
-        const {loggedIn, authType} = this.props;
-        return authType === AUTH_LOCAL && loggedIn && (
-            <div className="login-container" style={{display: 'none'}} />
-        )
-    }
+    return (
+        <div className="login-container" style={{display: 'none'}}/>
+    )
 }
 
-const mapStateToProps = state => {
-    const {loggedIn, authType} = state.user;
-    return {loggedIn, authType};
-};
-
-const mapDispatchToProps = {
-    updateLocalAuth,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AppUpdateLocalLogin);
+export default AppUpdateLocalLogin;

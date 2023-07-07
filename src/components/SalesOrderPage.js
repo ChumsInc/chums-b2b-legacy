@@ -7,7 +7,7 @@ import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {Redirect, useHistory} from 'react-router-dom';
 import {loadSalesOrder} from '../actions/salesOrder';
-import {newCart, setCurrentCart} from '../actions/cart';
+import {newCart, setCurrentCart} from '../ducks/cart/actions';
 import ProgressBar from "./ProgressBar";
 import {NEW_CART} from "../constants/orders";
 import OrderHeader from "./OrderHeader";
@@ -17,7 +17,7 @@ import CheckoutProgress from "./CheckoutProgress";
 import Alert from "../common-components/Alert";
 import DocumentTitle from "./DocumentTitle";
 import {useParams} from "react-router";
-import {selectCustomerAccount, selectCustomerLoading} from "../selectors/customer";
+import {selectCustomerAccount, selectCustomerLoading} from "../ducks/customer/selectors";
 import {
     selectAttempts,
     selectIsCart,
@@ -25,8 +25,8 @@ import {
     selectSalesOrderHeader,
     selectSalesOrderNo,
     selectSendingEmailStatus
-} from "../selectors/salesOrder";
-import {selectCartNo} from "../selectors/cart";
+} from "../ducks/salesOrder/selectors";
+import {selectCartNo} from "../ducks/cart/selectors";
 
 const SalesOrderPage = () => {
     const dispatch = useDispatch();
@@ -76,7 +76,7 @@ const SalesOrderPage = () => {
         return (<Redirect to="/profile"/>);
     }
 
-    const documentTitle = `${isCart ? 'Cart' : 'Order'} Info #${salesOrderNo}`;
+    const documentTitle = `${isCart ? 'Cart' : 'Order'} Info #${SalesOrderNo}`;
     return (
         <div>
             <DocumentTitle documentTitle={documentTitle}/>
@@ -91,7 +91,7 @@ const SalesOrderPage = () => {
                 <OrderHeader history={history}/>
                 {isCart && <CheckoutProgress/>}
                 {SalesOrderNo === salesOrderNo && <OrderDetail/>}
-                {(sendEmailStatus.sending || sendEmailStatus.messageId) && <SendEmailModal/>}
+                {(sendEmailStatus?.sending || sendEmailStatus?.messageId) && <SendEmailModal/>}
             </div>
         </div>
     )

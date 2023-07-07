@@ -1,7 +1,8 @@
 import React from 'react';
 import Select from "../common-components/Select";
-import {useSelector} from 'react-redux';
-import {selectCustomerShipToAddresses} from "../selectors/customer";
+import {useDispatch, useSelector} from 'react-redux';
+import {selectCustomerShipToAddresses, selectPermittedShipToAddresses} from "../ducks/customer/selectors";
+import {selectCustomerPermissions} from "../selectors/user";
 
 // export interface ShipToSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'value' | 'onChange'> {
 //     value: string | null;
@@ -11,7 +12,11 @@ import {selectCustomerShipToAddresses} from "../selectors/customer";
 //
 
 const ShipToSelect = ({value, defaultName, onChange, ...props}) => {
-    const shipToAddresses = useSelector(selectCustomerShipToAddresses);
+    const dispatch = useDispatch();
+    const shipToAddresses = useSelector(selectPermittedShipToAddresses);
+    const permissions = useSelector(selectCustomerPermissions);
+
+
     const changeHandler = ({value}) => {
         onChange(value ?? null);
     }
@@ -21,8 +26,10 @@ const ShipToSelect = ({value, defaultName, onChange, ...props}) => {
     }
     return (
         <Select onChange={changeHandler} value={value ?? ''} {...props}>
-            <option value="">{defaultName}</option>
-            {shipToAddresses.map(shipTo => (
+            {!!defaultName && <option value={null}>{defaultName}</option>}
+            {shipToAddresses
+                .filter(shipTo => shipTo.ShipToCode !== '' || permissions?.billTo)
+                .map(shipTo => (
                 <option key={shipTo.ShipToCode} value={shipTo.ShipToCode}>
                     [{shipTo.ShipToCode || 'Billing'}] {shipTo.ShipToName}, {shipTo.ShipToCity} {shipTo.ShipToState}
                 </option>

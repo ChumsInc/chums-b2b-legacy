@@ -1,4 +1,4 @@
-import {buildPath} from '../utils/fetch';
+import {buildPath} from '../utils/path-utils';
 import {ORDER_TYPE, ORDER_TYPE_NAMES} from "./orders";
 
 

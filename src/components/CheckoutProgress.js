@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {setCartProgress} from "../actions/cart";
+import {setCartProgress} from "../ducks/cart/actions";
 import {CART_PROGRESS_NAMES, CART_PROGRESS_STATES} from "../constants/orders";
 import ProgressBar from "./ProgressBar";
 import classNames from 'classnames';

@@ -1,29 +1,21 @@
 import React, {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {changedSelector, versionSelector, minCheckInterval} from "./index";
-import {fetchVersion, ignoreVersion} from "./actions";
+import {useSelector} from 'react-redux';
+import {minCheckInterval, selectShouldAlertVersion, selectVersion} from "./index";
+import {ignoreVersion, loadVersion} from "./actions";
+import {useAppDispatch} from "../../app/configureStore";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 
 const AppVersion = () => {
-    const dispatch = useDispatch();
-    const changed = useSelector(changedSelector);
-    const version = useSelector(versionSelector);
+    const dispatch = useAppDispatch();
+    const version = useSelector(selectVersion);
+    const shouldAlert = useSelector(selectShouldAlertVersion);
     const [intervalId, setIntervalId] = useState(0)
-    useEffect(() => {
-        dispatch(fetchVersion(true));
-        if (global.document) {
-            const intervalId = window.setInterval(() => dispatch(fetchVersion()), minCheckInterval);
-            setIntervalId(intervalId);
-        }
-        return () => {
-            window.clearInterval(intervalId);
-        }
-    }, [])
 
-    if (global.document) {
-        document.addEventListener('visibilitychange', () => {
-            dispatch(fetchVersion());
-        });
+
+    const onUpdateVersion = (force = false) => {
+        dispatch(loadVersion(force));
     }
 
     const onDismissUpdate = () => {
@@ -34,16 +26,30 @@ const AppVersion = () => {
         window.location.reload();
     }
 
+    useEffect(() => {
+        onUpdateVersion();
+        if (global.document) {
+            const intervalId = window.setInterval(onUpdateVersion, minCheckInterval);
+            setIntervalId(intervalId);
+        }
+        return () => {
+            window.clearInterval(intervalId);
+            window.removeEventListener('visibilityChange', onUpdateVersion)
+        }
+    }, [])
+
+    if (global.document) {
+        document.addEventListener('visibilitychange', onUpdateVersion);
+    }
 
     return (
         <div>
-            <span onClick={() => dispatch(fetchVersion(true))} className="app__version">Version: {version}</span>
-            {changed && (
-                <div onClick={onUpdate} className="app__version-popup">
+            <span onClick={() => onUpdateVersion(true)} className="app__version">Version: {version}</span>
+            <Snackbar open={shouldAlert} autoHideDuration={10000} onClose={onDismissUpdate}>
+                <Alert severity="info" sx={{width: '100%'}} onClose={onDismissUpdate} onClick={onUpdate}>
                     <strong>Update Available! Click here to refresh</strong>
-                    <span className="ms-3 close" onClick={onDismissUpdate}/>
-                </div>
-            )}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

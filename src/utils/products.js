@@ -1,7 +1,7 @@
 import {PRICE_FIELDS, SELL_AS_COLOR, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
 import {calcPrice, priceRecord} from "./customer";
 
-export const hasVariants = (product) => product.variants !== undefined && product.variants.filter(v => !!v.status).length > 0 ;
+export const hasVariants = (product) => product.variants !== undefined && product.variants.filter(v => !!v.status).length > 0;
 export const defaultVariant = (product) => {
     const activeVariants = product.variants.filter(v => !!v.status);
     const [variant = activeVariants[0]] = activeVariants.filter(v => !!v.isDefaultVariant);
@@ -10,18 +10,18 @@ export const defaultVariant = (product) => {
 
 export const getSalesUM = (product) => {
     switch (product.sellAs) {
-    case SELL_AS_COLOR:
-        const um = [];
-        product.items
-            .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D' || !item.salesUM))
-            .forEach(item => {
-                if (!um.includes(item.salesUM)) {
-                    um.push(item.salesUM);
-                }
-            });
-        return um.join(',');
-    default:
-        return product.salesUM;
+        case SELL_AS_COLOR:
+            const um = [];
+            product.items
+                .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D' || !item.salesUM))
+                .forEach(item => {
+                    if (!um.includes(item.salesUM)) {
+                        um.push(item.salesUM);
+                    }
+                });
+            return um.join(',');
+        default:
+            return product.salesUM;
     }
 };
 
@@ -37,30 +37,30 @@ export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCode
     const priceCode = priceRecord({pricing: priceCodes, itemCode: product.itemCode, priceCode: product.priceCode});
 
     switch (product.sellAs) {
-    case SELL_AS_SELF:
-    case SELL_AS_MIX:
-        return [calcPrice({stdPrice: product[priceField], ...priceCode}) * product.salesUMFactor];
-    case SELL_AS_COLOR:
-        const prices = [];
-        product.items
-            .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D'))
-            .filter(item => !!item[priceField])
-            .forEach(item => {
-                const price = getItemPrice({item, priceField, priceCodes});
-                if (!prices.includes(price)) {
-                    prices.push(price);
-                }
-            });
-        if (prices.length === 0) {
-            return [product.msrp];
-        }
-        if (prices.length === 1) {
-            return prices;
-        }
-        const sortedPrices = prices.sort();
-        return [sortedPrices[0], sortedPrices[sortedPrices.length - 1]];
-    default:
-        return [];
+        case SELL_AS_SELF:
+        case SELL_AS_MIX:
+            return [calcPrice({stdPrice: product[priceField], ...priceCode}) * product.salesUMFactor];
+        case SELL_AS_COLOR:
+            const prices = [];
+            product.items
+                .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D'))
+                .filter(item => !!item[priceField])
+                .forEach(item => {
+                    const price = getItemPrice({item, priceField, priceCodes});
+                    if (!prices.includes(price)) {
+                        prices.push(price);
+                    }
+                });
+            if (prices.length === 0) {
+                return [product.msrp];
+            }
+            if (prices.length === 1) {
+                return prices;
+            }
+            const sortedPrices = prices.sort();
+            return [sortedPrices[0], sortedPrices[sortedPrices.length - 1]];
+        default:
+            return [];
     }
 };
 
@@ -85,66 +85,74 @@ export const defaultCartItem = ({
                                     cartItemCode,
                                     season_code,
                                     season_available,
-                                    mix
+                                    mix,
+                                    stdUM,
                                 }, preferredColor) => {
     switch (sellAs) {
-    case SELL_AS_SELF:
-        return {
-            itemCode,
-            stdPrice,
-            salesUM,
-            salesUMFactor,
-            QuantityAvailable,
-            msrp,
-            quantity: 1,
-            season_code,
-            season_available
-        };
-    case SELL_AS_MIX:
-        const [colorName = ''] = mix.items.filter(item => item.color.code === defaultColor)
-            .map(item => item.color.name);
-        const additionalData = {};
-        const [image_filename] = mix.items
-            .filter(item => item.color.code === defaultColor)
-            .map(item => {
-                if (item.additionalData && item.additionalData.image_filename) {
-                    return item.additionalData.image_filename;
-                }
-                return null;
+        case SELL_AS_SELF:
+            return {
+                itemCode,
+                stdPrice,
+                stdUM,
+                salesUM,
+                salesUMFactor,
+                QuantityAvailable,
+                msrp,
+                quantity: 1,
+                season_code,
+                season_available
+            };
+        case SELL_AS_MIX:
+            const [colorName = ''] = mix.items.filter(item => item.color.code === defaultColor)
+                .map(item => item.color.name);
+            const additionalData = {};
+            const [image_filename] = mix.items
+                .filter(item => item.color.code === defaultColor)
+                .map(item => {
+                    if (item.additionalData && item.additionalData.image_filename) {
+                        return item.additionalData.image_filename;
+                    }
+                    return null;
+                });
+            if (image_filename) {
+                additionalData.image_filename = image_filename || undefined;
+            }
+            return {
+                itemCode,
+                stdPrice,
+                stdUM,
+                salesUM,
+                salesUMFactor,
+                QuantityAvailable,
+                msrp,
+                quantity: 1,
+                season_code,
+                season_available,
+                colorName,
+                defaultColor,
+                additionalData
+            };
+        default:
+            let cartItem = {};
+            if (preferredColor) {
+                [cartItem = {}] = items
+                    .filter(item => !!item.status)
+                    .filter(item => !!cartItemCode ? item.itemCode === cartItemCode : item.colorCode === preferredColor);
+            }
+            if (!cartItem.itemCode) {
+                [cartItem = {}] = items
+                    .filter(item => !!item.status)
+                    .filter(item => !!cartItemCode ? item.itemCode === cartItemCode : item.colorCode === defaultColor);
+            }
+            if (!cartItem.additionalData) {
+                cartItem.additionalData = {season: {}};
+            }
+            return colorCartItem({
+                ...cartItem,
+                stdUM,
+                season_code,
+                season_available
             });
-        if (image_filename) {
-            additionalData.image_filename = image_filename || undefined;
-        }
-        return {
-            itemCode,
-            stdPrice,
-            salesUM,
-            salesUMFactor,
-            QuantityAvailable,
-            msrp,
-            quantity: 1,
-            season_code,
-            season_available,
-            colorName,
-            defaultColor,
-            additionalData
-        };
-    default:
-        let cartItem = {};
-        if (preferredColor) {
-            [cartItem = {}] = items
-                .filter(item => !!item.status)
-                .filter(item => !!cartItemCode ? item.itemCode === cartItemCode : item.colorCode === preferredColor);
-        }
-        if (!cartItem.itemCode) {
-            [cartItem = {}] = items
-                .filter(item => !!item.status)
-                .filter(item => !!cartItemCode ? item.itemCode === cartItemCode : item.colorCode === defaultColor);
-        }
-        if (!cartItem.additionalData) {
-            cartItem.additionalData = {season: {}};
-        }
-        return colorCartItem({...cartItem, season_code, season_available});
     }
 };
 
@@ -171,6 +179,7 @@ export const colorCartItem = ({
                                   colorName,
                                   priceCode,
                                   stdPrice,
+    stdUM,
                                   salesUM,
                                   salesUMFactor,
                                   QuantityAvailable,
@@ -184,6 +193,7 @@ export const colorCartItem = ({
         colorName,
         priceCode,
         stdPrice,
+        stdUM,
         salesUM,
         salesUMFactor,
         QuantityAvailable,
@@ -212,18 +222,18 @@ export const sortVariants = (a, b) => a.priority === b.priority
  */
 export const getDefaultColor = (product, preferredColor = '') => {
     switch (product.sellAs) {
-    case SELL_AS_SELF:
-        return product.defaultColor || '';
-    case SELL_AS_MIX:
-        return product.mix && product.mix.items.filter(item => item.color.code === preferredColor).length
-            ? preferredColor
-            : (product.defaultColor || '');
-    case SELL_AS_COLOR:
-        return !!product.items && product.items
-            .filter(item => item.status === 1)
-            .filter(item => item.colorCode === preferredColor).length
-            ? preferredColor
-            : (product.defaultColor || '');
+        case SELL_AS_SELF:
+            return product.defaultColor || '';
+        case SELL_AS_MIX:
+            return product.mix && product.mix.items.filter(item => item.color.code === preferredColor).length
+                ? preferredColor
+                : (product.defaultColor || '');
+        case SELL_AS_COLOR:
+            return !!product.items && product.items
+                .filter(item => item.status === 1)
+                .filter(item => item.colorCode === preferredColor).length
+                ? preferredColor
+                : (product.defaultColor || '');
     }
     return (product.defaultColor || '');
 };
@@ -241,3 +251,13 @@ export const parseColor = (str, colorCode = '') => {
     return str.replace(/\*/g, '');
 };
 
+
+/**
+ *
+ * @param {Keyword} a
+ * @param {Keyword} b
+ * @return {number}
+ */
+export const keywordSorter = (a, b) => {
+    return a.keyword.toLowerCase() > b.keyword.toLowerCase() ? 1 : -1;
+}

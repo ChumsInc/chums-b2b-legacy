@@ -7,5 +7,6 @@ export const STORE_CUSTOMER = 'com.chums.b2b.customer';
 export const STORE_USER_ACCOUNT = 'com.chums.b2b.userAccount';
 export const STORE_USER_PREFS = 'com.chums.b2b.prefs';
 export const STORE_RECENT_ACCOUNTS = 'com.chums.b2b.recentAccounts';
+export const STORE_INVOICES_ROWS_PER_PAGE = 'invoices.rowsPerPage';
 
 export const STORE_CUSTOMER_SHIPPING_ACCOUNT = 'com.chums.b2b.customerShippingAccount';

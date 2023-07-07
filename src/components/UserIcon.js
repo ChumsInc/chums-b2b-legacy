@@ -1,15 +1,25 @@
 import React from 'react';
+import StoreIcon from '@mui/icons-material/Store';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupIcon from '@mui/icons-material/Group';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
+/**
+ *
+ * @param {number} accountType
+ * @return {JSX.Element}
+ * @constructor
+ */
 const UserIcon = ({accountType}) => {
     switch (accountType) {
     case 1:
-        return (<span className="material-icons material-icons-sm">person</span>);
+        return (<PersonIcon fontSize="small"/>);
     case 2:
-        return (<span className="material-icons material-icons-sm">group</span>);
+        return (<GroupIcon fontSize="small" />);
     case 4:
-        return (<span className="material-icons material-icons-sm">store</span>);
+        return (<StoreIcon fontSize="small" />);
     }
-    return (<span className="material-icons material-icons-sm">error_outline</span>);
+    return (<ErrorOutlineIcon fontSize="small" />);
 };
 
 export default UserIcon;

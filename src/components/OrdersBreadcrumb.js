@@ -10,7 +10,7 @@ import {
 } from "../constants/paths";
 import {matchPropTypes} from "../constants/myPropTypes";
 import {ORDER_TYPE_NAMES} from "../constants/orders";
-import {buildPath} from "../utils/fetch";
+import {buildPath} from "../utils/path-utils";
 
 class OrdersBreadcrumb extends Component {
     static propTypes = {
@@ -37,8 +37,12 @@ class OrdersBreadcrumb extends Component {
 
         const {orderType, SalesOrderNo = null, InvoiceType = null, InvoiceNo = null} = match.params;
 
-        const profilePath = buildPath(PATH_PROFILE_ACCOUNT, {id: profileId});
-        const accountPath = buildPath(PATH_CUSTOMER_ACCOUNT, {Company, ARDivisionNo, CustomerNo, ShipToCode});
+        const profilePath = PATH_PROFILE_ACCOUNT.replace(':id', profileId);
+        const accountPath = PATH_CUSTOMER_ACCOUNT
+            .replace(':Company', encodeURIComponent(Company))
+            .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))
+            .replace(':CustomerNo', encodeURIComponent(CustomerNo))
+            .replace(':ShipToCode?', encodeURIComponent(ShipToCode ?? ''));
         const orderPath = buildPath(PATH_SALES_ORDERS, {orderType});
         const invoicePath = buildPath(PATH_SALES_ORDERS, {orderType: 'invoices'});
 

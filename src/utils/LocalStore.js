@@ -13,7 +13,7 @@ export default class LocalStore {
             return JSON.parse(data);
         } catch(err) {
             console.log("getItem()", key, err.message);
-            return data;
+            return data ?? null;
         }
     }
 

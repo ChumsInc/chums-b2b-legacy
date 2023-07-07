@@ -26,16 +26,18 @@ const CategoryPageElement = ({itemType = '', title = '', description = '', categ
         return (
             <div className={"col-sm-3 col-6 " + (rest.className || '')}>
                 {rest.urlOverride && (
-                    <Link className="link" to={rest.urlOverride}>
-                        {!!rest.imageUrl && (
-                            <ProductImage image={rest.imageUrl} title={title} altText={title} size="400"
-                                          className="main-image"/>
-                        )}
-                        <div className="product-title">{title}</div>
+                    <>
+                        <Link className="link" to={rest.urlOverride}>
+                            {!!rest.imageUrl && (
+                                <ProductImage image={rest.imageUrl} title={title} altText={title} size="400"
+                                              className="main-image"/>
+                            )}
+                            <div className="product-title">{title}</div>
+                        </Link>
                         <div className="description">
                             <div dangerouslySetInnerHTML={{__html: description}}/>
                         </div>
-                    </Link>
+                    </>
                 )}
                 {!rest.urlOverride && (
                     <div>

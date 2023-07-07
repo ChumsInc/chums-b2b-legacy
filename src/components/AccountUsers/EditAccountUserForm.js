@@ -1,6 +1,10 @@
 import React from 'react';
 import Alert from "../../common-components/Alert";
 import TextareaAutosize from "react-textarea-autosize";
+import BusinessIcon from "@mui/icons-material/Business";
+import {useSelector} from "react-redux";
+import {selectPermittedShipToAddresses} from "../../ducks/customer/selectors";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 // export interface EditAccountUserFormProps {
 //     user: (ExtendedCustomerUser & Editable) | null;
@@ -21,6 +25,7 @@ const EditAccountUserForm = ({
                                  onNewUser,
                                  onDeleteUser
                              }) => {
+    const shipToAddresses = useSelector(selectPermittedShipToAddresses);
     const changeHandler = (field) => (ev) => {
         onChangeUser({[field]: ev.target.value});
     }
@@ -99,6 +104,38 @@ const EditAccountUserForm = ({
                         </button>
                     </div>
                 )}
+            </div>
+            <hr/>
+            <div className="mt-3">
+                <h4>Access Permissions</h4>
+                <table className="table table-sm">
+                    <thead>
+                    <tr>
+                        <th />
+                        <th>Ship To Code</th>
+                        <th>Name</th>
+                        <th>Location</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {user.shipToCode?.length === 0 && (
+                        <tr>
+                            <td><BusinessIcon/></td>
+                            <td colSpan={3}>All Locations</td>
+                        </tr>
+                    )}
+                    {shipToAddresses
+                        .filter(st => user.shipToCode?.includes(st.ShipToCode))
+                        .map(shipTo => (
+                            <tr>
+                                <td><ShoppingCartIcon/></td>
+                                <td>{shipTo.ShipToCode}</td>
+                                <td>{shipTo.ShipToName}</td>
+                                <td>{shipTo.ShipToCity}, {shipTo.ShipToState} {shipTo.ShipToCountryCode}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
         </form>
     )

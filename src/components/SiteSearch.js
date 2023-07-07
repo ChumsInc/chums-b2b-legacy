@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import ProgressBar from "./ProgressBar";
 import {Link, withRouter} from 'react-router-dom';
-import {buildPath} from "../utils/fetch";
+import {buildPath} from "../utils/path-utils";
 import {CONTENT_PATH_SEARCH_IMAGE, PATH_CATEGORY, PATH_PAGE, PATH_PRODUCT} from "../constants/paths";
 
 const itemLink = ({parent, keyword, pagetype}) => {
@@ -57,7 +57,7 @@ const SearchResult = ({active, keyword, parent, title, image = 'missing.png', pa
                 </div>
                 <div className="text-container">
                     <div>{title}</div>
-                    <small>{additional_data.subtitle || ''}</small>
+                    {!!additional_data?.subtitle && (<div className="text-muted small">{additional_data.subtitle}</div>)}
                     <small>{pagetype}</small>
                 </div>
             </Link>

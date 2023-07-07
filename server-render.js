@@ -14,8 +14,8 @@ import http from 'http';
 import React from 'react'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
-import reducers from './src/ducks';
-import App from './src/components/App';
+import {rootReducer} from './src/app/configureStore';
+import App from './src/app/App';
 import Html from "./src/HTML";
 import {renderToString} from 'react-dom/server';
 import {Helmet} from 'react-helmet';
@@ -188,7 +188,7 @@ async function handleRender(req, res) {
 
 
     try {
-        const store = createStore(reducers, initialState);
+        const store = createStore(rootReducer, initialState);
 
         const html = renderToString(
             <Provider store={store}>

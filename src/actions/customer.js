@@ -1,4 +1,4 @@
-import {buildPath, fetchDELETE, fetchGET, fetchPOST, fetchPUT} from '../utils/fetch';
+import {fetchDELETE, fetchGET, fetchPOST, fetchPUT} from '../utils/fetch';
 import {
     CANCEL_CREATE_ACCOUNT_USER,
     CHANGE_ACCOUNT_FIELD,
@@ -35,8 +35,9 @@ import {defaultCartItem, getPrices} from "../utils/products";
 import localStore from "../utils/LocalStore";
 import {STORE_RECENT_ACCOUNTS} from "../constants/stores";
 import {setUserAccount} from "./user";
-import {fetchInvoices} from "./invoices";
+import {loadInvoices} from "../ducks/invoices/actions";
 import {selectLoggedIn} from "../selectors/user";
+import {buildPath} from "../utils/path-utils";
 
 
 export const changeAccount = (props) => ({type: CHANGE_ACCOUNT_FIELD, props});
@@ -137,7 +138,7 @@ export const fetchCustomerAccount = ({fetchOrders = false, force = false} = {}) 
             });
             if (fetchOrders) {
                 dispatch(fetchOpenOrders({Company, ARDivisionNo, CustomerNo}));
-                dispatch(fetchInvoices({Company, ARDivisionNo, CustomerNo}));
+                dispatch(loadInvoices({Company, ARDivisionNo, CustomerNo}));
             }
             // dispatch(fetchValidPromoCodes());
         })

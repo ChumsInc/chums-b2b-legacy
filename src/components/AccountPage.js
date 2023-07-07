@@ -8,11 +8,12 @@ import ShipToForm from "./ShipToForm";
 import {CUSTOMER_TABS} from "../constants/app";
 import AccountUsers from "./AccountUsers/AccountUsers";
 import AccountBreadcrumbs from "./AccountBreadcrumbs";
-import {selectCustomerAccount} from "../selectors/customer";
+import {selectCustomerAccount} from "../ducks/customer/selectors";
 import {selectCustomerTab} from "../selectors/app";
 import {useParams} from "react-router";
 import DocumentTitle from "./DocumentTitle";
 import AccountTabs from "./AccountTabs";
+import {loadCustomerPermissions} from "../actions/user";
 
 const AccountPage = () => {
     const dispatch = useDispatch();
@@ -21,12 +22,18 @@ const AccountPage = () => {
     const params = useParams();
 
     useEffect(() => {
+        console.log('useEffect() []', params);
+    }, []);
+
+    useEffect(() => {
+        console.log('useEffect() [params, customer]', params, customer);
         if (params.ARDivisionNo === customer?.ARDivisionNo && params.CustomerNo === customer?.CustomerNo) {
             return;
         }
         dispatch(setCustomerAccount({...params}))
         dispatch(fetchCustomerAccount({fetchOrders: true}));
-    }, [params])
+        dispatch(loadCustomerPermissions());
+    }, [params, customer])
 
     const selectHandler = (id) => {
         dispatch(setCustomerTab(id));

@@ -3,10 +3,13 @@ import {Link} from 'react-router-dom';
 import classNames from "classnames";
 import {PATH_CUSTOMER_ACCOUNT} from "../constants/paths";
 import {longCustomerNo} from "../utils/customer";
-import {buildPath} from "../utils/fetch";
 
 const CustomerLink = ({Company, ARDivisionNo, CustomerNo, ShipToCode, selected = false}) => {
-    const path = buildPath(PATH_CUSTOMER_ACCOUNT, {Company, ARDivisionNo, CustomerNo, ShipToCode});
+    const path = PATH_CUSTOMER_ACCOUNT
+        .replace(':Company', encodeURIComponent(Company))
+        .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))
+        .replace(':CustomerNo', encodeURIComponent(CustomerNo))
+        .replace(':ShipToCode?', encodeURIComponent(ShipToCode ?? ''))
     const btnClassName = {
         'btn-outline-secondary': !selected,
         'btn-secondary': selected

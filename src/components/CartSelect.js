@@ -1,14 +1,13 @@
 import React from 'react';
-import Select from '../common-components/Select';
 import {NEW_CART} from "../constants/orders";
 
 const CartSelect = ({cartList, cartNo = '', onChange}) => {
     // console.log({cartList});
     return (
-        <Select value={cartNo} onChange={({field, value}) => onChange({field, value})} field="cartNo">
+        <select className="form-select form-select-sm" value={cartNo} onChange={onChange}>
             <option value={NEW_CART}>New Cart</option>
-            {cartList.map(so => (<option key={so.SalesOrderNo} value={so.SalesOrderNo}>{so.CustomerPONo}</option>))}
-        </Select>
+            {cartList.map(so => (<option key={so.SalesOrderNo} value={so.SalesOrderNo} title={`Cart #${so.SalesOrderNo}`}>{so.CustomerPONo}</option>))}
+        </select>
     )
 };
 

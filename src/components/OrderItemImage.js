@@ -1,5 +1,4 @@
 import React from 'react';
-import {buildPath} from "../utils/fetch";
 import {API_PATH_CART_IMAGE} from "../constants/paths";
 
 const OrderItemImage = ({ItemCode, ItemCodeDesc, image}) => {
@@ -7,8 +6,8 @@ const OrderItemImage = ({ItemCode, ItemCodeDesc, image}) => {
         return null;
     }
     const src = !!image
-        ? buildPath('/images/products/80/:image', {image})
-        : buildPath(API_PATH_CART_IMAGE, {ItemCode});
+        ? `/images/products/80/${encodeURIComponent(image)}`
+        : API_PATH_CART_IMAGE.replace(':ItemCode', encodeURIComponent(ItemCode));
     return (<img src={src} alt={ItemCodeDesc} className="img-thumbnail"/>)
 };
 

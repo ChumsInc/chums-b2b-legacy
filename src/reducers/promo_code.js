@@ -47,14 +47,14 @@ const description = (state = '', action) => {
 }
 
 
-const requiredItems = (state = '', action) => {
+const requiredItems = (state = [], action) => {
     const {type, status, promo_code} = action;
     switch (type) {
     case SET_PROMO_CODE:
         return [];
     case FETCH_PROMO_CODE:
         if (status === FETCH_SUCCESS) {
-            return promo_code.requirements?.ItemCodes || [];
+            return promo_code.requirements?.ItemCodes ?? [];
         }
         return state;
     default:

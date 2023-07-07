@@ -50,8 +50,13 @@ export const companyPriority = (code) => {
 };
 
 
-
-
+/**
+ *
+ * @param {string} ARDivisionNo
+ * @param {string} CustomerNo
+ * @param {string} [ShipToCode]
+ * @return {string}
+ */
 export const longCustomerNo = ({ARDivisionNo, CustomerNo, ShipToCode}) => ShipToCode
     ? `${ARDivisionNo}-${CustomerNo}:${ShipToCode}`
     : `${ARDivisionNo}-${CustomerNo}`;
@@ -90,15 +95,20 @@ export const isValidCompany = ({Company}) => {
 export const isValidARDivisionNo = ({Company, ARDivisionNo}) => {
     switch (companyCode(Company)) {
     case 'chums':
-        return ['01', '02', '03', '04', '05', '06', '07', '08', '09'].includes(ARDivisionNo);
+        return /^0[1-9]$/.test(ARDivisionNo);
     case 'bc':
         return ['01', '02', '03', '04', '05', '06'].includes(ARDivisionNo);
     }
     return false;
 };
+
+/**
+ *
+ * @param {string} CustomerNo
+ * @return {boolean}
+ */
 export const isValidCustomerNo = ({CustomerNo = ''}) => {
-    const customerNo = String(CustomerNo).toUpperCase();
-    return !!customerNo && customerNo !== '%';
+    return /^[A-Z0-9]+$/i.test(CustomerNo ?? '')
 };
 
 export const isValidCustomer = ({Company, ARDivisionNo, CustomerNo}) => {
@@ -121,11 +131,11 @@ export const calcPrice = ({stdPrice, PricingMethod = null, DiscountMarkup1 = 0})
     case PRICE_METHODS.override:
         return DiscountMarkup1;
     case PRICE_METHODS.discountAmt:
-        return stdPrice - DiscountMarkup1;
+        return +stdPrice - DiscountMarkup1;
     case PRICE_METHODS.discountPct:
-        return stdPrice * (1 - (DiscountMarkup1 / 100));
+        return +stdPrice * (1 - (DiscountMarkup1 / 100));
     }
-    return stdPrice;
+    return +stdPrice;
 };
 
 export const priceRecord = ({pricing = [], itemCode, priceCode}) => {

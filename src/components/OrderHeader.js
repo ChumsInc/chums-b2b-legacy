@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {orderHeaderPropType, paymentCardShape, shipToAddressPropType} from "../constants/myPropTypes";
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
-import ShipToSelect from "./ShipToSelect";
 import FormGroup from "../common-components/FormGroup";
 import DatePicker from "../common-components/DatePicker";
-import ShipToAddress from "./Address/ShipToAddress";
 import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "../constants/orders";
 import PaymentSelect from "./PaymentSelect";
 import parseDate from 'date-fns/parseJSON';
@@ -16,12 +14,12 @@ import {
     promoteCart,
     removeCart,
     saveCart,
-    setCurrentCart,
     setCartProgress,
+    setCurrentCart,
     setShipDate,
     setShippingAccount,
     updateCart,
-} from "../actions/cart";
+} from "../ducks/cart/actions";
 import {applyPromoCode} from '../actions/promo_codes';
 import {connect} from "react-redux";
 import ShippingMethodSelect from "./ShippingMethodSelect";
@@ -29,7 +27,6 @@ import {DEFAULT_SHIPPING_ACCOUNT, filteredTermsCode, getPaymentType, PAYMENT_TYP
 import OrderFooter from "./OrderFooter";
 import Alert from "../common-components/Alert";
 import {PATH_PRODUCT_HOME, PATH_PRODUCT_HOME_BC, PATH_SALES_ORDER, PATH_SALES_ORDERS} from "../constants/paths";
-import {buildPath} from "../utils/fetch";
 import {companyCode} from "../utils/customer";
 import OrderPromoCode from "./OrderPromoCode";
 import {minShipDate, nextShipDate} from "../utils/orders";
@@ -48,13 +45,13 @@ import CustomerPONoField from "./Cart/CustomerPONoField";
 
 const SaveChangedButton = ({changed, onClick, disabled}) => {
     return (
-        <Button onClick={onClick} color={changed ? BTN_WARNING : BTN_OUTLINE_SECONDARY} disabled={disabled} >
+        <Button onClick={onClick} color={changed ? BTN_WARNING : BTN_OUTLINE_SECONDARY} disabled={disabled}>
             Save Changes
         </Button>
     )
 };
 
-const mapStateToProps = ({customer, user, pastOrders, cart, carts, openOrders, salesOrder}) => {
+const mapStateToProps = ({customer, user, cart, carts, openOrders, salesOrder}) => {
     const {shipDate, cartProgress, shippingAccount, loading} = cart;
     const {header, readOnly, orderType, detail, processing} = salesOrder;
     const {shipToAddresses, account, paymentCards} = customer;
@@ -170,7 +167,15 @@ class OrderHeader extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {changed, cartProgress, setCartProgress, cartLoading, header, defaultPaymentType, updateCart} = this.props;
+        const {
+            changed,
+            cartProgress,
+            setCartProgress,
+            cartLoading,
+            header,
+            defaultPaymentType,
+            updateCart
+        } = this.props;
         if (cartProgress !== CART_PROGRESS_STATES.cart && changed) {
             setCartProgress(CART_PROGRESS_STATES.cart);
         }
@@ -194,9 +199,9 @@ class OrderHeader extends Component {
     }
 
     onSaveCart() {
-        const {header, readOnly, isCart} = this.props;
+        const {readOnly, isCart} = this.props;
         if (!readOnly && isCart) {
-            this.props.saveCart(header);
+            this.props.saveCart();
         }
     }
 
@@ -223,7 +228,7 @@ class OrderHeader extends Component {
     onDeleteCart() {
         this.props.removeCart(this.props.header)
             .then(() => {
-                this.props.history.push(buildPath(PATH_SALES_ORDERS, {orderType: ORDER_TYPE.cart}))
+                this.props.history.push(PATH_SALES_ORDERS.replace(':orderType?', ORDER_TYPE.cart));
             })
     }
 
@@ -237,11 +242,10 @@ class OrderHeader extends Component {
                 }
                 // console.log(`redirect to ${SalesOrderNo}`, SalesOrderNo);
                 this.setState({confirmDuplicate: false, newCartName: ''}, () => {
-                    this.props.history.push(buildPath(PATH_SALES_ORDER, {
-                        orderType: ORDER_TYPE.cart,
-                        Company,
-                        SalesOrderNo
-                    }))
+                    const path = PATH_SALES_ORDER
+                        .replace(':orderType', ORDER_TYPE.cart)
+                        .replace(':Company', encodeURIComponent(Company))
+                        .replace(':SalesOrderNo', encodeURIComponent(SalesOrderNo))
                 });
             })
     }
@@ -281,12 +285,11 @@ class OrderHeader extends Component {
             .then(() => this.props.promoteCart())
             .then(success => {
                 if (success) {
-                    const pathProps = {
-                        orderType: ORDER_TYPE.open,
-                        Company: companyCode(Company),
-                        SalesOrderNo
-                    };
-                    this.props.history.push(buildPath(PATH_SALES_ORDER, pathProps));
+                    const path = PATH_SALES_ORDER
+                        .replace(':orderType', ORDER_TYPE.open)
+                        .replace(':Company', encodeURIComponent(companyCode(Company)))
+                        .replace(':SalesOrderNo', encodeURIComponent(SalesOrderNo));
+                    this.props.history.push(path);
                 }
             });
     }
@@ -295,14 +298,14 @@ class OrderHeader extends Component {
         const {cartProgress, header, shippingAccount} = this.props;
         const {changed, PaymentType, CustomerPONo, ShipVia} = header;
         switch (cartProgress) {
-        case CART_PROGRESS_STATES.cart:
-            return !changed;
-        case CART_PROGRESS_STATES.delivery:
-            return true; // (!shippingAccount.enabled || !!shippingAccount.value);
-        case CART_PROGRESS_STATES.payment:
-            return true; //!(PAYMENT_TYPES[PaymentType].requirePO && !!CustomerPONo);
-        case CART_PROGRESS_STATES.confirm:
-            return true;
+            case CART_PROGRESS_STATES.cart:
+                return !changed;
+            case CART_PROGRESS_STATES.delivery:
+                return true; // (!shippingAccount.enabled || !!shippingAccount.value);
+            case CART_PROGRESS_STATES.payment:
+                return true; //!(PAYMENT_TYPES[PaymentType].requirePO && !!CustomerPONo);
+            case CART_PROGRESS_STATES.confirm:
+                return true;
         }
     }
 
@@ -329,9 +332,27 @@ class OrderHeader extends Component {
             changed, setCurrentCart, cartLoading, paymentCards,
         } = this.props;
         const {
-            Company, SalesOrderNo, OrderDate, ShipToCode, ShipVia, CustomerPONo, PaymentType, TermsCode, LastInvoiceDate, LastInvoiceNo,
-            Comment, ShipExpireDate, UDF_CANCEL_DATE, payment,
-            FreightAmt, DepositAmt, DiscountAmt, TaxableAmt, NonTaxableAmt, SalesTaxAmt, TaxSchedule,
+            Company,
+            SalesOrderNo,
+            OrderDate,
+            ShipToCode,
+            ShipVia,
+            CustomerPONo,
+            PaymentType,
+            TermsCode,
+            LastInvoiceDate,
+            LastInvoiceNo,
+            Comment,
+            ShipExpireDate,
+            UDF_CANCEL_DATE,
+            payment,
+            FreightAmt,
+            DepositAmt,
+            DiscountAmt,
+            TaxableAmt,
+            NonTaxableAmt,
+            SalesTaxAmt,
+            TaxSchedule,
         } = header;
         const isOpen = orderType === ORDER_TYPE.open;
         const isPast = orderType === ORDER_TYPE.past;
@@ -366,7 +387,7 @@ class OrderHeader extends Component {
                             </FormGroup>
                         )}
                         {(!isCart || cartProgress === CART_PROGRESS_STATES.cart) && (
-                            <CustomerPONoField />
+                            <CustomerPONoField/>
                         )}
                         {isOpen && (
                             <FormGroup colWidth={8} label="Ship Date">
@@ -390,7 +411,7 @@ class OrderHeader extends Component {
                         )}
                     </div>
                     <div className="col-md-6">
-                        <OrderHeaderShipTo />
+                        <OrderHeaderShipTo/>
 
                         {isPast && (
                             <FormGroup colWidth={8} label="Invoice Date / No">
@@ -488,18 +509,20 @@ class OrderHeader extends Component {
 
                 <div className="checkout-buttons">
                     {isNewCart && (
-                        <Button color={BTN_PRIMARY} disabled={CustomerPONo === '' || cartLoading} onClick={this.onStartShopping}>
+                        <Button color={BTN_PRIMARY} disabled={CustomerPONo === '' || cartLoading}
+                                onClick={this.onStartShopping}>
                             Start Shopping
                         </Button>
                     )}
                     {isCart && !isNewCart && !isCurrentCart && !changed && cartProgress === CART_PROGRESS_STATES.cart
-                    && (
-                        <Button color={BTN_OUTLINE_SECONDARY} onClick={() => setCurrentCart({Company, SalesOrderNo})}
-                                disabled={cartLoading}>
-                            Make Current Cart
-                            <MaterialIcon icon="shopping_cart"/>
-                        </Button>
-                    )}
+                        && (
+                            <Button color={BTN_OUTLINE_SECONDARY}
+                                    onClick={() => setCurrentCart({Company, SalesOrderNo})}
+                                    disabled={cartLoading}>
+                                Make Current Cart
+                                <MaterialIcon icon="shopping_cart"/>
+                            </Button>
+                        )}
 
                     {isCart && !isNewCart && changed && cartProgress === CART_PROGRESS_STATES.cart && (
                         <SaveChangedButton changed={changed} onClick={this.onSaveCart} disabled={cartLoading}/>
@@ -518,7 +541,8 @@ class OrderHeader extends Component {
                     )}
 
                     {isCart && !isNewCart && cartProgress === CART_PROGRESS_STATES.cart && (
-                        <Button color={BTN_OUTLINE_SECONDARY} disabled={changed || cartLoading} onClick={this.onSendEmail}>
+                        <Button color={BTN_OUTLINE_SECONDARY} disabled={changed || cartLoading}
+                                onClick={this.onSendEmail}>
                             Send Email
                         </Button>
                     )}

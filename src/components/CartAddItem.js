@@ -5,7 +5,7 @@ import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
 import {connect} from "react-redux";
 import {NEW_CART, ORDER_TYPE} from "../constants/orders";
-import {saveCartItem, saveNewCart, setCurrentCart} from '../actions/cart';
+import {saveCartItem, saveNewCart, setCurrentCart} from '../ducks/cart/actions';
 import {buildPath} from "../utils/fetch";
 import {PATH_SALES_ORDER} from "../constants/paths";
 
@@ -43,13 +43,14 @@ class CartAddItem extends Component {
         if (SalesOrderNo === NEW_CART) {
             this.props.saveNewCart({cartName: CustomerPONo, itemCode, quantity})
                 .then(({SalesOrderNo, Company}) => {
-                    const pathProps = {
-                        orderType: ORDER_TYPE.cart,
-                        Company,
-                        SalesOrderNo
-                    };
+                    const path = PATH_SALES_ORDER
+                        .replace(':orderType', ORDER_TYPE.cart)
+                        .replace(':Company', encodeURIComponent(Company))
+                        .replace(':SalesOrderNo', encodeURIComponent(SalesOrderNo))
+
                     this.props.selectCart({Company, SalesOrderNo}, true);
-                    this.props.history.push(buildPath(PATH_SALES_ORDER, pathProps));
+
+                    this.props.history.push(path);
                 });
         } else {
             this.props.saveCartItem({SalesOrderNo, ItemCode: itemCode, QuantityOrdered: quantity});

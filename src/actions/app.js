@@ -18,10 +18,11 @@ import {
     SHOW_SEARCH,
     TOGGLE_XS_NAVBAR
 } from "../constants/actions";
-import {buildPath, fetchGET, fetchPOST} from '../utils/fetch';
+import {fetchGET, fetchPOST} from '../utils/fetch';
 import {API_PATH_HOME_SLIDES, API_PATH_SEARCH, API_PATH_VERSION} from "../constants/paths";
 import localStore from "../utils/LocalStore";
 import {STORE_USER_PREFS} from "../constants/stores";
+import {buildPath} from "../utils/path-utils";
 
 
 export const setAlert = ({

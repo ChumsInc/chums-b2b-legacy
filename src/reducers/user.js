@@ -2,7 +2,7 @@ import {combineReducers} from 'redux';
 import {
     CHANGE_USER,
     CHANGE_USER_PASSWORD, CLEAR_USER_ACCOUNT,
-    FETCH_CUSTOMER,
+    FETCH_CUSTOMER, FETCH_CUSTOMER_PERMISSIONS,
     FETCH_FAILURE,
     FETCH_INIT,
     FETCH_LOCAL_LOGIN,
@@ -396,6 +396,27 @@ const loading = (state = false, action) => {
     }
 };
 
+const customerPermissions = (state = {loading: false, loaded: false, permissions: null}, action) => {
+    const {type, status, payload} = action;
+    switch (type) {
+        case FETCH_CUSTOMER_PERMISSIONS:
+            if (status === FETCH_INIT) {
+                return {
+                    loading: true,
+                    loaded: false,
+                    permissions: null
+                };
+            }
+            return {
+                loading: false,
+                loaded: true,
+                permissions: payload ?? null,
+            }
+        default:
+            return state;
+    }
+}
+
 
 export default combineReducers({
     token,
@@ -414,4 +435,5 @@ export default combineReducers({
     passwordChange,
     login,
     loading,
+    customerPermissions,
 });

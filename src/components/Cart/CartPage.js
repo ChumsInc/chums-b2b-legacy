@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import DocumentTitle from "../DocumentTitle";
 import {useSelector} from "react-redux";
-import {selectIsCart, selectProcessing, selectSalesOrderNo, selectSendingEmailStatus} from "../../selectors/salesOrder";
+import {selectIsCart, selectProcessing, selectSalesOrderNo, selectSendingEmailStatus} from "../../ducks/salesOrder/selectors";
 import ProgressBar from "../ProgressBar";
 import CartHeader from "./CartHeader";
 import CheckoutProgress from "../CheckoutProgress";

@@ -5,14 +5,14 @@ import RepLink from "./RepLink";
 import CustomerLink from "./CustomerLink";
 
 const UserAccount = ({acct = {}, selected = 0}) => {
-    const {id, Company, CustomerName, SalespersonName, isRepAccount} = acct;
+    const {id, Company, CustomerName, SalespersonName, isRepAccount, ShipToName} = acct;
     return (
         <tr>
             <td>
                 {!!isRepAccount && <RepLink {...acct} selected={id === selected}/>}
                 {!isRepAccount && <CustomerLink {...acct} selected={id === selected}/>}
             </td>
-            <td>{isRepAccount ? SalespersonName : CustomerName}</td>
+            <td>{isRepAccount ? SalespersonName : (ShipToName ?? CustomerName)}</td>
         </tr>
     )
 };

@@ -3,9 +3,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {deleteUser, fetchCustomerAccount, saveUser, updateUser} from '../../actions/customer';
 import ProgressBar from "../ProgressBar";
 import AccountUserTable from "./AccountUserTable";
-import {selectCustomerLoading, selectCustomerUsers} from "../../selectors/customer";
+import {selectCustomerLoading, selectCustomerUsers} from "../../ducks/customer/selectors";
 import EditAccountUserForm from "./EditAccountUserForm";
-import {selectIsEmployee, selectIssRep} from "../../selectors/user";
+import {selectIsEmployee, selectIsRep} from "../../selectors/user";
 
 const newUser = {id: 0, name: '', email: '', accountType: 4};
 
@@ -15,7 +15,7 @@ const AccountUsers = () => {
     const users = useSelector(selectCustomerUsers);
     const loading = useSelector(selectCustomerLoading);
     const isEmployee = useSelector(selectIsEmployee);
-    const isRep = useSelector(selectIssRep);
+    const isRep = useSelector(selectIsRep);
     const [user, setUser] = useState(null);
 
 

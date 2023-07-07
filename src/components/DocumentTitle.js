@@ -1,13 +1,11 @@
-import {Helmet} from 'react-helmet';
-import React, {Component} from "react";
-import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import {Helmet} from 'react-helmet-async';
+import React from "react";
 
 const DocumentTitle = ({documentTitle = ''}) => {
     return (
         <Helmet>
             <title>{[documentTitle, 'Chums B2B'].join(' | ')}</title>
-            <meta property="og:title" content={[documentTitle, 'Chums B2B'].join(' | ')} />
+            <meta property="og:title" content={[documentTitle, 'Chums B2B'].join(' | ')}/>
         </Helmet>
     )
 }

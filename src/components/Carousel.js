@@ -5,9 +5,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import {buildPath} from "../utils/fetch";
 import {CONTENT_PATH_PRODUCT_IMAGE} from "../constants/paths";
-import ProductImage from "./ProductImage";
 
 
 const SCROLL_RIGHT = -1;
@@ -33,7 +31,8 @@ const CarouselIndicators = ({images, active, onClick}) => (
     <ol className="carousel-indicators">
         {images.map((img, index) => (
             <CarouselIndicator key={index} index={index} active={active === index} onClick={(id) => onClick(id)}>
-                <img src={buildPath(CONTENT_PATH_PRODUCT_IMAGE, {size: '80', image: img})} width="80" height="80" />
+                <img src={CONTENT_PATH_PRODUCT_IMAGE.replace(':size', '80').replace(':image', encodeURIComponent(img))}
+                     width="80" height="80"/>
             </CarouselIndicator>
         ))}
     </ol>
@@ -48,7 +47,7 @@ const CarouselImage = ({filename, active, isNext, isPrev, direction, title}) => 
         [CarouselClassName.NEXT]: isNext,
         [CarouselClassName.PREV]: isPrev,
     });
-    const src = buildPath(CONTENT_PATH_PRODUCT_IMAGE, {size: '800', image: filename || 'missing.png'});
+    const src = CONTENT_PATH_PRODUCT_IMAGE.replace(':size', '800').replace(':image', encodeURIComponent(filename || 'missing.png'));
     return (<div className={classNames(className)}>
         <img src={src} className="main-image" alt={src} title={title} width="800" height="800"/>
     </div>)
@@ -135,31 +134,31 @@ export default class Carousel extends Component {
         let direction = SCROLL_LEFT;
         let scrolling = false;
         switch (option) {
-        case 'next':
-            next = active === count - 1 ? 0 : active + 1;
-            // prev = active === 0 ? count - 1 : active - 1;
-            scrolling = true;
-            break;
-        case 'prev':
-            next = active === 0 ? count - 1 : active - 1;
-            // prev = active === count - 1 ? 0 : active + 1;
-            scrolling = true;
-            break;
-        case 'pause':
-            if (this.scrollTimer) {
-                clearTimeout(this.scrollTimer);
-                this.scrollTimer = null;
-                this.setState({next, prev, scrolling});
-                return;
-            } else {
-                this.scrollByTimer();
-            }
-            break;
-        default:
-            if (typeof option === 'number' && option < count && option >= 0) {
-                next = option;
+            case 'next':
+                next = active === count - 1 ? 0 : active + 1;
+                // prev = active === 0 ? count - 1 : active - 1;
                 scrolling = true;
-            }
+                break;
+            case 'prev':
+                next = active === 0 ? count - 1 : active - 1;
+                // prev = active === count - 1 ? 0 : active + 1;
+                scrolling = true;
+                break;
+            case 'pause':
+                if (this.scrollTimer) {
+                    clearTimeout(this.scrollTimer);
+                    this.scrollTimer = null;
+                    this.setState({next, prev, scrolling});
+                    return;
+                } else {
+                    this.scrollByTimer();
+                }
+                break;
+            default:
+                if (typeof option === 'number' && option < count && option >= 0) {
+                    next = option;
+                    scrolling = true;
+                }
         }
         if (scrolling) {
             clearTimeout(this.scrollTimer);

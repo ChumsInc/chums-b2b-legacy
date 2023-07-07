@@ -6,7 +6,6 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {parseImageFilename2} from '../common/image';
 import Carousel from "./Carousel";
-import {buildPath} from "../utils/fetch";
 import {CONTENT_PATH_PRODUCT_IMAGE, CONTENT_PATH_PRODUCT_MISSING_IMAGE} from "../constants/paths";
 import classNames from 'classnames';
 
@@ -53,7 +52,7 @@ export default class ProductImage extends Component {
         const filename = parseImageFilename2({image, colorCode});
         const src = loading === true || filename === ''
             ? CONTENT_PATH_PRODUCT_MISSING_IMAGE
-            : buildPath(CONTENT_PATH_PRODUCT_IMAGE, {size, image: filename});
+            : CONTENT_PATH_PRODUCT_IMAGE.replace(':size', encodeURIComponent(size)).replace(':image', encodeURIComponent(filename));
         return (
             <div className="product-image-container">
                 {carouselImages.length === 0
@@ -65,6 +64,4 @@ export default class ProductImage extends Component {
             </div>
         );
     }
-
-
 }

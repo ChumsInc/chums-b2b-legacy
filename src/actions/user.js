@@ -1,52 +1,61 @@
-import {buildPath, fetchGET, fetchPOST} from '../utils/fetch';
+import {fetchGET, fetchPOST} from '../utils/fetch';
 import {
+    ALERT_TYPES,
     CHANGE_USER,
+    CHANGE_USER_PASSWORD,
+    CLEAR_USER_ACCOUNT,
+    FETCH_CUSTOMER_PERMISSIONS,
     FETCH_FAILURE,
     FETCH_INIT,
+    FETCH_LOCAL_LOGIN,
     FETCH_REP_LIST,
     FETCH_REP_LIST_FAILURE,
     FETCH_SUCCESS,
     FETCH_USER_CUSTOMERS,
     FETCH_USER_PROFILE,
-    RECEIVE_REP_LIST,
-    SET_LOGGED_IN,
-    CHANGE_USER_PASSWORD,
-    SET_USER_ACCOUNT,
-    UPDATE_SIGNUP,
-    FETCH_LOCAL_LOGIN,
-    ALERT_TYPES,
     FETCH_USER_SIGNUP,
-    UPDATE_LOGIN, SET_CUSTOMER, CLEAR_USER_ACCOUNT,
+    RECEIVE_REP_LIST,
+    SET_CUSTOMER,
+    SET_LOGGED_IN,
+    SET_USER_ACCOUNT,
+    UPDATE_LOGIN,
+    UPDATE_SIGNUP,
 } from "../constants/actions";
 
-import {handleError, setAlert} from './app';
+import {handleError} from './app';
+import {setAlert} from '../ducks/alerts';
 
 import localStore from '../utils/LocalStore';
 import {
-    STORE_AUTHTYPE, STORE_CURRENT_CART,
-    STORE_CUSTOMER, STORE_CUSTOMER_SHIPPING_ACCOUNT,
+    STORE_AUTHTYPE,
+    STORE_CURRENT_CART,
+    STORE_CUSTOMER,
+    STORE_CUSTOMER_SHIPPING_ACCOUNT,
     STORE_RECENT_ACCOUNTS,
     STORE_TOKEN,
     STORE_USER_ACCOUNT
 } from '../constants/stores';
 
 import {auth} from '../utils/IntranetAuthService';
-import {getTokenExpirationDate, getProfile, getSignInProfile} from "../utils/jwtHelper";
+import {getProfile, getSignInProfile, getTokenExpirationDate} from "../utils/jwtHelper";
 import {getFirstCustomer, getFirstUserAccount, getUserAccount, isValidCustomer} from "../utils/customer";
 import {fetchCustomerAccount, setCustomerAccount} from "./customer";
 import {
     API_PATH_CHANGE_PASSWORD,
     API_PATH_CUSTOMER_LIST,
-    API_PATH_LOGIN_LOCAL,
+    API_PATH_LOGIN_GOOGLE,
     API_PATH_LOGIN_LOCAL_REAUTH,
+    API_PATH_LOGOUT,
+    API_PATH_PASSWORD_RESET,
     API_PATH_PROFILE,
     API_PATH_REP_LIST,
-    API_PATH_LOGOUT,
     API_PATH_USER_SET_PASSWORD,
-    API_PATH_USER_SIGN_UP,
-    API_PATH_PASSWORD_RESET, API_PATH_LOGIN_GOOGLE
+    API_PATH_USER_SIGN_UP
 } from "../constants/paths";
 import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../constants/app";
+import {selectCurrentCustomer, selectCustomerPermissionsLoading} from "../selectors/user";
+import {selectCustomerAccount} from "../ducks/customer/selectors";
+import {fetchCustomerValidation, postLocalLogin} from "../api/user";
 
 let reauthTimer = 0;
 
@@ -55,25 +64,24 @@ export const setLoggedIn = ({loggedIn, authType, token}) => ({type: SET_LOGGED_I
 
 export const updateLogin = (props) => ({type: UPDATE_LOGIN, props});
 
-export const loginUser = ({email, password}) => (dispatch) => {
-    dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_INIT});
-    return fetchPOST(API_PATH_LOGIN_LOCAL, {email, password})
-        .then(({token, error}) => {
-            if (error) {
-                dispatch(setAlert({message: error, context: FETCH_LOCAL_LOGIN}));
-                return;
-            }
-            localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
-            auth.setToken(token);
-            auth.setProfile(getProfile(token));
-            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-            dispatch(fetchProfile());
-        })
-        .catch(err => {
-            dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_FAILURE});
-            dispatch(handleError(err, FETCH_LOCAL_LOGIN));
-            localStore.removeItem(STORE_TOKEN);
-        });
+export const loginUser = ({email, password}) => async (dispatch) => {
+    try {
+        dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_INIT});
+        const token = await postLocalLogin({email, password});
+        localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
+        auth.setToken(token);
+        auth.setProfile(getProfile(token));
+        dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
+        dispatch(fetchProfile());
+    } catch (err) {
+        if (err instanceof Error) {
+            console.debug("loginUser()", err.message);
+            dispatch(setAlert({message: err.message, context: FETCH_LOCAL_LOGIN}));
+        }
+        dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_FAILURE});
+        dispatch(handleError(err, FETCH_LOCAL_LOGIN));
+        localStore.removeItem(STORE_TOKEN);
+    }
 };
 
 export const updateLocalAuth = (forceReAuth = false) => (dispatch, getState) => {
@@ -140,7 +148,7 @@ export const selectUserAccountIfNeeded = (user) => (dispatch, getState) => {
 
 export const signInWithGoogle = (token) => async (dispatch, getState) => {
     try {
-
+        const state = getState();
         dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
         const res = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
         const {user = {}, roles = [], accounts = []} = res;
@@ -160,9 +168,13 @@ export const signInWithGoogle = (token) => async (dispatch, getState) => {
         dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
         dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
         dispatch(fetchRepList());
-
         dispatch(selectUserAccountIfNeeded(user));
-    } catch(err) {
+        const currentCustomer = selectCurrentCustomer(state);
+        if (!!currentCustomer.CustomerNo && !selectCustomerAccount(state)?.CustomerNo) {
+            dispatch(setCustomerAccount(currentCustomer));
+            dispatch(fetchCustomerAccount({fetchOrders: true}));
+        }
+    } catch (err) {
         console.trace(err);
         auth.logout();
         dispatch(setLoggedIn({loggedIn: false}));
@@ -299,7 +311,10 @@ export const fetchCustomerList = ({Company, SalespersonDivisionNo, SalespersonNo
     }
 
     dispatch({type: FETCH_USER_CUSTOMERS, status: FETCH_INIT});
-    const url = buildPath(API_PATH_CUSTOMER_LIST,{Company, SalespersonDivisionNo, SalespersonNo});
+    const url = API_PATH_CUSTOMER_LIST
+        .replace(':Company', encodeURIComponent(Company))
+        .replace(':SalespersonDivisionNo', encodeURIComponent(SalespersonDivisionNo))
+        .replace(':SalespersonNo', encodeURIComponent(SalespersonNo))
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
             const list = res.result || [];
@@ -348,7 +363,7 @@ export const fetchRepList = () => (dispatch, getState) => {
     }
 
     dispatch({type: FETCH_REP_LIST});
-    const url = buildPath(API_PATH_REP_LIST, userAccount);
+    const url = API_PATH_REP_LIST.replace(':Company', encodeURIComponent(userAccount.Company));
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
             const {list} = res;
@@ -390,7 +405,9 @@ export const submitNewPassword = () => (dispatch, getState) => {
     const {user} = getState();
     const {authKey, authHash} = user.signUp;
     const {newPassword} = user.passwordChange;
-    const url = buildPath(API_PATH_USER_SET_PASSWORD, {authKey, authHash});
+    const url = API_PATH_USER_SET_PASSWORD
+        .replace(':authHash', encodeURIComponent(authHash))
+        .replace(':authKey', encodeURIComponent(authKey));
     return fetchPOST(url, {newPassword})
         .then(({token}) => {
             auth.setToken(token);
@@ -407,7 +424,9 @@ export const submitNewPassword = () => (dispatch, getState) => {
 
 export const fetchSignUpUser = ({authKey, authHash}) => (dispatch, getState) => {
     dispatch({type: FETCH_USER_SIGNUP, status: FETCH_INIT, props: {authKey, authHash}});
-    const url = buildPath(API_PATH_USER_SET_PASSWORD, {authKey, authHash});
+    const url = API_PATH_USER_SET_PASSWORD
+        .replace(':authKey', encodeURIComponent(authKey))
+        .replace(':authHash', encodeURIComponent(authHash))
     fetchGET(url, {cache: 'no-cache'})
         .then(({user}) => {
             dispatch({type: FETCH_USER_SIGNUP, status: FETCH_SUCCESS, props: user});
@@ -421,7 +440,7 @@ export const fetchSignUpUser = ({authKey, authHash}) => (dispatch, getState) => 
 
 export const submitNewUser = ({email, name, account, accountName, telephone, address}) => (dispatch) => {
     dispatch({type: FETCH_USER_SIGNUP, status: FETCH_INIT});
-    const url = buildPath(API_PATH_USER_SIGN_UP, {email});
+    const url = API_PATH_USER_SIGN_UP.replace(':email', encodeURIComponent(email));
     const body = {email, name, account, accountName, telephone, address};
     fetchPOST(url, body)
         .then(({error, message, success, result}) => {
@@ -466,3 +485,19 @@ export const resetPassword = ({email}) => (dispatch) => {
             console.log(err.name, err.message);
         })
 };
+
+export const loadCustomerPermissions = () => async (dispatch, getState) => {
+    try {
+        const state = getState();
+        const customer = selectCustomerAccount(state);
+        const loading = selectCustomerPermissionsLoading(state);
+        if (loading || !customer) {
+            return;
+        }
+        dispatch({type: FETCH_CUSTOMER_PERMISSIONS, status: FETCH_INIT});
+        const permissions = await fetchCustomerValidation(customer);
+        dispatch({type: FETCH_CUSTOMER_PERMISSIONS, status: FETCH_SUCCESS, payload: permissions});
+    } catch (err) {
+        dispatch({type: FETCH_CUSTOMER_PERMISSIONS, status: FETCH_FAILURE});
+    }
+}

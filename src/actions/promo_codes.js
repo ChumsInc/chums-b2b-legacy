@@ -1,16 +1,18 @@
 import {buildPath, fetchGET, fetchPOST} from "../utils/fetch";
 import {API_PATH_CART_ACTION, API_PATH_PROMO_CODE, API_PATH_VALID_PROMO_CODES, CART_ACTIONS} from "../constants/paths";
 import {
-    FETCH_APPLY_PROMO_CODE, FETCH_FAILURE,
+    FETCH_APPLY_PROMO_CODE,
+    FETCH_FAILURE,
     FETCH_INIT,
     FETCH_PROMO_CODE,
     FETCH_SUCCESS,
-    FETCH_VALID_PROMO_CODES, SET_PROMO_CODE
+    FETCH_VALID_PROMO_CODES,
+    SET_PROMO_CODE
 } from "../constants/actions";
-import {handleError, setAlert} from "./app";
-import {customerFromState} from "./cart";
+import {handleError} from "./app";
+import {customerFromState} from "../ducks/cart/actions";
 import {loadSalesOrder} from "./salesOrder";
-import {selectCustomerAccount} from "../selectors/customer";
+import {selectCustomerAccount} from "../ducks/customer/selectors";
 
 export const setPromoCode = (code) => ({type: SET_PROMO_CODE, code});
 
@@ -30,7 +32,7 @@ export const fetchValidPromoCodes = () => (dispatch, getState) => {
             .catch(err => {
                 dispatch(handleError(err, FETCH_VALID_PROMO_CODES));
             });
-    } catch(err) {
+    } catch (err) {
         console.log("()", err.message);
         return err;
     }
@@ -39,7 +41,7 @@ export const fetchValidPromoCodes = () => (dispatch, getState) => {
 
 export const fetchPromoCode = (code) => (dispatch, getState) => {
     try {
-        const url = buildPath(API_PATH_PROMO_CODE, {code});
+        const url = API_PATH_PROMO_CODE.replace(':code', encodeURIComponent(code));
         if (!code) {
             dispatch({type: FETCH_PROMO_CODE, status: FETCH_SUCCESS, promo_code: {code: '', description: ''}});
             return;
@@ -47,17 +49,24 @@ export const fetchPromoCode = (code) => (dispatch, getState) => {
         dispatch({type: FETCH_PROMO_CODE, status: FETCH_INIT});
         fetchGET(url, {cache: 'no-cache'})
             .then(res => {
-                const promo_code = res.promo_codes[0] || {code: '', description: `'${code}' is not currently a valid code`};
+                const promo_code = res.promo_codes[0] || {
+                    code: '',
+                    description: `'${code}' is not currently a valid code`
+                };
                 dispatch({type: FETCH_PROMO_CODE, status: FETCH_SUCCESS, promo_code});
                 const {cart, salesOrder} = getState();
                 if (!!promo_code.promo_code && salesOrder.header.UDF_PROMO_DEAL !== promo_code.promo_code) {
-                    dispatch(applyPromoCode({Company: salesOrder.header.Company, SalesOrderNo: salesOrder.header.SalesOrderNo, discountCode: promo_code.promo_code}));
+                    dispatch(applyPromoCode({
+                        Company: salesOrder.header.Company,
+                        SalesOrderNo: salesOrder.header.SalesOrderNo,
+                        discountCode: promo_code.promo_code
+                    }));
                 }
             })
             .catch(err => {
                 dispatch(handleError(err, FETCH_PROMO_CODE));
             });
-    } catch(err) {
+    } catch (err) {
         console.log("()", err.message);
         return err;
     }
@@ -77,7 +86,12 @@ export const applyPromoCode = ({Company, SalesOrderNo, discountCode}) => (dispat
         return;
     }
     const {ARDivisionNo, CustomerNo} = account;
-    const url = buildPath(API_PATH_CART_ACTION, customerFromState(state));
+
+    const customer = customerFromState(state);
+    const params = new URLSearchParams();
+    params.set('co', customer.Company);
+    params.set('account', `${customer.ARDivisionNo}-${customer.CustomerNo}`);
+    const url = `/sage/b2b/cart-quote.php?${params.toString()}`
     dispatch({type: FETCH_APPLY_PROMO_CODE, status: FETCH_INIT});
     return fetchPOST(url, data)
         .then(res => {

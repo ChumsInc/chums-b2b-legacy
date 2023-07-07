@@ -1,4 +1,5 @@
-import {buildPath, fetchGET} from '../utils/fetch';
+import {fetchGET} from '../utils/fetch';
+import 'core-js/actual/structured-clone'
 import {
     CLEAR_PRODUCT,
     FETCH_FAILURE,
@@ -26,6 +27,7 @@ import {
 import {API_PATH_KEYWORDS, API_PATH_PRODUCT} from "../constants/paths";
 import {ga_viewItem} from './gtag';
 import {priceRecord} from "../utils/customer";
+import {selectProductCartItem} from "../ducks/products/selectors";
 
 
 export const fetchKeywords = () => (dispatch, getState) => {
@@ -48,7 +50,7 @@ export const fetchProduct = (keyword) => (dispatch, getState) => {
     }
 
     const {product} = getState().products;
-    const url = buildPath(API_PATH_PRODUCT, {keyword});
+    const url = API_PATH_PRODUCT.replace(':keyword', encodeURIComponent(keyword));
     dispatch({type: FETCH_PRODUCT, status: FETCH_INIT});
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {
@@ -93,7 +95,7 @@ export const fetchProduct = (keyword) => (dispatch, getState) => {
 
 };
 
-export const selectVariant = (variant, colorCode) => (dispatch, getState) => {
+export const setCurrentVariant = (variant, colorCode) => (dispatch, getState) => {
     const {user, customer} = getState();
     const msrp = getMSRP(variant.product);
     const customerPrice = user.loggedIn ? getPrices({
@@ -116,11 +118,13 @@ export const selectVariant = (variant, colorCode) => (dispatch, getState) => {
     dispatch({type: SELECT_VARIANT, variant, msrp, customerPrice, salesUM, cartItem});
 };
 
-export const selectColor = (colorCode) => (dispatch, getState) => {
+export const setColorCode = (colorCode) => (dispatch, getState) => {
+    const state = getState();
     const {user, products, customer} = getState();
     const {selectedProduct} = products;
     const {season_code, season_available} = selectedProduct;
-    let {cartItem} = products;
+    let cartItem = structuredClone(selectProductCartItem(state));
+    cartItem.stdUM = selectedProduct.stdUM;
     const quantity = Math.max(cartItem.quantity || 0, 1);
     const {pricing} = customer;
     if (selectedProduct.sellAs === SELL_AS_COLOR) {

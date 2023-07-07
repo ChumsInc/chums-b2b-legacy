@@ -1,86 +1,55 @@
-import {AnyAction, combineReducers} from "redux";
-import {RootState} from '../index';
-import {fetchGET} from "../../utils/fetch";
-import {ThunkAction} from "redux-thunk";
-
-// export interface ManifestFile {
-//     versionNo: string,
-// }
-// export interface VersionAction extends AnyAction {
-//     payload?: {
-//         versionNo?: string,
-//         lastChecked?: number,
-//         error?: Error,
-//         context?: string,
-//     }
-// }
-//
-// export interface VersionState {
-//     versionNo: string,
-//     changed: boolean,
-//     lastChecked: number,
-//     loading: boolean,
-//     ignored: string,
-// }
-
-export const defaultState = {
-    versionNo: '',
-    changed: false,
-    lastChecked: new Date().valueOf(),
-    loading: false,
-    ignored: '',
-}
-
-// export interface ScreenThunkAction  extends ThunkAction<any, RootState, unknown, VersionAction> {}
+import {createReducer, createSelector} from "@reduxjs/toolkit";
+import {ignoreVersion, loadVersion} from "./actions";
 
 export const minCheckInterval = 15 * 60 * 1000;
-export const versionFetchRequested = 'version/fetchRequested';
-export const versionFetchSucceeded = 'version/fetchSucceeded';
-export const versionFetchFailed = 'version/fetchFailed';
-export const versionIgnored = 'version/ignored';
 
-export const versionURL = '/version';
-
-export const loadingSelector = (state) => state.version.loading;
-export const shouldCheckVersion = (state) => !loadingSelector(state)
-    && state.version.versionNo !== ''
-    && (new Date().valueOf() - state.version.lastChecked > minCheckInterval);
-export const changedSelector = (state) => state.version.changed && state.version.versionNo !== state.version.ignored;
-export const versionSelector = (state) => state.version.versionNo;
-
-
-const versionReducer = (state = {...defaultState}, action) => {
-    const {type, payload} = action;
-    switch (type) {
-    case versionFetchRequested:
-        return {
-            ...state,
-            loading: true
-        }
-    case versionFetchFailed:
-        return {
-            ...state,
-            loading: false,
-        }
-    case versionFetchSucceeded:
-        if (payload?.versionNo && payload?.lastChecked) {
-            return {
-                versionNo: payload.versionNo,
-                changed: payload.versionNo !== state.versionNo && state.versionNo !== defaultState.versionNo,
-                loading: false,
-                lastChecked: payload.lastChecked,
-                ignored: payload.versionNo,
-            }
-        }
-        return state;
-    case versionIgnored:
-        return {
-            ...state,
-            changed: false,
-            ignored: state.versionNo,
-        }
-    default: return state;
+export const selectVersion = (state) => state.version.versionNo;
+export const selectVersionLoading = (state) => state.version.loading;
+export const selectVersionChanged = (state) => state.version.changed;
+export const selectLastChecked = (state) => state.version.lastChecked;
+export const selectVersionIgnored = (state) => state.version.ignored;
+export const selectShouldAlertVersion = createSelector(
+    [selectVersion, selectVersionChanged, selectVersionIgnored],
+    (version, changed, ignored) => {
+        return changed && !!version && version !== ignored;
     }
+)
+export const selectShouldCheckVersion = createSelector(
+    [selectVersion, selectLastChecked],
+    (version, lastChecked) => {
+        // console.log('selectShouldCheckVersion', {version, lastChecked, now: new Date().valueOf()})
+        if (!version || !lastChecked) {
+            return true;
+        }
+        return lastChecked + minCheckInterval < new Date().valueOf();
+    }
+)
+
+export const versionState = {
+    versionNo: '',
+    loading: false,
+    changed: false,
+    ignored: '',
+    lastChecked: 0,
 }
+
+const versionReducer = createReducer(versionState, (builder) => {
+    builder
+        .addCase(loadVersion.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(loadVersion.fulfilled, (state, action) => {
+            state.loading = false;
+            state.changed = state.versionNo !== '' && action.payload.versionNo !== state.versionNo;
+            state.versionNo = action.payload.versionNo;
+            state.lastChecked = action.payload.lastChecked;
+        })
+        .addCase(loadVersion.rejected, (state) => {
+            state.loading = false;
+        })
+        .addCase(ignoreVersion, (state) => {
+            state.ignored = state.versionNo;
+        })
+})
 
 export default versionReducer;

@@ -5,19 +5,13 @@ import SubNavColumn from "./SubNavColumn";
 import {
     PATH_CUSTOMER_ACCOUNT,
     PATH_PROFILE_ACCOUNT,
-    SUB_NAV_LOGIN, SUB_NAV_LOGOUT,
+    SUB_NAV_LOGIN,
+    SUB_NAV_LOGOUT,
     SUB_NAV_PROFILE,
-    SUB_NAV_RECENT_ACCOUNTS, SUB_NAV_SIGNUP
+    SUB_NAV_RECENT_ACCOUNTS,
+    SUB_NAV_SIGNUP
 } from "../constants/paths";
-
-import {buildPath} from "../utils/fetch";
-import {
-    companyCode,
-    compareCustomerAccountNumber,
-    longCustomerNo,
-    longRepNo,
-    sortUserAccounts
-} from "../utils/customer";
+import {longRepNo, sortUserAccounts} from "../utils/customer";
 
 const sortPriority = (a, b) => a.priority === b.priority
     ? (a.title === b.title ? 0 : (a.title > b.title ? 1 : -1))
@@ -73,10 +67,15 @@ class AccountSubNav extends Component {
                 ...customerAccounts
                     .sort(sortUserAccounts)
                     .map((acct, index) => {
+                        const path = PATH_CUSTOMER_ACCOUNT
+                            .replace(':Company', encodeURIComponent(acct.Company))
+                            .replace(':ARDivisionNo', encodeURIComponent(acct.ARDivisionNo))
+                            .replace(':CustomerNo', encodeURIComponent(acct.CustomerNo))
+                            .replace(':ShipToCode?', encodeURIComponent(acct.ShipToCode ?? ''))
                         return {
                             id: `cust-${acct.Company}-${acct.ARDivisionNo}-${acct.CustomerNo}`,
                             title: (<CustomerNavTitle {...acct}/>),
-                            url: buildPath(PATH_CUSTOMER_ACCOUNT, acct),
+                            url: path,
                             priority: index,
                         }
                     }));
@@ -84,10 +83,12 @@ class AccountSubNav extends Component {
                 ...repAccounts
                     .sort(sortUserAccounts)
                     .map((acct, index) => {
+                        const path = PATH_PROFILE_ACCOUNT
+                            .replace(':id', encodeURIComponent(acct.id));
                         return {
                             id: `rep-${acct.Company}-${acct.SalespersonDivisionNo}-${acct.SalespersonNo}`,
                             title: (<RepNavTitle {...acct}/>),
-                            url: buildPath(PATH_PROFILE_ACCOUNT, acct),
+                            url: path,
                             priority: index + customerAccounts.length,
                         }
                     }));
@@ -99,12 +100,17 @@ class AccountSubNav extends Component {
                 ...recentAccounts
                     // .filter(acct => compareCustomerAccountNumber(acct, currentCustomer) !== 0)
                     .map((acct, index) => {
+                        const path = PATH_CUSTOMER_ACCOUNT
+                            .replace(':Company', encodeURIComponent(acct.Company))
+                            .replace(':ARDivisionNo', encodeURIComponent(acct.ARDivisionNo))
+                            .replace(':CustomerNo', encodeURIComponent(acct.CustomerNo))
+                            .replace(':ShipToCode?', encodeURIComponent(acct.ShipToCode ?? ''))
                         return {
                             id: !!acct.ShipToCode
                                 ? `cust-${acct.Company}-${acct.ARDivisionNo}-${acct.CustomerNo}-${acct.ShipToCode}`
                                 : `cust-${acct.Company}-${acct.ARDivisionNo}-${acct.CustomerNo}`,
                             title: (<CustomerNavTitle {...acct}/>),
-                            url: buildPath(PATH_CUSTOMER_ACCOUNT, acct),
+                            url: path,
                             priority: index,
                         }
                     }));

@@ -1,29 +1,23 @@
-import React, {PureComponent} from 'react';
-import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import React from 'react';
+import {useParams} from "react-router";
+import {useAppSelector} from "../app/configureStore";
+import {selectCategory} from "../ducks/category/selectors";
 
 
-class LifestyleImage extends PureComponent {
-    static propTypes = {
-        lifestyle: PropTypes.string,
-    };
-
-    static defaultProps = {
-        lifestyle: null,
-    };
-
-    render() {
-        const {lifestyle} = this.props;
-        return (
-            <div className="lifestyle-image">
-                {!!lifestyle && <img src={lifestyle} alt="Chums Lifestyle"/>}
-            </div>
-        );
+const LifestyleImage = () => {
+    const params = useParams();
+    const category = useAppSelector(selectCategory);
+    if (!category || category.keyword !== params.category) {
+        return null;
     }
+    if (!category.lifestyle) {
+        return null;
+    }
+    return (
+        <div className="lifestyle-image">
+            <img src={category.lifestyle} alt="Chums Lifestyle"/>
+        </div>
+    );
 }
 
-const mapStateToProps = ({app}) => {
-    const {lifestyle} = app;
-    return {lifestyle};
-};
-export default connect(mapStateToProps)(LifestyleImage);
+export default LifestyleImage;

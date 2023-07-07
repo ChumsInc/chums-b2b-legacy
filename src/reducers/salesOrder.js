@@ -18,9 +18,15 @@ import {
     UPDATE_CART_ITEM
 } from "../constants/actions";
 
-import {calcOrderType as calcOrderType, isCartOrder} from "../utils/orders";
+import {calcOrderType, isCartOrder} from "../utils/orders";
 import {ORDER_TYPE} from "../constants/orders";
 
+/**
+ *
+ * @param {string} state
+ * @param action
+ * @return {string}
+ */
 const salesOrderNo = (state = '', action) => {
     const {type, status, salesOrderNo, salesOrder, cart} = action;
     switch (type) {
@@ -42,7 +48,12 @@ const salesOrderNo = (state = '', action) => {
     }
 };
 
-
+/**
+ *
+ * @param {(SalesOrderHeader & Editable) |EmptyObject} state
+ * @param action
+ * @return {(SalesOrderHeader & Editable) | EmptyObject}
+ */
 const header = (state = {}, action) => {
     const {type, status, salesOrder, salesOrderNo, orders, props, checkoutInProcess, cart} = action;
     switch (type) {

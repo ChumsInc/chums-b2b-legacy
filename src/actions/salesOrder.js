@@ -2,7 +2,6 @@ import {
     FETCH_FAILURE,
     FETCH_INIT,
     FETCH_INVOICE,
-    FETCH_INVOICES,
     FETCH_ORDERS,
     FETCH_SALES_ORDER,
     FETCH_SUCCESS,
@@ -12,25 +11,20 @@ import {
     SEND_ORDER_EMAIL_ACK,
     SET_CART,
 } from "../constants/actions";
-import {buildPath, fetchGET, fetchPOST} from "../utils/fetch";
-import {
-    API_PATH_INVOICE,
-    API_PATH_OPEN_ORDERS,
-    API_PATH_PAST_ORDERS,
-    API_PATH_SAVE_CART,
-    CART_ACTIONS
-} from "../constants/paths";
+import {fetchGET, fetchPOST} from "../utils/fetch";
+import {API_PATH_INVOICE, API_PATH_OPEN_ORDERS, CART_ACTIONS} from "../constants/paths";
 import {isValidCustomer, sageCompanyCode} from "../utils/customer";
-import {handleError, setAlert} from "./app";
+import {handleError} from "./app";
+import {setAlert} from "../ducks/alerts";
 import {isCartOrder} from "../utils/orders";
 import localStore from "../utils/LocalStore";
 import {STORE_CURRENT_CART} from "../constants/stores";
-import {customerFromState, setCurrentCart} from "./cart";
+import {customerFromState, setCurrentCart} from "../ducks/cart/actions";
 import {NEW_CART} from "../constants/orders";
-import {selectCustomerAccount} from "../selectors/customer";
+import {selectCustomerAccount} from "../ducks/customer/selectors";
 import {fetchSalesOrder, postOrderEmail} from "../api/sales-order";
-import {selectCartNo} from "../selectors/cart";
-import {selectIsSendingEmail, selectProcessing} from "../selectors/salesOrder";
+import {selectCartNo} from "../ducks/cart/selectors";
+import {selectIsSendingEmail, selectProcessing} from "../ducks/salesOrder/selectors";
 
 
 export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatch, getState) => {
@@ -41,7 +35,10 @@ export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatc
     if (!isValidCustomer({Company, ARDivisionNo, CustomerNo})) {
         return;
     }
-    const url = buildPath(API_PATH_OPEN_ORDERS, {Company: sageCompanyCode(Company), ARDivisionNo, CustomerNo});
+    const url = API_PATH_OPEN_ORDERS
+        .replace(':Company', encodeURIComponent(sageCompanyCode(Company)))
+        .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))
+        .replace(':CustomerNo', encodeURIComponent(CustomerNo));
     dispatch({type: FETCH_ORDERS, status: FETCH_INIT});
     return fetchGET(url, {cache: 'no-cache'})
         .then(res => {
@@ -67,23 +64,6 @@ export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatc
         });
 };
 
-export const fetchPastOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatch, getState) => {
-    if (!isValidCustomer({Company, ARDivisionNo, CustomerNo})) {
-        return;
-    }
-    const url = buildPath(API_PATH_PAST_ORDERS, {Company, ARDivisionNo, CustomerNo});
-    dispatch({type: FETCH_INVOICES, status: FETCH_INIT});
-    fetchGET(url, {cache: 'no-cache'})
-        .then(res => {
-            const {list} = res;
-            dispatch({type: FETCH_INVOICES, status: FETCH_SUCCESS, list});
-        })
-        .catch(err => {
-            console.log('fetchPastOrders()', err.message);
-            dispatch(handleError(err, FETCH_INVOICES));
-            dispatch({type: FETCH_INVOICES, status: FETCH_FAILURE, message: err.message});
-        });
-};
 /**
  *
  * @param {string} SalesOrderNo
@@ -139,22 +119,6 @@ export const loadSalesOrder = (SalesOrderNo) => async (dispatch, getState) => {
     }
 };
 
-export const fetchInvoice = ({Company, InvoiceNo}) => (dispatch, getState) => {
-    if (!InvoiceNo) {
-        return;
-    }
-    const url = buildPath(API_PATH_INVOICE, {Company: sageCompanyCode(Company), InvoiceNo});
-    dispatch({type: FETCH_INVOICE, status: FETCH_INIT});
-    fetchGET(url, {cache: 'no-cache'})
-        .then(res => {
-            const invoice = res.result || {};
-            if (!invoice.InvoiceNo) {
-                dispatch(setAlert({message: 'That invoice was not found', context: FETCH_INVOICE}))
-            }
-            dispatch({type: FETCH_INVOICE, status: FETCH_SUCCESS, invoice});
-        })
-};
-
 export const selectSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState) => {
     const state = getState();
     const customer = selectCustomerAccount(state);
@@ -162,8 +126,8 @@ export const selectSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState
         return;
     }
     const {ARDivisionNo, CustomerNo} = customer;
-    const {carts, openOrders, pastOrders} = state;
-    const [salesOrder = {SalesOrderNo}] = [...carts.list, ...openOrders.list, pastOrders.list]
+    const {carts, openOrders} = state;
+    const [salesOrder = {SalesOrderNo}] = [...carts.list, ...openOrders.list]
         .filter(so => so.SalespersonNo === SalesOrderNo);
     dispatch({type: SELECT_SO, salesOrder});
     dispatch(loadSalesOrder(SalesOrderNo));
@@ -209,7 +173,10 @@ export const duplicateOrder = ({SalesOrderNo, newCartName}) => (dispatch, getSta
         promo_code: promo_code.code,
     };
     const customer = customerFromState(getState());
-    const url = buildPath(API_PATH_SAVE_CART, customer);
+    const params = new URLSearchParams();
+    params.set('co', customer.Company);
+    params.set('account', `${customer.ARDivisionNo}-${customer.CustomerNo}`);
+    const url = `/sage/b2b/cart-quote.php?${params.toString()}`;
     dispatch({type: SAVE_CART, status: FETCH_INIT, message: 'Creating new cart'});
     return fetchPOST(url, data)
         .then(res => {

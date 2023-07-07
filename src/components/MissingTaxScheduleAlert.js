@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import Alert from "../common-components/Alert";
-import {selectCustomerAccount, selectCustomerLoading} from "../selectors/customer";
+import {selectCustomerAccount, selectCustomerLoading} from "../ducks/customer/selectors";
 
 const MissingTaxScheduleAlert = () => {
     const customer = useSelector(selectCustomerAccount);

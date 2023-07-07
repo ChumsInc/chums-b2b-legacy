@@ -12,24 +12,28 @@ import Alert from "../common-components/Alert";
 import FormGroup from "../common-components/FormGroup";
 import ContactFormFields from "./ContactFormFields";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
-import {selectCustomerAccount, selectCustomerLoading} from "../selectors/customer";
-import {selectIsEmployee, selectIssRep} from "../selectors/user";
+import {selectCustomerAccount, selectCustomerLoading} from "../ducks/customer/selectors";
+import {selectCustomerPermissions, selectIsEmployee, selectIsRep} from "../selectors/user";
 import StoreMapToggle from "./StoreMapToggle";
 import ErrorBoundary from "../common-components/ErrorBoundary";
 import {isBillToCustomer} from "../utils/typeguards";
+import {loadCustomerPermissions} from "../actions/user";
+import Address from "./Address/Address";
 
 const BillToForm = () => {
     const dispatch = useDispatch();
     const current = useSelector(selectCustomerAccount);
     const loading = useSelector(selectCustomerLoading);
     const isEmployee = useSelector(selectIsEmployee);
-    const isRep = useSelector(selectIssRep);
+    const isRep = useSelector(selectIsRep);
     const readOnly = !(isEmployee || isRep);
     const [account, setAccount] = useState(current ?? null);
+    const permissions = useSelector(selectCustomerPermissions);
 
     useEffect(() => {
         if (isBillToCustomer(current)) {
             setAccount({...current});
+            dispatch(loadCustomerPermissions());
         } else {
             setAccount(null);
         }
@@ -48,10 +52,20 @@ const BillToForm = () => {
 
     const reloadHandler = () => {
         dispatch(fetchCustomerAccount());
+        dispatch(loadCustomerPermissions());
     }
 
     if (!current || !account) {
         return null;
+    }
+
+    if (!permissions?.billTo) {
+        return (
+            <div>
+                <h4>Billing Address</h4>
+                <Address address={current} />
+            </div>
+        )
     }
 
     return (

@@ -19,11 +19,11 @@ class ErrorBoundary extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {hasError: false};
+        this.state = {hasError: false, errorMessage: null};
     }
 
     static getDerivedStateFromError(error) {
-        return {hasError: true};
+        return {hasError: true, errorMessage: error.message};
     }
 
     componentDidCatch(error, errorInfo) {
@@ -36,7 +36,10 @@ class ErrorBoundary extends Component {
     render() {
         if (this.state.hasError) {
             return (
-                <h1>Sorry! something went wrong!</h1>
+                <div>
+                    <h1>Sorry! something went wrong!</h1>
+                    {this.state.errorMessage}
+                </div>
             )
         }
         return this.props.children;

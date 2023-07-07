@@ -1,100 +1,74 @@
-import React, {Component, Fragment} from 'react';
-import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {getItemAvailability} from "../actions/cart";
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {getItemAvailability} from "../ducks/cart/actions";
 import {itemPrice} from "../utils/customer";
 import CartItemInfo from "./CartItemInfo";
 import CartItemDetail from "./CartItemDetail";
 import AddToCartForm from "./AddToCartForm";
-import Alert from "../common-components/Alert";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
+import {selectItemAvailability} from "../ducks/cart/selectors";
+import {selectCustomerPricing, selectTaxSchedule} from "../ducks/customer/selectors";
 
 
+/**
+ *
+ * @param {string} itemCode
+ * @param {number} quantity
+ * @param {string} comment
+ * @param {() => void} onClose
+ * @return {JSX.Element}
+ * @constructor
+ */
+const AddToCartContainer = ({itemCode, quantity, comment, onClose}) => {
+    const dispatch = useDispatch();
+    const itemAvailability = useSelector(selectItemAvailability);
+    const taxSchedule = useSelector(selectTaxSchedule);
+    const pricing = useSelector(selectCustomerPricing);
+    const [_quantity, setQuantity] = useState(quantity);
 
-class AddToCartContainer extends Component {
-    static propTypes = {
-        itemCode: PropTypes.string,
-        quantity: PropTypes.number,
-        customerPrice: PropTypes.number,
-        comment: PropTypes.string,
-        itemAvailability: PropTypes.object,
-        TaxSchedule: PropTypes.string,
-
-        getItemAvailability: PropTypes.func,
-        onClose: PropTypes.func,
-    };
-
-    static defaultProps = {
-        itemCode: '',
-        quantity: 0,
-        customerPrice: 0,
-        comment: '',
-        itemAvailability: {},
-    };
-
-    state = {
-        quantity: 1,
-    };
-
-    constructor(props) {
-        super(props);
-        this.onChangeQuantity = this.onChangeQuantity.bind(this);
-    }
-
-    componentDidMount() {
-        const {itemCode, itemAvailability, getItemAvailability, quantity} = this.props;
-        this.setState({quantity});
-        if (itemCode !== itemAvailability.ItemCode) {
-            getItemAvailability({ItemCode: itemCode});
+    useEffect(() => {
+        if (itemCode) {
+            dispatch(getItemAvailability(itemCode));
         }
+    }, [itemCode]);
+
+    useEffect(() => {
+        setQuantity(quantity);
+    }, [quantity]);
+
+
+    const onChangeQuantity = (quantity) => {
+        setQuantity(+quantity);
     }
 
-    onChangeQuantity(quantity) {
-        this.setState({quantity});
+    const customerPrice = itemPrice({pricing, itemCode, priceCode: itemAvailability?.PriceCode ?? '', stdPrice: itemAvailability?.StandardUnitPrice ?? 0});
+    /**
+     *
+     * @type {CartItemDetailProps}
+     */
+    const cartItem = {
+        itemCode,
+        quantity,
+        QuantityAvailable: itemAvailability?.QuantityAvailable ?? 0,
+        price: customerPrice,
+        salesUM: itemAvailability?.SalesUnitOfMeasure ?? 'EA',
+        salesUMFactor: itemAvailability?.SalesUMConvFactor ?? 1,
+        stdUM: itemAvailability?.StandardUnitOfMeasure ?? 'EA',
+        msrp: itemAvailability?.SuggestedRetailPrice ?? 0,
     }
-
-    render() {
-        const {itemAvailability, customerPrice, itemCode, comment, TaxSchedule} = this.props;
-        const {quantity} = this.state;
-        const {
-            ItemCode, ItemCodeDesc, SalesUnitOfMeasure, StandardUnitOfMeasure, SuggestedRetailPrice,
-            SalesUMConvFactor = 1, QuantityAvailable
-        } = itemAvailability;
-        return (
-            <Fragment>
-                <div className="my-3">
-                    <CartItemInfo ItemCode={ItemCode} ItemCodeDesc={ItemCodeDesc}/>
-                </div>
-                {!TaxSchedule && (<MissingTaxScheduleAlert />)}
-                <AddToCartForm itemCode={itemCode} quantity={quantity} comment={comment}
-                               onChangeQuantity={this.onChangeQuantity}
-                               onDone={() => this.props.onClose()}/>
-                <CartItemDetail itemCode={ItemCode} quantity={quantity}
-                                QuantityAvailable={QuantityAvailable}
-                                price={customerPrice}
-                                salesUM={SalesUnitOfMeasure} salesUMFactor={SalesUMConvFactor}
-                                stdUM={StandardUnitOfMeasure} msrp={SuggestedRetailPrice} />
-            </Fragment>
-        );
-    }
-
+    return (
+        <>
+            <div className="my-3">
+                <CartItemInfo ItemCode={itemAvailability?.ItemCode ?? itemCode}
+                              ItemCodeDesc={itemAvailability?.ItemCodeDesc ?? ''}/>
+            </div>
+            {!taxSchedule && (<MissingTaxScheduleAlert/>)}
+            <AddToCartForm itemCode={itemCode} quantity={_quantity} comment={comment}
+                           onChangeQuantity={onChangeQuantity}
+                           onDone={() => onClose()}/>
+            <CartItemDetail cartItem={cartItem}/>
+        </>
+    );
 }
 
-const mapStateToProps = ({cart, customer}) => {
-    const {itemAvailability} = cart;
-    const {pricing} = customer;
-    const {TaxSchedule} = customer.account;
-    const {ItemCode, PriceCode, StandardUnitPrice} = itemAvailability;
-    const customerPrice = itemPrice({pricing, itemCode: ItemCode, priceCode: PriceCode, stdPrice: StandardUnitPrice});
-    return {
-        itemAvailability,
-        customerPrice,
-        TaxSchedule,
-    };
-};
-
-const mapDispatchToProps = {
-    getItemAvailability,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddToCartContainer);
+export default AddToCartContainer;

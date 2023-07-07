@@ -1,6 +1,16 @@
 import React from 'react';
 import TextInput from "../common-components/TextInput";
 
+/**
+ *
+ * @param {number} quantity
+ * @param {(value:number) => void} onChange
+ * @param {(ev:Event) => void} onAddToCart
+ * @param {number} min = 1
+ * @param {boolean|undefined} disabled
+ * @return {JSX.Element}
+ * @constructor
+ */
 const CartQuantityInput = ({quantity, onChange, onAddToCart, min = 1, disabled = undefined}) => {
     return (
         <div className="row g-3">
