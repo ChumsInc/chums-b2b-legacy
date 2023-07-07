@@ -2,38 +2,6 @@ import {UPDATE_GA} from "../constants/actions";
 
 const TAG_ID = 'G-KMH9RBEF98';
 
-/**
- * @deprecated
- * @param title
- * @param path
- * @return {{path, action: string, type: string, title}}
- */
-export const ga_config = ({title, path}) => {
-    if (!!window && window.gtag) {
-        const page_title = `${title} | Chums B2B`;
-        const page_path = path;
-        const page_location = !!document ? `${document.location.origin}${page_path}` : page_path;
-        window.gtag('config', 'UA-3648826-6', {page_title, page_path, page_location});
-    }
-    return {type: UPDATE_GA, action: 'config', title, path};
-};
-
-/**
- * @deprecated
- * @param title
- * @param path
- * @return {{path, action: string, type: string, title}}
- */
-export const ga_screenView = ({title, path}) => {
-    if (!!window && window.gtag) {
-        const page_title = title;
-        const page_path = path;
-        const page_location = !!document ? `${document.location.origin}${page_path}` : page_path;
-        window.gtag('event', 'screen_view', {page_title, page_path, page_location});
-    }
-    return {type: UPDATE_GA, action: 'screen_view', title, path};
-};
-
 export const ga_viewItem = ({cartItem, selectedProduct}) => {
     if (!window || !window.gtag) {
         return;
@@ -42,7 +10,14 @@ export const ga_viewItem = ({cartItem, selectedProduct}) => {
         item_id: cartItem.itemCode,
         price: cartItem.price,
     };
-    window.gtag('event', 'view_item', [item]);
+    window.gtag('event', 'view_item', {
+        currency: 'USD',
+        value: cartItem.price * cartItem.quantity,
+        items: [{
+            item_id: cartItem.itemCode,
+            price: cartItem.price,
+        }]
+    });
 };
 
 export const ga_login = (user_id, method = 'Google') => {
@@ -70,6 +45,17 @@ export const ga_addToCart = (itemCode, quantity, price) => {
     });
 }
 
+export const ga_beginCheckout = (value, items) => {
+    if (!window || !window.gtag) {
+        return;
+    }
+    window.gtag('event', 'begin_checkout', {
+        currency: 'USD',
+        value: value,
+        items: items.map(item => ({item_id: item.ItemCode, price: item.UnitPrice, quantity: item.QuantityOrdered}))
+    })
+}
+
 export const ga_purchase = (salesOrderNo, value, items) => {
     if (!window || !window.gtag) {
         return;
@@ -78,7 +64,12 @@ export const ga_purchase = (salesOrderNo, value, items) => {
         currency: 'USD',
         transaction_id: salesOrderNo,
         value,
-        items: items.map(item => ({item_id: item.ItemCode, price: item.UnitPrice, quantity: item.QuantityOrdered}))
+        items: items.map(item => ({
+            item_id: item.ItemCode,
+            item_name: item.ItemCodeDesc,
+            price: item.UnitPrice,
+            quantity: item.QuantityOrdered
+        }))
     })
 }
 
