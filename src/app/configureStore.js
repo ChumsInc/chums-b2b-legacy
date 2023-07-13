@@ -38,6 +38,7 @@ export const rootReducer = combineReducers({
     promo_code,
     salesOrder: salesOrderReducer,
     search: searchReducer,
+
     slides: slidesReducer,
     user,
     version: versionReducer

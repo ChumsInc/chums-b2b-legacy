@@ -11987,7 +11987,7 @@ textarea.form-control-lg {
   }
 }
 html {
-  /* background-color: white; */
+  background-color: white;
   background-size: cover;
   min-height: 100%;
   position: relative;
@@ -13130,7 +13130,7 @@ body.scrolled .site-header .global-search-padder {
 }
 
 .product-page {
-  /* background-color: #fff; */
+  background-color: #fff;
   padding: 5px;
   /** stuff from old site */
   /*
