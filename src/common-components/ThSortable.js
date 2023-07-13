@@ -6,9 +6,14 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from "classnames";
 import MaterialIcon from "./MaterialIcon";
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const SortIcon = ({asc = true}) => {
-    return (<MaterialIcon size={12} icon={asc ? 'arrow_upward' : 'arrow_downward'} />)
+    return asc
+        ? <KeyboardArrowUpIcon />
+        : <KeyboardArrowDownIcon />;
+    // return (<MaterialIcon size={12} icon={asc ? 'arrow_upward' : 'arrow_downward'} />)
 };
 
 export default class ThSortable extends Component {
@@ -53,8 +58,8 @@ export default class ThSortable extends Component {
             : (
                 <th className={classNames(className, _className)}
                     onClick={this.onClick}>
-                    {children}
                     {currentSort.field === field && <SortIcon asc={currentSort.asc}/>}
+                    {children}
                 </th>
             )
     }

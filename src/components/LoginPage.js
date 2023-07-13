@@ -6,7 +6,7 @@ import {DOCUMENT_TITLES, PATH_HOME} from "../constants/paths";
 import Alert from '../common-components/Alert';
 import GoogleSignInButton from "./GoogleSignInButton";
 import DocumentTitle from "./DocumentTitle";
-import {selectLoggedIn} from "../selectors/user";
+import {selectLoggedIn} from "../ducks/user/selectors";
 
 const LoginPage = () => {
     const loggedIn = useSelector(selectLoggedIn);

@@ -50,6 +50,7 @@ if (isLoggedIn) {
  */
 export const initialCustomerState = {
     company: 'chums',
+    key: null,
     account: localStore.getItem(STORE_CUSTOMER) || defaults.customer,
     contacts: [],
     pricing: [],
@@ -87,12 +88,23 @@ const customerReducer = createReducer(initialCustomerState, builder => {
                         state.contacts = [];
                         state.pricing = [];
                         state.shipToAddresses = [];
+                        state.paymentCards = [];
+                        state.users = [];
                     }
                     return;
                 case SET_CUSTOMER:
                     state.company = companyCode(action.customer?.Company ?? 'chums');
                     state.account = action.customer;
-                    state.paymentCards = [];
+                    if (state.account.ARDivisionNo !== action.customer.ARDivisionNo
+                        || state.account.CustomerNo !== action.customer.CustomerNo
+                        || (state.account.ShipToCode ?? '') !== (action.customer.ShipToCode ?? '')
+                    ) {
+                        state.contacts = [];
+                        state.pricing = [];
+                        state.shipToAddresses = [];
+                        state.paymentCards = [];
+                        state.users = [];
+                    }
                     return;
                 case SET_LOGGED_IN:
                     if (action.loggedIn === false) {

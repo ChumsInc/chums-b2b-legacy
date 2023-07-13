@@ -1,9 +1,9 @@
 import React, {useEffect} from 'react';
-import {updateLocalAuth} from "../actions/user";
+import {updateLocalAuth} from "../ducks/user/actions";
 import {useSelector} from 'react-redux';
 import {AUTH_LOCAL} from "../constants/app";
 import {useAppDispatch} from "../app/configureStore";
-import {selectAuthType, selectLoggedIn} from "../selectors/user";
+import {selectAuthType, selectLoggedIn} from "../ducks/user/selectors";
 
 
 const AppUpdateLocalLogin = () => {

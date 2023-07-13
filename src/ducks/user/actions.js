@@ -1,4 +1,4 @@
-import {fetchGET, fetchPOST} from '../utils/fetch';
+import {fetchGET, fetchPOST} from '../../utils/fetch';
 import {
     ALERT_TYPES,
     CHANGE_USER,
@@ -20,12 +20,12 @@ import {
     SET_USER_ACCOUNT,
     UPDATE_LOGIN,
     UPDATE_SIGNUP,
-} from "../constants/actions";
+} from "../../constants/actions";
 
-import {handleError} from './app';
-import {setAlert} from '../ducks/alerts';
+import {handleError} from '../app/actions';
+import {setAlert} from '../alerts';
 
-import localStore from '../utils/LocalStore';
+import localStore from '../../utils/LocalStore';
 import {
     STORE_AUTHTYPE,
     STORE_CURRENT_CART,
@@ -34,12 +34,12 @@ import {
     STORE_RECENT_ACCOUNTS,
     STORE_TOKEN,
     STORE_USER_ACCOUNT
-} from '../constants/stores';
+} from '../../constants/stores';
 
-import {auth} from '../utils/IntranetAuthService';
-import {getProfile, getSignInProfile, getTokenExpirationDate} from "../utils/jwtHelper";
-import {getFirstCustomer, getFirstUserAccount, getUserAccount, isValidCustomer} from "../utils/customer";
-import {fetchCustomerAccount, setCustomerAccount} from "./customer";
+import {auth} from '../../utils/IntranetAuthService';
+import {getProfile, getSignInProfile, getTokenExpirationDate} from "../../utils/jwtHelper";
+import {getFirstCustomer, getFirstUserAccount, getUserAccount, isValidCustomer} from "../../utils/customer";
+import {loadCustomerAccount, setCustomerAccount} from "../customer/actions";
 import {
     API_PATH_CHANGE_PASSWORD,
     API_PATH_CUSTOMER_LIST,
@@ -51,16 +51,26 @@ import {
     API_PATH_REP_LIST,
     API_PATH_USER_SET_PASSWORD,
     API_PATH_USER_SIGN_UP
-} from "../constants/paths";
-import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../constants/app";
-import {selectCurrentCustomer, selectCustomerPermissionsLoading} from "../selectors/user";
-import {selectCustomerAccount} from "../ducks/customer/selectors";
-import {fetchCustomerValidation, postLocalLogin} from "../api/user";
+} from "../../constants/paths";
+import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../../constants/app";
+import {
+    selectCurrentCustomer,
+    selectCustomerPermissionsLoading,
+    selectUserLoading, selectUserRepAccounts,
+    selectUserRepsLoading
+} from "./selectors";
+import {selectCustomerAccount} from "../customer/selectors";
+import {fetchCustomerValidation, fetchRepList, fetchUserProfile, postLocalLogin} from "../../api/user";
+import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 
 let reauthTimer = 0;
+/**
+ *
+ * @type {PayloadActionCreator<SetLoggedInProps, "user/setLoggedIn">}
+ */
+export const setLoggedIn = createAction('user/setLoggedIn');
 
-
-export const setLoggedIn = ({loggedIn, authType, token}) => ({type: SET_LOGGED_IN, loggedIn, authType, token});
+// export const setLoggedIn = ({loggedIn, authType, token}) => ({type: SET_LOGGED_IN, loggedIn, authType, token});
 
 export const updateLogin = (props) => ({type: UPDATE_LOGIN, props});
 
@@ -72,7 +82,7 @@ export const loginUser = ({email, password}) => async (dispatch) => {
         auth.setToken(token);
         auth.setProfile(getProfile(token));
         dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-        dispatch(fetchProfile());
+        dispatch(loadProfile());
     } catch (err) {
         if (err instanceof Error) {
             console.debug("loginUser()", err.message);
@@ -123,7 +133,7 @@ export const updateLocalAuth = (forceReAuth = false) => (dispatch, getState) => 
             }
             auth.setToken(token);
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-            dispatch(fetchProfile());
+            dispatch(loadProfile());
 
             // trigger an updateLocalAuth so that we start a new reauthTimer
             dispatch(updateLocalAuth());
@@ -146,6 +156,21 @@ export const selectUserAccountIfNeeded = (user) => (dispatch, getState) => {
     }
 };
 
+export const _signInWithGoogle = createAsyncThunk(
+    'user/signInWithGoogle',
+    /**
+     * @param {string} arg
+     * @returns {Promise<void>}
+     */
+    async (arg, {dispatch}) => {
+
+    },
+    {
+        condition: (arg, {getState}) => {
+
+        }
+    }
+)
 export const signInWithGoogle = (token) => async (dispatch, getState) => {
     try {
         const state = getState();
@@ -167,12 +192,15 @@ export const signInWithGoogle = (token) => async (dispatch, getState) => {
 
         dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
         dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
-        dispatch(fetchRepList());
+        dispatch(loadRepList());
         dispatch(selectUserAccountIfNeeded(user));
         const currentCustomer = selectCurrentCustomer(state);
+        if (!currentCustomer) {
+            return;
+        }
         if (!!currentCustomer.CustomerNo && !selectCustomerAccount(state)?.CustomerNo) {
             dispatch(setCustomerAccount(currentCustomer));
-            dispatch(fetchCustomerAccount({fetchOrders: true}));
+            dispatch(loadCustomerAccount({fetchOrders: true}));
         }
     } catch (err) {
         console.trace(err);
@@ -183,108 +211,95 @@ export const signInWithGoogle = (token) => async (dispatch, getState) => {
     }
 }
 
-export const loginGoogleUser = (googleUser) => (dispatch, getState) => {
-    const authResponse = googleUser.getAuthResponse();
-    const token = authResponse.id_token;
-    const profile = googleUser.profileObj;
-    clearTimeout(reauthTimer);
+export const loginGoogleUser = (googleUser) => async (dispatch, getState) => {
+    try {
+        const authResponse = await googleUser.getAuthResponse();
+        const token = authResponse.id_token;
+        const profile = googleUser.profileObj;
+        clearTimeout(reauthTimer);
+        dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
+        const response = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
+        const {user = {}, roles = [], accounts = []} = response ?? {};
+        user.roles = roles;
+        user.accounts = accounts;
+        auth.setToken(token);
+        auth.setProfile({...profile, chums: {user}});
+        localStore.setItem(STORE_AUTHTYPE, AUTH_GOOGLE);
+        const expirationDate = getTokenExpirationDate(token);
+        const now = new Date();
+        const retry = expirationDate - now - 60000;
+        clearTimeout(reauthTimer);
+        reauthTimer = setTimeout(() => {
+            dispatch(updateGoogleAuth(googleUser))
+        }, retry);
 
-    dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
-    return fetchPOST(API_PATH_LOGIN_GOOGLE, {token})
-        .then(res => {
-            const {user = {}, roles = [], accounts = []} = res;
-            user.roles = roles;
-            user.accounts = accounts;
-            auth.setToken(token);
-            auth.setProfile({...profile, chums: {user}});
-            localStore.setItem(STORE_AUTHTYPE, AUTH_GOOGLE);
-            const expirationDate = getTokenExpirationDate(token);
-            const now = new Date();
-            const retry = expirationDate - now - 60000;
-            clearTimeout(reauthTimer);
-            reauthTimer = setTimeout(() => {
-                dispatch(updateGoogleAuth(googleUser))
-            }, retry);
 
+        dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
+        dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
+        dispatch(loadRepList());
 
-            dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
-            dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
-            dispatch(fetchRepList());
-
-            dispatch(selectUserAccountIfNeeded(user));
-        })
-        .catch(err => {
-            console.trace(err);
+        dispatch(selectUserAccountIfNeeded(user));
+    } catch(err) {
+        if (err instanceof Error) {
+            onsole.trace(err);
             auth.logout();
             dispatch(setLoggedIn({loggedIn: false}));
             dispatch({type: FETCH_USER_PROFILE, status: FETCH_FAILURE, message: err.message});
             dispatch(handleError(err, FETCH_USER_PROFILE));
-        });
+        }
+        console.debug("LoginGoogleUser()", err);
+        return Promise.reject(new Error('Error in LoginGoogleUser()'));
+    }
 };
 
-export const updateGoogleAuth = (googleUser) => (dispatch, getState) => {
+export const updateGoogleAuth = (googleUser) => async (dispatch, getState) => {
     clearTimeout(reauthTimer);
-    googleUser.reloadAuthResponse()
-        .then(authResponse => {
-            const token = authResponse.id_token;
-            auth.setToken(token);
-            const expirationDate = getTokenExpirationDate(token);
-            const now = new Date();
-            const retry = expirationDate - now - 60000;
-            clearTimeout(reauthTimer);
-            reauthTimer = setTimeout(() => {
-                dispatch(updateGoogleAuth(googleUser))
-            }, retry);
-            return fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
-        })
-        .then(res => {
-            const {user = {}} = res;
-            if (user.id > 0) {
-                dispatch({type: SET_LOGGED_IN, loggedIn: true, authType: AUTH_GOOGLE, token: auth.getToken()});
-                dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
-                dispatch(selectUserAccountIfNeeded(user));
-            } else {
-                dispatch(setLoggedIn({loggedIn: false}));
-            }
-        })
-        .catch(err => {
-            console.log('reAuth', err.message);
-        })
+    const authResponse = await googleUser.reloadAuthResponse();
+    const token = authResponse.id_token;
+    auth.setToken(token);
+    const expirationDate = getTokenExpirationDate(token);
+    const now = new Date();
+    const retry = expirationDate - now - 60000;
+    clearTimeout(reauthTimer);
+    reauthTimer = setTimeout(() => {
+        dispatch(updateGoogleAuth(googleUser))
+    }, retry);
+    const profileResponse = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
+    const {user = {}} = profileResponse;
+    if (user.id > 0) {
+        dispatch({type: SET_LOGGED_IN, loggedIn: true, authType: AUTH_GOOGLE, token: auth.getToken()});
+        dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
+        dispatch(selectUserAccountIfNeeded(user));
+    } else {
+        dispatch(setLoggedIn({loggedIn: false}));
+    }
 };
 
-export const logout = () => (dispatch, getState) => {
-    return fetchPOST(API_PATH_LOGOUT)
-        .then(() => {
-            auth.logout();
-            clearTimeout(reauthTimer);
-            localStore.removeItem(STORE_CUSTOMER);
-            localStore.removeItem(STORE_USER_ACCOUNT);
-            localStore.removeItem(STORE_RECENT_ACCOUNTS);
-            localStore.removeItem(STORE_AUTHTYPE);
-            localStore.removeItem(STORE_CURRENT_CART);
-            localStore.removeItem(STORE_CUSTOMER_SHIPPING_ACCOUNT);
-            dispatch(setLoggedIn({loggedIn: false}));
-            dispatch({type: SET_CUSTOMER, customer: {Company: 'chums'}});
-        })
-        .catch(err => {
-            auth.logout();
-            clearTimeout(reauthTimer);
-            localStore.removeItem(STORE_CUSTOMER);
-            localStore.removeItem(STORE_USER_ACCOUNT);
-            localStore.removeItem(STORE_RECENT_ACCOUNTS);
-            localStore.removeItem(STORE_AUTHTYPE);
-            localStore.removeItem(STORE_CURRENT_CART);
-            localStore.removeItem(STORE_CUSTOMER_SHIPPING_ACCOUNT);
-            dispatch(setLoggedIn({loggedIn: false}));
-            console.log('logout()', {message: err.message});
-        });
+export const logout = () => async (dispatch, getState) => {
+    try {
+        await fetchPOST(API_PATH_LOGOUT);
+    } catch(err) {
+        if (err instanceof Error) {
+            console.debug("logout()", err.message);
+        }
+    }
+    auth.logout();
+    clearTimeout(reauthTimer);
+    localStore.removeItem(STORE_CUSTOMER);
+    localStore.removeItem(STORE_USER_ACCOUNT);
+    localStore.removeItem(STORE_RECENT_ACCOUNTS);
+    localStore.removeItem(STORE_AUTHTYPE);
+    localStore.removeItem(STORE_CURRENT_CART);
+    localStore.removeItem(STORE_CUSTOMER_SHIPPING_ACCOUNT);
+    dispatch(setLoggedIn({loggedIn: false}));
+    dispatch({type: SET_CUSTOMER, customer: {Company: 'chums'}});
 };
 
 export const clearUserAccount = () => ({type: CLEAR_USER_ACCOUNT});
 
 export const setUserAccount = (userAccount) => (dispatch, getState) => {
     const {user} = getState();
-    if (userAccount.id === user.userAccount.id) {
+    if (userAccount.id === user.userAccount?.id) {
         return;
     }
 
@@ -292,10 +307,10 @@ export const setUserAccount = (userAccount) => (dispatch, getState) => {
     const {isRepAccount, Company, ARDivisionNo, CustomerNo} = userAccount;
     if (!isRepAccount && isValidCustomer({Company, ARDivisionNo, CustomerNo})) {
         dispatch(setCustomerAccount({Company, ARDivisionNo, CustomerNo}));
-        dispatch(fetchCustomerAccount({Company, ARDivisionNo, CustomerNo, fetchOrders: true}));
+        dispatch(loadCustomerAccount({Company, ARDivisionNo, CustomerNo, fetchOrders: true}));
     } else if (isRepAccount) {
         dispatch(fetchCustomerList(userAccount));
-        dispatch(fetchRepList());
+        dispatch(loadRepList());
     }
 };
 
@@ -326,6 +341,23 @@ export const fetchCustomerList = ({Company, SalespersonDivisionNo, SalespersonNo
         })
 };
 
+export const loadProfile = createAsyncThunk(
+    'user/loadProfile',
+    /**
+     *
+     * @returns {Promise<UserProfileResponse>}
+     */
+    async (arg, {dispatch, getState}) => {
+        return await fetchUserProfile();
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState();
+            return !selectUserLoading(state);
+        }
+    }
+)
+
 export const fetchProfile = () => (dispatch, getState) => {
     dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
     fetchGET(API_PATH_PROFILE)
@@ -346,36 +378,21 @@ export const fetchProfile = () => (dispatch, getState) => {
             dispatch({type: FETCH_USER_PROFILE, status: FETCH_FAILURE, message: err.message});
             dispatch(handleError(err, FETCH_USER_PROFILE));
         });
-    dispatch(fetchRepList());
+    dispatch(loadRepList());
 };
 
-export const fetchRepList = () => (dispatch, getState) => {
-    const {user} = getState();
-    const {userAccount, roles} = user;
-    if (!userAccount || !userAccount.ARDivisionNo) {
-        // console.log('fetchRepList()', userAccount)
-        return;
+export const loadRepList = createAsyncThunk(
+    'user/loadReps',
+    async () => {
+        return await fetchRepList();
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState();
+            return !selectUserRepsLoading(state) && !!selectUserRepAccounts(state).length;
+        }
     }
-    const [role] = roles.filter(role => role === 'rep' || role.role === 'rep');
-    if (!role) {
-        // console.log('fetchRepList()', roles)
-        return;
-    }
-
-    dispatch({type: FETCH_REP_LIST});
-    const url = API_PATH_REP_LIST.replace(':Company', encodeURIComponent(userAccount.Company));
-    fetchGET(url, {cache: 'no-cache'})
-        .then(res => {
-            const {list} = res;
-            dispatch({type: RECEIVE_REP_LIST, list})
-        })
-        .catch(err => {
-            dispatch({type: FETCH_REP_LIST_FAILURE});
-            dispatch(handleError(err, FETCH_REP_LIST))
-        });
-};
-
-export const updateSignUp = (props) => ({type: UPDATE_SIGNUP, props});
+)
 
 export const changeUser = (props) => ({type: CHANGE_USER, props});
 export const changeUserPassword = (props) => ({type: CHANGE_USER_PASSWORD, props});
@@ -392,7 +409,7 @@ export const submitPasswordChange = () => (dispatch, getState) => {
             auth.setToken(token);
             dispatch(setAlert({type: ALERT_TYPES.success, title: 'Done!', message: 'Your password has been changed'}));
             dispatch({type: SET_LOGGED_IN, authType: AUTH_LOCAL, token});
-            dispatch(fetchProfile());
+            dispatch(loadProfile());
             dispatch(updateLocalAuth());
         })
         .catch(err => {
@@ -413,7 +430,7 @@ export const submitNewPassword = () => (dispatch, getState) => {
             auth.setToken(token);
             auth.setProfile(getProfile(token));
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-            dispatch(fetchProfile());
+            dispatch(loadProfile());
             return {success: true};
         })
         .catch(err => {

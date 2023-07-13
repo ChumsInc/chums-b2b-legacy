@@ -5,7 +5,7 @@ import {withRouter} from 'react-router-dom'
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
 import LogoutButton from "./LogoutButton";
-import {submitPasswordChange, changeUser, changeUserPassword, fetchProfile, logout, updateLocalAuth} from "../actions/user";
+import {submitPasswordChange, changeUser, changeUserPassword, loadProfile, logout, updateLocalAuth} from "../ducks/user/actions";
 import ChangePasswordForm from "./PasswordForm";
 import {AUTH_LOCAL} from "../constants/app";
 import {PATH_HOME, PATH_LOGIN} from "../constants/paths";
@@ -22,7 +22,7 @@ class UserProfile extends Component {
         history: PropTypes.object,
 
         changeUser: PropTypes.func.isRequired,
-        fetchProfile: PropTypes.func.isRequired,
+        loadProfile: PropTypes.func.isRequired,
         logout: PropTypes.func.isRequired,
         submitPasswordChange: PropTypes.func.isRequired,
         updateLocalAuth: PropTypes.func.isRequired,
@@ -67,7 +67,7 @@ class UserProfile extends Component {
         if (this.props.authType === AUTH_LOCAL) {
             this.props.updateLocalAuth(true);
         } else {
-            this.props.fetchProfile();
+            this.props.loadProfile();
         }
     }
 
@@ -141,7 +141,7 @@ const mapStateToProps = ({user}) => {
 
 const mapDispatchToProps = {
     logout,
-    fetchProfile,
+    loadProfile,
     changeUser,
     submitPasswordChange,
     updateLocalAuth,

@@ -9,7 +9,7 @@ import {
     FETCH_VALID_PROMO_CODES,
     SET_PROMO_CODE
 } from "../constants/actions";
-import {handleError} from "./app";
+import {handleError} from "../ducks/app/actions";
 import {customerFromState} from "../ducks/cart/actions";
 import {loadSalesOrder} from "./salesOrder";
 import {selectCustomerAccount} from "../ducks/customer/selectors";

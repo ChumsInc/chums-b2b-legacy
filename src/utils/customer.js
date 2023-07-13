@@ -153,22 +153,20 @@ export const itemPrice = ({pricing = [], itemCode, priceCode, stdCost = 0, stdPr
 };
 
 export const getFirstCustomer = (accounts) => {
-    const [customer = {}] = accounts
+    const [customer] = accounts
         .filter(acct => !acct.isRepAccount)
         .sort((a, b) => a.Company === b.Company
             ? (longCustomerNo(a) > longCustomerNo(b) ? 1 : -1)
             : (companyPriority(a.Company) > companyPriority(b.Company) ? 1 : -1)
         );
-    const {id, Company, ARDivisionNo, CustomerNo} = customer;
-    return {id, Company, ARDivisionNo, CustomerNo};
+    return customer ?? null;
 };
 
 export const getFirstUserAccount = (accounts) => {
-    const [userAccount = {}] = accounts
+    const [userAccount] = accounts
         .filter(acct => !!acct.isRepAccount)
         .sort((a, b) => a.Company === b.Company ? (longRepNo(a) > longRepNo(b) ? 1 : -1) : (a.Company > b.Company ? 1 : -1));
-    const {id} = userAccount;
-    return {id};
+    return userAccount ?? null;
 };
 
 export const getUserAccount = (accounts, id) => {
@@ -189,6 +187,11 @@ export const buildRecentAccounts = (recentAccounts = [], customer) => {
         .filter((_customer, index) => index < 10);
 };
 
+/**
+ *
+ * @param {BillToCustomer} customer
+ * @returns {ShipToCustomer}
+ */
 export const shipToAddressFromBillingAddress = (customer) => {
     const [EmailAddress] = (customer.EmailAddress || '').split(/;[ ]*/);
     return {
@@ -204,6 +207,8 @@ export const shipToAddressFromBillingAddress = (customer) => {
         TelephoneNo: customer.TelephoneNo,
         TelephoneExt: customer.TelephoneExt,
         EmailAddress,
+        ResidentialAddress: customer.ResidentialAddress,
+        Reseller: customer.Reseller,
     }
 };
 

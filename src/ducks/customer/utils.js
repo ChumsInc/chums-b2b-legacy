@@ -54,4 +54,4 @@ export const customerUserSorter = (a, b) => {
  * @param {CustomerKey} [customer]
  * @return {string}
  */
-export const shortCustomerKey = (customer) => `${customer?.ARDivisionNo ?? ''}-${customer?.ARDivisionNo ?? ''}`;
+export const shortCustomerKey = (customer) => `${customer?.ARDivisionNo ?? ''}-${customer.CustomerNo ?? ''}`;

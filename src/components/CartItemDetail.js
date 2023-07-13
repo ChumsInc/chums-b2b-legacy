@@ -4,7 +4,7 @@ import Alert from "../common-components/Alert";
 import classNames from 'classnames';
 import CartItemPriceDescription from "./CartItemPriceDescription";
 import {useSelector} from "react-redux";
-import {selectCanViewAvailable} from "../selectors/user";
+import {selectCanViewAvailable} from "../ducks/user/selectors";
 
 /**
  *

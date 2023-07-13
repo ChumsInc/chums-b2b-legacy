@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {GOOGLE_CLIENT_ID} from "../constants/app";
-import {signInWithGoogle} from "../actions/user";
+import {signInWithGoogle} from "../ducks/user/actions";
 import {useDispatch, useSelector} from "react-redux";
-import {selectLoggedIn, selectLoginExpiry} from "../selectors/user";
+import {selectLoggedIn, selectLoginExpiry} from "../ducks/user/selectors";
 
 /**
  *

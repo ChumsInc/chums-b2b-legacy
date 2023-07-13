@@ -5,7 +5,7 @@ import {Link} from "react-router-dom";
 import numeral from 'numeral';
 import {ORDER_TYPE} from "../../../constants/orders";
 import {useAppDispatch} from "../../../app/configureStore";
-import {selectCurrentCustomer, selectLoggedIn} from "../../../selectors/user";
+import {selectCurrentCustomer, selectLoggedIn} from "../../user/selectors";
 import {selectCartLoading, selectCartName, selectCartNo, selectCartQuantity, selectCartTotal} from "../selectors";
 import Tooltip from '@mui/material/Tooltip';
 import LinearProgress from "@mui/material/LinearProgress";

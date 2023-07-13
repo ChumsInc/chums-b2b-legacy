@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {deleteUser, fetchCustomerAccount, saveUser, updateUser} from '../../actions/customer';
+import {deleteUser, loadCustomerAccount, saveUser, updateUser} from '../../ducks/customer/actions';
 import ProgressBar from "../ProgressBar";
 import AccountUserTable from "./AccountUserTable";
 import {selectCustomerLoading, selectCustomerUsers} from "../../ducks/customer/selectors";
 import EditAccountUserForm from "./EditAccountUserForm";
-import {selectIsEmployee, selectIsRep} from "../../selectors/user";
+import {selectIsEmployee, selectIsRep} from "../../ducks/user/selectors";
 
 const newUser = {id: 0, name: '', email: '', accountType: 4};
 
@@ -24,7 +24,7 @@ const AccountUsers = () => {
     }
 
     const reloadHandler = () => {
-        dispatch(fetchCustomerAccount({fetchOrders: false}));
+        dispatch(loadCustomerAccount({fetchOrders: false}));
     }
 
     const changeUserHandler = (props) => {

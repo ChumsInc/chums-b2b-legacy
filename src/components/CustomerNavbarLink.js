@@ -8,7 +8,7 @@ import {Link} from "react-router-dom";
 import ProgressBar from "./ProgressBar";
 import CustomerNameIndicator from "./CustomerNameIndicator";
 import {useAppSelector} from "../app/configureStore";
-import {selectCurrentCustomer, selectLoggedIn} from "../selectors/user";
+import {selectCurrentCustomer, selectLoggedIn} from "../ducks/user/selectors";
 import {selectCustomerLoading} from "../ducks/customer/selectors";
 
 const CustomerNavbarLink = () => {

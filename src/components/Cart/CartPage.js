@@ -8,7 +8,7 @@ import CheckoutProgress from "../CheckoutProgress";
 import CartDetail from "./CartDetail";
 import SendEmailModal from "../SendEmailModal";
 import {useParams} from "react-router";
-import {selectCurrentCustomer} from "../../selectors/user";
+import {selectCurrentCustomer} from "../../ducks/user/selectors";
 
 const CartPage = () => {
     const currentCustomer = useSelector(selectCurrentCustomer);

@@ -2,7 +2,7 @@ import React from 'react';
 import Select from "../common-components/Select";
 import {useDispatch, useSelector} from 'react-redux';
 import {selectCustomerShipToAddresses, selectPermittedShipToAddresses} from "../ducks/customer/selectors";
-import {selectCustomerPermissions} from "../selectors/user";
+import {selectCustomerPermissions} from "../ducks/user/selectors";
 
 // export interface ShipToSelectProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'value' | 'onChange'> {
 //     value: string | null;

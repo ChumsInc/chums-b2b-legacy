@@ -7,7 +7,7 @@ import queryString from "query-string";
 import MAPPolicy from "./MAPPolicy";
 import UsagePolicy from "./UsagePolicy";
 import DocumentTitle from "./DocumentTitle";
-import {selectLoggedIn} from "../selectors/user";
+import {selectLoggedIn} from "../ducks/user/selectors";
 
 const SignUp = () => {
     const history = useHistory();

@@ -5,7 +5,7 @@
 
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {fetchCustomerAccount, setCustomerAccount} from '../../../actions/customer';
+import {loadCustomerAccount, setCustomerAccount} from '../../customer/actions';
 import {loadInvoice, setCurrentInvoice} from '../actions';
 import InvoiceHeader from "./InvoiceHeader";
 import InvoiceDetail from "./InvoiceDetail";
@@ -13,7 +13,7 @@ import DocumentTitle from "../../../components/DocumentTitle";
 import {useAppDispatch} from "../../../app/configureStore";
 import {useParams} from "react-router";
 import {selectCurrentInvoice, selectCurrentInvoiceLoading} from "../selectors";
-import {selectCurrentCustomer} from "../../../selectors/user";
+import {selectCurrentCustomer} from "../../user/selectors";
 import {isValidCustomer} from "../../../utils/customer";
 import LinearProgress from "@mui/material/LinearProgress";
 
@@ -50,7 +50,7 @@ const mapStateToProps = ({customer, user, invoices, app}) => {
 };
 
 const mapDispatchToProps = {
-    fetchAccount: fetchCustomerAccount,
+    fetchAccount: loadCustomerAccount,
     fetchInvoice: loadInvoice,
     selectInvoice: setCurrentInvoice,
     setCustomerAccount,

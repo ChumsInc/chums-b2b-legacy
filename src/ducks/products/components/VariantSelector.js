@@ -3,7 +3,7 @@ import classNames from "classnames";
 import {getMSRP, getPrices, getSalesUM, sortVariants} from "../../../utils/products";
 import numeral from 'numeral';
 import {useSelector} from "react-redux";
-import {selectLoggedIn} from "../../../selectors/user";
+import {selectLoggedIn} from "../../user/selectors";
 import {ClickAwayListener} from '@mui/base';
 import VariantItem from "../../../components/VariantItem";
 import {selectCurrentProduct, selectProductColorCode, selectProductVariantId} from "../selectors";

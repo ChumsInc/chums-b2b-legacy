@@ -63,7 +63,7 @@ export const API_PATH_ACCOUNT_USER = '/api/user/b2b/users/:Company/:ARDivisionNo
 export const API_PATH_ACCOUNT_USERS = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_CUSTOMER = '/api/sales/b2b/account/:Company/:ARDivisionNo-:CustomerNo';
 export const API_PATH_CUSTOMER_LIST = '/api/sales/b2b/account-list/:Company/:SalespersonDivisionNo-:SalespersonNo';
-export const API_PATH_REP_LIST = '/api/sales/rep/list/:Company/condensed';
+export const API_PATH_REP_LIST = '/api/sales/rep/list/chums/condensed';
 export const API_PATH_SAVE_ADDRESS = '/sage/b2b/billto.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo';
 export const API_PATH_SAVE_SHIPTO_ADDRESS = '/sage/b2b/shipto.php\\?co=:Company&account=:ARDivisionNo-:CustomerNo-:ShipToCode';
 export const API_PATH_SET_PRIMARY_SHIPTO = '/sage/b2b/set-primary-shipto.php\\?co=:Company';

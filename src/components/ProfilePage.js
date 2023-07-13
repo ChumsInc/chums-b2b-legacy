@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {changeUser, fetchProfile, logout, setUserAccount} from "../actions/user";
+import {changeUser, loadProfile, logout, setUserAccount} from "../ducks/user/actions";
 import AccountSelector from "./AccountSelector";
 import {userAccountPropType} from "../constants/myPropTypes";
 import {isSameCustomer} from "../utils/customer";
@@ -21,7 +21,7 @@ const mapStateToProps = ({user, app}) => {
 const mapDispatchToProps = {
     logout,
     setUserAccount,
-    fetchProfile,
+    loadProfile,
     changeUser,
 };
 
@@ -39,7 +39,7 @@ class ProfilePage extends Component {
         loading: PropTypes.bool,
 
         setUserAccount: PropTypes.func.isRequired,
-        fetchProfile: PropTypes.func.isRequired,
+        loadProfile: PropTypes.func.isRequired,
         changeUser: PropTypes.func.isRequired,
     };
 

@@ -3,7 +3,7 @@
  */
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {fetchCustomerAccount, saveShipToAddress, setDefaultShipTo} from '../actions/customer';
+import {loadCustomerAccount, saveShipToAddress, setDefaultShipTo} from '../ducks/customer/actions';
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
 import ShipToSelect from "./ShipToSelect";
@@ -18,7 +18,7 @@ import {
     selectCustomerPermissionsLoading,
     selectIsEmployee,
     selectIsRep
-} from "../selectors/user";
+} from "../ducks/user/selectors";
 import {
     selectCustomerLoading,
     selectCustomerShipToAddresses,
@@ -80,7 +80,7 @@ const ShipToForm = () => {
     }
 
     const reloadHandler = () => {
-        dispatch(fetchCustomerAccount());
+        dispatch(loadCustomerAccount());
     }
 
 

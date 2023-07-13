@@ -18,7 +18,7 @@ import {Link, useHistory} from "react-router-dom";
 import MissingTaxScheduleAlert from "../../../components/MissingTaxScheduleAlert";
 import RequireLogin from "../../../components/RequireLogin";
 import {useAppDispatch} from "../../../app/configureStore";
-import {selectLoggedIn} from "../../../selectors/user";
+import {selectLoggedIn} from "../../user/selectors";
 import {
     selectCurrentProduct,
     selectProductCartItem,

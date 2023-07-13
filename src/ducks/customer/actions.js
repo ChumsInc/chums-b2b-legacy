@@ -1,4 +1,4 @@
-import {fetchDELETE, fetchGET, fetchPOST, fetchPUT} from '../utils/fetch';
+import {fetchDELETE, fetchGET, fetchPOST, fetchPUT} from '../../utils/fetch';
 import {
     CANCEL_CREATE_ACCOUNT_USER,
     CHANGE_ACCOUNT_FIELD,
@@ -14,15 +14,15 @@ import {
     SAVE_CUSTOMER,
     SELECT_ACCOUNT_USER,
     SET_CUSTOMER,
-} from "../constants/actions";
-import {handleError} from "./app";
+} from "../../constants/actions";
+import {handleError} from "../app/actions";
 import {
     buildRecentAccounts,
     isValidCustomer,
     sageCompanyCode,
     shipToAddressFromBillingAddress
-} from "../utils/customer";
-import {fetchOpenOrders} from "./salesOrder";
+} from "../../utils/customer";
+import {fetchOpenOrders} from "../../actions/salesOrder";
 import {
     API_PATH_ACCOUNT_USER,
     API_PATH_ACCOUNT_USERS,
@@ -30,14 +30,17 @@ import {
     API_PATH_SAVE_ADDRESS,
     API_PATH_SAVE_SHIPTO_ADDRESS,
     API_PATH_SET_PRIMARY_SHIPTO,
-} from "../constants/paths";
-import {defaultCartItem, getPrices} from "../utils/products";
-import localStore from "../utils/LocalStore";
-import {STORE_RECENT_ACCOUNTS} from "../constants/stores";
-import {setUserAccount} from "./user";
-import {loadInvoices} from "../ducks/invoices/actions";
-import {selectLoggedIn} from "../selectors/user";
-import {buildPath} from "../utils/path-utils";
+} from "../../constants/paths";
+import {defaultCartItem, getPrices} from "../../utils/products";
+import localStore from "../../utils/LocalStore";
+import {STORE_RECENT_ACCOUNTS} from "../../constants/stores";
+import {setUserAccount} from "../user/actions";
+import {loadInvoices} from "../invoices/actions";
+import {selectLoggedIn, selectRecentAccounts} from "../user/selectors";
+import {buildPath} from "../../utils/path-utils";
+import {selectCustomerAccount, selectCustomerLoading} from "./selectors";
+import {fetchCustomerAccount} from "../../api/customer";
+import {selectCurrentProduct, selectProductCartItem, selectSelectedProduct} from "../products/selectors";
 
 
 export const changeAccount = (props) => ({type: CHANGE_ACCOUNT_FIELD, props});
@@ -91,61 +94,65 @@ export const deleteUser = (user) => async (dispatch, getState) => {
 
 
 export const setCustomerAccount = (customer) => (dispatch, getState) => {
-    const {recentAccounts, accounts} = getState().user;
-    const [userAccount] = accounts.filter(acct => {
-        return acct.Company === customer.Company
-            && acct.ARDivisionNo === customer.ARDivisionNo
-            && acct.CustomerNo === customer.CustomerNo
-    });
-    if (userAccount) {
-        dispatch(setUserAccount(userAccount));
-    }
+    const {recentAccounts} = getState().user;
     localStore.setItem(STORE_RECENT_ACCOUNTS, buildRecentAccounts(recentAccounts, customer));
     dispatch({type: SET_CUSTOMER, customer});
 };
 
-export const fetchCustomerAccount = ({fetchOrders = false, force = false} = {}) => (dispatch, getState) => {
-    const {customer} = getState();
-
-    if (!isValidCustomer(customer.account)) {
-        return;
-    }
-
-    const {Company, ARDivisionNo, CustomerNo} = customer.account;
-    if (customer.loading === true && !force) {
-        return;
-    }
-
-    const url = buildPath(API_PATH_CUSTOMER, {Company, ARDivisionNo, CustomerNo});
-    dispatch({type: FETCH_CUSTOMER, status: FETCH_INIT, customer: {Company, ARDivisionNo, CustomerNo}});
-    fetchGET(url, {cache: 'no-cache'})
-        .then(res => {
-            const {contacts, customer, pricing, shipTo, users, paymentCards, promoCodes} = res.result;
-            const {products} = getState();
-            let cartItem = products.cartItem;
-            const customerPrice = getPrices({product: products.selectedProduct, priceCodes: pricing});
-            if (!!products.selectedProduct.id) {
-                cartItem = defaultCartItem({...products.selectedProduct, cartItemCode: products.cartItem.itemCode});
-            }
-            const {recentAccounts} = getState().user;
-            localStore.setItem(STORE_RECENT_ACCOUNTS, buildRecentAccounts(recentAccounts, customer));
-            shipTo.unshift(shipToAddressFromBillingAddress(customer));
-            dispatch({
-                type: FETCH_CUSTOMER,
-                status: FETCH_SUCCESS,
-                Company, customer, contacts, pricing, shipTo, customerPrice, users, paymentCards,
-                cartItem, promoCodes,
-            });
-            if (fetchOrders) {
-                dispatch(fetchOpenOrders({Company, ARDivisionNo, CustomerNo}));
-                dispatch(loadInvoices({Company, ARDivisionNo, CustomerNo}));
-            }
-            // dispatch(fetchValidPromoCodes());
-        })
-        .catch(err => {
+export const loadCustomerAccount = ({fetchOrders = false, force = false} = {}) =>
+    async (dispatch, getState) => {
+    try {
+        const state = getState();
+        const customerAccount = selectCustomerAccount(state);
+        if (!isValidCustomer(customerAccount)) {
+            return;
+        }
+        if (!force && selectCustomerLoading(state)) {
+            return;
+        }
+        let cartItem = selectProductCartItem(state);
+        const selectedProduct = selectSelectedProduct(state);
+        const recentAccounts = selectRecentAccounts(state);
+        const {Company, ARDivisionNo, CustomerNo} = customerAccount;
+        dispatch({type: FETCH_CUSTOMER, status: FETCH_INIT, customer: customerAccount});
+        const {contacts,
+            customer,
+            pricing,
+            shipTo,
+            users,
+            paymentCards,
+            promoCodes,
+            permissions,
+        } = await fetchCustomerAccount(customerAccount);
+        const customerPrice = getPrices({product: selectedProduct, priceCodes: pricing ?? []});
+        if (!!selectedProduct?.id) {
+            cartItem = defaultCartItem({...selectedProduct, cartItemCode: cartItem.itemCode});
+        }
+        localStore.setItem(STORE_RECENT_ACCOUNTS, buildRecentAccounts(recentAccounts, customer));
+        shipTo.unshift(shipToAddressFromBillingAddress(customer));
+        console.log(FETCH_CUSTOMER, FETCH_SUCCESS, {Company, customer, contacts, pricing, shipTo, customerPrice, users, paymentCards,
+            cartItem, promoCodes});
+        dispatch({
+            type: FETCH_CUSTOMER,
+            status: FETCH_SUCCESS,
+            Company, customer, contacts, pricing, shipTo, customerPrice, users, paymentCards,
+            cartItem, promoCodes, permissions,
+        });
+        if (fetchOrders) {
+            dispatch(fetchOpenOrders({Company, ARDivisionNo, CustomerNo}));
+            dispatch(loadInvoices({Company, ARDivisionNo, CustomerNo}));
+        }
+    } catch(err) {
+        if (err instanceof Error) {
+            console.debug("loadCustomerAccount()", err.message);
             dispatch(handleError(err, FETCH_CUSTOMER));
             dispatch({type: FETCH_CUSTOMER, status: FETCH_FAILURE});
-        });
+            return
+        }
+        console.debug("loadCustomerAccount()", err);
+        dispatch(handleError(err, FETCH_CUSTOMER));
+        dispatch({type: FETCH_CUSTOMER, status: FETCH_FAILURE});
+    }
 };
 
 
@@ -176,7 +183,7 @@ export const saveBillingAddress = (account) => (dispatch, getState) => {
     dispatch({type: SAVE_CUSTOMER, status: FETCH_INIT});
     fetchPOST(url, data)
         .then(() => {
-            dispatch(fetchCustomerAccount({force: true}));
+            dispatch(loadCustomerAccount({force: true}));
         })
         .catch(err => {
             dispatch(handleError(err, SAVE_CUSTOMER));
@@ -212,7 +219,7 @@ export const saveShipToAddress = (shipToAddress) => (dispatch, getState) => {
     dispatch({type: SAVE_CUSTOMER, status: FETCH_INIT});
     fetchPOST(url, data)
         .then(() => {
-            dispatch(fetchCustomerAccount({force: true}));
+            dispatch(loadCustomerAccount({force: true}));
         })
         .catch(err => {
             dispatch(handleError(err, SAVE_CUSTOMER));
@@ -226,7 +233,7 @@ export const setDefaultShipTo = (ShipToCode) => (dispatch, getState) => {
     dispatch({type: SAVE_CUSTOMER, status: FETCH_INIT});
     fetchPOST(url, {Company, account: `${ARDivisionNo}-${CustomerNo}:${ShipToCode}`})
         .then(() => {
-            dispatch(fetchCustomerAccount({force: true}));
+            dispatch(loadCustomerAccount({force: true}));
         })
         .catch(err => {
             dispatch(handleError(err, SAVE_CUSTOMER));

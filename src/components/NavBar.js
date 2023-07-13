@@ -8,13 +8,14 @@ import {Link} from 'react-router-dom';
 import classNames from 'classnames';
 import {connect} from 'react-redux';
 import {PATH_LOGIN, PATH_RESOURCES_CHUMS_REPS, PATH_RESOURCES_CUSTOMER, PATH_SIGNUP} from '../constants/paths';
-import {setSubNavBar} from '../actions/app';
+import {setSubNavBar} from '../ducks/app/actions';
 import DropDownToggle from "./DropDownToggle";
 import {SUB_NAV_TYPES} from "../constants/app";
 import NavBarSubNavContainer from "./NavBarSubNavContainer";
 import {withRouter} from "react-router";
 import {selectVersionChanged} from "../ducks/version";
 import {selectHasMessages} from "../ducks/messages";
+import {selectShowSearch} from "../ducks/search";
 
 
 const NavItem = ({path, title = '', active = false}) => {
@@ -31,11 +32,11 @@ const isPathProfile = new RegExp(`^/(profile|account)`);
 const isPathOrders = new RegExp('^/orders');
 
 const mapStateToProps = (state) => {
-    const {app, user} = state;
+    const {app, user, search} = state;
     const versionChanged = selectVersionChanged(state);
     const hasMessages = selectHasMessages(state);
-    const {subNav, showNavBar, search} = app;
-    const hideForSearch = search.show;
+    const {subNav, showNavBar} = app;
+    const hideForSearch = !selectShowSearch(state);
     const {loggedIn, accounts} = user;
     return {showNavBar, subNav, loggedIn, accounts, hasMessages, hideForSearch};
 };

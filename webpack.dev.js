@@ -39,7 +39,7 @@ module.exports = merge(common, {
         },
         watchFiles: 'src/**/*',
     },
-    devtool: 'eval-source-map',
+    devtool: 'inline-source-map',
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
     ]

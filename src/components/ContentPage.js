@@ -5,7 +5,7 @@ import {contentPageShape} from "../constants/myPropTypes";
 import {fetchPage} from '../actions/page';
 import ProgressBar from "./ProgressBar";
 import ContentPage404 from "./ContentPage404";
-import {setLifestyle} from '../actions/app';
+import {setLifestyle} from '../ducks/app/actions';
 import DocumentTitle from "./DocumentTitle";
 
 class ContentPage extends Component {

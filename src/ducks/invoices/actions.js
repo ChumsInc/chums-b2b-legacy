@@ -2,7 +2,7 @@ import {fetchGET} from "../../utils/fetch";
 import {API_PATH_INVOICE} from "../../constants/paths";
 import {isValidCustomer, sageCompanyCode} from "../../utils/customer";
 import {FETCH_FAILURE, FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "../../constants/actions";
-import {handleError} from "../../actions/app";
+import {handleError} from "../app/actions";
 import {setAlert} from "../alerts";
 import {buildPath} from "../../utils/path-utils";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
@@ -65,6 +65,11 @@ export const loadInvoice = ({Company, InvoiceNo, InvoiceType}) => (dispatch, get
 
 export const loadInvoices = createAsyncThunk(
     'invoices/loadInvoices',
+    /**
+     *
+     * @param {{Company:string, ARDivisionNo: string, CustomerNo: string, ShipToCode?: string}} arg
+     * @returns {Promise<InvoiceHeader[]>}
+     */
     async (arg) => {
         return await fetchInvoices(arg);
     }, {

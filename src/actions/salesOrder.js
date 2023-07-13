@@ -14,7 +14,7 @@ import {
 import {fetchGET, fetchPOST} from "../utils/fetch";
 import {API_PATH_INVOICE, API_PATH_OPEN_ORDERS, CART_ACTIONS} from "../constants/paths";
 import {isValidCustomer, sageCompanyCode} from "../utils/customer";
-import {handleError} from "./app";
+import {handleError} from "../ducks/app/actions";
 import {setAlert} from "../ducks/alerts";
 import {isCartOrder} from "../utils/orders";
 import localStore from "../utils/LocalStore";

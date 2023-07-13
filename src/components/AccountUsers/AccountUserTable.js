@@ -6,7 +6,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TablePagination from "../../common-components/TablePagination";
 import BusinessIcon from '@mui/icons-material/Business';
 import {useSelector} from "react-redux";
-import {selectIsEmployee} from "../../selectors/user";
+import {selectIsEmployee} from "../../ducks/user/selectors";
 
 
 // export interface AccountUserTableProps {

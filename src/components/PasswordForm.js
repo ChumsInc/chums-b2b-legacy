@@ -3,7 +3,7 @@ import FormGroup from "../common-components/FormGroup";
 import PasswordInput from "../common-components/PasswordInput";
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import PropTypes from "prop-types";
-import {changeUserPassword} from "../actions/user";
+import {changeUserPassword} from "../ducks/user/actions";
 import {connect} from "react-redux";
 
 

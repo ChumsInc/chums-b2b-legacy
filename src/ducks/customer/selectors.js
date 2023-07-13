@@ -1,6 +1,6 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {isBillToCustomer} from "../../utils/typeguards";
-import {selectCustomerPermissions} from "../../selectors/user";
+import {selectCustomerPermissions} from "../user/selectors";
 
 export const selectCustomerAccount = (state) => state.customer.account ?? null;
 export const selectTaxSchedule = (state) => state.customer.account?.TaxSchedule ?? '';

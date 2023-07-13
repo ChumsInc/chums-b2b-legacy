@@ -20,9 +20,9 @@ import {
     selectCustomerPermissions,
     selectCustomerPermissionsLoaded,
     selectCustomerPermissionsLoading
-} from "../selectors/user";
+} from "../ducks/user/selectors";
 import ShipToSelect from "./ShipToSelect";
-import {loadCustomerPermissions} from "../actions/user";
+import {loadCustomerPermissions} from "../ducks/user/actions";
 
 
 const AddToCartForm = ({

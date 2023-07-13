@@ -3,7 +3,7 @@ import {getMSRP, getPrices, getSalesUM} from "../utils/products";
 import numeral from "numeral";
 import React from "react";
 import {useSelector} from "react-redux";
-import {selectLoggedIn} from "../selectors/user";
+import {selectLoggedIn} from "../ducks/user/selectors";
 
 const VariantItem = ({variant, selected = false, onClick, priceCodes = []}) => {
     const loggedIn = useSelector(selectLoggedIn);

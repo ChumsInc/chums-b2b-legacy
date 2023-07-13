@@ -6,7 +6,31 @@ import {
     FETCH_SUCCESS,
     FETCH_VALID_PROMO_CODES,
     SET_PROMO_CODE
-} from "../constants/actions";
+} from "../../constants/actions";
+import {createReducer} from "@reduxjs/toolkit";
+
+/**
+ *
+ * @type {PromoCodeState}
+ */
+const initialPromoCodeState = {
+    code: '',
+    description: '',
+    requiredItems: [],
+    validCodes: [],
+    loading: false,
+}
+
+const promoCodeReducer = createReducer(initialPromoCodeState, (builder) => {
+    builder
+        .addDefaultCase((state, action) => {
+            switch (action.type) {
+                case SET_PROMO_CODE:
+                    state.code = action.code ?? '';
+                    return;
+            }
+        })
+})
 
 const code = (state = '', action) => {
     const {type, status, promo_code, code, salesOrder} = action;

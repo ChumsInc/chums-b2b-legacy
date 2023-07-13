@@ -4,16 +4,16 @@
 
 
 export default class LocalStore {
-    static getItem(key) {
+    static getItem(key, defaultValue = null) {
         if (!window.localStorage) {
-            return null;
+            return defaultValue;
         }
         const data = window.localStorage.getItem(key);
         try {
-            return JSON.parse(data);
+            return JSON.parse(data) ?? defaultValue;
         } catch(err) {
             console.log("getItem()", key, err.message);
-            return data ?? null;
+            return data ?? defaultValue;
         }
     }
 

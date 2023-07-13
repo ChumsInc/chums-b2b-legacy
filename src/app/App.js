@@ -22,12 +22,11 @@ import {
 import Header from "../components/Header";
 import Login from "../components/LoginPage";
 import AlertList from "../ducks/alerts/AlertList";
-import HomeV2 from "../components/HomeV2";
 import ProductRouter from "../ducks/products/components/ProductRouter";
 import {useDispatch, useSelector} from 'react-redux';
 import LifestyleImage from "../components/LifestyleImage";
-import {fetchProfile, loadCustomerPermissions} from '../actions/user';
-import {fetchCustomerAccount} from '../actions/customer';
+import {loadCustomerPermissions, loadProfile} from '../ducks/user/actions';
+import {loadCustomerAccount} from '../ducks/customer/actions';
 import ProfilePage from "../components/ProfilePage";
 import AccountPage from "../components/AccountPage";
 import AccountList from "../components/AccountList";
@@ -38,12 +37,11 @@ import SignUp from "../components/SignUp";
 import AppUpdateLocalLogin from "../components/AppUpdateLocalLogin";
 import Logout from "../components/Logout";
 import ResetPassword from "../components/ResetPassword";
-import GA_RouteHandler from "../components/GA_RouteHandler";
 import DocumentTitle from "../components/DocumentTitle";
 import ContentPage from "../components/ContentPage";
 import InvoicePage from "../ducks/invoices/components/InvoicePage";
 import ErrorBoundary from "../common-components/ErrorBoundary";
-import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../selectors/user";
+import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../ducks/user/selectors";
 import {selectCustomerLoading} from "../ducks/customer/selectors";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -60,24 +58,10 @@ const App = () => {
         if (!loggedIn) {
             return;
         }
-        if (!userLoading) {
-            dispatch(fetchProfile());
-        }
+        dispatch(loadProfile());
         if (!customerLoading) {
-            dispatch(fetchCustomerAccount({fetchOrders: true, reload: true}));
+            dispatch(loadCustomerAccount({fetchOrders: true, reload: true}));
             dispatch(loadCustomerPermissions());
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!loggedIn) {
-            return;
-        }
-        if (!userLoading) {
-            dispatch(fetchProfile());
-        }
-        if (!customerLoading) {
-            dispatch(fetchCustomerAccount({fetchOrders: true, reload: true}));
         }
     }, [loggedIn]);
 
@@ -87,12 +71,16 @@ const App = () => {
                 <Route component={Header}/>
                 <main>
                     <DocumentTitle/>
-                    <Route path={PATH_PRODUCT} component={LifestyleImage} />
+                    <Route path={PATH_PRODUCT} component={LifestyleImage}/>
                     <div className="container main-container">
                         {!!loggedIn && <AppUpdateLocalLogin/>}
                         <AlertList/>
-                        <Route path={PATH_HOME} component={ProfilePage}/>
-                        <Route path="/" exact component={ProfilePage}/>
+                        {loggedIn && <Route path={PATH_HOME} component={ProfilePage}/>}
+                        {loggedIn && <Route path="/" exact component={ProfilePage}/>}
+                        {!loggedIn && <Route path={PATH_HOME} component={Login}/>}
+                        {!loggedIn && <Route path="/" exact component={Login}/>}
+
+                        {/*<Route path="/" exact component={ProfilePage}/>*/}
 
                         {/* The login and signup paths will redirect away to home when the user is logged in */}
                         <ErrorBoundary>
@@ -119,7 +107,7 @@ const App = () => {
                                 <Route path={PATH_LOGOUT} component={Logout}/>
                                 <Route exact path={PATH_PROFILE} component={ProfilePage}/>
                                 <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage}/>
-                                <Route path={PATH_PROFILE_ACCOUNT} component={AccountList}/>
+                                <Route path="/profile/:id" component={AccountList}/>
                                 <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb}/>
                                 <Route path={PATH_INVOICE} component={OrdersBreadcrumb}/>
                                 <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer}/>
@@ -139,15 +127,15 @@ const App = () => {
                                         </ErrorBoundary>
                                     </Fragment>
                                 )}
-                                {!currentCustomer.CustomerNo && (
-                                    <Route exact path={PATH_SALES_ORDER} component={AccountList}/>
+                                {(!currentCustomer || !currentCustomer.CustomerNo) && (
+                                    <Route exact path={PATH_SALES_ORDER}
+                                           component={AccountList}/>
                                 )}
                             </Fragment>
                         )}
                     </div>
                 </main>
                 <Footer/>
-                <Route component={GA_RouteHandler}/>
             </LocalizationProvider>
         </>
     )

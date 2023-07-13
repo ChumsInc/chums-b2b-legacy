@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
-import {selectSearchLoading, selectSearchResults, selectSearchTerm} from "../index";
+import {getSearchResults, selectSearchLoading, selectSearchResults, selectSearchTerm} from "../index";
 import {Autocomplete, TextField} from "@mui/material";
 import {buildPath} from "../../../utils/path-utils";
 import {CONTENT_PATH_SEARCH_IMAGE, PATH_CATEGORY, PATH_PAGE, PATH_PRODUCT} from "../../../constants/paths";
-import {getSearchResults} from "../../../actions/app";
 import {Link, useHistory} from 'react-router-dom';
 
 

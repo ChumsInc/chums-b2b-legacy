@@ -1,7 +1,7 @@
 import {FETCH_FAILURE, FETCH_INIT, FETCH_PAGE, FETCH_SUCCESS} from "../constants/actions";
 import {fetchGET} from "../utils/fetch";
 import {API_PATH_PAGE} from "../constants/paths";
-import {handleError} from "./app";
+import {handleError} from "../ducks/app/actions";
 
 export const fetchPage = (keyword) => (dispatch, getState) => {
     if (!keyword) {

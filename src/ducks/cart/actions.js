@@ -15,7 +15,7 @@ import {
 } from "../../constants/actions";
 import {isCartOrder} from "../../utils/orders";
 import {CART_ACTIONS} from "../../constants/paths";
-import {handleError, logError} from "../../actions/app";
+import {handleError, logError} from "../app/actions";
 import parseDate from "date-fns/parseJSON";
 import {fetchOpenOrders, loadSalesOrder} from "../../actions/salesOrder";
 import {sageCompanyCode, shipToAddressFromBillingAddress} from "../../utils/customer";
@@ -29,7 +29,7 @@ import {selectCartNo, selectItemAvailabilityLoading, selectShipDate, selectShipp
 import {fetchSalesOrder} from "../../api/sales-order";
 import {fetchItemAvailability, postCartAction} from "../../api/cart";
 import {selectSalesOrderDetail, selectSalesOrderHeader, selectSalesOrderNo} from "../salesOrder/selectors";
-import {selectCurrentCustomer} from "../../selectors/user";
+import {selectCurrentCustomer} from "../user/selectors";
 import {selectPromoCode} from "../../selectors/promo_code";
 import {changedDetailLine, newCommentLine} from "../../utils/cart";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";

@@ -49,10 +49,7 @@ const SalesOrderPage = () => {
     useEffect(() => {
         console.debug(customer, SalesOrderNo);
         if (customer && !!customer.CustomerNo) {
-            if (SalesOrderNo === NEW_CART && salesOrderNo !== NEW_CART) {
-                dispatch(newCart());
-            } else if (!!!salesOrderProcessing && SalesOrderNo !== salesOrderNo && attempts < 4) {
-                const {ARDivisionNo, CustomerNo} = customer;
+            if (!salesOrderProcessing && SalesOrderNo !== salesOrderNo && attempts < 4) {
                 dispatch(loadSalesOrder(SalesOrderNo))
             }
         }

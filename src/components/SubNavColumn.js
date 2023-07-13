@@ -16,7 +16,7 @@ const SubNavItem = ({title, description, url, className}) => (
 const SubNavItemList = ({items = [], urlFormatter, itemSorter}) => {
     return (
         <ul className="navbar-nav">
-            {items
+            {[...items]
                 .sort(itemSorter)
                 .map((item, index) => (
                     <SubNavItem key={item.id || index} title={item.title} description={item.description} className={item.className}

@@ -2,7 +2,7 @@ import React from 'react';
 import {PATH_PROFILE, PATH_PROFILE_ACCOUNT} from "../constants/paths";
 import Breadcrumb from "./Breadcrumb";
 import {useSelector} from "react-redux";
-import {selectUserAccount, selectUserAccountsCount} from "../selectors/user";
+import {selectUserAccount, selectUserAccountsCount} from "../ducks/user/selectors";
 import {selectCustomerAccount} from "../ducks/customer/selectors";
 import {useLocation} from "react-router";
 

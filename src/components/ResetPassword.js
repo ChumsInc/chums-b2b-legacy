@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import PasswordForm from "./PasswordForm";
 import ProgressBar from "./ProgressBar";
-import {submitNewPassword, fetchSignUpUser} from "../actions/user";
+import {submitNewPassword, fetchSignUpUser} from "../ducks/user/actions";
 import queryString from "query-string";
 import {PATH_PROFILE} from "../constants/paths";
 

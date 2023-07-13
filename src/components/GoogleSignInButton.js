@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from 'react';
 import {GOOGLE_CLIENT_ID} from "../constants/app";
-import {signInWithGoogle} from "../actions/user";
+import {signInWithGoogle} from "../ducks/user/actions";
 import {useDispatch} from "react-redux";
 
 const GoogleSignInButton = () => {

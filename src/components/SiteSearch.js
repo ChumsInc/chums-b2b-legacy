@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
-import {getSearchResults, setSearchTerm, showSearch} from "../actions/app";
+import {getSearchResults, setSearchTerm, showSearch} from "../ducks/search/index";
 import {connect} from 'react-redux';
 import classNames from 'classnames';
 import debounce from 'lodash/debounce';
@@ -67,7 +67,7 @@ const SearchResult = ({active, keyword, parent, title, image = 'missing.png', pa
 
 
 const mapStateToProps = (state) => {
-    const {term, loading, results, show} = state.app.search;
+    const {term, loading, results, show} = state.search;
     return {term, loading, results, show};
 };
 

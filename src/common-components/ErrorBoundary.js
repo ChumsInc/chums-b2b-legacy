@@ -1,52 +1,38 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import PropTypes from 'prop-types'
-import {logError} from '../actions/app';
+import React from 'react';
+import {useSelector} from 'react-redux';
+import {selectVersion} from "../ducks/version";
+import {selectUserProfile} from "../ducks/user/selectors";
+import {ErrorBoundary as ReactErrorBoundary} from 'react-error-boundary';
+import {postErrors} from "../api/log-errors";
+import Alert from "@mui/material/Alert";
 
-function mapStateToProps(state) {
-    return {};
+function ErrorFallback({error, resetErrorBoundary}) {
+    return (
+        <Alert severity="danger">
+            <strong>Sorry! Something went wrong.</strong>
+            <div className="text-danger" style={{whiteSpace: 'pre-wrap'}}>{error.message}</div>
+        </Alert>
+    )
 }
 
-const mapDispatchToProps = {
-    logError
-};
 
-class ErrorBoundary extends Component {
-    static propTypes = {
-        logError: PropTypes.func.isRequired,
-    };
-    static defaultProps = {};
+export default function ErrorBoundary({children}) {
+    const version = useSelector(selectVersion);
+    const userProfile = useSelector(selectUserProfile);
 
-    constructor(props) {
-        super(props);
-        this.state = {hasError: false, errorMessage: null};
+    const logError = (error, info) => {
+        postErrors({
+            message: error.message,
+            version,
+            userId: userProfile?.id,
+            componentStack: info.componentStack
+        })
+            .catch(err => console.log(err.message));
     }
 
-    static getDerivedStateFromError(error) {
-        return {hasError: true, errorMessage: error.message};
-    }
-
-    componentDidCatch(error, errorInfo) {
-        // console.log('componentDidCatch() error', error.valueOf());
-        console.log('componentDidCatch() errorInfo', errorInfo);
-
-        this.props.logError({componentStack: errorInfo.componentStack, message: error.message})
-    }
-
-    render() {
-        if (this.state.hasError) {
-            return (
-                <div>
-                    <h1>Sorry! something went wrong!</h1>
-                    {this.state.errorMessage}
-                </div>
-            )
-        }
-        return this.props.children;
-    }
+    return (
+        <ReactErrorBoundary onError={logError} FallbackComponent={ErrorFallback}>
+            {children}
+        </ReactErrorBoundary>
+    )
 }
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(ErrorBoundary);

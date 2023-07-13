@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {ordersPropType} from "../constants/myPropTypes";
-import {fetchOpenOrders} from '../actions/customer';
+import {orderHeaderPropType, ordersPropType} from "../constants/myPropTypes";
 import SortableTable from "../common-components/SortableTable";
 import ProgressBar from "./ProgressBar";
 import {CartButton, InvoiceLink, OrderLink} from "./OrderLink";
@@ -31,12 +30,13 @@ const sortMethods = {
     BalanceDue: (a, b) => (sortFn.balanceDue(a) - sortFn.balanceDue(b)) || sortMethods.InvoiceNo(a,b),
 }
 
-const sortSO = (a, b) => a.SalesOrderNo === b.SalesOrderNo ? 0 : (a.SalesOrderNo > b.SalesOrderNo ? 1 : -1);
+const sortSO = (a, b) => (a?.SalesOrderNo ?? '') === (b?.SalesOrderNo ?? '') ? 0 : ((a?.SalesOrderNo ?? '') > (b?.SalesOrderNo ?? '') ? 1 : -1);
 const sortInvoice = (a, b) => sortFn.invoice(a) === sortFn.invoice(b) ? 0 : ( sortFn.invoice(a) > sortFn.invoice(b) ? 1 : -1);
 const sortInvoiceSO = (a, b) => sortInvoice(a, b) || sortSO(a, b);
+const sortTotal = (a, b) => ((a?.NonTaxableAmt ?? 0) + (a?.TaxableAmt ?? 0)) - ((b?.NonTaxableAmt ?? 0) + (b?.TaxableAmt ?? 0));
 
 const cartFields = [
-    {field: 'selected', title: 'Cart', render: (so) => <CartButton {...so}/>},
+    {field: 'selected', title: 'Cart', render: (so) => <CartButton {...so}/>, noSort: true},
     {field: 'SalesOrderNo', title: 'Order #', render: (so) => <OrderLink {...so}/>},
     {field: 'CustomerPONo', title: 'PO #'},
     {field: 'OrderDate', title: 'Ordered Created', render: (so) => <DateString date={so.OrderDate}/>},
@@ -48,7 +48,7 @@ const cartFields = [
         title: 'Total',
         render: (so) => numeral(so.NonTaxableAmt + so.TaxableAmt).format('0,0.00'),
         className: 'right',
-        sort: (a, b) => (a.NonTaxableAmt + a.TaxableAmt) - (b.NonTaxableAmt + b.TaxableAmt) || sortSO(a, b),
+        sort: (a, b) => sortTotal(a, b) || sortSO(a, b),
     }
 ];
 
@@ -64,7 +64,7 @@ const openOrderFields = [
         title: 'Total',
         render: (so) => numeral(so.NonTaxableAmt + so.TaxableAmt).format('0,0.00'),
         className: 'right',
-        sort: (a, b) => (a.NonTaxableAmt + a.TaxableAmt) - (b.NonTaxableAmt + b.TaxableAmt) || sortSO(a, b),
+        sort: (a, b) => sortTotal(a,b) || sortSO(a, b),
     }
 ];
 
@@ -111,7 +111,8 @@ const defaultSort = {
 
 export default class OrdersList extends Component {
     static propTypes = {
-        orders: ordersPropType,
+        list: PropTypes.arrayOf(orderHeaderPropType),
+        loading: PropTypes.bool,
         orderType: PropTypes.string,
         currentCart: PropTypes.string,
         onReload: PropTypes.func.isRequired,
@@ -120,10 +121,8 @@ export default class OrdersList extends Component {
     };
 
     static defaultProps = {
-        orders: {
-            loading: false,
-            list: []
-        },
+        loading: false,
+        list: [],
         orderType: ORDER_TYPE.cart,
         currentCart: '',
     };
@@ -149,8 +148,7 @@ export default class OrdersList extends Component {
     }
 
     render() {
-        const {orders, orderType, currentCart, onNewCart} = this.props;
-        const {list, loading} = orders;
+        const {list, loading, orderType, currentCart, onNewCart} = this.props;
         const {page, rowsPerPage, filter} = this.state;
         const fields = orderFields[orderType];
         if (orderType === ORDER_TYPE.cart) {
@@ -161,13 +159,13 @@ export default class OrdersList extends Component {
                 );
             }
         }
-        let filteredList = [...list];
+        let filteredList = list.filter(so => !!so);
         if (filter) {
             try {
                 const re = new RegExp(filter, 'i');
-                filteredList = list.filter(so => re.test(so.SalesOrderNo) || re.test(so.CustomerPONo));
+                filteredList = list.filter(so => !!so).filter(so => re.test(so.SalesOrderNo) || re.test(so.CustomerPONo));
             } catch(err) {
-                filteredList = [...list];
+                filteredList = list.filter(so => !!so);
             }
         }
         return (

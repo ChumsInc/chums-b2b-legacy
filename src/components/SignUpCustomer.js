@@ -2,7 +2,7 @@ import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {Link, Redirect} from "react-router-dom";
-import {fetchSignUpUser, submitNewPassword, submitNewUser, updateSignUp} from '../actions/user';
+import {fetchSignUpUser, submitNewPassword, submitNewUser} from '../ducks/user/actions';
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
 import {PATH_HOME, PATH_LOGIN} from "../constants/paths";
@@ -11,7 +11,7 @@ import {USER_EXISTS} from "../constants/app";
 import Alert from "../common-components/Alert";
 import FormCheck from "../common-components/FormCheck";
 import AddressFormFields from "./AddressFormFields";
-import {addressDefaults, addressShape} from "../constants/myPropTypes";
+import {addressDefaults} from "../constants/myPropTypes";
 
 class SignUpCustomer extends Component {
     static propTypes = {
@@ -19,7 +19,6 @@ class SignUpCustomer extends Component {
         error: PropTypes.string,
         loading: PropTypes.bool,
 
-        updateSignUp: PropTypes.func.isRequired,
         fetchSignUpUser: PropTypes.func.isRequired,
         submitNewPassword: PropTypes.func.isRequired,
         submitNewUser: PropTypes.func.isRequired,
@@ -71,7 +70,6 @@ class SignUpCustomer extends Component {
     }
 
 
-
     render() {
         const {email, name, accountName, hasAccount, account, telephone, agreeToPolicies} = this.state;
         const {loggedIn, error, loading} = this.props;
@@ -114,7 +112,8 @@ class SignUpCustomer extends Component {
                                    onChange={() => this.setState({agreeToPolicies: !agreeToPolicies})}/>
                     </FormGroup>
                     <FormGroup colWidth={8}>
-                        <button type="submit" className="btn btn-primary" disabled={!agreeToPolicies}>Request Account</button>
+                        <button type="submit" className="btn btn-primary" disabled={!agreeToPolicies}>Request Account
+                        </button>
                     </FormGroup>
                 </form>
                 {!!error && error === USER_EXISTS && (
@@ -139,7 +138,6 @@ const mapStateToProps = ({user}) => {
 };
 
 const mapDispatchToProps = {
-    updateSignUp,
     fetchSignUpUser,
     submitNewPassword,
     submitNewUser,

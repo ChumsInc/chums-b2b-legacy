@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import {withRouter} from 'react-router-dom'
 import {connect} from 'react-redux';
 import UserProfile from "./UserProfile";
-import {logout} from "../actions/user";
+import {logout} from "../ducks/user/actions";
 
 class Logout extends Component {
     static propTypes = {

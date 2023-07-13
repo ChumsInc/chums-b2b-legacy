@@ -1,7 +1,7 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {selectCustomerTab} from "../selectors/app";
-import {setCustomerTab} from "../actions/app";
+import {setCustomerTab} from "../ducks/app/actions";
 import {CUSTOMER_TABS} from "../constants/app";
 import Tabs from "../common-components/Tabs";
 

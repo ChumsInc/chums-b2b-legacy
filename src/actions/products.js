@@ -13,7 +13,7 @@ import {
     SELL_AS_COLOR, SELL_AS_MIX,
     SET_CART_ITEM_QUANTITY
 } from "../constants/actions";
-import {handleError} from "./app";
+import {handleError} from "../ducks/app/actions";
 import {
     colorCartItem,
     defaultCartItem,

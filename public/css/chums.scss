@@ -12,7 +12,7 @@ html {
 body {
   background-color: transparent;
   font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background-image: url('/images/chums/mountain-footer.webp');
+  background-image: url('//b2b.chums.com/images/chums/mountain-footer.webp');
   background-position: bottom;
   background-repeat: repeat-x;
   padding-bottom: $mountain-footer-height;
@@ -135,14 +135,6 @@ a {
   @import 'Header.scss';
   background-color: transparent;
   color: #FFF;
-  //height: $logo-height;
-
-  .hangOnBar {
-    @import './HangOnBar.scss';
-    background: url('../images/RedBar.gif') repeat-x;
-    height: 40px;
-    text-align: center;
-  }
 
   @import "navbar";
   @import "global-search-container";

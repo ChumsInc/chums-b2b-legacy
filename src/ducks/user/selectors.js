@@ -1,6 +1,9 @@
 import {createSelector} from "@reduxjs/toolkit";
 
+export const selectUserProfile = (state) => state.user.profile;
 export const selectUserAccounts = (state) => state.user.accounts ?? [];
+export const selectUserCustomerAccounts = (state) => state.user.accounts.filter(acct => !acct.isRepAccount);
+export const selectUserRepAccounts = (state) => state.user.accounts.filter(acct => !!acct.isRepAccount);
 
 export const selectUserAccountsCount = (state) => (state.user.accounts ?? []).length;
 
@@ -9,8 +12,12 @@ export const selectLoggedIn = (state) => state.user.loggedIn ?? false;
 export const selectAuthType = (state) => state.user.authType;
 
 export const selectUserAccount = (state) => state.user.userAccount ?? {};
+export const selectUserCustomers = (state) => state.user.customerList.list ?? [];
+export const selectUserCustomersLoading = (state) => state.user.customerList.loading ?? false;
 
 export const selectCurrentCustomer = (state) => state.user.currentCustomer ?? {}
+
+export const selectRecentAccounts = (state) => state.user.recentAccounts ?? [];
 
 export const selectUserLoading = (state) => state.user.loading ?? false;
 

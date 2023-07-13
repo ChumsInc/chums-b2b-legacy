@@ -1,9 +1,10 @@
 import React, {useEffect} from 'react';
 import Select from '../common-components/Select';
 import {longRepNo} from "../utils/customer";
-import {useDispatch, useSelector} from "react-redux";
-import {selectUserAccount, selectUserReps, selectUserRepsLoaded, selectUserRepsLoading} from "../selectors/user";
-import {fetchRepList} from "../actions/user";
+import {useSelector} from "react-redux";
+import {selectUserAccount, selectUserReps, selectUserRepsLoaded, selectUserRepsLoading} from "../ducks/user/selectors";
+import {loadRepList} from "../ducks/user/actions";
+import {useAppDispatch} from "../app/configureStore";
 
 // export interface RepSelectProps {
 //     value: string,
@@ -11,7 +12,7 @@ import {fetchRepList} from "../actions/user";
 // }
 //
 const RepSelect = ({value = '', onChange}) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const userAccount = useSelector(selectUserAccount);
     const reps = useSelector(selectUserReps);
     const loading = useSelector(selectUserRepsLoading);
@@ -20,7 +21,7 @@ const RepSelect = ({value = '', onChange}) => {
 
     useEffect(() => {
         if (!loading && !loaded) {
-            dispatch(fetchRepList());
+            dispatch(loadRepList());
         }
     }, [userAccount]);
 

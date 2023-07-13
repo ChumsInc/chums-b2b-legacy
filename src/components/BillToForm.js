@@ -6,18 +6,18 @@ import AddressFormFields from './AddressFormFields';
 import {filteredTermsCode} from '../constants/account';
 import {useDispatch, useSelector} from "react-redux";
 import {longAccountNumber} from "../utils/customer";
-import {fetchCustomerAccount, saveBillingAddress} from '../actions/customer';
+import {loadCustomerAccount, saveBillingAddress} from '../ducks/customer/actions';
 import ProgressBar from "./ProgressBar";
 import Alert from "../common-components/Alert";
 import FormGroup from "../common-components/FormGroup";
 import ContactFormFields from "./ContactFormFields";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 import {selectCustomerAccount, selectCustomerLoading} from "../ducks/customer/selectors";
-import {selectCustomerPermissions, selectIsEmployee, selectIsRep} from "../selectors/user";
+import {selectCustomerPermissions, selectIsEmployee, selectIsRep} from "../ducks/user/selectors";
 import StoreMapToggle from "./StoreMapToggle";
 import ErrorBoundary from "../common-components/ErrorBoundary";
 import {isBillToCustomer} from "../utils/typeguards";
-import {loadCustomerPermissions} from "../actions/user";
+import {loadCustomerPermissions} from "../ducks/user/actions";
 import Address from "./Address/Address";
 
 const BillToForm = () => {
@@ -51,7 +51,7 @@ const BillToForm = () => {
     }
 
     const reloadHandler = () => {
-        dispatch(fetchCustomerAccount());
+        dispatch(loadCustomerAccount());
         dispatch(loadCustomerPermissions());
     }
 
