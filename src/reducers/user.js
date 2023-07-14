@@ -271,7 +271,7 @@ const repListValues = (state = defaults.repList.list ?? [], action) => {
     case FETCH_REP_LIST_FAILURE:
         return []
     case SET_LOGGED_IN:
-        return loggedIn === true ? state : defaults.repList;
+        return loggedIn === true ? state : defaults.repList.list;
     default:
         return state;
 
