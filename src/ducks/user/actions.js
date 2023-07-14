@@ -297,6 +297,11 @@ export const logout = () => async (dispatch, getState) => {
 
 export const clearUserAccount = () => ({type: CLEAR_USER_ACCOUNT});
 
+/**
+ *
+ * @param {CustomerKey} userAccount
+ * @return {(function(*, *): void)|*}
+ */
 export const setUserAccount = (userAccount) => (dispatch, getState) => {
     const {user} = getState();
     if (userAccount.id === user.userAccount?.id) {

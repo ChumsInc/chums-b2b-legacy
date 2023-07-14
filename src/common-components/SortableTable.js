@@ -161,7 +161,7 @@ export default class SortableTable extends Component {
         if (!sort && typeof sorter === 'function') {
             return sorter({list, field, asc});
         }
-        return list.sort((a, b) => {
+        return [...list].sort((a, b) => {
             const aa = sort ? sort(a) : (typeof (a[field]) === 'number' ? a[field] : String(a[field]).toLowerCase());
             const bb = sort ? sort(b) : (typeof (b[field]) === 'number' ? b[field] : String(b[field]).toLowerCase());
             return (

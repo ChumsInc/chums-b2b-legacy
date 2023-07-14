@@ -4,31 +4,32 @@
 
 import React, {Component, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
-import {connect, useSelector} from 'react-redux';
-import {customerListPropType, repListPropType, userAccountPropType} from "../constants/myPropTypes";
-import {fetchCustomerList, loadRepList, setUserAccount} from '../ducks/user/actions';
-import {setRowsPerPage} from '../ducks/app/actions';
-import SortableTable from "../common-components/SortableTable";
-import {compareCustomerAccountNumber, longAccountNumber, longRepNo} from "../utils/customer";
-import RepSelect from "./RepSelect";
-import ProgressBar from "./ProgressBar";
-import CustomerLink from "./CustomerLink";
-import Breadcrumb from "./Breadcrumb";
-import {DOCUMENT_TITLES, PATH_PROFILE} from "../constants/paths";
-import ErrorBoundary from "../common-components/ErrorBoundary";
-import TextInput from "../common-components/TextInput";
-import DocumentTitle from "./DocumentTitle";
+import {useSelector} from 'react-redux';
+import {repListPropType, userAccountPropType} from "../../constants/myPropTypes";
+import {fetchCustomerList, loadRepList, setUserAccount} from '../../ducks/user/actions';
+import {setRowsPerPage} from '../../ducks/app/actions';
+import SortableTable from "../../common-components/SortableTable";
+import {compareCustomerAccountNumber, longAccountNumber, longRepNo} from "../../utils/customer";
+import RepSelect from "../RepSelect";
+import ProgressBar from "../ProgressBar";
+import CustomerLink from "../CustomerLink";
+import Breadcrumb from "../Breadcrumb";
+import {DOCUMENT_TITLES, PATH_PROFILE} from "../../constants/paths";
+import ErrorBoundary from "../../common-components/ErrorBoundary";
+import TextInput from "../../common-components/TextInput";
+import DocumentTitle from "../DocumentTitle";
 import {
     selectCurrentCustomer,
     selectUserAccount,
+    selectUserAccounts,
     selectUserCustomers,
     selectUserCustomersLoading,
     selectUserReps
-} from "../ducks/user/selectors";
-import {useAppDispatch} from "../app/configureStore";
+} from "../../ducks/user/selectors";
+import {useAppDispatch} from "../../app/configureStore";
 import {useLocation, useParams} from "react-router";
-import localStore from "../utils/LocalStore";
-import {STORE_ACCOUNT_LIST_RPP, STORE_USER_PREFS} from "../constants/stores";
+import localStore from "../../utils/LocalStore";
+import {STORE_ACCOUNT_LIST_RPP} from "../../constants/stores";
 
 const ACCOUNT_LIST_FIELDS = [
     {field: 'CustomerNo', title: 'Account', render: (row => <CustomerLink {...row} />)},
@@ -40,10 +41,10 @@ const ACCOUNT_LIST_FIELDS = [
     {field: 'TelephoneNo', title: 'Phone'},
 ];
 
-const _AccountList = () => {
+const AccountList = () => {
     const dispatch = useAppDispatch();
-    const params = useParams();
-    const location = useLocation();
+    const userAccount = useSelector(selectUserAccount);
+    const accounts = useSelector(selectUserAccounts);
     const customers = useSelector(selectUserCustomers);
     const loading = useSelector(selectUserCustomersLoading);
     const repList = useSelector(selectUserReps);
@@ -54,15 +55,29 @@ const _AccountList = () => {
     const [repFilter, setRepFilter] = useState(null);
     const [list, setList] = useState(customers ?? []);
 
-
     useEffect(() => {
         const rpp = localStore.getItem(STORE_ACCOUNT_LIST_RPP, rowsPerPage);
         setRowsPerPage(rpp);
     }, []);
 
     useEffect(() => {
-        // const list =
-    }, [filter, repFilter])
+        const filterRegex = new RegExp(`\\b${filter ?? ''}`, 'i');
+        const list = customers
+            .filter(customer => !repFilter || customer.SalespersonNo === repFilter)
+            .filter(customer => {
+                return !filter
+                    || filterRegex.test(customer.key)
+                    || filterRegex.test(`${customer.ARDivisionNo}-${customer.CustomerNo}`)
+                    || filterRegex.test(customer.CustomerNo)
+                    || filterRegex.test(customer.CustomerName)
+                    || filterRegex.test(customer.AddressLine1)
+                    || filterRegex.test(customer.City)
+                    || filterRegex.test(customer.State)
+                    || filterRegex.test(customer.ZipCode)
+                    || filterRegex.test(customer.TelephoneNo)
+            });
+        setList(list);
+    }, [filter, repFilter, customers]);
 
     const rppChangeHandler = (rpp) => {
         localStore.setItem(STORE_ACCOUNT_LIST_RPP, rpp);
@@ -78,52 +93,45 @@ const _AccountList = () => {
         setRepFilter(value ?? null)
         setPage(0);
     }
-
-    const documentTitle = DOCUMENT_TITLES.accountList.replace(':name', userAccount.SalespersonName || '');
-    const paths = [
-        {title: 'Profile', pathname: PATH_PROFILE},
-        {title: 'Account List', pathname: location.pathname}
-    ];
-
+    const reloadHandler = () => {
+        dispatch(fetchCustomerList(userAccount));
+    }
     return (
-        <div>
-            <ErrorBoundary>
-                <DocumentTitle documentTitle={documentTitle}/>
-                <Breadcrumb paths={paths}/>
-                <h2>Account List: {userAccount.SalespersonName}
-                    <small>({longAccountNumber(userAccount)})</small>
-                </h2>
-                <div className="row g-3 mb-1 align-items-baseline">
-                    <div className="col-auto">
-                        Filter Accounts
-                    </div>
-                    <div className="col">
-                        <TextInput type="search" placeholder="Search" onChange={this.setFilter} value={filter}/>
-                    </div>
-                    <div className="col-auto">
-                        <RepSelect value={repFilter} onChange={this.onSelectRep}/>
-                    </div>
-                    <div className="col-auto">
-                        <button className="btn btn-sm btn-outline-primary" onClick={this.onLoadAccountList}>
-                            Refresh List
-                        </button>
-                    </div>
+        <ErrorBoundary>
+            <h2>Account List: {userAccount.SalespersonName}
+                <small>({longAccountNumber(userAccount)})</small>
+            </h2>
+            <div className="row g-3 mb-1 align-items-baseline">
+                <div className="col-auto">
+                    Filter Accounts
                 </div>
-                {loading && <ProgressBar striped={true}/>}
-                <SortableTable data={filteredAccounts} fields={ACCOUNT_LIST_FIELDS} defaultSort={'CustomerName'}
-                               rowsPerPage={rowsPerPage}
-                               onChangeRowsPerPage={(rowsPerPage) => this.props.setRowsPerPage(rowsPerPage)}
-                               page={page} onChangePage={(page) => this.setState({page})}
-                               keyField={longAccountNumber}
-                               rowClassName={row => ({'table-active': compareCustomerAccountNumber(row, currentCustomer) === 0})}
-                               filtered={filteredAccounts.length < customerList.length}/>
-            </ErrorBoundary>
-        </div>
+                <div className="col">
+                    <TextInput type="search" placeholder="Search" onChange={filterChangeHandler} value={filter}/>
+                </div>
+                <div className="col-auto">
+                    <RepSelect value={repFilter} onChange={repChangeHandler}/>
+                </div>
+                <div className="col-auto">
+                    <button className="btn btn-sm btn-outline-primary" onClick={reloadHandler}>
+                        Refresh List
+                    </button>
+                </div>
+            </div>
+            {loading && <ProgressBar striped={true}/>}
+            <SortableTable data={list} fields={ACCOUNT_LIST_FIELDS} defaultSort={'CustomerName'}
+                           rowsPerPage={rowsPerPage}
+                           onChangeRowsPerPage={rppChangeHandler}
+                           page={page} onChangePage={(page) => setPage(page)}
+                           keyField={longAccountNumber}
+                           rowClassName={row => ({'table-active': compareCustomerAccountNumber(row, currentCustomer) === 0})}
+                           filtered={list.length < customers.length}/>
+        </ErrorBoundary>
     );
-
 }
 
-class AccountList extends Component {
+export default AccountList;
+
+class _AccountList extends Component {
     static propTypes = {
         match: PropTypes.shape({
             params: PropTypes.shape({
@@ -329,4 +337,4 @@ const mapDispatchToProps = {
     setRowsPerPage,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AccountList);
+// export default connect(mapStateToProps, mapDispatchToProps)(AccountList);

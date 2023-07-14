@@ -29,7 +29,7 @@ import {loadCustomerPermissions, loadProfile} from '../ducks/user/actions';
 import {loadCustomerAccount} from '../ducks/customer/actions';
 import ProfilePage from "../components/ProfilePage";
 import AccountPage from "../components/AccountPage";
-import AccountList from "../components/AccountList";
+import AccountList from "../components/profile/AccountList";
 import OrdersContainer from "../components/OrdersContainer";
 import SalesOrderPage from "../components/SalesOrderPage";
 import OrdersBreadcrumb from "../components/OrdersBreadcrumb";
@@ -45,6 +45,7 @@ import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../ducks
 import {selectCustomerLoading} from "../ducks/customer/selectors";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import AccountListContainer from "../components/profile/AccountListContainer";
 
 
 const App = () => {
@@ -105,9 +106,9 @@ const App = () => {
                         {!!loggedIn && (
                             <Fragment>
                                 <Route path={PATH_LOGOUT} component={Logout}/>
-                                <Route exact path={PATH_PROFILE} component={ProfilePage}/>
-                                <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage}/>
-                                <Route path="/profile/:id" component={AccountList}/>
+                                <Route exact path="/profile" component={ProfilePage}/>
+                                <Route path="/profile/:id" component={AccountListContainer}/>
+                                <Route path="/account/:Company/:ARDivisionNo-:CustomerNo/:ShipToCode?" component={AccountPage}/>
                                 <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb}/>
                                 <Route path={PATH_INVOICE} component={OrdersBreadcrumb}/>
                                 <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer}/>
