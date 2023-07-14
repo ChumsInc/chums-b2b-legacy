@@ -9,7 +9,6 @@ import {selectCartProgress} from "../selectors/cart";
 import {CART_PROGRESS_STATES} from "../constants/orders";
 import {selectCustomerShipToAddresses} from "../selectors/customer";
 import {isSalesOrderHeader} from "../utils/typeguards";
-import {SalesOrderHeader} from "b2b-types";
 
 const OrderHeaderShipTo = () => {
     const dispatch = useDispatch();

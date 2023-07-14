@@ -1,5 +1,3 @@
-import {BillToCustomer, SalesOrderHeader} from "b2b-types";
-
 export function isBillToCustomer(customer) {
     if (!customer) {
         return false;

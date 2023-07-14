@@ -1,5 +1,4 @@
 import {API_PATH_SALES_ORDER} from "../constants/paths";
-import {EmailResponse, SalesOrder} from 'b2b-types'
 import {fetchGET, fetchPOST} from "../utils/fetch";
 
 /**
