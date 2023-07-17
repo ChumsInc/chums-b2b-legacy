@@ -43,7 +43,7 @@ export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCode
     case SELL_AS_COLOR:
         const prices = [];
         product.items
-            .filter(item => !(item.status === 0 || !!item.inactiveItem || item.productType === 'D'))
+            .filter(item => !(!item.status || !!item.inactiveItem || item.productType === 'D'))
             .filter(item => !!item[priceField])
             .forEach(item => {
                 const price = getItemPrice({item, priceField, priceCodes});
