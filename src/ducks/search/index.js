@@ -14,7 +14,7 @@ import {handleError} from "../app/actions";
 
 /**
  *
- * @type {SearchState}
+ * @return {SearchState}
  */
 export const initialSearchState = () => ({
     term: '',
