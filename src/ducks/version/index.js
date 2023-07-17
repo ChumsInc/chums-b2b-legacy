@@ -25,15 +25,15 @@ export const selectShouldCheckVersion = createSelector(
     }
 )
 
-export const versionState = {
-    versionNo: '',
+export const initialVersionState = (preload = windows?.__PRELOADED_STATE__ ?? {}) => ({
+    versionNo: preload?.version?.versionNo ?? '',
     loading: false,
     changed: false,
     ignored: '',
     lastChecked: 0,
-}
+})
 
-const versionReducer = createReducer(versionState, (builder) => {
+const versionReducer = createReducer(initialVersionState, (builder) => {
     builder
         .addCase(loadVersion.pending, (state) => {
             state.loading = true;

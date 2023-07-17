@@ -29,78 +29,82 @@ import {createReducer} from "@reduxjs/toolkit";
 import {loadProfile, loadRepList, setLoggedIn} from "./actions";
 import {getPrimaryAccount, userAccountSort, userRepListSort} from "./utils";
 
-const _existingToken = auth.getToken();
-let _existingTokenExpires = 0;
-if (_existingToken) {
-    const decoded = jwtDecode(_existingToken);
-    _existingTokenExpires = decoded?.exp ?? 0;
-}
-const _isLoggedIn = auth.loggedIn();
-const _profile = _isLoggedIn ? (auth.getProfile() ?? {}) : {}
-const _accounts = _profile?.chums?.user?.accounts ?? [];
-const _roles = _profile?.chums?.user?.roles ?? [];
-const _customer = _isLoggedIn
-    ? localStore.getItem(STORE_CUSTOMER, getFirstCustomer(_accounts) ?? {})
-    : {};
-const _userAccount = _isLoggedIn
-    ? localStore.getItem(STORE_USER_ACCOUNT, _customer?.id ?? {})
-    : {};
-const _recentAccounts = _isLoggedIn
-    ? localStore.getItem(STORE_RECENT_ACCOUNTS, [])
-    : [];
-const _authType = localStore.getItem(STORE_AUTHTYPE, '');
+
 /**
  *
- * @type {UserState}
+ * @return {UserState}
  */
-export const initialUserState = {
-    token: _existingToken ?? null,
-    tokenExpires: _existingTokenExpires,
-    profile: _profile,
-    accounts: _profile?.chums?.user?.accounts ?? [],
-    roles: _profile?.chums?.user?.roles ?? [],
-    loggedIn: _isLoggedIn,
-    userAccount: _userAccount,
-    currentCustomer: _customer,
-    customerList: {
-        list: [],
+export const initialUserState = () => {
+    const _existingToken = auth.getToken();
+    let _existingTokenExpires = 0;
+    if (_existingToken) {
+        const decoded = jwtDecode(_existingToken);
+        _existingTokenExpires = decoded?.exp ?? 0;
+    }
+    const _isLoggedIn = auth.loggedIn();
+    const _profile = _isLoggedIn ? (auth.getProfile() ?? {}) : {}
+    const _accounts = _profile?.chums?.user?.accounts ?? [];
+    const _roles = _profile?.chums?.user?.roles ?? [];
+    const _customer = _isLoggedIn
+        ? localStore.getItem(STORE_CUSTOMER, getFirstCustomer(_accounts) ?? {})
+        : {};
+    const _userAccount = _isLoggedIn
+        ? localStore.getItem(STORE_USER_ACCOUNT, _customer?.id ?? {})
+        : {};
+    const _recentAccounts = _isLoggedIn
+        ? localStore.getItem(STORE_RECENT_ACCOUNTS, [])
+        : [];
+    const _authType = localStore.getItem(STORE_AUTHTYPE, '');
+
+    return {
+        token: _existingToken ?? null,
+        tokenExpires: _existingTokenExpires,
+        profile: _profile,
+        accounts: _profile?.chums?.user?.accounts ?? [],
+        roles: _profile?.chums?.user?.roles ?? [],
+        loggedIn: _isLoggedIn,
+        userAccount: _userAccount,
+        currentCustomer: _customer,
+        customerList: {
+            list: [],
+            loading: false,
+            loaded: false,
+            filter: '',
+            repFilter: '',
+        },
+        repList: {
+            list: [],
+            loading: false,
+            loaded: false,
+        },
+        signUp: {
+            email: '',
+            authKey: '',
+            error: null,
+            loading: false,
+        },
+        recentAccounts: _recentAccounts,
+        authType: _authType,
+        passwordChange: {
+            oldPassword: '',
+            newPassword: '',
+            newPassword2: '',
+            visible: false,
+        },
+        login: {
+            email: '',
+            password: '',
+            forgotPassword: '',
+            loading: false,
+        },
         loading: false,
-        loaded: false,
-        filter: '',
-        repFilter: '',
-    },
-    repList: {
-        list: [],
-        loading: false,
-        loaded: false,
-    },
-    signUp: {
-        email: '',
-        authKey: '',
-        error: null,
-        loading: false,
-    },
-    recentAccounts: _recentAccounts,
-    authType: _authType,
-    passwordChange: {
-        oldPassword: '',
-        newPassword: '',
-        newPassword2: '',
-        visible: false,
-    },
-    login: {
-        email: '',
-        password: '',
-        forgotPassword: '',
-        loading: false,
-    },
-    loading: false,
-    customerPermissions: {
-        loading: false,
-        loaded: false,
-        permissions: {
-            billTo: false,
-            shipTo: [],
+        customerPermissions: {
+            loading: false,
+            loaded: false,
+            permissions: {
+                billTo: false,
+                shipTo: [],
+            }
         }
     }
 }

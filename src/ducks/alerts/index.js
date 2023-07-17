@@ -3,12 +3,12 @@ import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/act
 
 /**
  *
- * @type {AlertsState}
+ * @return {AlertsState}
  */
-const initialAlertState = {
+const initialAlertState = () => ({
     index: 0,
     list: [],
-}
+})
 
 /**
  *

@@ -2,13 +2,13 @@ import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
 import {fetchMessages} from "../../api/messages";
 
 /**
- *
- * @type {MessagesState}
+ * @param {unknown} preload
+ * @return {MessagesState}
  */
-export const initialMessagesState = {
-    list: window?.__PRELOADED_STATE__?.messages?.list ?? [],
+export const initialMessagesState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
+    list: preload?.messages?.list ?? [],
     loading: false,
-}
+})
 
 
 export const loadMessages = createAsyncThunk(

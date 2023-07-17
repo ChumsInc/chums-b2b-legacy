@@ -16,19 +16,11 @@ import {getDefaultColor, getItemPrice, keywordSorter} from "../../utils/products
 import {priceRecord,} from "../../utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
 
-if (!window.__PRELOADED_STATE__) {
-    window.__PRELOADED_STATE__ = {};
-}
-const defaults = {
-    keywords: window.__PRELOADED_STATE__.keywords || [],
-};
-
-
 /**
- *
- * @type {ProductsState}
+ * @param {unknown} preload
+ * @return {ProductsState}
  */
-export const initialProductsState = {
+export const initialProductsState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
     keywords: window?.__PRELOADED_STATE__?.keywords?.list ?? [],
     loadingKeywords: false,
     product: {},
@@ -40,7 +32,7 @@ export const initialProductsState = {
     customerPrice: [],
     salesUM: null,
     cartItem: {},
-};
+});
 
 const productsReducer = createReducer(initialProductsState, (builder) => {
     builder

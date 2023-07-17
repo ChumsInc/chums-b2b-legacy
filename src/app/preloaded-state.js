@@ -1,3 +1,4 @@
+import './global-window';
 import {initialProductsState} from "../ducks/products";
 import {initialCustomerState} from "../ducks/customer";
 import {initialCartState} from "../ducks/cart";
@@ -7,19 +8,34 @@ import {initialAppState} from '../ducks/app';
 import {initialSlidesState} from '../ducks/slides'
 import {initialMenuState} from "../ducks/menu";
 import {initialKeywordsState} from "../ducks/keywords";
+import {initialCategoryState} from "../ducks/category";
+import {initialCartsState} from "../ducks/carts";
+import {initialInvoicesState} from "../ducks/invoices";
+import {initialOpenOrderState} from "../ducks/open-orders";
+import {initialPageState} from "../ducks/page";
+import {initialPromoCodeState} from "../ducks/promo-code";
+import {initialSalesOrderState} from "../ducks/salesOrder";
+import {initialSearchState} from "../ducks/search";
+import {initialVersionState} from "../ducks/version";
 
-const preloadedState = window.__PRELOADED_STATE__ ?? {};
-preloadedState.app = {...initialAppState};
-preloadedState.slides = {...initialSlidesState};
-
-preloadedState.cart = {...initialCartState}
-preloadedState.keywords = {...initialKeywordsState};
-preloadedState.menu = {...initialMenuState};
-
-preloadedState.messages = {...initialMessagesState}
-preloadedState.user = {...initialUserState};
-
-preloadedState.customer = {...initialCustomerState}
-preloadedState.products = {...initialProductsState}
+const preloadedState = {};
+preloadedState.app = initialAppState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.cart = initialCartState();
+preloadedState.carts = initialCartsState();
+preloadedState.category = initialCategoryState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.customer = initialCustomerState();
+preloadedState.invoices = initialInvoicesState();
+preloadedState.keywords = initialKeywordsState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.menu = initialMenuState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.messages = initialMessagesState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.openOrders = initialOpenOrderState();
+preloadedState.page = initialPageState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.products = initialProductsState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.promo_code = initialPromoCodeState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.salesOrder = initialSalesOrderState();
+preloadedState.search = initialSearchState();
+preloadedState.slides = initialSlidesState(window?.__PRELOADED_STATE__ ?? {});
+preloadedState.user = initialUserState();
+preloadedState.version = initialVersionState(window?.__PRELOADED_STATE__ ?? {});
 
 export default preloadedState;

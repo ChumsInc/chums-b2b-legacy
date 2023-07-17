@@ -14,9 +14,9 @@ import {ORDER_TYPE} from "../../constants/orders";
 
 /**
  *
- * @type {SalesOrderState}
+ * @return {SalesOrderState}
  */
-const initialSalesOrderState = {
+export const initialSalesOrderState = () => ({
     salesOrderNo: '',
     header: {},
     detail: [],
@@ -27,7 +27,7 @@ const initialSalesOrderState = {
     sendingEmail: false,
     attempts: 0,
     loading: false,
-}
+})
 
 const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
     builder

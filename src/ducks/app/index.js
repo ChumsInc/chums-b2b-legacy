@@ -22,32 +22,22 @@ if (typeof window === "undefined") {
 if (!window.__PRELOADED_STATE__) {
     window.__PRELOADED_STATE__ = {};
 }
-const preferences = {
-    version: (window.CHUMS || {}).version || {},
-    keywords: window.__PRELOADED_STATE__.keywords || [],
-    productMenu: window.__PRELOADED_STATE__.menu_chums || [],
-    productMenuBC: window.__PRELOADED_STATE__.menu_bc || [],
-    rowsPerPage: 10,
-    customerTab: CUSTOMER_TABS[0].id,
-    messages: window.__PRELOADED_STATE__.messages || [],
-    ...localStore.getItem(STORE_USER_PREFS) || {},
-};
 
 /**
- *
- * @type {AppState}
+ * @param {PreloadedState} [preload]
+ * @return {AppState}
  */
-export const initialAppState = {
-    productMenu: window?.__PRELOADED_STATE__?.app?.productMenu ?? null,
+export const initialAppState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
+    productMenu: preload?.app?.productMenu ?? null,
     showNavBar: false,
     subNav: '',
     rowsPerPage: localStore.getItem(STORE_USER_PREFS, {rowsPerPage: 10}).rowsPerPage,
     customerTab: CUSTOMER_TABS[0].id,
     documentTitle: 'Home',
-    keywords: window?.__PRELOADED_STATE__?.keywords ?? [],
+    keywords: preload?.keywords ?? [],
     lifestyle: '',
     debug: null,
-}
+})
 
 const appReducer = createReducer(initialAppState, (builder) => {
     builder

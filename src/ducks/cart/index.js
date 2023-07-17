@@ -28,10 +28,10 @@ import {getItemAvailability, setCartProgress, setShipDate} from "./actions";
 
 /**
  *
- * @type {CartState}
+ * @return {CartState}
  */
-export const initialCartState = {
-    cartNo: localStore.getItem(STORE_CURRENT_CART) ?? '',
+export const initialCartState = () => ({
+    cartNo: localStore.getItem(STORE_CURRENT_CART, ''),
     cartName: '',
     cartQuantity: 0,
     cartTotal: 0,
@@ -42,11 +42,11 @@ export const initialCartState = {
     cartProgress: CART_PROGRESS_STATES.cart,
     shipDate: nextShipDate(),
     shippingAccount: {
-        enabled: localStore.getItem(STORE_CUSTOMER_SHIPPING_ACCOUNT)?.enabled ?? false,
-        value: localStore.getItem(STORE_CUSTOMER_SHIPPING_ACCOUNT)?.value ?? '',
+        enabled: localStore.getItem(STORE_CUSTOMER_SHIPPING_ACCOUNT, {})?.enabled ?? false,
+        value: localStore.getItem(STORE_CUSTOMER_SHIPPING_ACCOUNT, {})?.value ?? '',
     },
     cartMessage: '',
-}
+})
 
 const cartReducer = createReducer(initialCartState, builder => {
     builder

@@ -46,12 +46,12 @@ if (isLoggedIn) {
 
 /**
  *
- * @type {CustomerState}
+ * @return {CustomerState}
  */
-export const initialCustomerState = {
+export const initialCustomerState = () => ({
     company: 'chums',
     key: null,
-    account: localStore.getItem(STORE_CUSTOMER) || defaults.customer,
+    account: localStore.getItem(STORE_CUSTOMER, {}),
     contacts: [],
     pricing: [],
     shipToAddresses: [],
@@ -59,7 +59,7 @@ export const initialCustomerState = {
     loading: false,
     loaded: false,
     users: [],
-}
+})
 
 const customerReducer = createReducer(initialCustomerState, builder => {
     builder

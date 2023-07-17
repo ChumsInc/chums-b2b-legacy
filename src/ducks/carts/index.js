@@ -16,12 +16,12 @@ import {salesOrderSorter} from "../salesOrder/sorter";
 
 /**
  *
- * @type {CartsState}
+ * @return {CartsState}
  */
-export const initialCartsState = {
+export const initialCartsState = () => ({
     list: [],
     loading: false,
-}
+})
 
 const cartsReducer = createReducer(initialCartsState, builder => {
     builder

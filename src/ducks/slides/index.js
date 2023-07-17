@@ -2,14 +2,14 @@ import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
 import {fetchSlides} from "./api";
 
 /**
- *
- * @type {SlidesState}
+ * @param {PreloadedState} [preload]
+ * @return {SlidesState}
  */
-export const initialSlidesState = {
-    list: window?.__PRELOADED_STATE__?.slides ?? [],
+export const initialSlidesState = (preload = window.__PRELOADED_STATE__ ?? {}) => ({
+    list: preload?.slides ?? [],
     loading: false,
-    loaded: (window?.__PRELOADED_STATE__?.slides ?? []).length > 0,
-}
+    loaded: (preload?.slides ?? []).length > 0,
+})
 
 export const selectSlides = (state) => state.slides.list ?? [];
 export const selectSlidesLoading = (state) => state.slides.loading ?? false;

@@ -13,11 +13,17 @@ export const sortMenuPriority = (a, b) => a.priority === b.priority
     : a.priority > b.priority ? 1 : -1;
 
 
-export const initialMenuState = {
-    items: (window?.__PRELOADED_STATE__?.app?.productMenu?.items ?? [])
+/**
+ *
+ * @param {any} preload
+ * @return {MenuState}
+ */
+export const initialMenuState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
+    items: (preload?.menu?.productMenu?.items ?? [])
         .filter(item => !!item.status)
         .sort(sortMenuPriority),
-}
+    loading: false,
+})
 
 export const selectMenuItems = (state) => state.menu.items ?? [];
 

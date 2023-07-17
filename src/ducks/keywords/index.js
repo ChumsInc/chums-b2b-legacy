@@ -1,10 +1,15 @@
 import {createReducer} from "@reduxjs/toolkit";
 import {FETCH_INIT, FETCH_KEYWORDS, FETCH_SUCCESS} from "../../constants/actions";
 
-export const initialKeywordsState = {
-    list: window?.__PRELOADED_STATE__?.keywords ?? [],
+/**
+ *
+ * @param {any} preload
+ * @return {KeywordsState}
+ */
+export const initialKeywordsState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
+    list: preload?.keywords ?? [],
     loading: false,
-}
+})
 
 const keywordsReducer = createReducer(initialKeywordsState, (builder) => {
     builder

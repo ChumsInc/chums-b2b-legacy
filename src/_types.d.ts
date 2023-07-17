@@ -1,4 +1,14 @@
-import {CartProduct, CustomerPriceRecord, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {
+    CartProduct,
+    ProductCategory,
+    ContentPage,
+    CustomerPriceRecord,
+    Keyword,
+    Menu,
+    Message, PromoCode,
+    SalesOrderDetailLine,
+    SalesOrderHeader, Slide, Product
+} from "b2b-types";
 
 export {SalesOrderHeader} from 'b2b-types'
 
@@ -179,4 +189,48 @@ export interface Selectable {
 export interface SortProps<T = any> {
     field: keyof T,
     ascending: boolean,
+}
+
+
+export interface PreloadedState {
+    app?: {
+        keywords?: Keyword[];
+        messages?: Message[];
+        productMenu?: Menu;
+        slides?: Slide[],
+    }
+    category?: {
+        keywords?: Keyword[];
+        content?: ProductCategory|null;
+    }
+    keywords?: {
+        list?: Keyword[];
+        loading?: boolean;
+    }
+    menu?: {
+        loaded: boolean;
+        productMenu?: Menu;
+    }
+    messages?: {
+        list?: Message[];
+    }
+    page?: {
+        list?: Keyword[];
+        content?: ContentPage|null;
+    }
+    products?: {
+        keywords?: Keyword[];
+        product?: Product|null;
+    },
+    promo_code?: {
+        promo_code?: PromoCode|null;
+        promo_codes?: PromoCode[];
+    }
+    slides?: {
+        list?: Slide[];
+        loaded?: boolean;
+    }
+    version?: {
+        versionNo?: string;
+    }
 }

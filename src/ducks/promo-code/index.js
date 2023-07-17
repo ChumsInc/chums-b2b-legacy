@@ -10,16 +10,16 @@ import {
 import {createReducer} from "@reduxjs/toolkit";
 
 /**
- *
- * @type {PromoCodeState}
+ * @param {PreloadedState} [preload]
+ * @return {PromoCodeState}
  */
-const initialPromoCodeState = {
-    code: '',
-    description: '',
-    requiredItems: [],
-    validCodes: [],
+export const initialPromoCodeState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
+    code: preload?.promo_code?.promo_code ?? '',
+    description: preload?.promo_code?.description ?? '',
+    requiredItems: preload?.promo_code?.requirements?.ItemCodes ?? [],
+    validCodes: preload?.promo_codes ?? [],
     loading: false,
-}
+})
 
 const promoCodeReducer = createReducer(initialPromoCodeState, (builder) => {
     builder
@@ -27,98 +27,32 @@ const promoCodeReducer = createReducer(initialPromoCodeState, (builder) => {
             switch (action.type) {
                 case SET_PROMO_CODE:
                     state.code = action.code ?? '';
+                    state.description = action.promo_code?.description ?? '';
+                    state.requiredItems = action.promo_code?.requirements?.ItemCodes ?? []
                     return;
+            case FETCH_PROMO_CODE:
+                state.loading = action.status === FETCH_INIT;
+                if (action.status === FETCH_SUCCESS) {
+                    state.code = action.promo_code?.promo_code ?? '';
+                    state.description = action.promo_code?.description ?? '';
+                    state.requiredItems = action.promo_code?.requirements?.ItemCodes ?? [];
+                }
+                return;
+            case FETCH_SALES_ORDER:
+                if (action.status === FETCH_INIT) {
+                    state.code = '';
+                } else if (action.status === FETCH_SUCCESS) {
+                    state.code = action.salesOrder?.UDF_PROMO_DEAL ?? '';
+                }
+                return;
+            case FETCH_VALID_PROMO_CODES:
+                state.loading = action.status === FETCH_INIT;
+                if (action.status === FETCH_SUCCESS) {
+                    state.validCodes = action.list;
+                    return;
+                }
             }
         })
-})
+});
 
-const code = (state = '', action) => {
-    const {type, status, promo_code, code, salesOrder} = action;
-    switch (type) {
-    case SET_PROMO_CODE:
-        return code;
-    case FETCH_PROMO_CODE:
-        if (status === FETCH_SUCCESS) {
-            return promo_code.promo_code || '';
-        }
-        return state;
-    case FETCH_SALES_ORDER:
-        if (status === FETCH_INIT) {
-            return '';
-        }
-        if (status === FETCH_SUCCESS) {
-            return salesOrder.UDF_PROMO_DEAL || '';
-        }
-        return state;
-    default:
-        return state;
-    }
-}
-
-const description = (state = '', action) => {
-    const {type, status, promo_code} = action;
-    switch (type) {
-    case SET_PROMO_CODE:
-        return '';
-    case FETCH_PROMO_CODE:
-        if (status === FETCH_SUCCESS) {
-            return promo_code.description || '';
-        }
-        return state;
-    default:
-        return state;
-    }
-}
-
-
-const requiredItems = (state = [], action) => {
-    const {type, status, promo_code} = action;
-    switch (type) {
-    case SET_PROMO_CODE:
-        return [];
-    case FETCH_PROMO_CODE:
-        if (status === FETCH_SUCCESS) {
-            return promo_code.requirements?.ItemCodes ?? [];
-        }
-        return state;
-    default:
-        return state;
-    }
-}
-
-const validCodes = (state = [], action) => {
-    const {type, status, list, promoCodes = []} = action;
-    switch (type) {
-    case FETCH_VALID_PROMO_CODES:
-        if (status === FETCH_SUCCESS) {
-            return [...list];
-        }
-        return state;
-    case FETCH_CUSTOMER:
-        if (status === FETCH_SUCCESS) {
-            return [...promoCodes];
-        }
-        return state;
-    default:
-        return state;
-    }
-}
-
-const loading = (state = false, action) => {
-    const {type, status} = action;
-    switch (type) {
-    case FETCH_VALID_PROMO_CODES:
-    case FETCH_PROMO_CODE:
-        return status === FETCH_INIT;
-    default:
-        return state;
-    }
-};
-
-export default combineReducers({
-    code,
-    description,
-    requiredItems,
-    validCodes,
-    loading,
-})
+export default promoCodeReducer;

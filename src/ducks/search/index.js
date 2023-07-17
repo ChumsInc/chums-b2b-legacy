@@ -16,12 +16,12 @@ import {handleError} from "../app/actions";
  *
  * @type {SearchState}
  */
-const initialSearchState = {
+export const initialSearchState = () => ({
     term: '',
     results: [],
     loading: false,
     show: false,
-}
+})
 
 export const selectSearchTerm = (state) => state.search.term;
 export const selectSearchResults = (state) => state.search.results;

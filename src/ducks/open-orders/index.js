@@ -13,12 +13,12 @@ import {salesOrderSorter} from "../salesOrder/sorter";
 
 /**
  *
- * @type {OpenOrdersState}
+ * @return {OpenOrdersState}
  */
-const initialOpenOrderState = {
+export const initialOpenOrderState = () => ({
     list: [],
     loading: false,
-}
+})
 
 const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
     builder

@@ -1,16 +1,16 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
+import './global-window';
 import alertsReducer from "../ducks/alerts";
-import app from "../ducks/app";
-import user from "../ducks/user";
+import appReducer from "../ducks/app";
+import userReducer from "../ducks/user";
 import productsReducer from "../ducks/products";
 import categoryReducer from "../ducks/category";
-import customer from "../ducks/customer";
+import customerReducer from "../ducks/customer";
 import cartReducer from "../ducks/cart";
-import carts from "../ducks/carts";
-import openOrders from "../ducks/open-orders";
-import page from "../reducers/page";
-import promo_code from "../ducks/promo-code";
-import invoices from "../ducks/invoices";
+import cartsReducer from "../ducks/carts";
+import openOrdersReducer from "../ducks/open-orders";
+import promoCodeReducer from "../ducks/promo-code";
+import invoicesReducer from "../ducks/invoices";
 import salesOrderReducer from "../ducks/salesOrder";
 import {useDispatch, useSelector} from "react-redux";
 import preloadedState from "./preloaded-state";
@@ -20,34 +20,35 @@ import searchReducer from "../ducks/search";
 import menuReducer from "../ducks/menu";
 import slidesReducer from "../ducks/slides";
 import keywordsReducer from "../ducks/keywords";
+import pageReducer from "../ducks/page";
+
 
 export const rootReducer = combineReducers({
     alerts: alertsReducer,
-    app,
-    category: categoryReducer,
-    customer,
+    app: appReducer,
     cart: cartReducer,
-    carts,
-    invoices,
+    carts: cartsReducer,
+    category: categoryReducer,
+    customer: customerReducer,
+    invoices: invoicesReducer,
     keywords: keywordsReducer,
     menu: menuReducer,
     messages: messagesReducer,
-    openOrders,
-    page,
+    openOrders: openOrdersReducer,
+    page: pageReducer,
     products: productsReducer,
-    promo_code,
+    promo_code: promoCodeReducer,
     salesOrder: salesOrderReducer,
     search: searchReducer,
-
     slides: slidesReducer,
-    user,
+    user: userReducer,
     version: versionReducer
 });
 console.log('preloadedState', preloadedState, window?.__PRELOADED_STATE__);
 
 const store = configureStore({
     reducer: rootReducer,
-    preloadedState: {...preloadedState},
+    preloadedState,
 });
 
 export const useAppDispatch = () => useDispatch();

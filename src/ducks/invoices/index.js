@@ -21,11 +21,12 @@ export const defaultSort = {
     field: 'InvoiceNo',
     ascending: false,
 }
+
 /**
  *
- * @type {InvoicesState}
+ * @return {InvoicesState}
  */
-export const initialInvoicesState = {
+export const initialInvoicesState = () => ({
     customerKey: '',
     list: [],
     invoice: null,
@@ -34,8 +35,8 @@ export const initialInvoicesState = {
     invoiceLoading: false,
     sort: {...defaultSort},
     page: 0,
-    rowsPerPage: localStore.getItem(STORE_INVOICES_ROWS_PER_PAGE) ?? 10,
-}
+    rowsPerPage: localStore.getItem(STORE_INVOICES_ROWS_PER_PAGE, 10),
+})
 
 const invoicesReducer = createReducer(initialInvoicesState, builder => {
     builder
