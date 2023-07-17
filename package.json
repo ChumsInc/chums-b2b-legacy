@@ -70,7 +70,7 @@
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.8.2",
-    "nodemon": "^2.0.7",
+    "nodemon": "^3.0.1",
     "react-hot-loader": "^4.13.0",
     "terser-webpack-plugin": "^5.1.1",
     "ts-loader": "^9.2.4",
