@@ -168,7 +168,7 @@ class ProductPage extends Component {
 
         if (location?.state?.variant) {
             const {variant} = location.state;
-            if (!!variant && product.variants && selectedProduct.keyword !== variant) {
+            if (!!variant && product?.variants && selectedProduct?.keyword !== variant) {
                 const [_variant] = product.variants.filter(v => v.product.keyword === variant);
                 if (!!_variant) {
                     this.props.selectVariant(_variant);
@@ -201,15 +201,15 @@ class ProductPage extends Component {
             cartItem, pricing, hasCustomer, canViewAvailable, season_code, season_available, season_description,
             season_teaser, TaxSchedule
         } = this.props;
-        const {images = [], name = '', variants = []} = product;
-        const {image, defaultColor, availableForSale, dateAvailable} = selectedProduct;
+        const {images = [], name = '', variants = []} = product ?? {};
+        const {image, defaultColor, availableForSale, dateAvailable} = selectedProduct ?? {};
         const {quantity} = cartItem;
 
         const productImage = !!((cartItem.additionalData || {}).image_filename)
             ? cartItem.additionalData.image_filename
             : parseImageFilename2({image, colorCode: colorCode || defaultColor});
 
-        const documentTitle = product.name + (product?.additionalData?.subtitle ? ` - ${product.additionalData.subtitle}` : '');
+        const documentTitle = product?.name + (product?.additionalData?.subtitle ? ` - ${product.additionalData.subtitle}` : '');
 
         return (
             <div className={classNames('product-page', {loading})} ref={this.elementRef}>
@@ -227,12 +227,12 @@ class ProductPage extends Component {
                             <div className="product-title">
                                 <h1 className="product-name">{name}</h1>
                                 <div className="row g-3">
-                                    {!!product.additionalData?.subtitle && (
+                                    {!!product?.additionalData?.subtitle && (
                                         <div className="col-auto">
-                                            <h2 className="product-subtitle">{product.additionalData.subtitle || ''}</h2>
+                                            <h2 className="product-subtitle">{product?.additionalData?.subtitle || ''}</h2>
                                         </div>
                                     )}
-                                    {!!product.additionalData?.size && (
+                                    {!!product?.additionalData?.size && (
                                         <div className="col-auto">
                                             <SizeIconList size={product.additionalData.size} />
                                         </div>
@@ -241,32 +241,32 @@ class ProductPage extends Component {
                             </div>
                             <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
                             <ProductInfo msrp={msrp} salesUM={salesUM}
-                                         itemCode={cartItem.itemCode || !!selectedProduct.itemCode}
-                                         upc={selectedProduct.upc}
+                                         itemCode={cartItem.itemCode || !!selectedProduct?.itemCode}
+                                         upc={selectedProduct?.upc}
                                          colorCode={colorCode}/>
                             {!!variants.length && (
-                                <VariantSelector selectedVariantId={variantId} variants={product.variants}
+                                <VariantSelector selectedVariantId={variantId} variants={product?.variants}
                                                  onSelect={this.onSelectVariant} priceCodes={pricing}
                                                  loggedIn={loggedIn}/>
                             )}
-                            {selectedProduct.sellAs === SELL_AS_MIX && !!selectedProduct.mix && (
+                            {selectedProduct?.sellAs === SELL_AS_MIX && !!selectedProduct?.mix && (
                                 <>
                                     <div>
                                         <span className="me-3">Selected Color:</span>
                                         <strong>{cartItem.colorName}</strong>
                                     </div>
-                                    <SwatchSet items={selectedProduct.mix.items}
-                                               swatch_format={selectedProduct.additionalData.swatch_format || '?'}
-                                               sellAs={selectedProduct.sellAs} selectedColorCode={colorCode}
+                                    <SwatchSet items={selectedProduct?.mix?.items ?? []}
+                                               swatch_format={selectedProduct?.additionalData?.swatch_format || '?'}
+                                               sellAs={selectedProduct?.sellAs} selectedColorCode={colorCode}
                                                onSelect={this.onSelectColor}/>
                                 </>
                             )}
-                            {selectedProduct.sellAs === SELL_AS_COLOR && !!selectedProduct.items && (
+                            {selectedProduct?.sellAs === SELL_AS_COLOR && !!selectedProduct?.items && (
                                 <>
                                     <div><span className="me-3">Color:</span><strong>{cartItem.colorName}</strong></div>
-                                    <SwatchSet swatch_format={selectedProduct.additionalData.swatch_format || '?'}
-                                               items={selectedProduct.items}
-                                               sellAs={selectedProduct.sellAs}
+                                    <SwatchSet swatch_format={selectedProduct?.additionalData.swatch_format || '?'}
+                                               items={selectedProduct?.items}
+                                               sellAs={selectedProduct?.sellAs}
                                                selectedColorCode={colorCode}
                                                onSelect={this.onSelectColor}/>
                                 </>
@@ -276,7 +276,7 @@ class ProductPage extends Component {
                             )}
                             {!availableForSale && (
                                 <Alert type="alert-warning">
-                                    <span><strong>{selectedProduct.name}</strong> is not available for sale.</span>
+                                    <span><strong>{selectedProduct?.name}</strong> is not available for sale.</span>
                                 </Alert>
                             )}
                             {!!dateAvailable && (
@@ -320,13 +320,13 @@ class ProductPage extends Component {
 
                             <hr/>
 
-                            {!!product.description && (
+                            {!!product?.description && (
                                 <div className="mt-3">
                                     <div dangerouslySetInnerHTML={{__html: product.description}}/>
                                 </div>
                             )}
 
-                            {!!product.details && (
+                            {!!product?.details && (
                                 <div className="mt-3">
                                     <h3>Features</h3>
                                     <div dangerouslySetInnerHTML={{__html: product.details}}/>
