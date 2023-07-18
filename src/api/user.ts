@@ -1,13 +1,12 @@
-import {UserCustomerAccess} from 'b2b-types'
+import {Salesperson, UserCustomerAccess} from 'b2b-types'
 import {fetchGET, fetchPOST} from "../utils/fetch";
 import {API_PATH_LOGIN_LOCAL, API_PATH_PROFILE, API_PATH_REP_LIST} from "../constants/paths";
-/**
- *
- * @param {string} ARDivisionNo
- * @param {string} CustomerNo
- * @return {Promise<UserCustomerAccess>}
- */
-export async function fetchCustomerValidation({ARDivisionNo, CustomerNo}) {
+import {UserProfileResponse} from "../ducks/user/types";
+
+export async function fetchCustomerValidation({ARDivisionNo, CustomerNo}:{
+    ARDivisionNo: string;
+    CustomerNo: string;
+}):Promise<UserCustomerAccess> {
     try {
         const url = `/api/user/b2b/validate/customer/chums/${encodeURIComponent(ARDivisionNo)}-${encodeURIComponent(CustomerNo)}`;
         return await fetchGET(url);
@@ -21,13 +20,10 @@ export async function fetchCustomerValidation({ARDivisionNo, CustomerNo}) {
     }
 }
 
-/**
- *
- * @param email
- * @param password
- * @return {Promise<string>}
- */
-export async function postLocalLogin({email, password}) {
+export async function postLocalLogin({email, password}:{
+    email: string;
+    password: string;
+}):Promise<string> {
     try {
          const {token, error} = await fetchPOST(API_PATH_LOGIN_LOCAL, {email, password});
          if (error) {
@@ -44,11 +40,7 @@ export async function postLocalLogin({email, password}) {
     }
 }
 
-/**
- *
- * @returns {Promise<UserProfileResponse>}
- */
-export async function fetchUserProfile() {
+export async function fetchUserProfile():Promise<UserProfileResponse> {
     try {
         const response = await fetchGET(API_PATH_PROFILE) ?? {};
         response.reps = await fetchRepList();
@@ -63,13 +55,9 @@ export async function fetchUserProfile() {
     }
 }
 
-/**
- *
- * @returns {Promise<Salesperson[]>}
- */
-export async function fetchRepList() {
+export async function fetchRepList():Promise<Salesperson[]> {
     try {
-        const response =  await fetchGET(API_PATH_REP_LIST);
+        const response =  await fetchGET(API_PATH_REP_LIST) as {list: Salesperson[]};
         return (response.list ?? []).filter(rep => !!rep.active);
     } catch(err) {
         if (err instanceof Error) {

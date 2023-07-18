@@ -1,8 +1,5 @@
-import {getWindow} from "ssr-window";
-
-
 if (typeof window === "undefined") {
-    global.window = getWindow();
+    global.window = {};
 }
 
 if (!global.window.__PRELOADED_STATE__) {

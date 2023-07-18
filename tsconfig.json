@@ -13,7 +13,7 @@
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
-        "module": "esnext",
+        "module": "Node16",
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "isolatedModules": true,
@@ -21,7 +21,7 @@
         "jsx": "react",
         "declaration": false,
         "noImplicitAny": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "outDir": "dist"
     },
     "include": [

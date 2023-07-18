@@ -1,10 +1,9 @@
-import React, {Component}  from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import PasswordForm from "./PasswordForm";
 import ProgressBar from "./ProgressBar";
-import {submitNewPassword, fetchSignUpUser} from "../ducks/user/actions";
-import queryString from "query-string";
+import {fetchSignUpUser, submitNewPassword} from "../ducks/user/actions";
 import {PATH_PROFILE} from "../constants/paths";
 
 class ResetPassword extends Component {
@@ -22,7 +21,9 @@ class ResetPassword extends Component {
     }
 
     componentDidMount() {
-        const {h: hash, key} = queryString.parse(document.location.search || '');
+        const params = new URLSearchParams(document.location.search);
+        const hash = params.get('h') ?? '';
+        const key = params.get('key') ?? '';
         if (!!hash && !!key) {
             this.props.fetchSignUpUser({authHash: decodeURIComponent(hash), authKey: decodeURIComponent(key)});
         }
@@ -38,6 +39,7 @@ class ResetPassword extends Component {
                 }
             })
     }
+
     render() {
         const {loading, email} = this.props;
         return (

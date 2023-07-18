@@ -7,9 +7,8 @@ import {selectIsCart, selectSalesOrderHeader} from "../ducks/salesOrder/selector
 import {updateCart} from "../ducks/cart/actions";
 import {selectCartProgress} from "../ducks/cart/selectors";
 import {CART_PROGRESS_STATES} from "../constants/orders";
-import {selectCustomerShipToAddresses, selectPermittedShipToAddresses} from "../ducks/customer/selectors";
+import {selectPermittedShipToAddresses} from "../ducks/customer/selectors";
 import {isSalesOrderHeader} from "../utils/typeguards";
-import {SalesOrderHeader} from "b2b-types";
 
 const OrderHeaderShipTo = () => {
     const dispatch = useDispatch();

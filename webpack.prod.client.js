@@ -17,13 +17,13 @@ const clientConfig = {
     target: 'web',
     mode: 'production',
     entry: {
-        client: [
+        main: [
             './src/client/index.tsx',
         ],
     },
     devtool: 'source-map',
     output: {
-        path: path.resolve(__dirname, './dist/client'),
+        path: path.resolve(__dirname, './public/build'),
         filename: "[name].[contenthash:8].js",
     },
     plugins: [

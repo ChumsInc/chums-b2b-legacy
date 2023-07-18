@@ -14,7 +14,7 @@ const clientConfig = {
     target: 'web',
     mode: 'development',
     entry: {
-        client: [
+        main: [
             './src/client/index.tsx',
         ],
     },

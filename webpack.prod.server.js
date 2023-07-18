@@ -9,7 +9,7 @@ const serverConfig = {
     mode: 'production',
     name: 'server',
     entry: {
-        server: './src/server/index.tsx'
+        server: './src/server/index.ts'
     },
     devtool: 'inline-source-map',
     optimization: {

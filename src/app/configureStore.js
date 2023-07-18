@@ -13,7 +13,7 @@ import promoCodeReducer from "../ducks/promo-code";
 import invoicesReducer from "../ducks/invoices";
 import salesOrderReducer from "../ducks/salesOrder";
 import {useDispatch, useSelector} from "react-redux";
-import preloadedState from "./preloaded-state";
+import prepState from "./preloaded-state";
 import versionReducer from "../ducks/version";
 import messagesReducer from "../ducks/messages";
 import searchReducer from "../ducks/search";
@@ -44,11 +44,10 @@ export const rootReducer = combineReducers({
     user: userReducer,
     version: versionReducer
 });
-console.log('preloadedState', preloadedState, window?.__PRELOADED_STATE__);
 
 const store = configureStore({
     reducer: rootReducer,
-    preloadedState,
+    preloadedState: prepState(window?.__PRELOADED_STATE__ ?? {}),
 });
 
 export const useAppDispatch = () => useDispatch();

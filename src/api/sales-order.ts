@@ -9,7 +9,11 @@ import {fetchGET, fetchPOST} from "../utils/fetch";
  * @param {string} SalesOrderNo
  * @return {Promise<SalesOrder|null>}
  */
-export async function fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo}) {
+export async function fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo}:{
+    ARDivisionNo: string;
+    CustomerNo: string;
+    SalesOrderNo: string;
+}):Promise<SalesOrder|null> {
     try {
         const url = API_PATH_SALES_ORDER
                 .replace(':Company', 'CHI')
@@ -30,14 +34,11 @@ export async function fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo}) 
 
 }
 
-/**
- *
- * @param {string} ARDivisionNo
- * @param {string} CustomerNo
- * @param {string} SalesOrderNo
- * @return {Promise<EmailResponse|null>}
- */
-export async function postOrderEmail({ARDivisionNo, CustomerNo, SalesOrderNo}) {
+export async function postOrderEmail({ARDivisionNo, CustomerNo, SalesOrderNo}: {
+    ARDivisionNo: string;
+    CustomerNo: string;
+    SalesOrderNo: string;
+}): Promise<EmailResponse | null> {
     try {
         const url = '/node-sage/api/CHI/salesorder/:ARDivisionNo-:CustomerNo/:SalesOrderNo/email'
             .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))

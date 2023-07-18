@@ -25,7 +25,7 @@ export const selectShouldCheckVersion = createSelector(
     }
 )
 
-export const initialVersionState = (preload = windows?.__PRELOADED_STATE__ ?? {}) => ({
+export const initialVersionState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
     versionNo: preload?.version?.versionNo ?? '',
     loading: false,
     changed: false,
