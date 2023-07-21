@@ -24,7 +24,7 @@ import {
 
 import localStore from "../utils/LocalStore";
 import {STORE_CURRENT_CART, STORE_CUSTOMER_SHIPPING_ACCOUNT} from "../constants/stores";
-import {isCartOrder, minShipDate} from "../utils/orders";
+import {isCartOrder, nextShipDate} from "../utils/orders";
 import {CART_PROGRESS_STATES, NEW_CART} from "../constants/orders";
 import {DEFAULT_SHIPPING_ACCOUNT} from "../constants/account";
 
@@ -230,10 +230,13 @@ const cartProgress = (state = CART_PROGRESS_STATES.cart, action) => {
     }
 };
 
-const shipDate = (state = minShipDate(), action) => {
+const shipDate = (state = nextShipDate(), action) => {
     const {type, shipDate} = action;
     switch (type) {
     case SET_SHIP_DATE:
+        if (!!shipDate && new Date(shipDate).valueOf() < nextShipDate().valueOf()) {
+            return nextShipDate();
+        }
         return shipDate;
     default:
         return state;

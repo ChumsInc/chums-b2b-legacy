@@ -23,7 +23,6 @@ import Box from "@mui/material/Box";
 
 const BrowserInput = function BrowserInput(props) {
     const {inputProps, InputProps, ownerState, inputRef, error, ...other} = props;
-
     return (
         <Box sx={{display: 'flex', alignItems: 'center'}} ref={InputProps?.ref}>
             <input ref={inputRef} {...inputProps} {...other} className="form-control form-control-sm"/>
@@ -40,7 +39,9 @@ const DatePicker = ({value, onChange, readOnly, disabled, minDate}) => {
     return (
         <MUIDatePicker slots={{textField: BrowserInput}} value={dayjs(value)}
                        onChange={changeHandler}
-                       readOnly={readOnly} disabled={disabled} minDate={dayjs(minDate)} maxDate={dayjs(minDate).add(1, 'year')}/>
+                       readOnly={readOnly} disabled={disabled}
+                       minDate={dayjs(minDate)}
+                       maxDate={dayjs(minDate).add(1, 'year')}/>
     )
 }
 
