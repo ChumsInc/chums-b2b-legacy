@@ -8,27 +8,38 @@ import {
     UserProfile,
     UserRole
 } from "b2b-types";
-import {EmptyObject} from "../../_types";
+import {EmptyObject, ExtendedUserProfile} from "../../_types";
+
+export interface UserLoginState {
+    // @TODO: migrate to Login Page internal state
+    email: string;
+    password: string;
+    forgotPassword: boolean;
+    loading: boolean;
+}
+
+export interface UserSignupState {
+    email: string;
+    authKey: string; // not used?
+    authHash: string;
+    error: string|null;
+    loading: boolean;
+}
+
+export interface UserPasswordState {
+    // @TODO: migrate to PasswordForm internal state
+    oldPassword: string;
+    newPassword: string;
+    newPassword2: string;
+    visible: boolean;
+}
 
 export interface UserState {
     token: string|null;
     tokenExpires: number;
-    profile: EmptyObject | {
-        googleId?: string;
-        imageUrl?: string;
-        email?: string;
-        name?: string;
-        givenName?: string;
-        familyName?: string;
-        chums?: {
-            user?: UserProfile & {
-                roles?:UserRole[];
-                accounts?: UserCustomerAccess[]
-            }
-        }
-    } & Editable;
+    profile: EmptyObject | (ExtendedUserProfile & Editable);
     accounts: UserCustomerAccess[];
-    roles: UserRole[];
+    roles: string[];
     loggedIn: boolean;
     userAccount: UserCustomerAccess|EmptyObject|null;
     currentCustomer: Customer|EmptyObject|null;
@@ -44,28 +55,11 @@ export interface UserState {
         loading: boolean;
         loaded: boolean;
     };
-    signUp: {
-        email: string;
-        authKey: string; // not used?
-        error: string|null;
-        loading: boolean;
-    };
+    signUp: UserSignupState;
     recentAccounts: RecentCustomer[];
     authType: string;
-    passwordChange: {
-        // @TODO: migrate to PasswordForm internal state
-        oldPassword: string;
-        newPassword: string;
-        newPassword2: string;
-        visible: boolean;
-    };
-    login: {
-        // @TODO: migrate to Login Page internal state
-        email: string;
-        password: string;
-        forgotPassword: boolean;
-        loading: boolean;
-    };
+    passwordChange: UserPasswordState;
+    login: UserLoginState;
     loading: boolean;
     customerPermissions: {
         loading: boolean;

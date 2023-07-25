@@ -1,13 +1,28 @@
 import {createReducer, createSelector} from "@reduxjs/toolkit";
 import {ignoreVersion, loadVersion} from "./actions";
+import {RootState} from "../../app/configureStore";
+import {PreloadedState} from "../../_types";
+
+export interface VersionState {
+    versionNo: string|null,
+    loading: boolean,
+    changed: boolean,
+    ignored: string|null,
+    lastChecked: number,
+}
+export interface LoadVersionResponse {
+    versionNo: string|null;
+    lastChecked: number;
+}
 
 export const minCheckInterval = 15 * 60 * 1000;
 
-export const selectVersion = (state) => state.version.versionNo;
-export const selectVersionLoading = (state) => state.version.loading;
-export const selectVersionChanged = (state) => state.version.changed;
-export const selectLastChecked = (state) => state.version.lastChecked;
-export const selectVersionIgnored = (state) => state.version.ignored;
+export const selectVersion = (state:RootState) => state.version.versionNo;
+export const selectVersionLoading = (state:RootState) => state.version.loading;
+export const selectVersionChanged = (state:RootState) => state.version.changed;
+export const selectLastChecked = (state:RootState) => state.version.lastChecked;
+export const selectVersionIgnored = (state:RootState) => state.version.ignored;
+
 export const selectShouldAlertVersion = createSelector(
     [selectVersion, selectVersionChanged, selectVersionIgnored],
     (version, changed, ignored) => {
@@ -25,11 +40,11 @@ export const selectShouldCheckVersion = createSelector(
     }
 )
 
-export const initialVersionState = (preload = window?.__PRELOADED_STATE__ ?? {}) => ({
-    versionNo: preload?.version?.versionNo ?? '',
+export const initialVersionState = (preload:PreloadedState = window?.__PRELOADED_STATE__ ?? {}):VersionState => ({
+    versionNo: preload?.version?.versionNo ?? null,
     loading: false,
     changed: false,
-    ignored: '',
+    ignored: null,
     lastChecked: 0,
 })
 
@@ -40,7 +55,7 @@ const versionReducer = createReducer(initialVersionState, (builder) => {
         })
         .addCase(loadVersion.fulfilled, (state, action) => {
             state.loading = false;
-            state.changed = state.versionNo !== '' && action.payload.versionNo !== state.versionNo;
+            state.changed = !!state.versionNo && action.payload.versionNo !== state.versionNo;
             state.versionNo = action.payload.versionNo;
             state.lastChecked = action.payload.lastChecked;
         })

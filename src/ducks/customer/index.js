@@ -22,7 +22,7 @@ import {DEFAULT_COMPANY} from "../../constants/defaults";
 import {companyCode} from "../../utils/customer";
 import localStore from "../../utils/LocalStore";
 import {STORE_CURRENT_CART, STORE_CUSTOMER} from "../../constants/stores";
-import {auth} from "../../utils/IntranetAuthService";
+import {auth} from "../../api/IntranetAuthService";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     customerContactSorter,

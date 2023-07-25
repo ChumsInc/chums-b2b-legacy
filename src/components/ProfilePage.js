@@ -1,15 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {changeUser, loadProfile, logout, setUserAccount} from "../ducks/user/actions";
+import {loadProfile, logout, setUserAccount} from "../ducks/user/actions";
 import AccountSelector from "./AccountSelector";
 import {userAccountPropType} from "../constants/myPropTypes";
-import {isSameCustomer} from "../utils/customer";
 import UserProfile from "./UserProfile";
 import ProgressBar from "./ProgressBar";
 import {DOCUMENT_TITLES} from '../constants/paths';
 import DocumentTitle from "./DocumentTitle";
-
 
 
 const mapStateToProps = ({user, app}) => {
@@ -22,9 +20,7 @@ const mapDispatchToProps = {
     logout,
     setUserAccount,
     loadProfile,
-    changeUser,
 };
-
 
 
 class ProfilePage extends Component {
@@ -40,7 +36,7 @@ class ProfilePage extends Component {
 
         setUserAccount: PropTypes.func.isRequired,
         loadProfile: PropTypes.func.isRequired,
-        changeUser: PropTypes.func.isRequired,
+
     };
 
     static defaultProps = {
@@ -67,12 +63,12 @@ class ProfilePage extends Component {
 
         return (
             <div className="profile-page">
-                <DocumentTitle documentTitle={DOCUMENT_TITLES.profile} />
+                <DocumentTitle documentTitle={DOCUMENT_TITLES.profile}/>
                 <UserProfile/>
                 {loading && <ProgressBar striped label="Updating Profile"/>}
                 {!!customerAccounts.length && <h4>Customer Accounts</h4>}
                 {!!customerAccounts.length &&
-                <AccountSelector userAccounts={customerAccounts} userAccount={userAccount}/>}
+                    <AccountSelector userAccounts={customerAccounts} userAccount={userAccount}/>}
 
                 {!!repAccounts.length && <h4>Rep Accounts</h4>}
                 {!!repAccounts.length && <AccountSelector userAccounts={repAccounts} userAccount={userAccount}/>}
@@ -80,4 +76,5 @@ class ProfilePage extends Component {
         );
     }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

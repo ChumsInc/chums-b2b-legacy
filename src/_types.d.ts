@@ -7,7 +7,7 @@ import {
     Menu,
     Message, PromoCode,
     SalesOrderDetailLine,
-    SalesOrderHeader, Slide, Product
+    SalesOrderHeader, Slide, Product, UserProfile, UserCustomerAccess, UserRole
 } from "b2b-types";
 
 export {SalesOrderHeader} from 'b2b-types'
@@ -233,4 +233,25 @@ export interface PreloadedState {
     version?: {
         versionNo?: string;
     }
+}
+
+export interface ExtendedUserProfile extends UserProfile {
+    accounts?: UserCustomerAccess[];
+    roles?: string[]
+}
+
+export interface GoogleProfile {
+    email?: string;
+    familyName?: string;
+    givenName?: string;
+    googleId?: string;
+    imageUrl?: string;
+    name?: string;
+}
+
+export interface StoredProfile extends GoogleProfile {
+    chums?: {
+        user?: ExtendedUserProfile
+    },
+
 }

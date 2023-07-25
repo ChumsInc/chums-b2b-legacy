@@ -12,7 +12,7 @@ import prepState from "../app/preloaded-state";
 import {API_PORT} from "./config";
 import {loadJSON, loadKeywords} from "./utils";
 import {loadManifest} from "./manifest";
-import B2BHtml from "./HTML";
+import B2BHtml from "./B2BHTML";
 import {FilledContext, HelmetProvider} from "react-helmet-async";
 import {Route, StaticRouter} from "react-router-dom";
 

@@ -2,9 +2,10 @@ import React, {useEffect, useRef} from 'react';
 import {GOOGLE_CLIENT_ID} from "../constants/app";
 import {signInWithGoogle} from "../ducks/user/actions";
 import {useDispatch} from "react-redux";
+import {useAppDispatch} from "../app/configureStore";
 
 const GoogleSignInButton = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const googleButtonRef = useRef(null);
 
     useEffect(() => {
@@ -21,7 +22,7 @@ const GoogleSignInButton = () => {
         }
     }, [])
 
-    const handleGoogleResponse = (response) => {
+    const handleGoogleResponse = (response: google.accounts.id.CredentialResponse) => {
         // console.log('handleGoogleResponse()', response);
         dispatch(signInWithGoogle(response.credential));
     }

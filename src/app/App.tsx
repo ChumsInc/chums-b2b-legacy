@@ -46,10 +46,11 @@ import {selectCustomerLoading} from "../ducks/customer/selectors";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import AccountListContainer from "../components/profile/AccountListContainer";
+import {useAppDispatch} from "./configureStore";
 
 
 const App = () => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const loggedIn = useSelector(selectLoggedIn);
     const currentCustomer = useSelector(selectCurrentCustomer);
     const customerLoading = useSelector(selectCustomerLoading);
@@ -61,7 +62,7 @@ const App = () => {
         }
         dispatch(loadProfile());
         if (!customerLoading) {
-            dispatch(loadCustomerAccount({fetchOrders: true, reload: true}));
+            dispatch(loadCustomerAccount({fetchOrders: true}));
             dispatch(loadCustomerPermissions());
         }
     }, [loggedIn]);

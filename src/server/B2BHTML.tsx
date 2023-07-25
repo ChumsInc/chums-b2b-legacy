@@ -12,7 +12,7 @@ const InlineJSHeadContent = (versionNo: string) => {
         
         gtag('config', 'G-KMH9RBEF98');
         
-        window.Chums = {version: ${versionNo}};
+        window.Chums = {"version": "${versionNo}"};
         `;
 }
 
@@ -34,7 +34,7 @@ export default function B2BHtml({html, css, state, helmet, manifestFiles, swatch
             <meta charSet="utf-8"/>
             <meta httpEquiv="x-ua-compatible" content="ie-edge"/>
             {!helmet && <title>CHUMS B2B</title>}
-            {helmet?.title.toString()}
+            <>{helmet?.title?.toComponent()}</>
             <meta name="description" content="Chums B2B"/>
             <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
@@ -42,7 +42,7 @@ export default function B2BHtml({html, css, state, helmet, manifestFiles, swatch
             <meta property="og:image:alt" content="Chums Logo"/>
             <meta property="og:type" content="website"/>
             <meta property="og:url" content="https://b2b.chums.com/"/>
-            {helmet?.meta.toString()}
+            <>{helmet?.meta?.toComponent()}</>
 
             <link rel="apple-touch-icon" sizes="57x57" href="/images/icons/apple-touch-icon-57x57.png"/>
             <link rel="apple-touch-icon" sizes="60x60" href="/images/icons/apple-touch-icon-60x60.png"/>
@@ -70,9 +70,9 @@ export default function B2BHtml({html, css, state, helmet, manifestFiles, swatch
         <body>
         <div id="app" dangerouslySetInnerHTML={{__html: html}}/>
         <script dangerouslySetInnerHTML={{__html: `window.__PRELOADED_STATE__ = ${preloadedState}`}}/>
-        {manifestFiles['vendors.js'] && (<script src={path.join('/build', manifestFiles['vendors.js'])}/>)}
-        {manifestFiles['chums.js'] && (<script src={path.join('/build', manifestFiles['chums.js'])}/>)}
-        {manifestFiles['main.js'] && (<script src={path.join('/build', manifestFiles['main.js'])}/>)}
+        {manifestFiles['vendors.js'] && (<script src={manifestFiles['vendors.js']}/>)}
+        {manifestFiles['chums.js'] && (<script src={manifestFiles['chums.js']}/>)}
+        {manifestFiles['main.js'] && (<script src={manifestFiles['main.js']}/>)}
         </body>
         </html>
     )

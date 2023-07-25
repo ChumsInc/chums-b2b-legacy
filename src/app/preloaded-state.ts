@@ -17,10 +17,9 @@ import {initialPromoCodeState} from "../ducks/promo-code";
 import {initialSalesOrderState} from "../ducks/salesOrder";
 import {initialSearchState} from "../ducks/search";
 import {initialVersionState} from "../ducks/version";
-import {RootState} from "./rootstate";
 import {PreloadedState} from "../_types";
 
-export default function prepState(preload:PreloadedState = window.__PRELOADED_STATE__ ?? {}) {
+export default function prepState(preload: PreloadedState = window.__PRELOADED_STATE__ ?? {}) {
     return {
         app: initialAppState(preload),
         cart: initialCartState(),

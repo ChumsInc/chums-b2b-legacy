@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from "classnames";
+import {BootstrapBGColor} from "../types/colors";
 
 /**
  *
@@ -19,7 +20,14 @@ export default function Badge({
                                   backgroundColor,
                                   className = '',
                                   children,
-                              }) {
+                              }: {
+    type: BootstrapBGColor | 'error';
+    text?: string;
+    url?: string|null;
+    backgroundColor?: string;
+    className?: string;
+    children?:React.ReactNode;
+}) {
     const badgeClassNames = classNames('badge badge-pill', className, {
         'bg-primary': type === 'primary',
         'bg-success': type === 'success',

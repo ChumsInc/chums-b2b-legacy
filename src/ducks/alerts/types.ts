@@ -1,10 +1,11 @@
-export type AlertType = 'primary' | 'success' | 'info' | 'secondary' | 'danger' |
-    'warning' | 'light' | 'dark';
+import {BootstrapBGColor} from "../../types/colors";
+
+export type AlertType = BootstrapBGColor;
 
 export interface B2BAlert {
     id: number;
-    type: AlertType;
-    title: string;
+    type?: AlertType;
+    title?: string;
     message: string;
     context?: string;
     count?: number;

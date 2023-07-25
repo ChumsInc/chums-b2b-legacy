@@ -4,27 +4,33 @@
 
 
 export default class LocalStore {
-    static getItem(key, defaultValue = null) {
+    static getItem<T = any>(key:string, defaultValue:T|null = null):T|null {
         if (!window.localStorage) {
             return defaultValue;
         }
         const data = window.localStorage.getItem(key);
+        if (!data) {
+            return defaultValue;
+        }
         try {
             return JSON.parse(data) ?? defaultValue;
-        } catch(err) {
-            console.log("getItem()", key, err.message);
-            return data ?? defaultValue;
+        } catch(err:unknown) {
+            if (err instanceof Error) {
+                console.log(err.message);
+                return defaultValue;
+            }
+            return defaultValue;
         }
     }
 
-    static setItem(key, data) {
+    static setItem(key:string, data:any) {
         if (!window.localStorage) {
             return;
         }
         window.localStorage.setItem(key, JSON.stringify(data));
     }
 
-    static removeItem(key) {
+    static removeItem(key:string) {
         if (!window.localStorage) {
             return;
         }

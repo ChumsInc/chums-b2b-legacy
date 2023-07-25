@@ -23,11 +23,12 @@ const clientConfig = {
     },
     devtool: 'source-map',
     output: {
+        publicPath: '/build',
         path: path.resolve(__dirname, './public/build'),
         filename: "[name].[contenthash:8].js",
     },
     plugins: [
-        new BundleAnalyzerPlugin(),
+        // new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin(),
         new WebpackManifestPlugin(),
     ],

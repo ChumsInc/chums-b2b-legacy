@@ -2,7 +2,7 @@
  * Created by steve on 8/24/2016.
  */
 
-import { auth } from './IntranetAuthService';
+import { auth } from '../api/IntranetAuthService';
 import 'isomorphic-fetch';
 import {compile} from 'path-to-regexp';
 

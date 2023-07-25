@@ -3,9 +3,12 @@ import classNames from "classnames";
 import {ALERT_TYPES} from '../constants/actions';
 import Badge from "./Badge";
 import numeral from 'numeral';
+import {BootstrapBGColor} from "../types/colors";
 
 
-const AlertDismisser = ({onDismiss}) => {
+const AlertDismisser = ({onDismiss}: {
+    onDismiss: () => void;
+}) => {
     return (
         <button type="button" className="btn-close" aria-label="Close"
                 onClick={() => onDismiss()}/>
@@ -13,24 +16,20 @@ const AlertDismisser = ({onDismiss}) => {
 };
 
 
-/**
- *
- * @param {number} [id]
- * @param {AlertType} [type]
- * @param {string} title
- * @param {string} message
- * @param {string} [context]
- * @param {number} count
- * @param {string} className
- * @param {(number) => void} onDismiss
- * @param {Node} [children]
- * @return {JSX.Element}
- * @constructor
- */
 const Alert = ({
                    id, type, title, message, context, count, className, onDismiss,
                    children,
-               }) => {
+               }: {
+    id: number;
+    type?: BootstrapBGColor;
+    title?: string;
+    message: string;
+    context?: string;
+    count?: number;
+    className?: string;
+    onDismiss?: (id: number) => void;
+    children?: React.ReactNode;
+}) => {
 
     const dismissible = typeof onDismiss === 'function';
     const _className = classNames('alert my-3', className, {
@@ -49,7 +48,7 @@ const Alert = ({
             {!!context && (<strong className="mr-1">[{context}]</strong>)}
             <strong className="me-1">{title || ''}</strong>
             {message || children}
-            {count > 1 && (
+            {!!count && count > 1 && (
                 <Badge className="ms-3" type={type ?? 'primary'}>
                     {numeral(count).format('0,0')}
                 </Badge>

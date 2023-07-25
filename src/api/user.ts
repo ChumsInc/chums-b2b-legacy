@@ -68,3 +68,8 @@ export async function fetchRepList():Promise<Salesperson[]> {
         return Promise.reject(new Error('Error in fetchRepList()'));
     }
 }
+
+
+export async function fetchGoogleLogin(token:string) {
+
+}
