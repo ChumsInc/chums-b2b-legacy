@@ -64,6 +64,26 @@ async function loadManifest() {
     }
 }
 
+async function loadVersion() {
+    try {
+        const packageFile = await fs.promises.readFile('./package.json');
+        const packageJSON = Buffer.from(packageFile).toString();
+        try {
+            const {version} = JSON.parse(packageJSON);
+            return version ?? '';
+        } catch(err) {
+            return '';
+        }
+    } catch(err) {
+        if (err instanceof Error) {
+            console.debug("loadVersion()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("loadVersion()", err);
+        return Promise.reject(new Error('Error in loadVersion()'));
+    }
+}
+
 async function loadMainCSS() {
     try {
         return await fs.promises.readFile('./public/css/chums.css');
@@ -122,8 +142,19 @@ async function handleRender(req, res) {
         slides: {
             list: [],
             loaded: false,
+        },
+        version: {
+            versionNo: '',
+            changed: false,
+            lastChecked: 0,
+            loading: false,
+            ignored: '',
         }
     };
+    defaultState.version.versionNo = await loadVersion();
+    if (!!defaultState.version.versionNo) {
+        defaultState.version.lastChecked = new Date().valueOf();
+    }
     let initialState = {...defaultState};
     try {
         const state = await loadJSON(`http://localhost:${API_PORT}/preload/state/formatted`);
@@ -240,7 +271,7 @@ async function handleRender(req, res) {
 app.get('/version', async (req, res) => {
     try {
         const version = await loadManifest();
-        version.versionNo =
+        // version.versionNo =
         await res.json({version});
     } catch(err) {
         debug("app.get /version ()", err.message);
@@ -254,7 +285,17 @@ app.get('/version.js', async (req, res) => {
         const js = 'CHUMS.version = ' + JSON.stringify(version);
         await res.set('Content-Type', 'application/javascript').send(js);
     } catch(err) {
-        debug("app.get /version ()", err.message);
+        debug("app.get /version.js ()", err.message);
+        await res.json({error: err.message});
+    }
+});
+
+app.get('/version.json', async (req, res) => {
+    try {
+        const version = await loadManifest();
+        res.json({versionNo: version.versionNo});
+    } catch(err) {
+        debug("app.get /version.json ()", err.message);
         await res.json({error: err.message});
     }
 });

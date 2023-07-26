@@ -74,16 +74,16 @@ function loadManifest() {
   return _loadManifest.apply(this, arguments);
 }
 function _loadManifest() {
-  _loadManifest = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+  _loadManifest = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
     var manifestFile, manifestJSON, manifestFiles;
-    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
-      while (1) switch (_context3.prev = _context3.next) {
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          _context3.prev = 0;
-          _context3.next = 3;
+          _context4.prev = 0;
+          _context4.next = 3;
           return _fs["default"].promises.readFile('./public/build/manifest.json');
         case 3:
-          manifestFile = _context3.sent;
+          manifestFile = _context4.sent;
           manifestJSON = Buffer.from(manifestFile).toString();
           manifestFiles = {};
           try {
@@ -91,45 +91,90 @@ function _loadManifest() {
           } catch (err) {
             debug('loadManifest() error parsing manifest', err.message);
           }
-          return _context3.abrupt("return", _objectSpread(_objectSpread({}, manifestFiles), {}, {
+          return _context4.abrupt("return", _objectSpread(_objectSpread({}, manifestFiles), {}, {
             versionNo: _package.version
           }));
         case 10:
-          _context3.prev = 10;
-          _context3.t0 = _context3["catch"](0);
-          debug("loadManifest()", _context3.t0.message);
-          return _context3.abrupt("return", Promise.reject(_context3.t0));
+          _context4.prev = 10;
+          _context4.t0 = _context4["catch"](0);
+          debug("loadManifest()", _context4.t0.message);
+          return _context4.abrupt("return", Promise.reject(_context4.t0));
         case 14:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
-    }, _callee3, null, [[0, 10]]);
+    }, _callee4, null, [[0, 10]]);
   }));
   return _loadManifest.apply(this, arguments);
+}
+function loadVersion() {
+  return _loadVersion.apply(this, arguments);
+}
+function _loadVersion() {
+  _loadVersion = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5() {
+    var packageFile, packageJSON, _JSON$parse, version;
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.prev = 0;
+          _context5.next = 3;
+          return _fs["default"].promises.readFile('./package.json');
+        case 3:
+          packageFile = _context5.sent;
+          packageJSON = Buffer.from(packageFile).toString();
+          _context5.prev = 5;
+          _JSON$parse = JSON.parse(packageJSON), version = _JSON$parse.version;
+          return _context5.abrupt("return", version !== null && version !== void 0 ? version : '');
+        case 10:
+          _context5.prev = 10;
+          _context5.t0 = _context5["catch"](5);
+          return _context5.abrupt("return", '');
+        case 13:
+          _context5.next = 22;
+          break;
+        case 15:
+          _context5.prev = 15;
+          _context5.t1 = _context5["catch"](0);
+          if (!(_context5.t1 instanceof Error)) {
+            _context5.next = 20;
+            break;
+          }
+          console.debug("loadVersion()", _context5.t1.message);
+          return _context5.abrupt("return", Promise.reject(_context5.t1));
+        case 20:
+          console.debug("loadVersion()", _context5.t1);
+          return _context5.abrupt("return", Promise.reject(new Error('Error in loadVersion()')));
+        case 22:
+        case "end":
+          return _context5.stop();
+      }
+    }, _callee5, null, [[0, 15], [5, 10]]);
+  }));
+  return _loadVersion.apply(this, arguments);
 }
 function loadMainCSS() {
   return _loadMainCSS.apply(this, arguments);
 }
 function _loadMainCSS() {
-  _loadMainCSS = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+  _loadMainCSS = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6() {
+    return _regeneratorRuntime().wrap(function _callee6$(_context6) {
+      while (1) switch (_context6.prev = _context6.next) {
         case 0:
-          _context4.prev = 0;
-          _context4.next = 3;
+          _context6.prev = 0;
+          _context6.next = 3;
           return _fs["default"].promises.readFile('./public/css/chums.css');
         case 3:
-          return _context4.abrupt("return", _context4.sent);
+          return _context6.abrupt("return", _context6.sent);
         case 6:
-          _context4.prev = 6;
-          _context4.t0 = _context4["catch"](0);
-          debug("loadMainCSS()", _context4.t0.message);
-          return _context4.abrupt("return", _context4.t0);
+          _context6.prev = 6;
+          _context6.t0 = _context6["catch"](0);
+          debug("loadMainCSS()", _context6.t0.message);
+          return _context6.abrupt("return", _context6.t0);
         case 10:
         case "end":
-          return _context4.stop();
+          return _context6.stop();
       }
-    }, _callee4, null, [[0, 6]]);
+    }, _callee6, null, [[0, 6]]);
   }));
   return _loadMainCSS.apply(this, arguments);
 }
@@ -137,10 +182,10 @@ function handleRender(_x, _x2) {
   return _handleRender.apply(this, arguments);
 }
 function _handleRender() {
-  _handleRender = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
+  _handleRender = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(req, res) {
     var result, defaultState, initialState, state, keywords, parsedProduct, keyword, search, _keywords$filter, _keywords$filter2, found, _keywords$filter3, _keywords$filter4, _yield$loadJSON, products, product, _products, prod, variant, msrp, salesUM, cartItem, _yield$loadJSON2, categories, _categories, _categories$, category, _category$id, id, _category$title, title, _category$pageText, pageText, _category$lifestyle, lifestyle, _category$children, children, store, html, helmet, preloadedState, _yield$fs$promises$st, swatchMTime, _yield$fs$promises$st2, cssMTime, manifestFiles, css, manifest, site;
-    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
+    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
+      while (1) switch (_context7.prev = _context7.next) {
         case 0:
           debug('handleRender', req.ip, req.path);
           if (typeof window === 'undefined') {
@@ -148,44 +193,44 @@ function _handleRender() {
           }
 
           // this is only for local testing, when running on the server /api is routed to a different proxy.
-          _context5.prev = 2;
+          _context7.prev = 2;
           if (!/^\/api\//.test(req.path)) {
-            _context5.next = 10;
+            _context7.next = 10;
             break;
           }
-          _context5.next = 6;
+          _context7.next = 6;
           return loadJSON("http://localhost:".concat(API_PORT) + req.path);
         case 6:
-          result = _context5.sent;
-          _context5.next = 9;
+          result = _context7.sent;
+          _context7.next = 9;
           return res.json(result);
         case 9:
-          return _context5.abrupt("return");
+          return _context7.abrupt("return");
         case 10:
-          _context5.next = 18;
+          _context7.next = 18;
           break;
         case 12:
-          _context5.prev = 12;
-          _context5.t0 = _context5["catch"](2);
-          debug("handleRender() api call => 500", _context5.t0.message);
-          _context5.next = 17;
+          _context7.prev = 12;
+          _context7.t0 = _context7["catch"](2);
+          debug("handleRender() api call => 500", _context7.t0.message);
+          _context7.next = 17;
           return res.status(500).json({
             error: 'invalid API content'
           });
         case 17:
-          return _context5.abrupt("return");
+          return _context7.abrupt("return");
         case 18:
           if (!(/^\/($|products|home|login|logout|signup|pages|profile|account|orders|invoices|set-password)/.test(req.path) === false)) {
-            _context5.next = 23;
+            _context7.next = 23;
             break;
           }
           debug('handleRender() invalid path => 404', req.path);
-          _context5.next = 22;
+          _context7.next = 22;
           return res.status(404).json({
             error: 'invalid url not found'
           });
         case 22:
-          return _context5.abrupt("return");
+          return _context7.abrupt("return");
         case 23:
           defaultState = {
             app: {
@@ -211,40 +256,54 @@ function _handleRender() {
             slides: {
               list: [],
               loaded: false
+            },
+            version: {
+              versionNo: '',
+              changed: false,
+              lastChecked: 0,
+              loading: false,
+              ignored: ''
             }
           };
+          _context7.next = 26;
+          return loadVersion();
+        case 26:
+          defaultState.version.versionNo = _context7.sent;
+          if (!!defaultState.version.versionNo) {
+            defaultState.version.lastChecked = new Date().valueOf();
+          }
           initialState = _objectSpread({}, defaultState);
-          _context5.prev = 25;
-          _context5.next = 28;
+          _context7.prev = 29;
+          _context7.next = 32;
           return loadJSON("http://localhost:".concat(API_PORT, "/preload/state/formatted"));
-        case 28:
-          state = _context5.sent;
+        case 32:
+          state = _context7.sent;
           initialState = (0, _deepmerge["default"])(defaultState, state);
           // initialState = {
           //     app: {slides, messages, productMenu: menu_chums, productMenuBC: menu_bc, keywords},
           //     products: {keywords},
           //     // pages: {list: keywords.filter(kw => kw.pagetype === 'page')}
           // };
-          _context5.next = 38;
+          _context7.next = 42;
           break;
-        case 32:
-          _context5.prev = 32;
-          _context5.t1 = _context5["catch"](25);
-          debug("handleRender() err: ", _context5.t1.message);
-          _context5.next = 37;
+        case 36:
+          _context7.prev = 36;
+          _context7.t1 = _context7["catch"](29);
+          debug("handleRender() err: ", _context7.t1.message);
+          _context7.next = 41;
           return res.json({
-            error: _context5.t1.message
+            error: _context7.t1.message
           });
-        case 37:
-          return _context5.abrupt("return");
-        case 38:
+        case 41:
+          return _context7.abrupt("return");
+        case 42:
           keywords = initialState.products.keywords;
           parsedProduct = categoryProductRegexp.exec(req.path);
           if (!parsedProduct) {
-            _context5.next = 65;
+            _context7.next = 69;
             break;
           }
-          _context5.prev = 41;
+          _context7.prev = 45;
           search = parsedProduct[2] ? parsedProduct[2] : parsedProduct[1];
           if (search) {
             _keywords$filter = keywords.filter(function (kw) {
@@ -262,13 +321,13 @@ function _handleRender() {
             }
           }
           if (!(keyword && keyword.pagetype === 'product')) {
-            _context5.next = 52;
+            _context7.next = 56;
             break;
           }
-          _context5.next = 47;
+          _context7.next = 51;
           return loadJSON("http://localhost:".concat(API_PORT, "/products/v2/keyword/:product").replace(':product', encodeURIComponent(search)));
-        case 47:
-          _yield$loadJSON = _context5.sent;
+        case 51:
+          _yield$loadJSON = _context7.sent;
           products = _yield$loadJSON.products;
           product = {};
           _products = _slicedToArray(products, 1), prod = _products[0];
@@ -286,15 +345,15 @@ function _handleRender() {
             product.cartItem = cartItem;
             initialState.products = _objectSpread(_objectSpread({}, initialState.products), product);
           }
-        case 52:
+        case 56:
           if (!(keyword && keyword.pagetype === 'category')) {
-            _context5.next = 60;
+            _context7.next = 64;
             break;
           }
-          _context5.next = 55;
+          _context7.next = 59;
           return loadJSON("http://localhost:".concat(API_PORT, "/products/category/:category").replace(':category', encodeURIComponent(search)));
-        case 55:
-          _yield$loadJSON2 = _context5.sent;
+        case 59:
+          _yield$loadJSON2 = _context7.sent;
           categories = _yield$loadJSON2.categories;
           _categories = _slicedToArray(categories, 1), _categories$ = _categories[0], category = _categories$ === void 0 ? {} : _categories$;
           _category$id = category.id, id = _category$id === void 0 ? '' : _category$id, _category$title = category.title, title = _category$title === void 0 ? '' : _category$title, _category$pageText = category.pageText, pageText = _category$pageText === void 0 ? '' : _category$pageText, _category$lifestyle = category.lifestyle, lifestyle = _category$lifestyle === void 0 ? null : _category$lifestyle, _category$children = category.children, children = _category$children === void 0 ? [] : _category$children;
@@ -305,15 +364,15 @@ function _handleRender() {
             lifestyle: lifestyle,
             children: children
           };
-        case 60:
-          _context5.next = 65;
+        case 64:
+          _context7.next = 69;
           break;
-        case 62:
-          _context5.prev = 62;
-          _context5.t2 = _context5["catch"](41);
-          console.trace("handleRender() preload product", _context5.t2.message);
-        case 65:
-          _context5.prev = 65;
+        case 66:
+          _context7.prev = 66;
+          _context7.t2 = _context7["catch"](45);
+          console.trace("handleRender() preload product", _context7.t2.message);
+        case 69:
+          _context7.prev = 69;
           store = (0, _redux.createStore)(_ducks["default"], initialState);
           html = (0, _server.renderToString)( /*#__PURE__*/_react["default"].createElement(_reactRedux.Provider, {
             store: store
@@ -324,24 +383,24 @@ function _handleRender() {
           // should I switch to a plain js string template as shown in https://www.npmjs.com/package/react-helmet
           helmet = _reactHelmet.Helmet.renderStatic();
           preloadedState = store.getState();
-          _context5.next = 72;
+          _context7.next = 76;
           return _fs["default"].promises.stat("./public/css/swatches-2020.css");
-        case 72:
-          _yield$fs$promises$st = _context5.sent;
-          swatchMTime = _yield$fs$promises$st.mtimeMs;
-          _context5.next = 76;
-          return _fs["default"].promises.stat("./public/css/chums.css");
         case 76:
-          _yield$fs$promises$st2 = _context5.sent;
-          cssMTime = _yield$fs$promises$st2.mtimeMs;
-          _context5.next = 80;
-          return loadManifest();
+          _yield$fs$promises$st = _context7.sent;
+          swatchMTime = _yield$fs$promises$st.mtimeMs;
+          _context7.next = 80;
+          return _fs["default"].promises.stat("./public/css/chums.css");
         case 80:
-          manifestFiles = _context5.sent;
-          _context5.next = 83;
+          _yield$fs$promises$st2 = _context7.sent;
+          cssMTime = _yield$fs$promises$st2.mtimeMs;
+          _context7.next = 84;
+          return loadManifest();
+        case 84:
+          manifestFiles = _context7.sent;
+          _context7.next = 87;
           return loadMainCSS();
-        case 83:
-          css = _context5.sent;
+        case 87:
+          css = _context7.sent;
           manifest = {
             manifestFiles: manifestFiles,
             vendors: "/build".concat(manifestFiles['vendors.js']),
@@ -360,23 +419,23 @@ function _handleRender() {
             swatchTimestamp: Math.floor(swatchMTime).toString(36)
           }));
           res.send("<!DOCTYPE html>".concat(site));
-          _context5.next = 95;
+          _context7.next = 99;
           break;
-        case 89:
-          _context5.prev = 89;
-          _context5.t3 = _context5["catch"](65);
-          debug("handleRender()", _context5.t3.message);
-          _context5.next = 94;
+        case 93:
+          _context7.prev = 93;
+          _context7.t3 = _context7["catch"](69);
+          debug("handleRender()", _context7.t3.message);
+          _context7.next = 98;
           return res.status(500).json({
-            error: _context5.t3.message
+            error: _context7.t3.message
           });
-        case 94:
-          return _context5.abrupt("return", _context5.t3);
-        case 95:
+        case 98:
+          return _context7.abrupt("return", _context7.t3);
+        case 99:
         case "end":
-          return _context5.stop();
+          return _context7.stop();
       }
-    }, _callee5, null, [[2, 12], [25, 32], [41, 62], [65, 89]]);
+    }, _callee7, null, [[2, 12], [29, 36], [45, 66], [69, 93]]);
   }));
   return _handleRender.apply(this, arguments);
 }
@@ -396,22 +455,21 @@ app.get('/version', /*#__PURE__*/function () {
             version: version
           });
         case 6:
-          version.versionNo = _context.sent;
-          _context.next = 14;
+          _context.next = 13;
           break;
-        case 9:
-          _context.prev = 9;
+        case 8:
+          _context.prev = 8;
           _context.t0 = _context["catch"](0);
           debug("app.get /version ()", _context.t0.message);
-          _context.next = 14;
+          _context.next = 13;
           return res.json({
             error: _context.t0.message
           });
-        case 14:
+        case 13:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[0, 9]]);
+    }, _callee, null, [[0, 8]]);
   }));
   return function (_x3, _x4) {
     return _ref.apply(this, arguments);
@@ -437,7 +495,7 @@ app.get('/version.js', /*#__PURE__*/function () {
         case 9:
           _context2.prev = 9;
           _context2.t0 = _context2["catch"](0);
-          debug("app.get /version ()", _context2.t0.message);
+          debug("app.get /version.js ()", _context2.t0.message);
           _context2.next = 14;
           return res.json({
             error: _context2.t0.message
@@ -450,6 +508,40 @@ app.get('/version.js', /*#__PURE__*/function () {
   }));
   return function (_x5, _x6) {
     return _ref2.apply(this, arguments);
+  };
+}());
+app.get('/version.json', /*#__PURE__*/function () {
+  var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
+    var version;
+    return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
+        case 0:
+          _context3.prev = 0;
+          _context3.next = 3;
+          return loadManifest();
+        case 3:
+          version = _context3.sent;
+          res.json({
+            versionNo: version.versionNo
+          });
+          _context3.next = 12;
+          break;
+        case 7:
+          _context3.prev = 7;
+          _context3.t0 = _context3["catch"](0);
+          debug("app.get /version.json ()", _context3.t0.message);
+          _context3.next = 12;
+          return res.json({
+            error: _context3.t0.message
+          });
+        case 12:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[0, 7]]);
+  }));
+  return function (_x7, _x8) {
+    return _ref3.apply(this, arguments);
   };
 }());
 /**
