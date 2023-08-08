@@ -6,7 +6,6 @@ export interface AppState {
     subNav: string;
     rowsPerPage: number;
     customerTab: number;
-    slides: Slide[],
     documentTitle: string;
     keywords: Keyword[],
     lifestyle: string;

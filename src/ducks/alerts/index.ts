@@ -2,9 +2,10 @@ import {createAction, createReducer, isRejected} from "@reduxjs/toolkit";
 import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
 import {RootState} from "../../app/configureStore";
 import {AlertsState, B2BAlert} from "./types";
+import {setLoggedIn} from "../user/actions";
 
 
-const initialAlertState = ():AlertsState => ({
+const initialAlertState = (): AlertsState => ({
     index: 0,
     list: [],
 })
@@ -12,10 +13,10 @@ const initialAlertState = ():AlertsState => ({
 export const setAlert = createAction<Omit<B2BAlert, 'id'>>('alerts/setAlert');
 export const dismissAlert = createAction<number>('alerts/dismissAlert');
 
-export const selectAlerts = (state:RootState) => state.alerts.list ?? [];
-export const selectContextAlerts = (context:string) => (state:RootState) => state.alerts.list.filter(alert => alert.context === context);
+export const selectAlerts = (state: RootState) => state.alerts.list ?? [];
+export const selectContextAlerts = (context: string) => (state: RootState) => state.alerts.list.filter(alert => alert.context === context);
 
-const alertSorter = (a:B2BAlert, b:B2BAlert):number => a.id - b.id;
+const alertSorter = (a: B2BAlert, b: B2BAlert): number => a.id - b.id;
 
 const alertsReducer = createReducer(initialAlertState, (builder) => {
     builder
@@ -30,12 +31,17 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
             } else {
                 state.list = [
                     ...state.list,
-                    {...action.payload, type: action.payload.type ?? 'warning',  id: state.index, count: 1}
+                    {...action.payload, type: action.payload.type ?? 'warning', id: state.index, count: 1}
                 ].sort(alertSorter);
             }
         })
         .addCase(dismissAlert, (state, action) => {
             state.list = state.list.filter(alert => alert.id !== action.payload).sort(alertSorter);
+        })
+        .addCase(setLoggedIn, (state, action) => {
+            if (action.payload.loggedIn) {
+                state.list = state.list.filter(alert => alert.context !== ALERT_CONTEXT_LOGIN).sort(alertSorter);
+            }
         })
         .addMatcher((action) => isRejected(action) && !!action.error,
             (state, action) => {
@@ -48,7 +54,13 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                         {...alert, count: (alert.count ?? 0) + 1},
                     ].sort(alertSorter);
                 } else {
-                    const newAlert:B2BAlert = {type: 'warning', message: action.error.message ?? '', context: '',  id: state.index, count: 1};
+                    const newAlert: B2BAlert = {
+                        type: 'warning',
+                        message: action.error.message ?? '',
+                        context,
+                        id: state.index,
+                        count: 1
+                    };
                     state.list = [
                         ...state.list,
                         newAlert

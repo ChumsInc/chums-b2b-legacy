@@ -1,38 +1,21 @@
-import React, {Component, useState} from 'react';
-import PropTypes from 'prop-types';
-import {orderHeaderPropType, paymentCardShape, shipToAddressPropType} from "../../../constants/myPropTypes";
+import React, {useState} from 'react';
 import FormGroupTextInput from "../../../common-components/FormGroupTextInput";
 import FormGroup from "../../../common-components/FormGroup";
-import DatePicker from "../../../common-components/DatePicker";
 import ShipToAddress from "../../../components/Address/ShipToAddress";
-import {CART_PROGRESS_STATES, ORDER_TYPE} from "../../../constants/orders";
-import parseDate from 'date-fns/parseJSON';
-import {duplicateOrder, sendOrderEmail} from "../../../actions/salesOrder";
+import {ORDER_TYPE} from "../../../constants/orders";
+import {duplicateOrder} from "../../../actions/salesOrder";
 import {loadInvoice} from '../actions';
-
-import {
-    appendCommentLine,
-    promoteCart,
-    setCartProgress,
-    setCurrentCart,
-    setShipDate,
-    setShippingAccount,
-    updateCart,
-} from "../../cart/actions";
-import {applyPromoCode} from '../../../actions/promo_codes';
 import {useSelector} from "react-redux";
 import ShippingMethodSelect from "../../../components/ShippingMethodSelect";
-import {DEFAULT_SHIPPING_ACCOUNT, filteredTermsCode, PAYMENT_TYPES} from "../../../constants/account";
 import {PATH_SALES_ORDER} from "../../../constants/paths";
 import OrderPromoCode from "../../../components/OrderPromoCode";
 import DuplicateCartAlert from "../../../components/DuplicateCartAlert";
-import {BTN_OUTLINE_SECONDARY, BTN_WARNING} from "../../../common-components/Button";
 import {noop} from "../../../utils/general";
 import TrackingLinkBadge from "../../../components/TrackingLinkBadge";
 import {selectCurrentInvoice} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectCartLoading, selectCartNo} from "../../cart/selectors";
-import {useHistory} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import dayjs from "dayjs";
 import Button from '@mui/material/Button';
 
@@ -43,7 +26,7 @@ const InvoiceHeader = () => {
     const [newCartName, setNewCartName] = useState('');
     const cartLoading = useSelector(selectCartLoading);
     const cartNo = useSelector(selectCartNo);
-    const history = useHistory();
+    const location = useLocation();
 
     const onCancelDuplicate = () => {
         setConfirmDuplicate(false);
@@ -60,7 +43,7 @@ const InvoiceHeader = () => {
                     .replace(':orderType', ORDER_TYPE.cart)
                     .replace(':Company', encodeURIComponent('chums'))
                     .replace(':SalesOrderNo', encodeURIComponent(cartNo))
-                history.push(path);
+                location.replace(path);
             });
     }
 

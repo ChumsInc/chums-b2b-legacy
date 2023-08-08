@@ -14,7 +14,8 @@ import {loadJSON, loadKeywords} from "./utils";
 import {loadManifest} from "./manifest";
 import B2BHtml from "./B2BHTML";
 import {FilledContext, HelmetProvider} from "react-helmet-async";
-import {Route, StaticRouter} from "react-router-dom";
+import {Route} from "react-router-dom";
+import {StaticRouter} from "react-router-dom/server";
 
 const debug = Debug('chums:index');
 
@@ -46,8 +47,8 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         const app = renderToString(
             <Provider store={store}>
                 <HelmetProvider context={helmetContext}>
-                    <StaticRouter>
-                        <Route component={App}/>
+                    <StaticRouter location={req.url}>
+                        <Route element={<App />}/>
                     </StaticRouter>
                 </HelmetProvider>
             </Provider>

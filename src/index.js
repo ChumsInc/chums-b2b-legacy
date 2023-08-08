@@ -9,14 +9,14 @@ import {HelmetProvider} from "react-helmet-async";
 const container = document.getElementById('app');
 const root = createRoot(container);
 
-root.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <HelmetProvider>
-                <BrowserRouter>
-                    <Route component={App}/>
-                </BrowserRouter>
-            </HelmetProvider>
-        </Provider>
-    </React.StrictMode>
-)
+// root.render(
+//     <React.StrictMode>
+//         <Provider store={store}>
+//             <HelmetProvider>
+//                 <BrowserRouter>
+//                     <Route component={App}/>
+//                 </BrowserRouter>
+//             </HelmetProvider>
+//         </Provider>
+//     </React.StrictMode>
+// )

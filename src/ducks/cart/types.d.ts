@@ -9,6 +9,7 @@ export interface CartState {
     loading: boolean;
     loaded: boolean;
     itemAvailability: ItemAvailability | null;
+    itemAvailabilityLoading: boolean;
     cartProgress: CartProgress;
     shipDate: string;
     shippingAccount: ShippingAccountState;

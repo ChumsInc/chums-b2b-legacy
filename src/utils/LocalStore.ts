@@ -4,7 +4,7 @@
 
 
 export default class LocalStore {
-    static getItem<T = any>(key:string, defaultValue:T|null = null):T|null {
+    static getItem<T = any>(key:string, defaultValue:T):T {
         if (!window.localStorage) {
             return defaultValue;
         }
@@ -23,7 +23,7 @@ export default class LocalStore {
         }
     }
 
-    static setItem(key:string, data:any) {
+    static setItem<T>(key:string, data:any) {
         if (!window.localStorage) {
             return;
         }

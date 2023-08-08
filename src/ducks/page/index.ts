@@ -3,11 +3,13 @@ import {FETCH_INIT, FETCH_KEYWORDS, FETCH_PAGE, FETCH_SUCCESS} from "../../const
 import {ContentPage, Keyword} from "b2b-types";
 import {EmptyObject} from "../../_types";
 import {keywordsSorter, pageKeywordsFilter} from "../keywords/utils";
+import {RootState} from "../../app/configureStore";
+import {loadPage} from "./actions";
 
 export interface PageState {
     list: Keyword[],
     loading: boolean;
-    content: ContentPage | EmptyObject | null;
+    content: ContentPage | null;
 }
 
 export const initialPageState = (preload = window?.__PRELOADED_STATE__ ?? {}): PageState => ({
@@ -16,8 +18,22 @@ export const initialPageState = (preload = window?.__PRELOADED_STATE__ ?? {}): P
     content: preload?.page?.content ?? null,
 })
 
+export const selectPageKeywords = (state:RootState) => state.page.list;
+export const selectPageLoading = (state:RootState) => state.page.loading;
+export const selectPageContent = (state:RootState) => state.page.content;
+
 const pageReducer = createReducer(initialPageState, (builder) => {
     builder
+        .addCase(loadPage.pending, (state)=> {
+            state.loading = true;
+        })
+        .addCase(loadPage.fulfilled, (state, action) => {
+            state.loading = false;
+            state.content = action.payload;
+        })
+        .addCase(loadPage.rejected, (state) => {
+            state.loading = false;
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_KEYWORDS:

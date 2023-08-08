@@ -1,4 +1,5 @@
 import {
+    BasicCustomer,
     BooleanLike,
     Customer,
     Editable,
@@ -34,15 +35,23 @@ export interface UserPasswordState {
     visible: boolean;
 }
 
+export interface CustomerPermissionsState {
+    loading: boolean;
+    loaded: boolean;
+    permissions: {
+        billTo: boolean;
+        shipTo: string[];
+    }
+}
 export interface UserState {
     token: string|null;
     tokenExpires: number;
-    profile: EmptyObject | (ExtendedUserProfile & Editable);
+    profile: (ExtendedUserProfile & Editable) | null;
     accounts: UserCustomerAccess[];
     roles: string[];
     loggedIn: boolean;
     userAccount: UserCustomerAccess|EmptyObject|null;
-    currentCustomer: Customer|EmptyObject|null;
+    currentCustomer: BasicCustomer|null;
     customerList: {
         list: Customer[];
         loading: boolean;
@@ -61,14 +70,7 @@ export interface UserState {
     passwordChange: UserPasswordState;
     login: UserLoginState;
     loading: boolean;
-    customerPermissions: {
-        loading: boolean;
-        loaded: boolean;
-        permissions: {
-            billTo: boolean;
-            shipTo: string[];
-        };
-    };
+    customerPermissions: CustomerPermissionsState;
 }
 
 export interface SetLoggedInProps {

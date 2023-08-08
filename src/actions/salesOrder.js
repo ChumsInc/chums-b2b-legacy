@@ -27,7 +27,8 @@ import {selectCartNo} from "../ducks/cart/selectors";
 import {selectIsSendingEmail, selectProcessing} from "../ducks/salesOrder/selectors";
 
 
-export const fetchOpenOrders = ({Company, ARDivisionNo, CustomerNo}) => (dispatch, getState) => {
+export const fetchOpenOrders = ({ARDivisionNo, CustomerNo}) => (dispatch, getState) => {
+    const Company = 'chums';
     const {user} = getState();
     if (!user.loggedIn) {
         return;

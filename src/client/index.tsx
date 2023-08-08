@@ -14,7 +14,7 @@ root.render(
         <Provider store={store}>
             <HelmetProvider>
                 <BrowserRouter>
-                    <Route component={App}/>
+                    <App />
                 </BrowserRouter>
             </HelmetProvider>
         </Provider>

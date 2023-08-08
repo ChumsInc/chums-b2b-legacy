@@ -1,5 +1,6 @@
-import {Salesperson, UserCustomerAccess} from "b2b-types";
+import {Customer, Salesperson, UserCustomerAccess, UserProfile} from "b2b-types";
 import {EmptyObject} from "../../_types";
+import {CustomerKey} from "b2b-types/src/customer";
 
 export const salespersonKey = (sp: Salesperson) => `${sp.SalespersonDivisionNo}-${sp.SalespersonNo}`;
 
@@ -21,4 +22,12 @@ export const userRepListSort = (a:Salesperson, b:Salesperson) => {
 
 export const isCustomerAccess = (value:UserCustomerAccess|EmptyObject|null):value is UserCustomerAccess  => {
     return !!value && (value as UserCustomerAccess).id !== undefined;
+}
+
+export const isUserProfile = (user:UserProfile|null): user is UserProfile => {
+    return (user as UserProfile).id !== undefined;
+}
+
+export const isCustomer = (customer:CustomerKey|EmptyObject|null): customer is CustomerKey => {
+    return !!customer && (customer as CustomerKey).CustomerNo !== undefined;
 }

@@ -20,10 +20,10 @@ const Alert = ({
                    id, type, title, message, context, count, className, onDismiss,
                    children,
                }: {
-    id: number;
+    id?: number;
     type?: BootstrapBGColor;
     title?: string;
-    message: string;
+    message?: string;
     context?: string;
     count?: number;
     className?: string;
@@ -47,13 +47,13 @@ const Alert = ({
         <div className={_className}>
             {!!context && (<strong className="mr-1">[{context}]</strong>)}
             <strong className="me-1">{title || ''}</strong>
-            {message || children}
+            {message ?? children ?? 'Undefined alert'}
             {!!count && count > 1 && (
                 <Badge className="ms-3" type={type ?? 'primary'}>
                     {numeral(count).format('0,0')}
                 </Badge>
             )}
-            {dismissible && <AlertDismisser onDismiss={() => onDismiss(id)}/>}
+            {!!id && dismissible && <AlertDismisser onDismiss={() => onDismiss(id)}/>}
         </div>
     )
 }

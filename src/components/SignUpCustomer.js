@@ -1,7 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Link, Redirect} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {fetchSignUpUser, submitNewPassword, submitNewUser} from '../ducks/user/actions';
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
@@ -73,9 +73,6 @@ class SignUpCustomer extends Component {
     render() {
         const {email, name, accountName, hasAccount, account, telephone, agreeToPolicies} = this.state;
         const {loggedIn, error, loading} = this.props;
-        if (!!loggedIn) {
-            return (<Redirect to={PATH_HOME}/>)
-        }
         return (
             <Fragment>
                 {loading && <ProgressBar striped={true}/>}

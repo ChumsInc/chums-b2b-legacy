@@ -11,7 +11,7 @@ import {EmptyObject, Selectable} from "../../_types";
 export interface CustomerState {
     company: string;
     key:CustomerKey|null;
-    account: (BillToCustomer & Editable) | EmptyObject;
+    account: (BillToCustomer & Editable) | null;
     contacts: CustomerContact[];
     pricing: CustomerPriceRecord[];
     shipToAddresses: (ShipToCustomer & Editable)[];

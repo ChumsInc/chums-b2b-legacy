@@ -3,7 +3,6 @@
  */
 
 import React from 'react';
-import SiteSearch from "./SiteSearch";
 import CustomerNavbarLink from "./CustomerNavbarLink";
 import CartIndicator from "../ducks/cart/components/CartIndicator";
 import {useDispatch} from 'react-redux';
@@ -28,7 +27,7 @@ const HangOnBar = () => {
                 <ul className="navbar-nav">
                     {/*<AppGoogleLogin/>*/}
                     <li className="nav-item search">
-                        <SiteSearch/>
+                        <SearchBar/>
                     </li>
                     {/*<li className="nav-item search">*/}
                     {/*    <SearchBar />*/}

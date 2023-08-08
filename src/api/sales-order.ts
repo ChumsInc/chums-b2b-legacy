@@ -55,3 +55,4 @@ export async function postOrderEmail({ARDivisionNo, CustomerNo, SalesOrderNo}: {
         return Promise.reject(new Error('Error in postOrderEmail()'));
     }
 }
+

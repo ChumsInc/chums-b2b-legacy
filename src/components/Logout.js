@@ -1,33 +1,11 @@
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {withRouter} from 'react-router-dom'
-import {connect} from 'react-redux';
+import React from 'react';
 import UserProfile from "./UserProfile";
-import {logout} from "../ducks/user/actions";
 
-class Logout extends Component {
-    static propTypes = {
-        history: PropTypes.object,
-    };
+const Logout = () => {
 
-    static defaultProps = {};
-
-
-    render() {
-        return (
-            <UserProfile />
-        );
-    }
+    return (
+        <UserProfile/>
+    );
 }
 
-const mapStateToProps = ({user}) => {
-    const {loggedIn} = user;
-    return {loggedIn};
-};
-
-const mapDispatchToProps = {
-    logout
-};
-
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Logout))
+export default Logout;

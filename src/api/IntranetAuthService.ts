@@ -18,7 +18,7 @@ export class AuthService extends EventEmitter {
     }
 
     getGoogleUser(): StoredProfile | null {
-        return LocalStore.getItem<StoredProfile>(STORE_PROFILE);
+        return LocalStore.getItem<StoredProfile|null>(STORE_PROFILE, null);
     }
 
     setProfile(profile: StoredProfile) {
@@ -30,7 +30,7 @@ export class AuthService extends EventEmitter {
 
     getProfile(): StoredProfile | null {
         // Retrieves the profile data from localStorage
-        return LocalStore.getItem<StoredProfile>(STORE_PROFILE, null);
+        return LocalStore.getItem<StoredProfile|null>(STORE_PROFILE, null);
     }
 
     setToken(idToken: string) {
@@ -40,7 +40,7 @@ export class AuthService extends EventEmitter {
 
     getToken(): string | null {
         // Retrieves the user token from localStorage
-        return LocalStore.getItem<string>(STORE_TOKEN, null);
+        return LocalStore.getItem<string|null>(STORE_TOKEN, null);
     }
 
     logout() {

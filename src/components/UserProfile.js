@@ -19,7 +19,6 @@ class UserProfile extends Component {
         canChangePassword: PropTypes.bool,
         passwordChangeVisible: PropTypes.bool,
         authType: PropTypes.string,
-        history: PropTypes.object,
 
         changeUser: PropTypes.func.isRequired,
         loadProfile: PropTypes.func.isRequired,
@@ -36,7 +35,6 @@ class UserProfile extends Component {
         changed: false,
         canChangePassword: false,
         passwordChangeVisible: false,
-        history: {},
     };
 
 
@@ -76,10 +74,7 @@ class UserProfile extends Component {
     }
 
     onLogout() {
-        this.props.logout()
-            .then(() => {
-                this.props.history.push(PATH_HOME);
-            })
+        this.props.logout();
     }
 
 
@@ -148,4 +143,4 @@ const mapDispatchToProps = {
     changeUserPassword,
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserProfile));
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfile);

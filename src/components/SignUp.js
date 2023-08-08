@@ -1,15 +1,15 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import SignUpCustomer from "./SignUpCustomer";
-import {Redirect, useHistory} from "react-router-dom";
-import {DOCUMENT_TITLES, PATH_HOME, PATH_SET_PASSWORD} from "../constants/paths";
+import {DOCUMENT_TITLES, PATH_SET_PASSWORD} from "../constants/paths";
 import MAPPolicy from "./MAPPolicy";
 import UsagePolicy from "./UsagePolicy";
 import DocumentTitle from "./DocumentTitle";
 import {selectLoggedIn} from "../ducks/user/selectors";
+import {useLocation} from "react-router";
 
 const SignUp = () => {
-    const history = useHistory();
+    const location = useLocation();
     const loggedIn = useSelector(selectLoggedIn);
 
     useEffect(() => {
@@ -17,13 +17,9 @@ const SignUp = () => {
         const hash = params.get('h') ?? '';
         const key = params.get('key') ?? '';
         if (!loggedIn && !!hash && !!key) {
-            history.push(PATH_SET_PASSWORD + document.location.search);
+            location.replace(PATH_SET_PASSWORD + document.location.search)
         }
     }, [])
-
-    if (!!loggedIn) {
-        return (<Redirect to={PATH_HOME}/>)
-    }
 
     return (
         <div>

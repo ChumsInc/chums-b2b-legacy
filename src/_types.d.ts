@@ -1,13 +1,17 @@
 import {
     CartProduct,
-    ProductCategory,
     ContentPage,
-    CustomerPriceRecord,
     Keyword,
     Menu,
-    Message, PromoCode,
+    Message,
+    Product,
+    ProductCategory,
+    PromoCode,
     SalesOrderDetailLine,
-    SalesOrderHeader, Slide, Product, UserProfile, UserCustomerAccess, UserRole
+    SalesOrderHeader,
+    Slide,
+    UserCustomerAccess,
+    UserProfile
 } from "b2b-types";
 
 export {SalesOrderHeader} from 'b2b-types'
@@ -40,6 +44,7 @@ export type CartAction =
 export interface CartQuoteBase {
     action: CartAction;
     SalesOrderNo: string;
+    promo_code?: string;
 }
 
 export interface CartAppendBody extends CartQuoteBase {
@@ -76,7 +81,7 @@ export interface DeleteCartBody extends CartQuoteBase {
 
 export interface UpdateCartItemBody extends CartQuoteBase {
     action: 'update-item' | 'append';
-    LineKey: string;
+    LineKey?: string;
     ItemCode: string;
     QuantityOrdered: number;
     Comment: string;
@@ -86,7 +91,7 @@ export interface NewCartBody extends CartQuoteBase {
     action: 'new',
     CartName: string;
     ItemCode: string;
-    QuantityOrdered: string;
+    QuantityOrdered: string|number;
     Comment: string;
     SalesOrderNo: '',
     promo_code: string;
@@ -104,7 +109,7 @@ export interface UpdateCartBody extends CartQuoteBase {
     ShipToState: string;
     ShipToZipCode: string;
     ConfirmTo: string | null;
-    changeLines: ChangeDetailLine[];
+    changedLines: ChangeDetailLine[];
     newLines: NewCommentLine[];
 }
 
@@ -173,13 +178,8 @@ export interface ShippingAccountState {
     value: string;
 }
 
-export interface CartItemDetailProps extends Pick<CartProduct, 'itemCode' | 'quantity' | 'salesUM' | 'salesUMFactor'
-    | 'msrp' | 'priceLevel'> {
-    stdUM: string;
-    QuantityAvailable: number
-    price: number;
-    priceCodeRecord: CustomerPriceRecord,
-}
+export type CartItemDetailProps = Pick<CartProduct, 'itemCode' | 'quantity' | 'salesUM' | 'stdUM' | 'salesUMFactor'
+    | 'msrp' | 'priceLevel' | 'quantityAvailable'>
 
 export interface Selectable {
     selected?: boolean;
@@ -201,7 +201,7 @@ export interface PreloadedState {
     }
     category?: {
         keywords?: Keyword[];
-        content?: ProductCategory|null;
+        content?: ProductCategory | null;
     }
     keywords?: {
         list?: Keyword[];
@@ -216,14 +216,14 @@ export interface PreloadedState {
     }
     page?: {
         list?: Keyword[];
-        content?: ContentPage|null;
+        content?: ContentPage | null;
     }
     products?: {
         keywords?: Keyword[];
-        product?: Product|null;
+        product?: Product | null;
     },
     promo_code?: {
-        promo_code?: PromoCode|null;
+        promo_code?: PromoCode | null;
         promo_codes?: PromoCode[];
     }
     slides?: {
