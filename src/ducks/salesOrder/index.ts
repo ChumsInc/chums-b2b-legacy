@@ -12,17 +12,17 @@ import {
     SELECT_SO,
     SEND_ORDER_EMAIL,
     SEND_ORDER_EMAIL_ACK,
-    SET_USER_ACCOUNT,
     UPDATE_CART,
     UPDATE_CART_ITEM
 } from "../../constants/actions";
 import {defaultDetailSorter, emptyDetailLine} from "./utils";
 import {calcOrderType, isCartOrder} from "../../utils/orders";
 import {setCustomerAccount} from "../customer/actions";
-import {setLoggedIn} from "../user/actions";
+import {setLoggedIn, setUserAccount} from "../user/actions";
 import {SalesOrderState} from "./types";
 import {isCartHeader} from "../../utils/typeguards";
 import {SalesOrderHeader, SalesOrderItemType} from "b2b-types";
+import {customerSlug} from "@/utils/customer";
 
 export const initialSalesOrderState = (): SalesOrderState => ({
     salesOrderNo: '',
@@ -55,15 +55,17 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.attempts = 0;
             }
         })
+        .addCase(setUserAccount.pending, (state, action) => {
+            if (!action.meta.arg?.isRepAccount && customerSlug(action.meta.arg) !== customerSlug(state.header)) {
+                state.header = null;
+                state.salesOrderNo = '';
+                state.detail = [];
+                state.orderType = 'past';
+                state.attempts = 0;
+            }
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
-                case SET_USER_ACCOUNT:
-                    state.salesOrderNo = '';
-                    state.header = null;
-                    state.detail = [];
-                    state.orderType = 'past';
-                    state.attempts = 0;
-                    return;
                 case SELECT_SO:
                     state.salesOrderNo = action.salesOrderNo ?? '';
                     state.header = null;

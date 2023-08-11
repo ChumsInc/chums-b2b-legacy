@@ -1,6 +1,7 @@
 import {createSelector} from "@reduxjs/toolkit";
 import {RootState} from "../../app/configureStore";
 import {isCartProduct, isProduct} from "./utils";
+import {Product} from "b2b-types";
 
 export const selectProductKeywords = (state: RootState) => state.products.keywords ?? [];
 export const selectProductKeywordsLoading = (state: RootState) => state.products.loadingKeywords ?? false;
@@ -16,17 +17,18 @@ export const selectProductCartItem = (state: RootState) => state.products.cartIt
 
 export const selectProductSeasonActive = createSelector(
     [selectSelectedProduct],
-    (product) => isProduct(product) ? product?.season_active ?? true : true);
+    (product):boolean => isProduct(product) ? product?.season_active ?? true : true);
+
 export const selectProductSeasonCode = createSelector(
     [selectSelectedProduct, selectProductCartItem],
-    (product, cartItem) => {
-        return (isProduct(product) ? product.season_active : null)
+    (product, cartItem):string|null => {
+        return (isProduct(product) ? product.season_code : null)
             ?? (isCartProduct(cartItem) ? cartItem.seasonCode : null)
             ?? null;
     });
 export const selectProductSeasonAvailable = createSelector(
     [selectSelectedProduct, selectProductCartItem],
-    (product, cartItem) => {
+    (product, cartItem):boolean|null => {
         return (isProduct(product) ? product?.season_available : null)
             ?? (isCartProduct(cartItem) ? cartItem.seasonAvailable : null)
             ?? null;
@@ -34,7 +36,7 @@ export const selectProductSeasonAvailable = createSelector(
 )
 export const selectProductSeasonDescription = createSelector(
     [selectSelectedProduct, selectProductCartItem],
-    (product, cartItem) => {
+    (product, cartItem):string|null => {
         return (isProduct(product) ? product?.season_description : null)
             ?? (isCartProduct(cartItem) ? cartItem.seasonDescription : null)
             ?? null;
@@ -42,7 +44,7 @@ export const selectProductSeasonDescription = createSelector(
 )
 export const selectProductSeasonTeaser = createSelector(
     [selectSelectedProduct, selectProductCartItem],
-    (product, cartItem) => {
+    (product, cartItem):string|null => {
         return (isProduct(product) ? product.season_teaser : null)
             ?? (isCartProduct(cartItem) ? cartItem.seasonTeaser : null)
             ?? null;

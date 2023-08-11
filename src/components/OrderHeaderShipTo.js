@@ -1,8 +1,8 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import FormGroup from "../common-components/FormGroup";
-import ShipToSelect from "./ShipToSelect";
-import ShipToAddress from "./Address/ShipToAddress";
+import ShipToSelect from "@/ducks/customer/components/ShipToSelect";
+import DeliveryAddress from "./Address/DeliveryAddress";
 import {selectIsCart, selectSalesOrderHeader} from "../ducks/salesOrder/selectors";
 import {updateCart} from "../ducks/cart/actions";
 import {selectCartProgress} from "../ducks/cart/selectors";

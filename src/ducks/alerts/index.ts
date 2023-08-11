@@ -1,6 +1,6 @@
 import {createAction, createReducer, isRejected} from "@reduxjs/toolkit";
-import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
-import {RootState} from "../../app/configureStore";
+import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "@/constants/actions";
+import {RootState} from "@/app/configureStore";
 import {AlertsState, B2BAlert} from "./types";
 import {setLoggedIn} from "../user/actions";
 
@@ -20,6 +20,11 @@ const alertSorter = (a: B2BAlert, b: B2BAlert): number => a.id - b.id;
 
 const alertsReducer = createReducer(initialAlertState, (builder) => {
     builder
+        // .addCase(setLoggedIn, (state, action) => {
+        //     if (action.payload.loggedIn) {
+        //         state.list = state.list.filter(alert => alert.context !== ALERT_CONTEXT_LOGIN).sort(alertSorter);
+        //     }
+        // })
         .addCase(setAlert, (state, action) => {
             state.index += 1;
             const [alert] = state.list.filter(alert => alert.context === action.payload.context ?? 'N/A');
@@ -37,11 +42,6 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
         })
         .addCase(dismissAlert, (state, action) => {
             state.list = state.list.filter(alert => alert.id !== action.payload).sort(alertSorter);
-        })
-        .addCase(setLoggedIn, (state, action) => {
-            if (action.payload.loggedIn) {
-                state.list = state.list.filter(alert => alert.context !== ALERT_CONTEXT_LOGIN).sort(alertSorter);
-            }
         })
         .addMatcher((action) => isRejected(action) && !!action.error,
             (state, action) => {

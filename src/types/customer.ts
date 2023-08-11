@@ -38,3 +38,8 @@ export interface ShippingMethodList {
 export interface PriceLevelsDescriptionList {
     [key:string]: string;
 }
+
+export interface CustomerPermissions {
+    billTo: boolean;
+    shipTo: string[];
+}

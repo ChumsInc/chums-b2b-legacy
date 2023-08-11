@@ -4,7 +4,7 @@ import {useSelector} from 'react-redux';
 import LoginLocal from "./LoginLocal";
 import {DOCUMENT_TITLES, PATH_HOME} from "../constants/paths";
 import Alert from '../common-components/Alert';
-import GoogleSignInButton from "./GoogleSignInButton";
+import GoogleSignInButton from "@/ducks/user/components/GoogleSignInButton";
 import DocumentTitle from "./DocumentTitle";
 import {selectLoggedIn} from "../ducks/user/selectors";
 

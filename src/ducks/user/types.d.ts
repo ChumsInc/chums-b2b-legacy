@@ -35,14 +35,7 @@ export interface UserPasswordState {
     visible: boolean;
 }
 
-export interface CustomerPermissionsState {
-    loading: boolean;
-    loaded: boolean;
-    permissions: {
-        billTo: boolean;
-        shipTo: string[];
-    }
-}
+
 export interface UserState {
     token: string|null;
     tokenExpires: number;
@@ -81,8 +74,11 @@ export interface SetLoggedInProps {
 
 export interface UserProfileResponse {
     user?: UserProfile;
-    roles?: UserRole[];
+    roles?: string[];
     accounts?: UserCustomerAccess[];
     reps?: Salesperson[];
 }
 
+export interface FunkyUserProfileResponse extends UserProfileResponse {
+    roles?: (string|UserRole)[];
+}

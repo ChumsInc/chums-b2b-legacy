@@ -18,7 +18,7 @@ const clientConfig = {
             './src/client/index.tsx',
         ],
     },
-    devtool: 'inline-source-map',
+    devtool: 'eval-cheap-module-source-map',
     devServer: {
         historyApiFallback: true,
         static: [
@@ -47,7 +47,7 @@ const clientConfig = {
         watchFiles: 'src/**/*',
     },
     plugins: [
-        new webpack.HotModuleReplacementPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
     ],
 }
 

@@ -1,14 +1,14 @@
-import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE, SET_USER_ACCOUNT} from "../../constants/actions";
+import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "@/constants/actions";
 import {createReducer} from "@reduxjs/toolkit";
 import {invoicesSorter} from "./utils";
-import localStore from "../../utils/LocalStore";
-import {STORE_INVOICES_ROWS_PER_PAGE} from "../../constants/stores";
+import localStore from "@/utils/LocalStore";
+import {STORE_INVOICES_ROWS_PER_PAGE} from "@/constants/stores";
 import {loadInvoices, setInvoicesPage, setInvoicesRowsPerPage, setInvoicesSort} from "./actions";
-import {shortCustomerKey} from "../customer/utils";
+import {customerSlug} from "@/utils/customer";
 import {setCustomerAccount} from "../customer/actions";
-import {setLoggedIn} from "../user/actions";
+import {setLoggedIn, setUserAccount} from "../user/actions";
 import {InvoicesState} from "./types";
-import {SortProps} from "../../_types";
+import {SortProps} from "@/types/generic";
 import {InvoiceHeader} from "b2b-types";
 
 export const defaultSort: SortProps<InvoiceHeader> = {
@@ -17,7 +17,7 @@ export const defaultSort: SortProps<InvoiceHeader> = {
 }
 
 export const initialInvoicesState = (): InvoicesState => ({
-    customerKey: '',
+    customerKey: null,
     list: [],
     invoice: null,
     loading: false,
@@ -43,10 +43,10 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
         })
         .addCase(loadInvoices.pending, (state, action) => {
             state.loading = true;
-            if (state.customerKey !== shortCustomerKey(action?.meta?.arg)) {
+            if (state.customerKey !== customerSlug(action?.meta?.arg)) {
                 state.list = [];
                 state.invoice = null;
-                state.customerKey = shortCustomerKey(action?.meta?.arg);
+                state.customerKey = customerSlug(action?.meta?.arg);
             }
         })
         .addCase(loadInvoices.fulfilled, (state, action) => {
@@ -73,6 +73,13 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
                 state.invoice = null;
             }
         })
+        .addCase(setUserAccount.pending, (state, action) => {
+            if (!action.meta.arg?.isRepAccount && state.customerKey !== customerSlug(action?.meta?.arg)) {
+                state.list = [];
+                state.invoice = null;
+                state.customerKey = customerSlug(action?.meta?.arg);
+            }
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_INVOICE:
@@ -84,11 +91,6 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
                         ].sort(invoicesSorter(defaultSort));
                         state.invoice = action.invoice ?? null;
                     }
-                    return;
-                case SET_USER_ACCOUNT:
-                    state.list = [];
-                    state.page = 0;
-                    state.invoice = null;
                     return;
                 case SELECT_INVOICE:
                     state.invoice = action.invoice ?? null;

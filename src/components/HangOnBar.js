@@ -7,7 +7,7 @@ import CustomerNavbarLink from "./CustomerNavbarLink";
 import CartIndicator from "../ducks/cart/components/CartIndicator";
 import {useDispatch} from 'react-redux';
 import {toggleXSNavBar} from '../ducks/app/actions';
-import GoogleSignInOneTap from "./GoogleSignInOneTap";
+import GoogleSignInOneTap from "@/ducks/user/components/GoogleSignInOneTap";
 import SiteMessages from "../ducks/messages/SiteMessages";
 import SearchBar from "../ducks/search/components/SearchBar";
 

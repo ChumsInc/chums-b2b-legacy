@@ -19,7 +19,7 @@ const Tab = ({active = false, id, title, path, onSelect}) => {
 
 const Tabs = ({tabList = [], activeTab, onSelect}) => (
     <ul className="nav nav-tabs mb-2">
-        {tabList.map(tab => <Tab key={tab.id} {...tab} active={activeTab === tab.id} onSelect={(id) => onSelect(id)}/>)}
+        {tabList.map(tab => <Tab key={tab.id} {...tab} active={activeTab === tab.path} onSelect={(id) => onSelect(id)}/>)}
     </ul>
 );
 

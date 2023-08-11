@@ -60,8 +60,8 @@ export const fetchProduct = (keyword) => (dispatch, getState) => {
             const msrp = variant ? getMSRP(variant.product) : getMSRP(product);
             const customerPrice = user.loggedIn
                 ? (variant
-                        ? getPrices({product: variant.product, priceCodes: customer.pricing})
-                        : getPrices({product, priceCodes: customer.pricing})
+                        ? getPrices(variant.product, customer.pricing)
+                        : getPrices(product, customer.pricing)
                 )
                 : [...msrp];
             const salesUM = variant ? getSalesUM(variant.product) : getSalesUM(product);
@@ -98,10 +98,7 @@ export const fetchProduct = (keyword) => (dispatch, getState) => {
 export const setCurrentVariant = (variant, colorCode) => (dispatch, getState) => {
     const {user, customer} = getState();
     const msrp = getMSRP(variant.product);
-    const customerPrice = user.loggedIn ? getPrices({
-        product: variant.product,
-        priceCodes: customer.pricing
-    }) : [...msrp];
+    const customerPrice = user.loggedIn ? getPrices(variant.product, customer.pricing) : [...msrp];
     const salesUM = getSalesUM(variant.product);
     const cartItem = defaultCartItem(variant.product, colorCode);
     if (!!customerPrice.length) {

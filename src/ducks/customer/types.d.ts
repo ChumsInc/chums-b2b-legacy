@@ -7,19 +7,7 @@ import {
     ShipToCustomer
 } from "b2b-types";
 import {EmptyObject, Selectable} from "../../_types";
-
-export interface CustomerState {
-    company: string;
-    key:CustomerKey|null;
-    account: (BillToCustomer & Editable) | null;
-    contacts: CustomerContact[];
-    pricing: CustomerPriceRecord[];
-    shipToAddresses: (ShipToCustomer & Editable)[];
-    paymentCards: CustomerPaymentCard[];
-    loading: boolean;
-    loaded: boolean;
-    users: (CustomerUser & Selectable & Editable)[];
-}
+import {CustomerPermissions} from "@/ducks/user/types";
 
 export interface FetchCustomerResponse {
     contacts: CustomerContact[];
@@ -29,5 +17,5 @@ export interface FetchCustomerResponse {
     users: CustomerUser[];
     paymentCards: CustomerPaymentCard[];
     promoCodes: PromoCode[];
-    permissions: UserCustomerAccess;
+    permissions: CustomerPermissions|null;
 }

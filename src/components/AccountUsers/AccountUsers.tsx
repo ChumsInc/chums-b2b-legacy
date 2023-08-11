@@ -8,6 +8,8 @@ import EditAccountUserForm from "./EditAccountUserForm";
 import {selectIsEmployee, selectIsRep} from "../../ducks/user/selectors";
 import {useAppDispatch} from "../../app/configureStore";
 import {CustomerUser, Editable} from "b2b-types";
+import LinearProgress from "@mui/material/LinearProgress";
+import Box from "@mui/material/Box";
 
 const newUser: CustomerUser = {id: 0, name: '', email: '', accountType: 4};
 
@@ -54,14 +56,16 @@ const AccountUsers = () => {
     }
 
     return (
-        <div>
-            {loading && <ProgressBar striped/>}
+        <Box sx={{mt: '2'}}>
             <div className="row">
                 <div className="col-sm-6">
+                    <div>
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={reloadHandler}>
+                            Reload
+                        </button>
+                    </div>
+                    {loading && <LinearProgress variant={"indeterminate"} sx={{my: 1}}/>}
                     <AccountUserTable users={users} onSelectUser={selectUserHandler} currentUser={user?.id}/>
-                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={reloadHandler}>
-                        Reload
-                    </button>
                 </div>
                 <div className="col-sm-6">
                     <EditAccountUserForm user={user} onChangeUser={changeUserHandler}
@@ -72,7 +76,7 @@ const AccountUsers = () => {
                                          onDeleteUser={deleteHandler}/>
                 </div>
             </div>
-        </div>
+        </Box>
     )
 }
 

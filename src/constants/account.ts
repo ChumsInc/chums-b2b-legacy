@@ -5,13 +5,16 @@ import {
     PaymentType,
     PaymentTypeList,
     PriceLevelsDescriptionList,
-    ShippingMethodList,
+    ShippingMethodList, TermsCode,
     TermsCodeList
 } from "../types/customer";
 
 
-export const filteredTermsCode = (code:string) => {
-    return TERMS_CODES[code] || {};
+export const filteredTermsCode = (code?:string|null):TermsCode|null => {
+    if (!code) {
+        return null;
+    }
+    return TERMS_CODES[code] ?? null;
 };
 
 export const TERMS_CODES:TermsCodeList = {

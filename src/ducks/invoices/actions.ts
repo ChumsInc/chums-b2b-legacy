@@ -12,8 +12,7 @@ import {fetchInvoices} from "../../api/invoices";
 import {selectInvoicesList, selectInvoicesLoading} from "./selectors";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {CustomerKey, InvoiceHeader} from "b2b-types";
-import {EmptyObject} from "../../_types";
-import {isCustomer} from "../customer/utils";
+import {selectLoggedIn} from "@/ducks/user/selectors";
 
 export const setInvoicesSort = createAction('invoices/setSort');
 export const setInvoicesPage = createAction('invoices/setPage');
@@ -24,19 +23,19 @@ export const setInvoicesRowsPerPage = createAction('invoices/setRowsPerPage', (r
     }
 });
 
-export const setCurrentInvoice = ({InvoiceNo, InvoiceType}:{InvoiceNo: string; InvoiceType: string}) =>
-    (dispatch:AppDispatch, getState: () => RootState) => {
-    const state = getState();
-    const list = selectInvoicesList(state);
-    const [invoice = {
-        InvoiceNo,
-        InvoiceType
-    }] = list.filter(inv => inv.InvoiceNo === InvoiceNo && inv.InvoiceType === InvoiceType);
-    dispatch({type: SELECT_INVOICE, invoice});
-    dispatch(loadInvoice({InvoiceNo, InvoiceType}));
-}
+export const setCurrentInvoice = ({InvoiceNo, InvoiceType}: { InvoiceNo: string; InvoiceType: string }) =>
+    (dispatch: AppDispatch, getState: () => RootState) => {
+        const state = getState();
+        const list = selectInvoicesList(state);
+        const [invoice = {
+            InvoiceNo,
+            InvoiceType
+        }] = list.filter(inv => inv.InvoiceNo === InvoiceNo && inv.InvoiceType === InvoiceType);
+        dispatch({type: SELECT_INVOICE, invoice});
+        dispatch(loadInvoice({InvoiceNo, InvoiceType}));
+    }
 
-export const loadInvoice = ({InvoiceNo, InvoiceType}:{InvoiceNo: string; InvoiceType: string}) => (dispatch:AppDispatch, getState: () => RootState) => {
+export const loadInvoice = ({InvoiceNo, InvoiceType}: { InvoiceNo: string; InvoiceType: string }) => (dispatch: AppDispatch, getState: () => RootState) => {
     const Company = 'chums';
     if (!InvoiceNo) {
         return;
@@ -65,14 +64,14 @@ export const loadInvoice = ({InvoiceNo, InvoiceType}:{InvoiceNo: string; Invoice
         });
 }
 
-export const loadInvoices = createAsyncThunk<InvoiceHeader[], CustomerKey|EmptyObject>(
+export const loadInvoices = createAsyncThunk<InvoiceHeader[], CustomerKey | null>(
     'invoices/loadInvoices',
     async (arg) => {
         return await fetchInvoices(arg as CustomerKey);
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
-            return !selectInvoicesLoading(state) && isCustomer(arg)  && isValidCustomer(arg);
+            return selectLoggedIn(state) && !!arg && !selectInvoicesLoading(state) && isValidCustomer(arg);
         }
     }
 )

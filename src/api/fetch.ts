@@ -25,12 +25,14 @@ async function handleJSONResponse<T = any>(res:Response):Promise<T> {
     return json || {};
 }
 
-export async function fetchJSON<T = any>(url:string, options:RequestInit = {}):Promise<T> {
+export async function fetchJSON<T = any>(url:string, options:RequestInit = {}, skipCredentials:boolean = false):Promise<T> {
     try {
         options.headers = new Headers(options?.headers);
-        const credentials = getCredentials();
-        if (credentials) {
-            options.headers.append('Authorization', credentials)
+        if (!skipCredentials) {
+            const credentials = getCredentials();
+            if (credentials) {
+                options.headers.append('Authorization', credentials)
+            }
         }
         if (!!options?.method && ['POST', 'PUT'].includes(options.method.toUpperCase())) {
             options.headers.append('Accept', 'application/json')

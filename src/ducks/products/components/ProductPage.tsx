@@ -4,7 +4,7 @@ import {fetchProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from
 import classNames from "classnames";
 import VariantSelector from "./VariantSelector";
 import SwatchSet from "./SwatchSet";
-import AddToCartForm from "../../../components/AddToCartForm";
+import AddToCartForm from "../../carts/components/AddToCartForm";
 import Alert from "../../../common-components/Alert";
 import CartItemDetail from "../../../components/CartItemDetail";
 import {noop} from '../../../utils/general';
@@ -31,12 +31,11 @@ import ProductPageInfo from "./ProductPageInfo";
 import {isCartProduct, isProduct} from "../utils";
 import {useLocation} from "react-router";
 import {isSellAsVariants} from "b2b-types";
-import {isCustomer} from "../../customer/utils";
 import {isBillToCustomer} from "../../../utils/typeguards";
 import ProductPreSeasonAlert from "./ProductPreSeasonAlert";
 
 
-const ProductPage = ({keyword}:{
+const ProductPage = ({keyword}: {
     keyword: string;
 }) => {
     const dispatch = useAppDispatch();
@@ -69,15 +68,15 @@ const ProductPage = ({keyword}:{
         }
     }, [location?.state?.variant]);
 
-    const onSelectColor = (colorCode:string) => {
+    const onSelectColor = (colorCode: string) => {
         dispatch(setColorCode(colorCode));
     }
 
-    const onChangeQuantity = (quantity:number) => {
+    const onChangeQuantity = (quantity: number) => {
         dispatch(setCartItemQuantity(quantity));
     }
 
-    const hasCustomer = isCustomer(customerAccount);
+    const hasCustomer = !!customerAccount;
 
     return (
         <div className={classNames('product-page', {loading})}>
@@ -116,18 +115,18 @@ const ProductPage = ({keyword}:{
                             <Alert type="warning" message="Please log in to see prices and availability"
                                    title=""/>
                         )}
-                        <ProductPreSeasonAlert />
+                        <ProductPreSeasonAlert/>
                         <MissingTaxScheduleAlert/>
                         <RequireLogin>
                             <>
                                 {isProduct(selectedProduct) && isCartProduct(cartItem)
                                     && isBillToCustomer(customerAccount) && selectedProduct.availableForSale && (
-                                    <AddToCartForm quantity={cartItem?.quantity ?? 1} itemCode={cartItem.itemCode}
-                                                   setGlobalCart
-                                                   season_code={season_code} season_available={season_available}
-                                                   disabled={!customerAccount?.TaxSchedule}
-                                                   onChangeQuantity={onChangeQuantity} onDone={noop} comment="" />
-                                )}
+                                        <AddToCartForm quantity={cartItem?.quantity ?? 1} itemCode={cartItem.itemCode}
+                                                       setGlobalCart
+                                                       season_code={season_code} season_available={season_available}
+                                                       disabled={!customerAccount?.TaxSchedule}
+                                                       onChangeQuantity={onChangeQuantity} onDone={noop} comment=""/>
+                                    )}
 
                                 <CartItemDetail cartItem={cartItem} msrp={[selectedProduct?.msrp]}/>
                             </>

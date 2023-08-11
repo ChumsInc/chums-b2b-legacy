@@ -157,9 +157,10 @@ a {
 }
 
 .main-container {
-  margin-top: 3rem;
+  margin-top: 8rem;
   @include media-breakpoint-down(md) {
     max-width: unset;
+    margin-top: 1rem;
   }
 }
 

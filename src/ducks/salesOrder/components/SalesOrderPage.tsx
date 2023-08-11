@@ -1,0 +1,93 @@
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {redirect} from 'react-router-dom';
+import {loadSalesOrder} from '../../../actions/salesOrder';
+import {setCurrentCart} from '../../cart/actions';
+import ProgressBar from "@/components/ProgressBar";
+import {NEW_CART} from "@/constants/orders";
+import OrderHeader from "@/components/OrderHeader";
+import OrderDetail from "@/components/OrderDetail";
+import SendEmailModal from "@/components/SendEmailModal";
+import CheckoutProgress from "@/components/CheckoutProgress";
+import Alert from "@mui/material/Alert";
+import DocumentTitle from "@/components/DocumentTitle";
+import {useMatch, useParams} from "react-router";
+import {selectCustomerAccount, selectCustomerLoading} from "../../customer/selectors";
+import {
+    selectAttempts,
+    selectIsCart, selectIsSendingEmail,
+    selectProcessing,
+    selectSalesOrderHeader,
+    selectSalesOrderNo,
+    selectSendingEmailStatus
+} from "../selectors";
+import {selectCartNo} from "../../cart/selectors";
+import {useAppDispatch} from "@/app/configureStore";
+
+const SalesOrderPage = () => {
+    const dispatch = useAppDispatch();
+    const match = useMatch('/account/:customerSlug/:orderType/:salesOrderNo');
+    const customer = useSelector(selectCustomerAccount);
+    const salesOrderNo = useSelector(selectSalesOrderNo);
+    const salesOrderHeader = useSelector(selectSalesOrderHeader);
+    const customerLoading = useSelector(selectCustomerLoading);
+    const salesOrderProcessing = useSelector(selectProcessing)
+    const isCart = useSelector(selectIsCart);
+    const sendEmailStatus = useSelector(selectSendingEmailStatus);
+    const sendingEmail = useSelector(selectIsSendingEmail);
+    const attempts = useSelector(selectAttempts);
+    const cartNo = useSelector(selectCartNo);
+
+    const processing = customerLoading || salesOrderProcessing;
+    const {OrderStatus, OrderType} = salesOrderHeader ?? {};
+    const isCurrentCart = cartNo === salesOrderNo;
+
+    useEffect(() => {
+        console.debug(customer, match);
+        if (customer && !!customer.CustomerNo) {
+            if (!salesOrderProcessing && !!match?.params?.salesOrderNo && match?.params?.salesOrderNo !== salesOrderNo && attempts < 4) {
+                dispatch(loadSalesOrder(match.params.salesOrderNo))
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (customer && !!customer.CustomerNo) {
+            if (match?.params?.salesOrderNo === NEW_CART && !isCurrentCart) {
+                dispatch(setCurrentCart(match.params.salesOrderNo));
+                return;
+            }
+            if (!!match?.params?.salesOrderNo && match.params.salesOrderNo !== NEW_CART && match.params.salesOrderNo !== salesOrderNo && !processing && attempts < 4) {
+                dispatch(loadSalesOrder(match.params.salesOrderNo));
+            }
+        }
+    }, [cartNo, match?.params?.salesOrderNo, salesOrderNo, isCurrentCart, processing])
+
+
+    if (!customer && !customerLoading) {
+        redirect('/profile');
+        return;
+    }
+
+    const documentTitle = `${isCart ? 'Cart' : 'Order'} Info #${match?.params?.salesOrderNo}`;
+    return (
+        <div>
+            <DocumentTitle documentTitle={documentTitle}/>
+            <div className="sales-order-page">
+                <h2>{isCart ? 'Cart' : 'Sales Order'} #{salesOrderNo}</h2>
+                {OrderStatus === 'X' && (
+                    <Alert severity="error" title="Note:">
+                        This order has been cancelled. Please contact Customer Service if you have any questions.
+                    </Alert>
+                )}
+                {processing && <ProgressBar striped={true} label="Loading" className="mb-3"/>}
+                <OrderHeader/>
+                {isCart && <CheckoutProgress/>}
+                {match?.params?.salesOrderNo === salesOrderNo && <OrderDetail/>}
+                {(sendingEmail || sendEmailStatus?.messageId) && <SendEmailModal/>}
+            </div>
+        </div>
+    )
+}
+
+export default SalesOrderPage;

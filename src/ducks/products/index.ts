@@ -18,6 +18,7 @@ import {createReducer} from "@reduxjs/toolkit";
 import {ProductsState} from "./types";
 import {PreloadedState} from "../../_types";
 import {isCartProduct} from "./utils";
+import {loadCustomer} from "@/ducks/customer/actions";
 
 
 export const initialProductsState = (preload: PreloadedState = window?.__PRELOADED_STATE__ ?? {}): ProductsState => ({
@@ -36,6 +37,24 @@ export const initialProductsState = (preload: PreloadedState = window?.__PRELOAD
 
 const productsReducer = createReducer(initialProductsState, (builder) => {
     builder
+        .addCase(loadCustomer.fulfilled, (state, action) => {
+            if (isCartProduct(state.cartItem)) {
+                state.cartItem = {
+                    ...state.cartItem,
+                    priceCodeRecord: priceRecord({
+                        pricing: action.payload?.pricing ?? [],
+                        itemCode: state.cartItem.itemCode,
+                        priceCode: state.cartItem.priceCode,
+                    }),
+                    priceLevel: action.payload?.customer?.PriceLevel ?? '',
+                    price: getItemPrice({
+                        item: state.cartItem,
+                        priceField: PRICE_FIELDS.standard,
+                        priceCodes: action.payload?.pricing ?? [],
+                    })
+                }
+            }
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_KEYWORDS:

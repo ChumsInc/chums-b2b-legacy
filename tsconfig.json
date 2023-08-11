@@ -18,11 +18,23 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": false,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "declaration": false,
         "noImplicitAny": true,
-        "sourceMap": false,
-        "outDir": "dist"
+        "sourceMap": true,
+        "outDir": "dist",
+        "baseUrl": "./src",
+        "paths": {
+            "@/api/*": ["api/*"],
+            "@/app/*": ["app/*"],
+            "@/components/*": ["components/*"],
+            "@/common-components/*": ["common-components/*"],
+            "@/constants/*": ["constants/*"],
+            "@/ducks/*": ["ducks/*"],
+            "@/hooks/*": ["hooks/*"],
+            "@/types/*": ["types/*"],
+            "@/utils/*": ["utils/*"]
+        }
     },
     "include": [
         "src/**/*"

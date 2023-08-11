@@ -57,8 +57,8 @@ const mapStateToProps = ({customer, user, cart, carts, openOrders, salesOrder}) 
     const {shipToAddresses, account, paymentCards} = customer;
     const {DefaultPaymentType, TermsCode} = account;
     const isCart = orderType === ORDER_TYPE.cart;
-    const isCurrentCart = cart.cartNo === header.SalesOrderNo;
-    const changed = header.changed || detail.filter(line => line.changed || line.newLine).length > 0;
+    const isCurrentCart = cart.cartNo === header?.SalesOrderNo;
+    const changed = header?.changed || detail.filter(line => line.changed || line.newLine).length > 0;
     return {
         header,
         orderType,
@@ -352,7 +352,7 @@ class OrderHeader extends Component {
             NonTaxableAmt,
             SalesTaxAmt,
             TaxSchedule,
-        } = header;
+        } = header ?? {};
         const isOpen = orderType === ORDER_TYPE.open;
         const isPast = orderType === ORDER_TYPE.past;
         const isNewCart = isCart && SalesOrderNo === NEW_CART;
@@ -434,7 +434,7 @@ class OrderHeader extends Component {
                         )}
                         {!isCart && (
                             <FormGroup colWidth={8} label="Promo Code">
-                                <OrderPromoCode code={header.UDF_PROMO_DEAL} disabled={true}/>
+                                <OrderPromoCode code={header?.UDF_PROMO_DEAL} disabled={true}/>
                             </FormGroup>
                         )}
                     </div>

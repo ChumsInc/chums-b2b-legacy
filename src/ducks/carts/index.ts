@@ -6,33 +6,47 @@ import {
     FETCH_SUCCESS,
     PROMOTE_CART,
     SET_LOGGED_IN,
-    SET_USER_ACCOUNT,
     UPDATE_CART
-} from "../../constants/actions";
-import {isCartOrder} from "../../utils/orders";
+} from "@/constants/actions";
+import {isCartOrder} from "@/utils/orders";
 import {createReducer} from "@reduxjs/toolkit";
-import {salesOrderSorter} from "../salesOrder/utils";
-import {CartsState} from "./types";
+import {defaultSalesOrderSort, salesOrderSorter} from "../salesOrder/utils";
 import {SalesOrderHeader} from "b2b-types";
+import {setUserAccount} from "@/ducks/user/actions";
+import {customerSlug} from "@/utils/customer";
+
+export interface CartsState {
+    customerKey: string | null;
+    list: SalesOrderHeader[];
+    loading: boolean;
+    loaded: boolean;
+}
 
 export const initialCartsState = (): CartsState => ({
+    customerKey: null,
     list: [],
     loading: false,
+    loaded: false,
 })
+
 
 const cartsReducer = createReducer(initialCartsState, builder => {
     builder
+        .addCase(setUserAccount.pending, (state, action) => {
+            if (!action.meta.arg?.isRepAccount && state.customerKey !== customerSlug(action.meta.arg)) {
+                state.list = [];
+                state.loaded = false;
+                state.customerKey = customerSlug(action.meta.arg);
+            }
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
-                case SET_USER_ACCOUNT:
-                    state.list = [];
-                    return;
                 case FETCH_ORDERS:
                     state.loading = action.status === FETCH_INIT;
                     if (action.status === FETCH_SUCCESS) {
                         state.list = (action.orders as SalesOrderHeader[])
                             .filter(so => isCartOrder(so))
-                            .sort(salesOrderSorter);
+                            .sort(salesOrderSorter((defaultSalesOrderSort)));
                     }
                     return;
                 case FETCH_SALES_ORDER:
@@ -41,15 +55,16 @@ const cartsReducer = createReducer(initialCartsState, builder => {
                             ? [
                                 ...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo),
                                 action.salesOrder,
-                            ].sort(salesOrderSorter)
-                            : [...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo)].sort(salesOrderSorter);
+                            ].sort(salesOrderSorter((defaultSalesOrderSort)))
+                            : [...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo)]
+                                .sort(salesOrderSorter((defaultSalesOrderSort)));
                     }
                     return;
                 case PROMOTE_CART:
                     if (action.status === FETCH_SUCCESS) {
                         state.list = [
                             ...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo)
-                        ].sort(salesOrderSorter);
+                        ].sort(salesOrderSorter((defaultSalesOrderSort)));
                     }
                     return;
                 case UPDATE_CART:
@@ -58,11 +73,11 @@ const cartsReducer = createReducer(initialCartsState, builder => {
                             ...state.list.filter(so => so.SalesOrderNo !== action.props.SalesOrderNo),
                             ...state.list.filter(so => so.SalesOrderNo === action.props.SalesOrderNo)
                                 .map(so => ({...so, ...action.props}))
-                        ].sort(salesOrderSorter);
+                        ].sort(salesOrderSorter((defaultSalesOrderSort)));
                     }
                     return;
                 case CREATE_NEW_CART:
-                    state.list = [...state.list, action.cart].sort(salesOrderSorter);
+                    state.list = [...state.list, action.cart].sort(salesOrderSorter((defaultSalesOrderSort)));
                     return;
                 case SET_LOGGED_IN:
                     if (action.loggedIn === false) {

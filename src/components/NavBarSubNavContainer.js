@@ -5,7 +5,7 @@ import ProductSubNav from "./ProductSubNav";
 import {SUB_NAV_TYPES} from "../constants/app";
 import {setSubNavBar} from "../ducks/app/actions";
 import AccountSubNav from "./AccountSubNav";
-import OrdersSubNav from "./OrdersSubNav";
+import OrdersSubNav from "@/ducks/menu/components/OrdersSubNav";
 import ResourcesSubNav from "./ResourcesSubNav";
 
 class NavBarSubNavContainer extends Component {

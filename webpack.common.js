@@ -1,5 +1,6 @@
 // const webpack = require('webpack');
 const path = require('path');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 module.exports = {
     module: {
@@ -33,6 +34,11 @@ module.exports = {
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],
+        plugins: [
+            new TsconfigPathsPlugin({
+                extensions: ['.tsx', '.ts', '.js'],
+            }),
+        ],
     },
     optimization: {
         splitChunks: {

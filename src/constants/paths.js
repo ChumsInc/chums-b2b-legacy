@@ -10,7 +10,9 @@ For Example - the following url will compile as below:
     TO: '/sage/b2b/billto.php?co=CHI&account=01-TEST'
  */
 export const PATH_CATEGORY = '/products/:category';
-export const PATH_CUSTOMER_ACCOUNT = '/account/:Company/:ARDivisionNo-:CustomerNo/:ShipToCode?';
+export const PATH_CUSTOMER_ACCOUNT = '/account/:customerSlug';
+export const PATH_CUSTOMER_DELIVERY_LIST = '/account/:customerSlug/delivery';
+export const PATH_CUSTOMER_DELIVERY = '/account/:customerSlug/delivery/:code';
 export const PATH_HOME = '/home';
 export const PATH_LOGIN = '/login';
 export const PATH_LOGOUT = '/logout';
@@ -26,18 +28,19 @@ export const PATH_PRODUCT_HOME_BC = '/products/active-formula-sunscreen';
 export const PATH_PRODUCTS = '/products';
 export const PATH_PROFILE = '/profile';
 export const PATH_PROFILE_ACCOUNT = '/profile/:id';
-export const PATH_SALES_ORDERS = '/orders/:orderType?';
+export const PATH_SALES_ORDERS = '/orders/:orderType';
 export const PATH_CART_CHECKOUT = '/orders/cart/:Company/:SalesOrderNo';
-export const PATH_SALES_ORDER = '/orders/:orderType/:Company/:SalesOrderNo';
+export const PATH_SALES_ORDER = './:orderType/:salesOrderNo';
 export const PATH_SALES_ORDER_OPEN = '/orders/open/:Company/:SalesOrderNo';
 export const PATH_SALES_ORDER_PAST = '/orders/past/:Company/:SalesOrderNo';
 export const PATH_SALES_ORDER_MASTER = '/orders/master/:Company/:SalesOrderNo';
 export const PATH_SALES_ORDER_INVOICES = '/orders/invoices/:Company/:SalesOrderNo';
-export const PATH_INVOICE = '/invoices/:Company/:InvoiceType/:InvoiceNo';
+export const PATH_INVOICE = '/invoices/:InvoiceType/:InvoiceNo';
 export const PATH_SALES_ORDER_BREADCRUMB = '/orders/:orderType?/:Company?/:SalesOrderNo?';
 export const PATH_INVOICE_BREADCRUMB = '/orders/:orderType?/:Company?/:SalesOrderNo?';
 export const PATH_SIGNUP = '/signup';
 export const PATH_SET_PASSWORD = '/set-password';
+
 
 
 

@@ -17,9 +17,9 @@ import {selectCurrentCustomer} from "../ducks/user/selectors";
 import {selectCartNo} from "../ducks/cart/selectors";
 import {selectCartsList} from "../ducks/carts/selectors";
 import {selectOpenOrdersList, selectOpenOrdersLoading} from "../ducks/open-orders/selectors";
-import CartsList from "./CartsList";
+import CartsList from "@/ducks/carts/components/CartsList";
 import OpenOrdersList from "./OpenOrdersList";
-import InvoicesList from "./InvoicesList";
+import InvoicesList from "@/ducks/invoices/components/InvoicesList";
 import {useParams, useRouteMatch} from "react-router";
 import {selectCustomerAccount, selectCustomerLoading} from "../ducks/customer/selectors";
 

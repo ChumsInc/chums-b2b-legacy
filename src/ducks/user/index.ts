@@ -10,40 +10,71 @@ import {
     FETCH_REP_LIST_FAILURE,
     FETCH_SUCCESS,
     FETCH_USER_CUSTOMERS,
-    FETCH_USER_PROFILE,
     FETCH_USER_SIGNUP,
     RECEIVE_REP_LIST,
     SET_LOGGED_IN,
-    SET_USER_ACCOUNT,
     UPDATE_LOGIN,
     UPDATE_SIGNUP
-} from "../../constants/actions";
-import {auth} from '../../api/IntranetAuthService';
+} from "@/constants/actions";
+import {auth} from '@/api/IntranetAuthService';
 import localStore from "../../utils/LocalStore";
-import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_RECENT_ACCOUNTS, STORE_USER_ACCOUNT} from "../../constants/stores";
-import {buildRecentAccounts, getFirstCustomer,} from "../../utils/customer";
+import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_RECENT_ACCOUNTS, STORE_USER_ACCOUNT} from "@/constants/stores";
+import {buildRecentAccounts, customerListSorter, getFirstCustomer,} from "@/utils/customer";
 import jwtDecode, {JwtPayload} from "jwt-decode";
 import {createReducer} from "@reduxjs/toolkit";
-import {loadCustomerPermissions, loadProfile, loadRepList, setLoggedIn} from "./actions";
+import {loadCustomerList, loadProfile, loadRepList, setLoggedIn, setUserAccount, signInWithGoogle} from "./actions";
 import {getPrimaryAccount, isCustomerAccess, userAccountSort, userRepListSort} from "./utils";
-import {CustomerPermissionsState, UserState} from "./types";
-import {BasicCustomer, RecentCustomer, UserCustomerAccess} from "b2b-types";
-import {setCustomerAccount} from "../customer/actions";
-import {EmptyObject} from "../../_types";
+import {UserLoginState, UserPasswordState, UserSignupState} from "./types";
+import {
+    BasicCustomer,
+    Customer,
+    Editable,
+    RecentCustomer,
+    Salesperson,
+    UserCustomerAccess,
+    UserProfile
+} from "b2b-types";
+import {loadCustomer, setCustomerAccount} from "../customer/actions";
+import {ExtendedUserProfile} from "../../_types";
 
-export const initialCustomerPermissionsState: CustomerPermissionsState = {
-    loading: false,
-    loaded: false,
-    permissions: {
-        billTo: false,
-        shipTo: [],
-    }
+
+export interface UserState {
+    token: string | null;
+    tokenExpires: number;
+    user: (UserProfile & Editable) | null;
+    profile: (ExtendedUserProfile & Editable) | null;
+    picture: string | null;
+    access: {
+        list: UserCustomerAccess[],
+        selected: UserCustomerAccess | null,
+        loading: boolean,
+        loaded: boolean,
+    };
+    accounts: UserCustomerAccess[];
+    roles: string[];
+    loggedIn: boolean;
+    userAccount: UserCustomerAccess | null;
+    currentCustomer: BasicCustomer | null;
+    customerList: {
+        list: Customer[];
+        loading: boolean;
+        loaded: boolean;
+        filter: string;
+        repFilter: string;
+    };
+    repList: {
+        list: Salesperson[];
+        loading: boolean;
+        loaded: boolean;
+    };
+    signUp: UserSignupState;
+    recentAccounts: RecentCustomer[];
+    authType: string;
+    passwordChange: UserPasswordState;
+    login: UserLoginState;
+    loading: boolean;
 }
 
-/**
- *
- * @return {UserState}
- */
 export const initialUserState = (): UserState => {
     const existingToken = auth.getToken();
     let existingTokenExpires = 0;
@@ -55,11 +86,11 @@ export const initialUserState = (): UserState => {
     const profile = isLoggedIn ? (auth.getProfile() ?? null) : null
     const accounts = profile?.chums?.user?.accounts ?? [];
     const customer = isLoggedIn
-        ? localStore.getItem<BasicCustomer|null>(STORE_CUSTOMER, getFirstCustomer(accounts) ?? null)
+        ? localStore.getItem<BasicCustomer | null>(STORE_CUSTOMER, getFirstCustomer(accounts) ?? null)
         : null;
-    const userAccount = isLoggedIn
-        ? localStore.getItem<UserCustomerAccess|EmptyObject>(STORE_USER_ACCOUNT, {})
-        : {};
+    const userAccount: UserCustomerAccess | null = isLoggedIn
+        ? localStore.getItem<UserCustomerAccess | null>(STORE_USER_ACCOUNT, null)
+        : null;
     const recentAccounts = isLoggedIn
         ? localStore.getItem<RecentCustomer[]>(STORE_RECENT_ACCOUNTS, [])
         : [];
@@ -68,12 +99,20 @@ export const initialUserState = (): UserState => {
     return {
         token: existingToken ?? null,
         tokenExpires: existingTokenExpires,
+        user: profile?.chums?.user ?? null,
         profile: profile?.chums?.user ?? null,
+        picture: profile?.imageUrl ?? null,
         accounts: profile?.chums?.user?.accounts ?? [],
         roles: profile?.chums?.user?.roles ?? [],
         loggedIn: isLoggedIn,
         userAccount: userAccount,
         currentCustomer: customer ?? null,
+        access: {
+            list: profile?.chums?.user?.accounts ?? [],
+            selected: userAccount,
+            loading: false,
+            loaded: !!profile?.chums?.user?.accounts,
+        },
         customerList: {
             list: [],
             loading: false,
@@ -108,14 +147,6 @@ export const initialUserState = (): UserState => {
             loading: false,
         },
         loading: false,
-        customerPermissions: {
-            loading: false,
-            loaded: false,
-            permissions: {
-                billTo: false,
-                shipTo: [],
-            }
-        }
     }
 }
 
@@ -125,6 +156,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             if (!state.loggedIn && action.payload.loggedIn) {
                 const _initialUserState = initialUserState();
                 state.tokenExpires = _initialUserState.tokenExpires;
+                state.user = _initialUserState.user;
                 state.profile = _initialUserState.profile;
                 state.accounts = _initialUserState.accounts;
                 state.roles = _initialUserState.roles;
@@ -138,10 +170,13 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 const _initialUserState = initialUserState();
                 state.token = null;
                 state.tokenExpires = 0;
+                state.user = null;
                 state.profile = null;
                 state.accounts = [];
                 state.roles = [];
-                state.userAccount = {};
+                state.userAccount = null;
+                state.access.list = [];
+                state.access.selected = null;
                 state.currentCustomer = null;
                 state.customerList = {
                     list: [],
@@ -167,23 +202,27 @@ const userReducer = createReducer(initialUserState, (builder) => {
         })
         .addCase(loadProfile.fulfilled, (state, action) => {
             state.loading = false;
+            state.user = action.payload.user ?? null;
             if (action.payload.user) {
                 state.profile = {
                     ...action.payload.user,
                     accounts: action.payload.accounts ?? [],
-                    roles: action.payload.roles?.map(role => role.role),
+                    roles: (action.payload.roles ?? []).sort(),
                 }
             } else {
                 state.profile = null;
             }
-            state.roles = action.payload.roles?.map(role => role.role) ?? [];
+            state.roles = (action.payload.roles ?? []).sort();
             state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
+            state.access.list = (action.payload.accounts ?? []).sort(userAccountSort);
+            state.access.loaded = true;
             if (isCustomerAccess(state.userAccount) && !!state.userAccount.id) {
                 const [acct] = state.accounts.filter(acct => isCustomerAccess(state.userAccount) && acct.id === state.userAccount.id);
-                state.userAccount = acct ?? {};
+                state.userAccount = acct ?? null;
+                state.access.selected = acct ?? null;
             }
             if (!isCustomerAccess(state.userAccount) || !state.userAccount?.id && state.accounts.length > 0) {
-                state.userAccount = getPrimaryAccount(state.accounts) ?? {};
+                state.userAccount = getPrimaryAccount(state.accounts) ?? null;
             }
             state.repList.list = [...(action.payload?.reps ?? [])].sort(userRepListSort);
             state.repList.loaded = true;
@@ -208,34 +247,62 @@ const userReducer = createReducer(initialUserState, (builder) => {
             state.currentCustomer = action.payload.customer;
             state.recentAccounts = action.payload.recent;
         })
-        .addCase(loadCustomerPermissions.pending, (state) => {
-            state.customerPermissions.loading = true;
-            state.customerPermissions.loaded = false;
-            state.customerPermissions.permissions = {...initialCustomerPermissionsState.permissions};
+        .addCase(loadCustomer.fulfilled, (state, action) => {
+            if (action.payload?.customer) {
+                const {ARDivisionNo, CustomerNo, CustomerName, ShipToCode} = action.payload.customer;
+                localStore.setItem<BasicCustomer>(STORE_CUSTOMER, {
+                    ...state.currentCustomer,
+                    ARDivisionNo,
+                    CustomerNo,
+                    CustomerName,
+                    ShipToCode
+                });
+                state.currentCustomer = {ARDivisionNo, CustomerNo, CustomerName, ShipToCode};
+                state.recentAccounts = buildRecentAccounts(state.recentAccounts, {
+                    ARDivisionNo,
+                    CustomerNo,
+                    CustomerName
+                });
+            }
         })
-        .addCase(loadCustomerPermissions.fulfilled, (state, action) => {
-            state.customerPermissions.loading = false;
-            state.customerPermissions.loaded = true;
-            state.customerPermissions.permissions = action.payload ?? {...initialCustomerPermissionsState.permissions};
+        .addCase(loadCustomerList.pending, (state) => {
+            state.customerList.loading = true;
         })
-        .addCase(loadCustomerPermissions.rejected, (state) => {
-            state.customerPermissions.loading = false;
+        .addCase(loadCustomerList.fulfilled, (state, action) => {
+            state.customerList.loading = false;
+            state.customerList.loaded = true;
+            state.customerList.list = action.payload.sort(customerListSorter({field: 'CustomerNo', ascending: true}))
+        })
+        .addCase(loadCustomerList.rejected, (state, action) => {
+            state.customerList.list = []
+        })
+        .addCase(setUserAccount.pending, (state, action) => {
+            state.userAccount = action.meta.arg;
+            state.access.selected = action.meta.arg;
+            if (action.meta.arg && !action.meta.arg?.isRepAccount) {
+                const {ARDivisionNo, CustomerNo, CustomerName, ShipToCode} = action.meta.arg;
+                state.currentCustomer = {ARDivisionNo, CustomerNo, CustomerName: CustomerName ?? undefined, ShipToCode};
+            }
+
+        })
+        .addCase(signInWithGoogle.pending, (state, action) => {
+            state.loading = true;
+        })
+        .addCase(signInWithGoogle.fulfilled, (state, action) => {
+            state.loading = false;
+            state.token = action.meta.arg;
+            state.profile = action.payload.user ?? null;
+            state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
+            state.roles = (action.payload.roles ?? []).sort();
+            state.loggedIn = !!(action.payload.user?.id ?? 0);
+        })
+        .addCase(signInWithGoogle.rejected, (state) => {
+            state.loading = false;
         })
         .addDefaultCase((state, action) => {
             const _initialUserState = initialUserState();
             // console.log(action.type, JSON.parse(JSON.stringify(state)), action);
             switch (action.type) {
-                case FETCH_USER_PROFILE:
-                    state.loading = action.status === FETCH_INIT;
-                    if (action.status === FETCH_SUCCESS) {
-                        const {accounts, token, roles, ...rest} = action.user;
-                        state.token = token ?? state.token ?? null;
-                        state.profile = {...state.profile, ...rest, changed: false}
-                        state.accounts = ((accounts ?? []) as UserCustomerAccess[]).filter(acct => acct.Company === 'chums');
-                        state.loggedIn = (action.user?.id ?? 0) > 0;
-                        state.roles = roles ?? [];
-                    }
-                    return;
                 case SET_LOGGED_IN:
                     state.loggedIn = action.loggedIn === true;
                     if (!action.loggedIn) {
@@ -244,7 +311,9 @@ const userReducer = createReducer(initialUserState, (builder) => {
                         state.profile = null;
                         state.accounts = [];
                         state.roles = [];
-                        state.userAccount = {};
+                        state.userAccount = null;
+                        state.access.list = [];
+                        state.access.selected = null;
                         state.currentCustomer = null;
                         state.customerList = {
                             list: [],
@@ -290,17 +359,8 @@ const userReducer = createReducer(initialUserState, (builder) => {
                     return;
                 case CLEAR_USER_ACCOUNT:
                     localStore.removeItem(STORE_USER_ACCOUNT);
-                    state.userAccount = {};
-                    return;
-                case SET_USER_ACCOUNT:
-                    state.userAccount = action.userAccount;
-                    localStore.setItem(STORE_USER_ACCOUNT, action.userAccount);
-                    state.customerList = {..._initialUserState.customerList};
-                    if (!action.userAccount?.isRepAccount) {
-                        const {Company, ARDivisionNo, CustomerNo, CustomerName, ShipToCode} = action.userAccount;
-                        localStore.setItem<BasicCustomer>(STORE_CUSTOMER, {Company, ARDivisionNo, CustomerNo, CustomerName});
-                        state.currentCustomer = {ARDivisionNo, CustomerNo, CustomerName, ShipToCode};
-                    }
+                    state.userAccount = null;
+                    state.access.selected = null;
                     return;
                 case FETCH_CUSTOMER:
                     if (action.status === FETCH_INIT) {
@@ -320,7 +380,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
                             CustomerNo,
                             CustomerName
                         });
-                        state.customerPermissions = action.permissions ?? {..._initialUserState.customerPermissions};
                     }
                     return;
                 case FETCH_USER_CUSTOMERS:

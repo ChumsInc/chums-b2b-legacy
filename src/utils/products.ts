@@ -21,7 +21,11 @@ export const defaultVariant = (product: SellAsVariantsProduct) => {
     return variant;
 };
 
-export const getSalesUM = (product: Product): string => {
+export const getSalesUM = (product: Product|null|undefined): string => {
+    if (!product) {
+        return '';
+    }
+
     if (isSellAsColors(product)) {
         const um: string[] = [];
         product.items
@@ -88,14 +92,17 @@ export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCode
     }
 };
 
-export const getMSRP = (product: Product) => {
+export const getMSRP = (product: Product|null|undefined) => {
+    if (!product) {
+        return [];
+    }
     return getPrice({product, priceField: PRICE_FIELDS.msrp});
 };
 
-export const getPrices = ({product, priceCodes = []}: {
-    product: Product;
-    priceCodes: CustomerPriceRecord[];
-}) => {
+export const getPrices = (product:Product|null|undefined, priceCodes:CustomerPriceRecord[] = []) => {
+    if (!product) {
+        return [];
+    }
     return getPrice({product, priceField: PRICE_FIELDS.standard, priceCodes});
 };
 

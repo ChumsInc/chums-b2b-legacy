@@ -1,23 +1,11 @@
-import {fetchCustomerValidation} from "./user";
-import {BillToCustomer, CustomerKey, CustomerUser, ShipToCustomer} from "b2b-types";
-import {FetchCustomerResponse} from "../ducks/customer/types";
-import {fetchJSON} from "./fetch";
-import {
-    API_PATH_ACCOUNT_USERS,
-    API_PATH_SAVE_ADDRESS,
-    API_PATH_SAVE_SHIPTO_ADDRESS,
-    API_PATH_SET_PRIMARY_SHIPTO
-} from "../constants/paths";
-import {buildPath} from "../utils/path-utils";
-import {sageCompanyCode} from "../utils/customer";
 
-/**
- *
- * @param {string} Company
- * @param {string} ARDivisionNo
- * @param {string} CustomerNo
- * @returns {Promise<FetchCustomerResponse>}
- */
+import {BillToCustomer, CustomerKey, CustomerUser, ShipToCustomer} from "b2b-types";
+import {FetchCustomerResponse} from "@/ducks/customer/types";
+import {fetchJSON} from "./fetch";
+import {sageCompanyCode} from "@/utils/customer";
+import {CustomerPermissions} from "@/types/customer";
+
+
 export async function fetchCustomerAccount({ARDivisionNo, CustomerNo}: CustomerKey): Promise<FetchCustomerResponse> {
     try {
         const url = `/api/sales/b2b/account/chums/${encodeURIComponent(ARDivisionNo)}-${encodeURIComponent(CustomerNo)}`
@@ -37,7 +25,7 @@ export async function fetchCustomerAccount({ARDivisionNo, CustomerNo}: CustomerK
     }
 }
 
-export async function postCustomerUser(arg:CustomerUser, customer:CustomerKey):Promise<CustomerUser[]> {
+export async function postCustomerUser(arg: CustomerUser, customer: CustomerKey): Promise<CustomerUser[]> {
     try {
         const url = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo/:id'
             .replace(':Company', 'chums')
@@ -46,9 +34,9 @@ export async function postCustomerUser(arg:CustomerUser, customer:CustomerKey):P
             .replace(':id', !!arg.id ? encodeURIComponent(arg.id) : '');
         const method = !!arg.id ? 'PUT' : 'POST';
         const body = JSON.stringify(arg);
-        const response = await fetchJSON<{users: CustomerUser[] }>(url, {method, body});
+        const response = await fetchJSON<{ users: CustomerUser[] }>(url, {method, body});
         return response.users ?? [];
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postCustomerUser()", err.message);
             return Promise.reject(err);
@@ -58,16 +46,16 @@ export async function postCustomerUser(arg:CustomerUser, customer:CustomerKey):P
     }
 }
 
-export async function deleteCustomerUser(arg:CustomerUser, customer:CustomerKey):Promise<CustomerUser[]> {
+export async function deleteCustomerUser(arg: CustomerUser, customer: CustomerKey): Promise<CustomerUser[]> {
     try {
         const url = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo/:email'
             .replace(':Company', 'chums')
             .replace(':ARDivisionNo', encodeURIComponent(customer.ARDivisionNo))
             .replace(':CustomerNo', encodeURIComponent(customer.CustomerNo))
             .replace(':email', encodeURIComponent(arg.email));
-        const response = await fetchJSON<{users: CustomerUser[] }>(url, {method: 'delete'});
+        const response = await fetchJSON<{ users: CustomerUser[] }>(url, {method: 'delete'});
         return response.users ?? [];
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("deleteCustomerUser()", err.message);
             return Promise.reject(err);
@@ -77,7 +65,7 @@ export async function deleteCustomerUser(arg:CustomerUser, customer:CustomerKey)
     }
 }
 
-export async function postBillingAddress(arg:BillToCustomer):Promise<void> {
+export async function postBillingAddress(arg: BillToCustomer): Promise<void> {
     try {
         const {
             ARDivisionNo, CustomerNo, CustomerName, AddressLine1, AddressLine2, AddressLine3,
@@ -102,7 +90,7 @@ export async function postBillingAddress(arg:BillToCustomer):Promise<void> {
         });
         const url = `/sage/b2b/billto.php?${params.toString()}`;
         await fetchJSON(url, {method: 'POST', body});
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postBillingAddress()", err.message);
             return Promise.reject(err);
@@ -112,14 +100,14 @@ export async function postBillingAddress(arg:BillToCustomer):Promise<void> {
     }
 }
 
-export async function postShipToAddress(arg:ShipToCustomer):Promise<void> {
+export async function postShipToAddress(arg: ShipToCustomer): Promise<void> {
     try {
         const {
             ARDivisionNo, CustomerNo, ShipToCode, ShipToName, ShipToAddress1, ShipToAddress2 = '', ShipToAddress3 = '',
             ShipToCity, ShipToState, ShipToZipCode, ShipToCountryCode, TelephoneNo, TelephoneExt = '', EmailAddress,
             ContactCode = '', Reseller = 'N',
         } = arg;
-        const params = new URLSearchParams({co: 'CHI', account:`${ARDivisionNo}-${CustomerNo}-${ShipToCode}`});
+        const params = new URLSearchParams({co: 'CHI', account: `${ARDivisionNo}-${CustomerNo}-${ShipToCode}`});
         const url = `/sage/b2b/shipto.php?${params.toString()}`;
         const body = JSON.stringify({
             Name: ShipToName,
@@ -137,7 +125,7 @@ export async function postShipToAddress(arg:ShipToCustomer):Promise<void> {
             ContactCode,
         });
         await fetchJSON(url, {method: 'POST', body});
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postShipToAddress()", err.message);
             return Promise.reject(err);
@@ -147,18 +135,36 @@ export async function postShipToAddress(arg:ShipToCustomer):Promise<void> {
     }
 }
 
-export async function postDefaultShipToCode(arg:string, customer:CustomerKey):Promise<void> {
+export async function postDefaultShipToCode(arg: string, customer: CustomerKey): Promise<void> {
     try {
         const {ARDivisionNo, CustomerNo} = customer;
         const url = '/sage/b2b/set-primary-shipto.php?co=CHI';
-        const body = JSON.stringify({Company: 'chums', account:  `${ARDivisionNo}-${CustomerNo}:${arg}`});
+        const body = JSON.stringify({Company: 'chums', account: `${ARDivisionNo}-${CustomerNo}:${arg}`});
         await fetchJSON(url, {method: 'POST', body});
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postDefaultShipToCode()", err.message);
             return Promise.reject(err);
         }
         console.debug("postDefaultShipToCode()", err);
         return Promise.reject(new Error('Error in postDefaultShipToCode()'));
+    }
+}
+
+export async function fetchCustomerValidation({ARDivisionNo, CustomerNo}:{
+    ARDivisionNo: string;
+    CustomerNo: string;
+}):Promise<CustomerPermissions|null> {
+    try {
+        const url = `/api/user/b2b/validate/customer/chums/${encodeURIComponent(ARDivisionNo)}-${encodeURIComponent(CustomerNo)}`;
+        const response = await fetchJSON<CustomerPermissions>(url);
+        return response ?? null;
+    } catch(err) {
+        if (err instanceof Error) {
+            console.debug("fetchCustomerValidation()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("fetchCustomerValidation()", err);
+        return Promise.reject(new Error('Error in fetchCustomerValidation()'));
     }
 }

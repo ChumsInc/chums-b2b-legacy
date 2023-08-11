@@ -1,4 +1,4 @@
-import {BillToCustomer, Editable, SalesOrderHeader} from "b2b-types";
+import {BillToCustomer, Editable, SalesOrderHeader, UserRole} from "b2b-types";
 import {EmptyObject} from "../_types";
 
 export function isBillToCustomer(customer:BillToCustomer|EmptyObject|null): customer is BillToCustomer {
@@ -15,4 +15,8 @@ export function isSalesOrderHeader(header:SalesOrderHeader|null): header is Sale
 
 export function isCartHeader(header:SalesOrderHeader|null): header is (SalesOrderHeader & Editable) {
     return isSalesOrderHeader(header) && header.OrderType === 'Q';
+}
+
+export const isUserRole = (role:string|UserRole): role is UserRole => {
+    return (role as UserRole).role !== undefined;
 }

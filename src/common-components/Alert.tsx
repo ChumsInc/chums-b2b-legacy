@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from "classnames";
-import {ALERT_TYPES} from '../constants/actions';
+import {ALERT_TYPES} from '@/constants/actions';
 import Badge from "./Badge";
 import numeral from 'numeral';
-import {BootstrapBGColor} from "../types/colors";
+import {BootstrapBGColor} from "@/types/colors";
 
 
 const AlertDismisser = ({onDismiss}: {
