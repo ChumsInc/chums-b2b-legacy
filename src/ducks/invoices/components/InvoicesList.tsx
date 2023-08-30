@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "../../user/selectors";
-import {selectCurrentInvoice, selectCurrentInvoiceNo, selectInvoicesList, selectInvoicesLoading} from "../selectors";
+import {selectCurrentInvoiceNo, selectInvoicesList, selectInvoicesLoaded, selectInvoicesLoading} from "../selectors";
 import {loadInvoices} from "../actions";
 import {InvoiceLink} from "@/ducks/invoices/components/InvoiceLink";
 import {DateString} from "@/components/DateString";
@@ -17,6 +17,9 @@ import OrderFilter from "@/components/OrderFilter";
 import SortableTable from "@/common-components/SortableTable";
 import TablePagination from "@mui/material/TablePagination";
 import {invoicesSorter} from "@/ducks/invoices/utils";
+import localStore from "@/utils/LocalStore";
+import {STORE_INVOICES_ROWS_PER_PAGE} from "@/constants/stores";
+import {customerSlug} from "@/utils/customer";
 
 
 const invoiceFields: SortableTableField<InvoiceHeader>[] = [
@@ -30,7 +33,7 @@ const invoiceFields: SortableTableField<InvoiceHeader>[] = [
     },
     {
         field: 'SalesOrderNo', title: 'Order #',
-        render: (so) => <OrderLink salesOrderNo={so.SalesOrderNo} orderType="past"/>,
+        render: (row) => <OrderLink salesOrderNo={row.SalesOrderNo} orderType="past"/>,
         sortable: true
     },
     {field: 'CustomerPONo', title: 'PO #', sortable: true},
@@ -65,12 +68,20 @@ const InvoicesList = () => {
     const list = useSelector(selectInvoicesList);
     const invoiceNo = useSelector(selectCurrentInvoiceNo);
     const loading = useSelector(selectInvoicesLoading);
+    const loaded = useSelector(selectInvoicesLoaded);
     const currentCustomer = useSelector(selectCurrentCustomer);
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(10);
+    const [rowsPerPage, setRowsPerPage] = useState(localStore.getItem<number>(STORE_INVOICES_ROWS_PER_PAGE, 10) ?? 10);
     const [sort, setSort] = useState<SortProps<InvoiceHeader>>({field: 'InvoiceDate', ascending: false});
     const [search, setSearch] = useState('');
     const [data, setData] = useState<InvoiceHeader[]>([]);
+
+    useEffect(() => {
+        if (!loading && !loaded && !!currentCustomer) {
+            dispatch(loadInvoices(currentCustomer))
+            setPage(0);
+        }
+    }, [currentCustomer, loading, loaded]);
 
     useEffect(() => {
         const data = list
@@ -83,17 +94,26 @@ const InvoicesList = () => {
         setData(data);
     }, [list, search, sort]);
 
+    const rowsPerPageChangeHandler = (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const rowsPerPage = +(ev.target.value ?? 10);
+        localStore.setItem(STORE_INVOICES_ROWS_PER_PAGE, rowsPerPage);
+        setRowsPerPage(rowsPerPage);
+    }
+
     const reloadHandler = () => {
         if (!currentCustomer) {
             return;
         }
         dispatch(loadInvoices(currentCustomer));
+        setPage(0);
     }
 
     if (!currentCustomer || !currentCustomer.CustomerNo) {
         return null;
     }
+
     const sortChangeHandler = (sort: SortProps) => setSort(sort);
+
     return (
         <div>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
@@ -109,9 +129,9 @@ const InvoicesList = () => {
                            selected={invoiceNo}
                            fields={invoiceFields} currentSort={sort} onChangeSort={sortChangeHandler}/>
             <TablePagination component="div"
-                             count={data.length} page={page} rowsPerPage={rowsPerPage}
-                             onPageChange={(ev, page) => setPage(page)} showFirstButton
-                             showLastButton/>
+                             count={data.length} page={page} onPageChange={(ev, page) => setPage(page)}
+                             rowsPerPage={rowsPerPage} onRowsPerPageChange={rowsPerPageChangeHandler}
+                             showFirstButton showLastButton/>
         </div>
     );
 }

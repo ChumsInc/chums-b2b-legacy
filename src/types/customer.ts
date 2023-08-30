@@ -17,6 +17,7 @@ export interface PaymentType {
     disabled: boolean;
     requirePO: boolean;
     prepaid: boolean;
+    customerValue?: string|null;
 }
 
 export interface PaymentTypeList {
@@ -42,4 +43,9 @@ export interface PriceLevelsDescriptionList {
 export interface CustomerPermissions {
     billTo: boolean;
     shipTo: string[];
+}
+
+export interface CustomerShippingAccount {
+    enabled: boolean;
+    value: string;
 }

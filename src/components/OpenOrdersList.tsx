@@ -1,7 +1,7 @@
 import React from 'react';
 import {useAppDispatch} from "../app/configureStore";
 import {useSelector} from "react-redux";
-import {selectOpenOrdersList, selectOpenOrdersLoading} from "../ducks/open-orders/selectors";
+import {selectOpenOrdersList, selectOpenOrdersLoaded, selectOpenOrdersLoading} from "../ducks/open-orders/selectors";
 import {selectCurrentCustomer} from "../ducks/user/selectors";
 import OrdersList from "./OrdersList";
 import {fetchOpenOrders} from "../actions/salesOrder";
@@ -11,6 +11,9 @@ import numeral from "numeral";
 import {SortableTableField} from "@/common-components/DataTable";
 import Decimal from "decimal.js";
 import {SalesOrderHeader} from "b2b-types";
+import {loadOrders} from "@/ducks/open-orders/actions";
+import Alert from "@mui/material/Alert";
+import {customerSlug} from "@/utils/customer";
 
 
 const openOrderFields: SortableTableField<SalesOrderHeader>[] = [
@@ -36,13 +39,14 @@ const OpenOrdersList = () => {
     const dispatch = useAppDispatch();
     const list = useSelector(selectOpenOrdersList);
     const loading = useSelector(selectOpenOrdersLoading);
+    const loaded = useSelector(selectOpenOrdersLoaded);
     const currentCustomer = useSelector(selectCurrentCustomer);
 
     const reloadHandler = () => {
         if (!currentCustomer) {
             return;
         }
-        dispatch(fetchOpenOrders(currentCustomer));
+        dispatch(loadOrders(currentCustomer));
     }
 
     if (!currentCustomer || !currentCustomer.CustomerNo) {
@@ -50,9 +54,14 @@ const OpenOrdersList = () => {
     }
 
     return (
-        <OrdersList list={list} fields={openOrderFields}
-                    loading={loading}
-                    onReload={reloadHandler}/>
+        <>
+            <OrdersList list={list} fields={openOrderFields}
+                        loading={loading}
+                        onReload={reloadHandler}/>
+            {list.length === 0 && loaded && (
+                <Alert severity="info">There are currently no open orders.</Alert>
+            )}
+        </>
     )
 }
 

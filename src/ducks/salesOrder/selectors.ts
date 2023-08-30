@@ -6,11 +6,14 @@ import {RootState} from "../../app/configureStore";
 
 export const selectSalesOrderNo = (state: RootState) => state.salesOrder.salesOrderNo;
 export const selectProcessing = (state: RootState) => state.salesOrder.processing;
+export const selectSOLoading = (state: RootState) => state.salesOrder.loading;
 export const selectSendingEmailStatus = (state: RootState) => state.salesOrder.sendEmailStatus;
 export const selectIsSendingEmail = (state: RootState) => state.salesOrder.sendingEmail;
 export const selectAttempts = (state: RootState) => state.salesOrder.attempts;
 export const selectSalesOrderHeader = (state: RootState) => state.salesOrder.header ?? null;
 export const selectSalesOrderDetail = (state: RootState) => state.salesOrder.detail ?? [];
+export const selectSalesOrderInvoices = (state:RootState) => state.salesOrder.invoices;
+export const selectSalesOrderPayment = (state:RootState) => state.salesOrder.payment;
 
 export const selectIsCart = (state: RootState) => {
     return isSalesOrderHeader(state.salesOrder.header) && state.salesOrder.orderType === ORDER_TYPE.cart;

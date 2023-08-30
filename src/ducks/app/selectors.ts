@@ -1,6 +1,4 @@
-import {RootState} from "../../app/configureStore";
-import {PreloadedState} from "../../_types";
-import {useEffect} from "react";
+import {RootState} from "@/app/configureStore";
 
 export const selectProductMenu = (state:RootState) => state.app.productMenu;
 export const selectShowNavBar = (state:RootState) => state.app.showNavBar;

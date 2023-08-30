@@ -8,9 +8,6 @@ export interface InvoicesState {
     loading: boolean;
     loaded: boolean;
     invoiceLoading: boolean;
-    sort: SortProps<InvoiceHeader>,
-    page: number;
-    rowsPerPage: number;
 }
 
 

@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {FETCH_INIT, FETCH_KEYWORDS, FETCH_SUCCESS} from "../../constants/actions";
+import {FETCH_INIT, FETCH_KEYWORDS, FETCH_SUCCESS} from "@/constants/actions";
 import {Keyword} from "b2b-types";
-import {PreloadedState} from "../../_types";
+import {PreloadedState} from "@/types/preload";
 
 export interface KeywordsState {
     list: Keyword[],
@@ -13,7 +13,7 @@ export interface KeywordsState {
  * @param {any} preload
  * @return {KeywordsState}
  */
-export const initialKeywordsState = (preload:PreloadedState = window?.__PRELOADED_STATE__ ?? {}):KeywordsState => ({
+export const initialKeywordsState = (preload:PreloadedState = {}):KeywordsState => ({
     list: preload?.keywords?.list ?? [],
     loading: false,
 })

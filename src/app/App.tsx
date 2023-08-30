@@ -1,35 +1,31 @@
 import React, {Fragment, useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom';
-import {PATH_INVOICE, PATH_LOGOUT, PATH_SALES_ORDER_BREADCRUMB, PATH_SALES_ORDERS} from "../constants/paths";
-import Login from "../components/LoginPage";
+import {PATH_LOGOUT} from "../constants/paths";
+import Login from "@/ducks/user/components/LoginPage";
 import {useSelector} from 'react-redux';
 import {loadProfile} from '../ducks/user/actions';
 import {loadCustomer} from '../ducks/customer/actions';
 import ProfilePage from "@/ducks/user/components/ProfilePage";
 import AccountPage from "@/ducks/customer/components/AccountPage";
-import AccountList from "../components/profile/AccountList";
-import OrdersContainer from "../components/OrdersContainer";
 import SalesOrderPage from "@/ducks/salesOrder/components/SalesOrderPage";
-import OrdersBreadcrumb from "../components/OrdersBreadcrumb";
 import SignUp from "../components/SignUp";
 import Logout from "../components/Logout";
 import ResetPassword from "../components/ResetPassword";
 import ContentPage from "../ducks/page/ContentPage";
 import InvoicePage from "../ducks/invoices/components/InvoicePage";
 import ErrorBoundary from "../common-components/ErrorBoundary";
-import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../ducks/user/selectors";
-import {selectCustomerLoading} from "../ducks/customer/selectors";
+import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "@/ducks/user/selectors";
+import {selectCustomerLoaded, selectCustomerLoading} from "@/ducks/customer/selectors";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import AccountListContainer from "../components/profile/AccountListContainer";
+import AccountListContainer from "@/ducks/customers/components/AccountListContainer";
 import {useAppDispatch} from "./configureStore";
-import {isCustomer} from "../ducks/user/utils";
 import RepResourcesRedirect from "../ducks/page/RepResourcesRedirect";
 import MainOutlet from "./MainOutlet";
 import ProductRouter from "@/ducks/products/components/ProductRouter";
 import BillToForm from "@/ducks/customer/components/BillToForm";
 import ShipToForm from "@/ducks/customer/components/ShipToForm";
-import AccountUsers from "@/components/AccountUsers/AccountUsers";
+import AccountUsers from "@/ducks/customer/components/AccountUsers";
 import {CssBaseline} from "@mui/material";
 import ContentPage404 from "@/components/ContentPage404";
 import CartsList from "@/ducks/carts/components/CartsList";
@@ -43,14 +39,19 @@ const App = () => {
     const loggedIn = useSelector(selectLoggedIn);
     const currentCustomer = useSelector(selectCurrentCustomer);
     const customerLoading = useSelector(selectCustomerLoading);
+    const customerLoaded = useSelector(selectCustomerLoaded);
     const userLoading = useSelector(selectUserLoading);
+
+    useEffect(() => {
+    }, []);
+
 
     useEffect(() => {
         if (!loggedIn) {
             return;
         }
         dispatch(loadProfile());
-        if (!!currentCustomer && !customerLoading) {
+        if (!!currentCustomer && !customerLoading && !customerLoaded) {
             dispatch(loadCustomer(currentCustomer));
         }
     }, [loggedIn]);
@@ -84,34 +85,16 @@ const App = () => {
                                         <Route index element={<BillToForm/>}/>
                                         <Route path="delivery" element={<ShipToList/>}/>
                                         <Route path="delivery/:shipToCode" element={<ShipToForm/>}/>
-                                        {/*<Route path="delivery" element={<ShipToForm/>}/>*/}
                                         <Route path="users" element={<AccountUsers/>}/>
                                         <Route path="carts" element={<CartsList/>}/>
                                         <Route path="carts/:salesOrderno" element={<SalesOrderPage/>}/>
                                         <Route path="orders" element={<OpenOrdersList/>}/>
                                         <Route path="orders/:salesOrderno" element={<SalesOrderPage/>}/>
                                         <Route path="invoices" element={<InvoicesList/>}/>
+                                        <Route path="invoices/so/:salesOrderno" element={<SalesOrderPage/>}/>
+                                        <Route path="invoices/:type/:invoiceNo" element={<InvoicePage/>}/>
                                         <Route path="*" element={<ContentPage404/>}/>
                                     </Route>
-                                    <Route path={PATH_SALES_ORDER_BREADCRUMB} element={<OrdersBreadcrumb/>}/>
-                                    <Route path={PATH_INVOICE} element={<OrdersBreadcrumb/>}/>
-                                    <Route path={PATH_SALES_ORDERS} element={<OrdersContainer/>}/>
-                                    {isCustomer(currentCustomer) && (
-                                        <>
-                                            <Route path="/orders/:orderType/:Company/:SalesOrderNo"
-                                                   element={<SalesOrderPage/>}/>
-                                            <Route path="/invoices/:Company/:InvoiceType/:InvoiceNo"
-                                                   element={<InvoicePage/>}/>
-                                        </>
-                                    )}
-                                    {(!isCustomer(currentCustomer)) && (
-                                        <>
-                                            <Route path="/orders/:orderType/:Company/:SalesOrderNo"
-                                                   element={<AccountList/>}/>
-                                            <Route path="/invoices/:Company/:InvoiceType/:InvoiceNo"
-                                                   element={<AccountList/>}/>
-                                        </>
-                                    )}
                                     <Route path="*" element={<ContentPage404/>}/>
                                 </>
                             )}

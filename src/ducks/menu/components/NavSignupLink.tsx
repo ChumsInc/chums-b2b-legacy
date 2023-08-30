@@ -4,7 +4,7 @@ import {selectLoggedIn} from "@/ducks/user/selectors";
 import ListItemLink from "@/components/ListItemLink";
 import {PATH_SIGNUP} from "@/constants/paths";
 import React from "react";
-import NavItemButtonLink from "@/components/NavItemButtonLink";
+import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
 
 export default function NavSignupLink({inDrawer}: NavItemProps) {
     const isLoggedIn = useSelector(selectLoggedIn);

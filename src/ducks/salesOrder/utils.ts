@@ -1,4 +1,4 @@
-import {SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {CustomerAddress, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {SortProps} from "@/types/generic";
 import dayjs from "dayjs";
 
@@ -83,5 +83,15 @@ export const emptyDetailLine: SalesOrderDetailLine = {
     WarehouseCode: "000",
     image: null,
     LineKey: ''
+}
 
+const multiLineAddress = (address:CustomerAddress):string[] => {
+    const finalLine = [address.City, address.State, address.CountryCode, address.ZipCode]
+        .filter(val => !!val).join(' ');
+    return [
+        address.AddressLine1 ?? '',
+        address.AddressLine2 ?? '',
+        address.AddressLine3 ?? '',
+        finalLine
+    ].filter(line => !!line);
 }

@@ -5,6 +5,8 @@ import {ShipToCustomer} from "b2b-types";
 
 export const selectCustomerKey = (state:RootState) => state.customer.key;
 export const selectCustomerAccount = (state:RootState) => state.customer.account ?? null;
+export const selectCustomerShipToCode = (state:RootState) => state.customer.shipToCode;
+export const selectCustomerShipTo = (state:RootState) => state.customer.shipTo;
 export const selectTaxSchedule = (state:RootState) => isBillToCustomer(state.customer.account) ? (state.customer.account?.TaxSchedule ?? '') : '';
 export const selectCustomerPricing = (state:RootState) => state.customer.pricing ?? [];
 export const selectCustomerLoading = (state:RootState) => state.customer.loading ?? false;
@@ -12,8 +14,9 @@ export const selectCustomerSaving = (state:RootState) => state.customer.saving ?
 export const selectCustomerLoaded = (state:RootState) => state.customer.loaded ?? false;
 export const selectCustomerUsers = (state:RootState) => state.customer.users ?? [];
 export const selectCustomerShipToAddresses = (state:RootState) => state.customer.shipToAddresses ?? [];
+export const selectCustomerPaymentCards = (state:RootState) => state.customer.paymentCards;
 
-export const selectCustomerPermissions = (state:RootState) => state.customer.permissions.permissions;
+export const selectCustomerPermissions = (state:RootState) => state.customer.permissions.values;
 export const selectCustomerPermissionsLoading = (state:RootState) => state.customer.permissions.loading ?? false;
 export const selectCustomerPermissionsLoaded = (state:RootState) => state.customer.permissions.loaded ?? false;
 

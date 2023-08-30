@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {redirect} from 'react-router-dom';
-import {loadSalesOrder} from '../../../actions/salesOrder';
+import {generatePath, redirect} from 'react-router-dom';
 import {setCurrentCart} from '../../cart/actions';
 import ProgressBar from "@/components/ProgressBar";
 import {NEW_CART} from "@/constants/orders";
@@ -11,7 +10,7 @@ import SendEmailModal from "@/components/SendEmailModal";
 import CheckoutProgress from "@/components/CheckoutProgress";
 import Alert from "@mui/material/Alert";
 import DocumentTitle from "@/components/DocumentTitle";
-import {useMatch, useParams} from "react-router";
+import {useMatch, useNavigate, useParams} from "react-router";
 import {selectCustomerAccount, selectCustomerLoading} from "../../customer/selectors";
 import {
     selectAttempts,
@@ -19,17 +18,23 @@ import {
     selectProcessing,
     selectSalesOrderHeader,
     selectSalesOrderNo,
-    selectSendingEmailStatus
+    selectSendingEmailStatus, selectSOLoading
 } from "../selectors";
 import {selectCartNo} from "../../cart/selectors";
 import {useAppDispatch} from "@/app/configureStore";
+import {loadSalesOrder} from "@/ducks/salesOrder/actions";
+import SalesOrderHeaderElement from "@/ducks/salesOrder/components/SalesOrderHeaderElement";
+import {customerSlug} from "@/utils/customer";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const SalesOrderPage = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const match = useMatch('/account/:customerSlug/:orderType/:salesOrderNo');
     const customer = useSelector(selectCustomerAccount);
     const salesOrderNo = useSelector(selectSalesOrderNo);
     const salesOrderHeader = useSelector(selectSalesOrderHeader);
+    const loading = useSelector(selectSOLoading);
     const customerLoading = useSelector(selectCustomerLoading);
     const salesOrderProcessing = useSelector(selectProcessing)
     const isCart = useSelector(selectIsCart);
@@ -38,7 +43,7 @@ const SalesOrderPage = () => {
     const attempts = useSelector(selectAttempts);
     const cartNo = useSelector(selectCartNo);
 
-    const processing = customerLoading || salesOrderProcessing;
+    const processing = customerLoading || salesOrderProcessing || loading;
     const {OrderStatus, OrderType} = salesOrderHeader ?? {};
     const isCurrentCart = cartNo === salesOrderNo;
 
@@ -50,6 +55,13 @@ const SalesOrderPage = () => {
             }
         }
     }, []);
+
+    useEffect(() => {
+        if (salesOrderHeader?.OrderStatus === 'Z' && match?.params?.orderType && match?.params?.customerSlug) {
+            const path = generatePath(`/account/:customerSlug/:orderType`, {customerSlug: match.params.customerSlug, orderType: match.params.orderType});
+            navigate(path, {replace: true});
+        }
+    }, [salesOrderHeader?.OrderStatus]);
 
     useEffect(() => {
         if (customer && !!customer.CustomerNo) {
@@ -80,7 +92,8 @@ const SalesOrderPage = () => {
                         This order has been cancelled. Please contact Customer Service if you have any questions.
                     </Alert>
                 )}
-                {processing && <ProgressBar striped={true} label="Loading" className="mb-3"/>}
+                {processing && <LinearProgress variant="indeterminate" sx={{my: 1}}/>}
+                <SalesOrderHeaderElement />
                 <OrderHeader/>
                 {isCart && <CheckoutProgress/>}
                 {match?.params?.salesOrderNo === salesOrderNo && <OrderDetail/>}

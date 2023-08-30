@@ -4,7 +4,9 @@ import {fetchSalesOrder, fetchSalesOrders} from "@/api/sales-order";
 import {SortProps} from "@/types/generic";
 import {RootState} from "@/app/configureStore";
 import {selectCurrentCustomer} from "@/ducks/user/selectors";
-import {selectProcessing} from "@/ducks/salesOrder/selectors";
+import {selectProcessing, selectSOLoading} from "@/ducks/salesOrder/selectors";
+import {generatePath, redirect} from "react-router-dom";
+import {customerSlug} from "@/utils/customer";
 
 export const loadSalesOrder = createAsyncThunk<SalesOrder | null, string>(
     'orders/loadSalesOrder',
@@ -17,7 +19,7 @@ export const loadSalesOrder = createAsyncThunk<SalesOrder | null, string>(
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
             const customer = selectCurrentCustomer(state);
-            return !!arg && !!customer && !selectProcessing(state);
+            return !!arg && !!customer && !selectProcessing(state) && !selectSOLoading(state);
         }
     }
 )

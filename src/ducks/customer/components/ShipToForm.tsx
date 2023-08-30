@@ -3,13 +3,12 @@
  */
 import React, {FormEvent, useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
-import {loadCustomerAccount, saveShipToAddress, setDefaultShipTo} from '@/ducks/customer/actions';
+import {saveShipToAddress, setDefaultShipTo} from '@/ducks/customer/actions';
 import FormGroupTextInput from "@/common-components/FormGroupTextInput";
 import FormGroup from "@/common-components/FormGroup";
 import Alert from "@mui/material/Alert";
 import ShipToAddressFormFields from "@/components/ShipToAddressFormFields";
-import ContactFormFields from "@/components/ContactFormFields";
-import ProgressBar from "@/components/ProgressBar";
+import ContactFormFields from "@/ducks/customer/components/ContactFormFields";
 import {selectCanEdit} from "@/ducks/user/selectors";
 import {
     selectCustomerLoading,
@@ -24,6 +23,7 @@ import {FieldValue} from "@/types/generic";
 import {useParams} from "react-router";
 import DeliveryAddress from "@/components/Address/DeliveryAddress";
 import LinearProgress from "@mui/material/LinearProgress";
+import ReloadCustomerButton from "@/ducks/customer/components/ReloadCustomerButton";
 
 const ShipToForm = () => {
     const dispatch = useAppDispatch();
@@ -69,10 +69,6 @@ const ShipToForm = () => {
         }
     }
 
-    const reloadHandler = () => {
-        dispatch(loadCustomerAccount());
-    }
-
     if (!canEdit) {
         return (
             <div>
@@ -96,7 +92,7 @@ const ShipToForm = () => {
                                                 onChange={changeHandler} required readOnly={readOnly}/>
                         </div>
                         <div className="col-md-6">
-                            <FormGroup colWidth={8}>
+                            <FormGroup label="" colWidth={8}>
                                 {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
                                     <button type="button" className="btn btn-sm btn-outline-secondary me-1"
                                             disabled={shipTo.changed || readOnly || shipTo.ShipToCode === primaryShipTo?.ShipToCode}
@@ -139,10 +135,7 @@ const ShipToForm = () => {
                                     </button>
                                 </div>
                                 <div className="col-auto">
-                                    <button type="button" className="btn btn-sm btn-outline-secondary me-1"
-                                            onClick={reloadHandler}>
-                                        Reload
-                                    </button>
+                                    <ReloadCustomerButton/>
                                 </div>
                             </div>
                         </div>

@@ -6,11 +6,11 @@ import AddressFormFields from '@/components/AddressFormFields';
 import {filteredTermsCode} from '@/constants/account';
 import {useSelector} from "react-redux";
 import {longCustomerNo} from "@/utils/customer";
-import {loadCustomerAccount, saveBillingAddress} from '../actions';
+import {saveBillingAddress} from '../actions';
 import Alert from "@mui/material/Alert";
 import FormGroup from "@/common-components/FormGroup";
-import ContactFormFields from "@/components/ContactFormFields";
-import MissingTaxScheduleAlert from "@/components/MissingTaxScheduleAlert";
+import ContactFormFields from "@/ducks/customer/components/ContactFormFields";
+import MissingTaxScheduleAlert from "@/ducks/customer/components/MissingTaxScheduleAlert";
 import {selectCustomerAccount, selectCustomerLoading, selectCustomerPermissions} from "../selectors";
 import {selectCanEdit} from "../../user/selectors";
 import StoreMapToggle from "@/components/StoreMapToggle";
@@ -21,6 +21,7 @@ import {useAppDispatch} from "@/app/configureStore";
 import {BillToCustomer} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
 import {FieldValue} from "@/types/generic";
+import ReloadCustomerButton from "@/ducks/customer/components/ReloadCustomerButton";
 
 const BillToForm = () => {
     const dispatch = useAppDispatch();
@@ -50,10 +51,6 @@ const BillToForm = () => {
             return;
         }
         dispatch(saveBillingAddress(customer))
-    }
-
-    const reloadHandler = () => {
-        dispatch(loadCustomerAccount());
     }
 
     if (!current || !customer) {
@@ -123,10 +120,7 @@ const BillToForm = () => {
                                     </button>
                                 </div>
                                 <div className="col-auto">
-                                    <button type="button" className="btn btn-sm btn-outline-secondary me-1"
-                                            onClick={reloadHandler}>
-                                        Reload
-                                    </button>
+                                    <ReloadCustomerButton/>
                                 </div>
                             </div>
                         </div>

@@ -3,7 +3,7 @@ import {useSelector} from "react-redux";
 import {selectProductMenu} from "@/ducks/menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import NavItemButton from "@/components/NavItemButton";
+import NavItemButton from "@/ducks/menu/components/NavItemButton";
 import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
 import {SxProps} from "@mui/system";
 import {Theme} from "@mui/material/styles";

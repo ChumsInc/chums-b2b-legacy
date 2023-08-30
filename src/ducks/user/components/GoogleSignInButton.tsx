@@ -7,6 +7,11 @@ const GoogleSignInButton = () => {
     const dispatch = useAppDispatch();
     const googleButtonRef = useRef(null);
 
+    const handleGoogleResponse = (response: google.accounts.id.CredentialResponse) => {
+        // console.log('handleGoogleResponse()', response);
+        dispatch(signInWithGoogle(response.credential));
+    }
+
     useEffect(() => {
         if (window.google && googleButtonRef.current) {
             window.google.accounts.id.initialize({
@@ -21,10 +26,6 @@ const GoogleSignInButton = () => {
         }
     }, [])
 
-    const handleGoogleResponse = (response: google.accounts.id.CredentialResponse) => {
-        // console.log('handleGoogleResponse()', response);
-        dispatch(signInWithGoogle(response.credential));
-    }
 
     return (
         <div ref={googleButtonRef}/>

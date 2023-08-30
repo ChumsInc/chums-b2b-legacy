@@ -12,8 +12,9 @@ import {
 } from "b2b-types";
 import {ProductAdditionalData, SellAsVariantsProduct} from "b2b-types/src/products";
 import Decimal from "decimal.js";
+import {CartItemColorProps} from "@/types/product";
 
-export const hasVariants = (product: Product) => isSellAsVariants(product) && product.variants.filter(v => v.status).length > 0;
+export const hasVariants = (product: Product|null):boolean => isSellAsVariants(product) && product.variants.filter(v => v.status).length > 0;
 
 export const defaultVariant = (product: SellAsVariantsProduct) => {
     const activeVariants = product.variants.filter(v => v.status);
@@ -106,25 +107,24 @@ export const getPrices = (product:Product|null|undefined, priceCodes:CustomerPri
     return getPrice({product, priceField: PRICE_FIELDS.standard, priceCodes});
 };
 
-export const defaultCartItem = (product: Product, preferredColor?: string, cartItemCode?:string): CartProduct => {
+export const defaultCartItem = (product: Product|null, option?: CartItemColorProps): CartProduct|null => {
     if (isSellAsColors(product)) {
+        const items = product.items.filter(item => item.status);
         let cartItem:ProductColorItem|undefined;
-        if (cartItemCode) {
-            [cartItem] = product.items
-                .filter(item => item.status)
-                .filter(item => item.itemCode === cartItemCode);
+        [cartItem] = items.filter(item => item.itemCode === option?.itemCode);
+        if (!cartItem) {
+            [cartItem] = items.filter(item => item.colorCode === option?.colorCode || item.color.code === option?.colorCode);
         }
         if (!cartItem) {
-            [cartItem] = product.items
-                .filter(item => item.status)
-                .filter(item => item.colorCode === preferredColor);
+            [cartItem] = items.filter(item => item.colorCode === product.defaultColor);
+        }
+        if (!cartItem && items.length) {
+            cartItem = items[0];
         }
         if (!cartItem) {
-            [cartItem] = product.items
-                .filter(item => item.status)
-                .filter(item => item.colorCode === product.defaultColor);
+            return null;
         }
-        return colorCartItem(cartItem ?? defaultCartItem(product), product);
+        return colorCartItem(cartItem, product);
     }
     if (isSellAsMix(product)) {
         const [colorName = ''] = product.mix.items.filter(item => item.color?.code === product.defaultColor)
@@ -156,6 +156,9 @@ export const defaultCartItem = (product: Product, preferredColor?: string, cartI
             seasonAvailable: product.season_available
         };
     }
+    if (!product) {
+        return null;
+    }
     return {
         image: product.image,
         name: product.name,
@@ -174,16 +177,20 @@ export const defaultCartItem = (product: Product, preferredColor?: string, cartI
 
 export const colorCartItem = (item:ProductColorItem, product?:BasicProduct):CartProduct => {
     return {
-        image: product?.image ?? item.additionalData?.image_filename ?? '',
-        name: product?.name ?? item.colorName,
-        productId: item.productId,
+        quantityAvailable: item.QuantityAvailable,
+        msrp: item.msrp,
+        colorCode: item.color.code ?? item.colorCode,
         itemCode: item.itemCode,
-        priceCode: item.priceCode,
         stdPrice: item.stdPrice,
         salesUM: item.salesUM,
         salesUMFactor: item.salesUMFactor,
-        quantityAvailable: item.QuantityAvailable,
-        msrp: item.msrp,
+        colorName: item.color.name ?? item.colorName,
+        priceCode: item.priceCode,
+        price: item.msrp?.toString(),
+        productId: item.productId,
+        stdUM: item.stdUM,
+        image: product?.image ?? item.additionalData?.image_filename ?? '',
+        name: product?.name ?? item.colorName,
         quantity: 1,
         seasonCode: item.additionalData?.swatch_code,
         seasonAvailable: item.additionalData?.season?.product_available,
@@ -207,7 +214,7 @@ export const sortVariants = (a:ProductVariant, b:ProductVariant) => a.priority =
  * @param preferredColor
  * @return {string}
  */
-export const getDefaultColor = (product:Product, preferredColor:string = ''):string => {
+export const getDefaultColor = (product:Product|null, preferredColor:string = ''):string => {
     if (isSellAsSelf(product)) {
         return product.defaultColor ?? '';
     }
@@ -223,7 +230,7 @@ export const getDefaultColor = (product:Product, preferredColor:string = ''):str
             ? preferredColor
             : (product.defaultColor ?? '');
     }
-    return (product.defaultColor || '');
+    return (product?.defaultColor || '');
 };
 
 export const parseColor = (str:string, colorCode:string = ''):string => {

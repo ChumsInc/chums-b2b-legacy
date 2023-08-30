@@ -1,9 +1,9 @@
 import React, {FormEvent, useId, useState} from 'react';
 import FormGroup from "../common-components/FormGroup";
-import {NEW_CART} from "../constants/orders";
-import {saveCartItem, saveNewCart} from '../ducks/cart/actions';
-import {useAppDispatch, useAppSelector} from "../app/configureStore";
-import {selectSalesOrderHeader} from "../ducks/salesOrder/selectors";
+import {NEW_CART} from "@/constants/orders";
+import {saveCartItem, saveNewCart} from '@/ducks/cart/actions';
+import {useAppDispatch, useAppSelector} from "@/app/configureStore";
+import {selectSalesOrderHeader} from "@/ducks/salesOrder/selectors";
 
 const CartAddItem = () => {
     const dispatch = useAppDispatch();
@@ -45,7 +45,7 @@ const CartAddItem = () => {
                     Add Item <span className="bi-bag-fill"/>
                 </button>
             </div>
-            <FormGroup colWidth={8}>
+            <FormGroup label="" colWidth={8}>
             </FormGroup>
         </form>
     );

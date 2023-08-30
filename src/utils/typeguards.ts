@@ -1,5 +1,5 @@
 import {BillToCustomer, Editable, SalesOrderHeader, UserRole} from "b2b-types";
-import {EmptyObject} from "../_types";
+import {EmptyObject} from "@/types/generic";
 
 export function isBillToCustomer(customer:BillToCustomer|EmptyObject|null): customer is BillToCustomer {
     if (!customer) {

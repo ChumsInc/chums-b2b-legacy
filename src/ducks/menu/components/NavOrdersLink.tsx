@@ -8,7 +8,7 @@ import {customerBasePath} from "@/ducks/customer/constants";
 import {customerPath} from "@/ducks/user/utils";
 import ListItemLink from "@/components/ListItemLink";
 import React from "react";
-import NavItemButtonLink from "@/components/NavItemButtonLink";
+import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
 
 export default function NavOrdersLink({inDrawer}: NavItemProps) {
     const isLoggedIn = useSelector(selectLoggedIn);

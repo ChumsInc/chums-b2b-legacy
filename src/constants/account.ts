@@ -4,7 +4,7 @@
 import {
     PaymentType,
     PaymentTypeList,
-    PriceLevelsDescriptionList,
+    PriceLevelsDescriptionList, ShippingMethod,
     ShippingMethodList, TermsCode,
     TermsCodeList
 } from "../types/customer";
@@ -165,7 +165,10 @@ export const SHIPPING_METHODS:ShippingMethodList = {
 
 export const DEFAULT_SHIPPING_ACCOUNT = {enabled: false, value: ''};
 
-export const getShippingMethod = (code:string) => {
+export const getShippingMethod = (code:string|null|undefined):ShippingMethod|null => {
+    if (!code) {
+        return null;
+    }
     return SHIPPING_METHODS[code] ?? null;
 };
 

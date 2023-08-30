@@ -29,7 +29,7 @@ const convertToAddress = (address:ShipToAddress):CustomerAddress => {
 
 const DeliveryAddress = ({address, className}:{
     address:ShipToAddress,
-    className?: classNames.ArgumentArray,
+    className?: classNames.Argument,
 }) => {
     return <Address address={convertToAddress(address)} className={className}/>
 };

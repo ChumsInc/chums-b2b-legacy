@@ -3,9 +3,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getItemAvailability} from "../ducks/cart/actions";
 import {itemPrice} from "../utils/customer";
 import CartItemInfo from "./CartItemInfo";
-import CartItemDetail from "./CartItemDetail";
+import CartItemDetail from "@/ducks/products/components/CartItemDetail";
 import AddToCartForm from "@/ducks/carts/components/AddToCartForm";
-import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
+import MissingTaxScheduleAlert from "@/ducks/customer/components/MissingTaxScheduleAlert";
 import {selectItemAvailability} from "../ducks/cart/selectors";
 import {selectCustomerPricing, selectTaxSchedule} from "../ducks/customer/selectors";
 

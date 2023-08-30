@@ -4,7 +4,7 @@ import {CustomerAddress} from "b2b-types";
 
 const Address = ({address, className}: {
     address: CustomerAddress,
-    className?: classNames.ArgumentArray
+    className?: classNames.Argument
 }) => {
     return (
         <address className={classNames(className)}>

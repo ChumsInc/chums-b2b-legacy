@@ -1,12 +1,12 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import {selectLoggedIn} from "@/ducks/user/selectors";
-import NavItemButtonLink from "@/components/NavItemButtonLink";
+import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import {selectCustomerAccount} from "@/ducks/customer/selectors";
 import {selectCartNo} from "@/ducks/cart/selectors";
 import {customerCartURL} from "@/ducks/user/utils";
-import CustomerIndicator from "@/ducks/menu/components/CustomerIndicator";
+import CustomerIndicator from "@/ducks/customer/components/CustomerIndicator";
 import CartIcon from "@/ducks/menu/components/CartIcon";
 
 

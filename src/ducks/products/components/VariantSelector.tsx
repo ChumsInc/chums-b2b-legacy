@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import classNames from "classnames";
-import {getMSRP, getPrices, getSalesUM, sortVariants} from "../../../utils/products";
+import {getMSRP, getPrices, getSalesUM, sortVariants} from "@/utils/products";
 import numeral from 'numeral';
 import {useSelector} from "react-redux";
 import {selectLoggedIn} from "../../user/selectors";
 import {ClickAwayListener} from '@mui/base';
-import VariantItem from "../../../components/VariantItem";
+import VariantItem from "./VariantItem";
 import {selectCurrentProduct, selectProductColorCode, selectProductVariantId} from "../selectors";
-import {useAppDispatch} from "../../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {setCurrentVariant} from "../../../actions/products";
 import {selectCustomerPricing} from "../../customer/selectors";
 import {isSellAsVariants, ProductVariant} from "b2b-types";
@@ -97,13 +97,12 @@ const VariantSelector = () => {
                         {/*{variant.title || 'Select an Option'}*/}
                     </button>
                     <div className={classNames("dropdown-menu", {show})}>
-                        {variants.filter(v => !!v.status && !!v.product?.status)
+                        {variants.filter(v => v.status && v.product?.status)
                             .sort(sortVariants)
                             .map(variant => (
                                 <VariantItem key={variant.id} variant={variant}
                                              selected={variant.id === selectedVariantId}
-                                             onClick={selectHandler}
-                                             priceCodes={priceCodes}/>))
+                                             onClick={selectHandler}/>))
                         }
                     </div>
                 </div>

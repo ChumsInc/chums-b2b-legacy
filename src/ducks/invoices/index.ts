@@ -1,12 +1,10 @@
 import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "@/constants/actions";
 import {createReducer} from "@reduxjs/toolkit";
 import {invoicesSorter} from "./utils";
-import localStore from "@/utils/LocalStore";
-import {STORE_INVOICES_ROWS_PER_PAGE} from "@/constants/stores";
-import {loadInvoices, setInvoicesPage, setInvoicesRowsPerPage, setInvoicesSort} from "./actions";
+import {loadInvoices} from "./actions";
 import {customerSlug} from "@/utils/customer";
 import {setCustomerAccount} from "../customer/actions";
-import {setLoggedIn, setUserAccount} from "../user/actions";
+import {setLoggedIn, setUserAccess} from "../user/actions";
 import {InvoicesState} from "./types";
 import {SortProps} from "@/types/generic";
 import {InvoiceHeader} from "b2b-types";
@@ -23,24 +21,10 @@ export const initialInvoicesState = (): InvoicesState => ({
     loading: false,
     loaded: false,
     invoiceLoading: false,
-    sort: {...defaultSort},
-    page: 0,
-    rowsPerPage: localStore.getItem<number>(STORE_INVOICES_ROWS_PER_PAGE, 10) ?? 10,
 })
 
 const invoicesReducer = createReducer(initialInvoicesState, builder => {
     builder
-        .addCase(setInvoicesSort, (state, action) => {
-            state.sort = action.payload ?? defaultSort;
-            state.page = 0;
-        })
-        .addCase(setInvoicesPage, (state, action) => {
-            state.page = action.payload ?? 0;
-        })
-        .addCase(setInvoicesRowsPerPage, (state, action) => {
-            state.rowsPerPage = action.payload ?? 10;
-            state.page = 0;
-        })
         .addCase(loadInvoices.pending, (state, action) => {
             state.loading = true;
             if (state.customerKey !== customerSlug(action?.meta?.arg)) {
@@ -52,6 +36,7 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
         .addCase(loadInvoices.fulfilled, (state, action) => {
             state.loading = false;
             state.list = [...action.payload].sort(invoicesSorter(defaultSort));
+            state.loaded = true;
             if (state.invoice) {
                 const invoiceNo = state.invoice.InvoiceNo;
                 const [invoice] = action.payload.filter(inv => inv.InvoiceNo === invoiceNo);
@@ -63,19 +48,19 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
         })
         .addCase(setCustomerAccount.fulfilled, (state) => {
             state.list = [];
-            state.page = 0;
+            state.loaded = false;
             state.invoice = null;
         })
         .addCase(setLoggedIn, (state, action) => {
             if (!action.payload.loggedIn) {
                 state.list = [];
-                state.page = 0;
                 state.invoice = null;
             }
         })
-        .addCase(setUserAccount.pending, (state, action) => {
+        .addCase(setUserAccess.pending, (state, action) => {
             if (!action.meta.arg?.isRepAccount && state.customerKey !== customerSlug(action?.meta?.arg)) {
                 state.list = [];
+                state.loaded = false;
                 state.invoice = null;
                 state.customerKey = customerSlug(action?.meta?.arg);
             }

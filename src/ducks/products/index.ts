@@ -11,17 +11,35 @@ import {
     SELECT_ITEM,
     SELECT_VARIANT,
     SET_CART_ITEM_QUANTITY
-} from "../../constants/actions";
-import {getDefaultColor, getItemPrice, keywordSorter} from "../../utils/products";
-import {priceRecord,} from "../../utils/customer";
+} from "@/constants/actions";
+import {defaultCartItem, getDefaultColor, getItemPrice, getMSRP, getPrices, keywordSorter} from "@/utils/products";
+import {customerPriceRecordSorter, customerSlug, priceRecord,} from "@/utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
-import {ProductsState} from "./types";
-import {PreloadedState} from "../../_types";
-import {isCartProduct} from "./utils";
+import {PreloadedState} from "@/types/preload";
+import {isCartProduct, updateCartProductPricing} from "./utils";
 import {loadCustomer} from "@/ducks/customer/actions";
+import {CartProduct, CustomerPriceRecord, isSellAsColors, isSellAsMix, Keyword, Product} from "b2b-types";
+import {loadProduct, setColorCode} from "@/ducks/products/actions";
+import {setLoggedIn} from "@/ducks/user/actions";
 
 
-export const initialProductsState = (preload: PreloadedState = window?.__PRELOADED_STATE__ ?? {}): ProductsState => ({
+export interface ProductsState {
+    keywords: Keyword[],
+    loadingKeywords: boolean;
+    product: Product | null;
+    selectedProduct: Product | null;
+    colorCode: string;
+    variantId: number|null;
+    loading: boolean;
+    msrp: (string|number)[],
+    customerPrice: (string|number)[],
+    salesUM: string|null;
+    cartItem: CartProduct|null;
+    pricing: CustomerPriceRecord[];
+    customerKey: string|null;
+}
+
+export const initialProductsState = (preload: PreloadedState = {}): ProductsState => ({
     keywords: preload?.keywords?.list ?? [],
     loadingKeywords: false,
     product: null,
@@ -33,29 +51,70 @@ export const initialProductsState = (preload: PreloadedState = window?.__PRELOAD
     customerPrice: [],
     salesUM: null,
     cartItem: null,
+    pricing: [],
+    customerKey: null,
 });
 
 const productsReducer = createReducer(initialProductsState, (builder) => {
     builder
+        .addCase(setLoggedIn, (state, action) => {
+            if (!action.payload) {
+                state.customerKey = null;
+                state.pricing = [];
+            }
+        })
+        .addCase(loadCustomer.pending, (state) => {
+            state.pricing = [];
+        })
         .addCase(loadCustomer.fulfilled, (state, action) => {
+            state.customerKey = customerSlug(action.payload?.customer ?? null);
+            state.pricing = [...(action.payload?.pricing ?? [])].sort(customerPriceRecordSorter);
+            state.msrp = getMSRP(state.selectedProduct);
+            state.customerPrice = !!state.customerKey ? getPrices(state.selectedProduct, state.pricing) : state.msrp;
             if (isCartProduct(state.cartItem)) {
-                state.cartItem = {
-                    ...state.cartItem,
-                    priceCodeRecord: priceRecord({
-                        pricing: action.payload?.pricing ?? [],
-                        itemCode: state.cartItem.itemCode,
-                        priceCode: state.cartItem.priceCode,
-                    }),
-                    priceLevel: action.payload?.customer?.PriceLevel ?? '',
-                    price: getItemPrice({
-                        item: state.cartItem,
-                        priceField: PRICE_FIELDS.standard,
-                        priceCodes: action.payload?.pricing ?? [],
-                    })
+                state.cartItem = updateCartProductPricing(state.cartItem, state.pricing)
+            }
+        })
+        .addCase(loadProduct.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(loadProduct.fulfilled, (state, action) => {
+            state.loading = false;
+            state.product = action.payload?.product ?? null;
+            state.selectedProduct = action.payload?.variant?.product ?? action.payload?.product ?? null;
+            state.colorCode = getDefaultColor(state.selectedProduct, state.colorCode);
+            state.variantId = action.payload?.variant?.id ?? null;
+            state.msrp = action.payload?.msrp ?? [];
+            state.salesUM = action.payload?.salesUM ?? null;
+            state.customerPrice = action.payload?.customerPrice ?? [];
+            state.cartItem = action.payload?.cartItem ?? null;
+            state.colorCode = action.payload?.cartItem?.colorCode
+                ?? action.payload?.variant?.product?.defaultColor
+                ?? action.payload?.product?.defaultColor
+                ?? '';
+        })
+        .addCase(loadProduct.rejected, (state, action) => {
+            state.loading = false;
+        })
+        .addCase(setColorCode, (state, action) => {
+            state.colorCode = action.payload;
+            if (isSellAsColors(state.selectedProduct)) {
+                let cartItem = defaultCartItem(state.selectedProduct, {colorCode: action.payload});
+                if (state.customerKey) {
+                    cartItem = updateCartProductPricing(cartItem, state.pricing);
+                }
+                state.cartItem = cartItem;
+            } else if (!!state.cartItem && isSellAsMix(state.selectedProduct)) {
+                const [item] = state.selectedProduct.mix.items
+                    .filter(item => item.color?.code === action.payload);
+                state.cartItem.colorName = item?.color?.name ?? item?.color?.code ?? '';
+                if (item.additionalData?.image_filename) {
+                    state.cartItem.image = item.additionalData.image_filename;
                 }
             }
         })
         .addDefaultCase((state, action) => {
+
             switch (action.type) {
                 case FETCH_KEYWORDS:
                     state.loadingKeywords = action.status === FETCH_INIT;

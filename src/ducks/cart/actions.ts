@@ -25,27 +25,42 @@ import {STORE_CURRENT_CART} from "../../constants/stores";
 import {NEW_CART} from "../../constants/orders";
 import {selectCartsList} from "../carts/selectors";
 import {selectCustomerAccount} from "../customer/selectors";
-import {selectCartNo, selectItemAvailabilityLoading, selectShipDate, selectShippingAccount} from "./selectors";
-import {fetchSalesOrder} from "../../api/sales-order";
+import {
+    selectCartLoading,
+    selectCartNo,
+    selectItemAvailabilityLoading,
+    selectShipDate,
+    selectShippingAccount
+} from "./selectors";
+import {fetchSalesOrder, postApplyPromoCode} from "../../api/sales-order";
 import {fetchItemAvailability, postCartAction} from "../../api/cart";
 import {selectSalesOrderDetail, selectSalesOrderHeader, selectSalesOrderNo} from "../salesOrder/selectors";
-import {selectCurrentCustomer} from "../user/selectors";
+import {selectCurrentCustomer, selectLoggedIn} from "../user/selectors";
 import {selectPromoCode} from "../../selectors/promo_code";
 import {changedDetailLine, newCommentLine} from "../../utils/cart";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {setAlert} from "../alerts";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {isCustomer} from "../user/utils";
-import {B2BError, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {B2BError, PromoCode, SalesOrder, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {isBillToCustomer, isSalesOrderHeader} from "../../utils/typeguards";
 import {
-    CartActionBody, CartAppendCommentBody, CartDeleteItemBody, DeleteCartBody,
-    ItemAvailability,
+    ApplyPromoCodeBody,
+    CartActionBody,
+    CartAppendCommentBody,
+    CartDeleteItemBody,
+    CartQuoteResponse,
+    DeleteCartBody,
+    DuplicateSalesOrderBody,
     NewCartBody,
     PromoteCartBody,
     UpdateCartBody,
     UpdateCartItemBody
-} from "../../_types";
+} from "@/types/cart";
+import {ItemAvailability} from "@/types/product";
+import {SaveNewCartProps} from "@/ducks/cart/types";
+import {selectCurrentPromoCode} from "@/ducks/promo-code/selectors";
+import {CustomerShippingAccount} from "@/types/customer";
 
 export const customerFromState = (state: RootState) => {
     if (!isCustomer(state.user.currentCustomer)) {
@@ -130,60 +145,115 @@ export const loadCurrentCart = () => async (dispatch: AppDispatch, getState: () 
     }
 };
 
-export const saveNewCart = ({shipToCode, cartName, itemCode, quantity = 1, comment = ''}:{
-    shipToCode: string;
-    cartName: string;
-    itemCode: string;
-    quantity: number;
-    comment?: string;
-}) =>
-    async (dispatch: AppDispatch, getState: () => RootState) => {
-        try {
-            const state = getState();
+export const saveNewCart = createAsyncThunk<SalesOrder|null, SaveNewCartProps>(
+    'cart/save',
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const customer = selectCurrentCustomer(state);
+        const promo_code = selectCurrentPromoCode(state);
+        const body:NewCartBody = {
+            action: 'new',
+            CartName: arg.cartName,
+            ItemCode: arg.itemCode,
+            QuantityOrdered: arg.quantity ?? 1,
+            Comment: arg.comment ?? '',
+            SalesOrderNo: '',
+            promo_code: promo_code?.promo_code ?? '',
+        };
+
+        const {ARDivisionNo, CustomerNo} = customer!;
+        const response = await postCartAction('chums', ARDivisionNo, CustomerNo, arg.shipToCode, body);
+        localStore.setItem<string|null>(STORE_CURRENT_CART, response?.SalesOrderNo ?? null);
+        return response;
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
             const customer = selectCurrentCustomer(state);
-            const promo_code = selectPromoCode(state);
-
-            if (!customer?.ARDivisionNo || !customer?.CustomerNo) {
-                return;
-            }
-
-            if (!cartName) {
-                dispatch(setAlert({message: 'Unable to save your cart without a cart name!'}));
-                return;
-            }
-
-            const data:NewCartBody = {
-                action: 'new',
-                CartName: cartName,
-                ItemCode: itemCode,
-                QuantityOrdered: quantity ?? 1,
-                Comment: comment,
-                SalesOrderNo: '',
-                promo_code: promo_code,
-            };
-
-            const {ARDivisionNo, CustomerNo} = customer;
-
-            const {SalesOrderNo} = await postCartAction('chums', ARDivisionNo, CustomerNo, shipToCode, data);
-            localStore.setItem(STORE_CURRENT_CART, SalesOrderNo);
-            dispatch({type: SAVE_CART, status: FETCH_SUCCESS, payload: SalesOrderNo});
-            dispatch(fetchOpenOrders(customer));
-            const {carts} = getState();
-            const [cart] = carts.list.filter(so => so.SalesOrderNo === SalesOrderNo);
-            if (!cart) {
-                return;
-            }
-            dispatch(setCurrentCart(cart.SalesOrderNo, true));
-            return {SalesOrderNo, ...customer};
-        } catch (err) {
-            dispatch({type: SAVE_CART, status: FETCH_FAILURE});
-            if (err instanceof Error) {
-                dispatch(handleError(err, SAVE_CART));
-                dispatch(logError({message: err.message}));
-            }
+            return !!customer?.ARDivisionNo
+                && !selectCartLoading(state)
+                && !!arg.cartName.trim()
+                && arg.quantity > 0;
         }
-    };
+    }
+)
 
+export interface DuplicateSalesOrderProps {
+    cartName: string;
+    salesOrderNo: string;
+    shipToCode?: string|null;
+}
+export const duplicateSalesOrder = createAsyncThunk<SalesOrder|null,DuplicateSalesOrderProps>(
+    'cart/duplicateSalesOrder',
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const customer = selectCurrentCustomer(state)!;
+        const promo_code = selectCurrentPromoCode(state);
+        const body:DuplicateSalesOrderBody = {
+            action: 'duplicate',
+            CartName: arg.cartName,
+            SalesOrderNo: arg.salesOrderNo,
+            promo_code: promo_code?.promo_code,
+        }
+        return await postCartAction('chums', customer.ARDivisionNo, customer.CustomerNo, arg.shipToCode ?? null, body);
+    },
+
+)
+//
+// export const _saveNewCart = ({shipToCode, cartName, itemCode, quantity = 1, comment = ''}:{
+//     shipToCode: string;
+//     cartName: string;
+//     itemCode: string;
+//     quantity: number;
+//     comment?: string;
+// }) =>
+//     async (dispatch: AppDispatch, getState: () => RootState) => {
+//         try {
+//             const state = getState();
+//             const customer = selectCurrentCustomer(state);
+//             const promo_code = selectPromoCode(state);
+//
+//             if (!customer?.ARDivisionNo || !customer?.CustomerNo) {
+//                 return;
+//             }
+//
+//             if (!cartName) {
+//                 dispatch(setAlert({message: 'Unable to save your cart without a cart name!'}));
+//                 return;
+//             }
+//
+//             const data:NewCartBody = {
+//                 action: 'new',
+//                 CartName: cartName,
+//                 ItemCode: itemCode,
+//                 QuantityOrdered: quantity ?? 1,
+//                 Comment: comment,
+//                 SalesOrderNo: '',
+//                 promo_code: promo_code,
+//             };
+//
+//             const {ARDivisionNo, CustomerNo} = customer;
+//
+//             const {SalesOrderNo} = await postCartAction('chums', ARDivisionNo, CustomerNo, shipToCode, data);
+//             localStore.setItem(STORE_CURRENT_CART, SalesOrderNo);
+//             dispatch({type: SAVE_CART, status: FETCH_SUCCESS, payload: SalesOrderNo});
+//             dispatch(fetchOpenOrders(customer));
+//             const {carts} = getState();
+//             const [cart] = carts.list.filter(so => so.SalesOrderNo === SalesOrderNo);
+//             if (!cart) {
+//                 return;
+//             }
+//             dispatch(setCurrentCart(cart.SalesOrderNo, true));
+//             return {SalesOrderNo, ...customer};
+//         } catch (err) {
+//             dispatch({type: SAVE_CART, status: FETCH_FAILURE});
+//             if (err instanceof Error) {
+//                 dispatch(handleError(err, SAVE_CART));
+//                 dispatch(logError({message: err.message}));
+//             }
+//         }
+//     };
+//
 
 export const saveCart = () => async (dispatch: AppDispatch, getState: () => RootState) => {
     try {
@@ -246,14 +316,14 @@ export const saveCart = () => async (dispatch: AppDispatch, getState: () => Root
             promo_code: UDF_PROMO_DEAL ?? promo_code ?? '',
         };
 
-        dispatch({type: SAVE_CART, status: FETCH_INIT});
-        const {success} = await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, body);
-        if (!success) {
-            dispatch({type: SAVE_CART, status: FETCH_FAILURE});
-            return;
-        }
-        dispatch({type: SAVE_CART, status: FETCH_SUCCESS});
-        dispatch(loadSalesOrder(header.SalesOrderNo));
+        // dispatch({type: SAVE_CART, status: FETCH_INIT});
+        // const {success} = await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, body);
+        // if (!success) {
+        //     dispatch({type: SAVE_CART, status: FETCH_FAILURE});
+        //     return;
+        // }
+        // dispatch({type: SAVE_CART, status: FETCH_SUCCESS});
+        // dispatch(loadSalesOrder(header.SalesOrderNo));
     } catch (err) {
         dispatch({type: SAVE_CART, status: FETCH_FAILURE});
         if (err instanceof B2BError) {
@@ -306,10 +376,10 @@ export const promoteCart = () => async (dispatch: AppDispatch, getState: () => R
 
         const response = await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, data);
 
-        dispatch({type: PROMOTE_CART, status: FETCH_SUCCESS, salesOrder: header});
-        dispatch(loadSalesOrder(header.SalesOrderNo));
-        dispatch(fetchOpenOrders(header));
-        return response.success;
+        // dispatch({type: PROMOTE_CART, status: FETCH_SUCCESS, salesOrder: header});
+        // dispatch(loadSalesOrder(header.SalesOrderNo));
+        // dispatch(fetchOpenOrders(header));
+        // return response.success;
     } catch (err) {
         dispatch({type: PROMOTE_CART, status: FETCH_FAILURE});
         if (err instanceof B2BError) {
@@ -394,23 +464,23 @@ export const saveCartItem = ({
                 QuantityOrdered,
                 Comment: CommentText,
             };
-            dispatch({type: SAVE_CART, status: FETCH_INIT});
-            const response = await postCartAction('chums', ARDivisionNo, CustomerNo, ShipToCode, data);
-            if (!response?.success) {
-                dispatch(setAlert({message: 'Unable to update cart', context: SAVE_CART}));
-                dispatch({type: SAVE_CART, status: FETCH_FAILURE});
-                return;
-            }
-            dispatch({
-                type: SAVE_CART,
-                status: FETCH_SUCCESS,
-                message: `Added to cart: ${ItemCode} (qty: ${QuantityOrdered})`
-            });
-            if (SalesOrderNo === _salesOrderNo) {
-                dispatch(loadSalesOrder(SalesOrderNo));
-            } else {
-                dispatch(loadCurrentCart());
-            }
+            // dispatch({type: SAVE_CART, status: FETCH_INIT});
+            // const response = await postCartAction('chums', ARDivisionNo, CustomerNo, ShipToCode, data);
+            // if (!response?.success) {
+            //     dispatch(setAlert({message: 'Unable to update cart', context: SAVE_CART}));
+            //     dispatch({type: SAVE_CART, status: FETCH_FAILURE});
+            //     return;
+            // }
+            // dispatch({
+            //     type: SAVE_CART,
+            //     status: FETCH_SUCCESS,
+            //     message: `Added to cart: ${ItemCode} (qty: ${QuantityOrdered})`
+            // });
+            // if (SalesOrderNo === _salesOrderNo) {
+            //     dispatch(loadSalesOrder(SalesOrderNo));
+            // } else {
+            //     dispatch(loadCurrentCart());
+            // }
         } catch (err) {
             dispatch({type: SAVE_CART, status: FETCH_FAILURE});
             if (err instanceof B2BError) {
@@ -496,4 +566,28 @@ export const getItemAvailability = createAsyncThunk<ItemAvailability | null, str
 
 export const setCartProgress = createAction('cart/setProgress');
 export const setShipDate = createAction('cart/setShipDate');
-export const setShippingAccount = createAction('cart/setShippingAccount');
+export const setShippingAccount = createAction<CustomerShippingAccount>('cart/setShippingAccount');
+
+export const applyPromoCode = createAsyncThunk<SalesOrder|null, PromoCode>(
+    'cart/applyPromoCode',
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const customer = selectCurrentCustomer(state);
+        const cartNo = selectCartNo(state);
+        const body:ApplyPromoCodeBody = {
+            action: 'apply-discount',
+            promo_code:arg.promo_code,
+            SalesOrderNo: cartNo,
+        }
+        return await postApplyPromoCode(customer!, body);
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return selectLoggedIn(state)
+                && !!selectCurrentCustomer(state)
+                && !!selectCartNo(state)
+                && !selectCartLoading(state);
+        }
+    }
+)

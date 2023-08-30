@@ -21,6 +21,8 @@ import menuReducer from "../ducks/menu";
 import slidesReducer from "../ducks/slides";
 import keywordsReducer from "../ducks/keywords";
 import pageReducer from "../ducks/page";
+import customersReducer from "@/ducks/customers";
+import repsReducer from "@/ducks/reps";
 
 
 export const rootReducer = combineReducers({
@@ -30,6 +32,7 @@ export const rootReducer = combineReducers({
     carts: cartsReducer,
     category: categoryReducer,
     customer: customerReducer,
+    customers: customersReducer,
     invoices: invoicesReducer,
     keywords: keywordsReducer,
     menu: menuReducer,
@@ -38,6 +41,7 @@ export const rootReducer = combineReducers({
     page: pageReducer,
     products: productsReducer,
     promo_code: promoCodeReducer,
+    reps: repsReducer,
     salesOrder: salesOrderReducer,
     search: searchReducer,
     slides: slidesReducer,

@@ -1,87 +1,86 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
+import React, {ChangeEvent, SyntheticEvent, useEffect, useRef, useState} from 'react';
+import {useAppDispatch, useAppSelector} from "@/app/configureStore";
 import {getSearchResults, selectSearchLoading, selectSearchResults, selectSearchTerm} from "../index";
 import {Autocomplete, TextField} from "@mui/material";
-import {buildPath} from "../../../utils/path-utils";
-import {CONTENT_PATH_SEARCH_IMAGE, PATH_CATEGORY, PATH_PAGE, PATH_PRODUCT} from "../../../constants/paths";
-import {Link, redirect} from 'react-router-dom';
+import {
+    CONTENT_PATH_SEARCH_IMAGE,
+    PATH_CATEGORY,
+    PATH_PAGE,
+    PATH_PRODUCT,
+    PATH_PRODUCT_WITHOUT_PARENT
+} from "@/constants/paths";
+import {generatePath, Link, redirect} from 'react-router-dom';
 import {SearchResult} from "b2b-types";
+import {useDebounce} from 'usehooks-ts'
+import {useNavigate} from "react-router";
 
 
-const itemLink = (result:SearchResult) => {
+const itemLink = (result: SearchResult) => {
     switch (result.pagetype) {
         case 'category':
-            return buildPath(PATH_CATEGORY, {category: result.keyword});
+            return generatePath(PATH_CATEGORY, {category: result.keyword});
         case 'page':
-            return buildPath(PATH_PAGE, {keyword: result.keyword});
-        case 'product':
-            return buildPath(PATH_PRODUCT, {category: parent, product: result.keyword})
+            return generatePath(PATH_PAGE, {keyword: result.keyword});
         default:
-            return !!result.parent
-                ? buildPath(PATH_PRODUCT, {category: parent, product: result.keyword})
-                : buildPath(PATH_CATEGORY, {category: result.keyword});
+            if (result.parent) {
+                return generatePath(PATH_PRODUCT, {category: result.parent, product: result.keyword})
+            }
+            return generatePath(PATH_PRODUCT_WITHOUT_PARENT, {product: result.keyword})
     }
 }
 
 
 export default function SearchBar() {
     const dispatch = useAppDispatch();
-    const term = useAppSelector(selectSearchTerm);
     const results = useAppSelector(selectSearchResults);
     const loading = useAppSelector(selectSearchLoading);
-
+    const navigate = useNavigate();
 
     const [value, setValue] = useState(null);
-    const [inputValue, setInputValue] = useState(term ?? '');
+    const [inputValue, setInputValue] = useState('');
+    const searchTerm = useDebounce<string>(inputValue, 500);
+
     const [options, setOptions] = useState(results ?? []);
 
-    const timer = useRef(0);
-
     useEffect(() => {
-        return () => {
-            window.clearTimeout(timer.current);
-        }
-    }, [])
-    useEffect(() => {
-        setInputValue(term ?? '');
         setOptions(results ?? []);
-    }, [term, results]);
+    }, [results]);
 
     useEffect(() => {
-        window.clearTimeout(timer.current);
-        timer.current = window.setTimeout(() => {
-            if (!inputValue || !inputValue.trim()) {
-                return;
-            }
-            dispatch(getSearchResults(inputValue))
-        }, 350);
-    }, [inputValue]);
-
+        dispatch(getSearchResults(searchTerm));
+    }, [searchTerm]);
 
     const changeHandler = (ev: React.SyntheticEvent, newValue: SearchResult | null) => {
         console.log('changeHandler', newValue);
         setValue(null);
         setInputValue('');
-        window.clearTimeout(timer.current);
         if (newValue) {
-            redirect(itemLink(newValue));
+            const path = itemLink(newValue);
+            navigate(path);
         }
+    }
+
+    const inputChangeHandler = (ev:SyntheticEvent, value:string) => {
+        setInputValue(value);
     }
 
     return (
         <Autocomplete
-            sx={{width: 300}}
+            sx={{width: 300, display: 'inline-block'}}
             renderInput={(params) => (
-                <TextField {...params} size="small" label="Search" fullWidth/>
+                <TextField {...params} variant="outlined" size="small" label="Search" fullWidth/>
             )}
-            onInputChange={(ev, value) => setInputValue(value)}
+            inputValue={inputValue}
+            onInputChange={inputChangeHandler}
             options={options}
+            noOptionsText={null}
             blurOnSelect
             getOptionLabel={(option) => option.title}
             filterOptions={(x) => x}
             onChange={changeHandler}
             renderOption={(props, option) => {
-                const src = buildPath(CONTENT_PATH_SEARCH_IMAGE, {image: option.image || 'missing.png'});
+                const src = CONTENT_PATH_SEARCH_IMAGE
+                    .replace(':image', encodeURIComponent(option.image ?? 'missing.png'));
                 const link = itemLink(option);
                 return (
                     <li {...props} key={option.keyword}>

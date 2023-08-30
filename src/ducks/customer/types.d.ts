@@ -1,12 +1,12 @@
 import {
     BillToCustomer,
-    CustomerContact, CustomerKey,
+    CustomerContact,
     CustomerPaymentCard,
     CustomerPriceRecord,
-    CustomerUser, Editable, PromoCode,
+    CustomerUser,
+    PromoCode, RecentCustomer,
     ShipToCustomer
 } from "b2b-types";
-import {EmptyObject, Selectable} from "../../_types";
 import {CustomerPermissions} from "@/ducks/user/types";
 
 export interface FetchCustomerResponse {
@@ -17,5 +17,6 @@ export interface FetchCustomerResponse {
     users: CustomerUser[];
     paymentCards: CustomerPaymentCard[];
     promoCodes: PromoCode[];
-    permissions: CustomerPermissions|null;
+    permissions: CustomerPermissions | null;
+    recent?: RecentCustomer[];
 }

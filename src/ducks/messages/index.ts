@@ -1,8 +1,8 @@
 import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {fetchMessages} from "../../api/messages";
+import {fetchMessages} from "@/api/messages";
 import {Message} from "b2b-types";
 import {RootState} from "@/app/configureStore";
-import {PreloadedState} from "../../_types";
+import {PreloadedState} from "@/types/preload";
 
 export interface MessagesState {
     list: Message[],

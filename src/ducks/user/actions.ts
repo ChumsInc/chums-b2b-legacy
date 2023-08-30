@@ -1,22 +1,20 @@
-import {fetchGET, fetchPOST} from '../../utils/fetch';
+import {fetchGET, fetchPOST} from '@/utils/fetch';
 import {
     CHANGE_USER,
     CHANGE_USER_PASSWORD,
-    CLEAR_USER_ACCOUNT,
     FETCH_FAILURE,
     FETCH_INIT,
     FETCH_LOCAL_LOGIN,
     FETCH_SUCCESS,
-    FETCH_USER_PROFILE,
     FETCH_USER_SIGNUP,
     SET_LOGGED_IN,
     UPDATE_LOGIN,
-} from "../../constants/actions";
+} from "@/constants/actions";
 
 import {handleError} from '../app/actions';
 import {setAlert} from '../alerts';
 
-import localStore from '../../utils/LocalStore';
+import localStore from '@/utils/LocalStore';
 import {
     STORE_AUTHTYPE,
     STORE_CURRENT_CART,
@@ -24,40 +22,30 @@ import {
     STORE_CUSTOMER_SHIPPING_ACCOUNT,
     STORE_RECENT_ACCOUNTS,
     STORE_TOKEN,
-    STORE_USER_ACCOUNT
-} from '../../constants/stores';
+    STORE_USER_ACCESS
+} from '@/constants/stores';
 
 import {auth} from '@/api/IntranetAuthService';
-import {getProfile, getSignInProfile, getTokenExpirationDate} from "../../utils/jwtHelper";
-import {getFirstCustomer, getFirstUserAccount} from "../../utils/customer";
-import {loadCustomer, loadCustomerAccount, setCustomerAccount} from "../customer/actions";
+import {getProfile, getSignInProfile, getTokenExpirationDate} from "@/utils/jwtHelper";
+import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {
     API_PATH_CHANGE_PASSWORD,
-    API_PATH_LOGIN_GOOGLE,
     API_PATH_LOGIN_LOCAL_REAUTH,
     API_PATH_LOGOUT,
     API_PATH_PASSWORD_RESET,
     API_PATH_USER_SET_PASSWORD,
     API_PATH_USER_SIGN_UP
-} from "../../constants/paths";
-import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../../constants/app";
-import {
-    selectCurrentCustomer,
-    selectLoggedIn,
-    selectUserCustomersLoading,
-    selectUserLoading,
-    selectUserRepAccounts,
-    selectUserRepsLoading
-} from "./selectors";
-import {selectCustomerAccount} from "../customer/selectors";
-import {fetchGoogleLogin, fetchRepList, fetchUserProfile, postLocalLogin} from "@/api/user";
+} from "@/constants/paths";
+import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "@/constants/app";
+import {selectLoggedIn, selectResettingPassword, selectUserAccount, selectUserLoading} from "./selectors";
+import {fetchGoogleLogin, fetchUserProfile, postLocalLogin, postResetPassword} from "@/api/user";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {SetLoggedInProps, UserLoginState, UserPasswordState, UserProfileResponse} from "./types";
-import {AppDispatch, RootState} from "../../app/configureStore";
-import {BasicCustomer, Customer, UserCustomerAccess, UserProfile} from "b2b-types";
-import {isCustomer, isCustomerAccess} from "./utils";
-import {fetchCustomerList} from "@/api/customer-list";
-import {StoredProfile} from "../../_types";
+import {AppDispatch, RootState} from "@/app/configureStore";
+import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
+import {isCustomerAccess} from "./utils";
+import {StoredProfile} from "@/types/user";
+import {loadCustomerList} from "@/ducks/customers/actions";
 
 let reauthTimer: number = 0;
 
@@ -143,22 +131,22 @@ export const updateLocalAuth = (forceReAuth = false) => (dispatch: AppDispatch, 
         });
 };
 
-export const selectUserAccountIfNeeded = (user: UserProfileResponse) => (dispatch: AppDispatch, getState: () => RootState) => {
-    const currentState = getState();
-    const currentUserAccountID = isCustomerAccess(currentState.user.userAccount) ? currentState.user.userAccount.id : null;
-    if (user.accounts?.filter(acct => acct.id === currentUserAccountID).length === 0) {
-        const firstCustomer = getFirstCustomer(user.accounts);
-        const firstUserAccount = getFirstUserAccount(user.accounts);
-        if (!firstCustomer && !firstUserAccount) {
-            return;
-        }
-        dispatch(setUserAccount(firstUserAccount ?? firstCustomer));
-    }
-};
+// export const selectUserAccountIfNeeded = (user: UserProfileResponse) => (dispatch: AppDispatch, getState: () => RootState) => {
+//     const currentState = getState();
+//     const currentUserAccountID = isCustomerAccess(currentState.user.access.current) ? currentState.user.access.current.id : null;
+//     if (user.accounts?.filter(acct => acct.id === currentUserAccountID).length === 0) {
+//         const firstCustomer = getFirstCustomer(user.accounts);
+//         const firstUserAccount = getFirstUserAccount(user.accounts);
+//         if (!firstCustomer && !firstUserAccount) {
+//             return;
+//         }
+//         dispatch(setUserAccess(firstUserAccount ?? firstCustomer));
+//     }
+// };
 
 export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
     'user/signInWithGoogle',
-    async (arg, {dispatch}) => {
+    async (arg) => {
         const response = await fetchGoogleLogin(arg);
         auth.setToken(arg);
         if (response.user) {
@@ -174,6 +162,7 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
                     }
                 }
             }
+            response.picture = getSignInProfile(arg)?.imageUrl ?? null;
             auth.setProfile(storedProfile);
             localStore.setItem<string>(STORE_AUTHTYPE, AUTH_GOOGLE);
         }
@@ -188,44 +177,44 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
 )
 
 
-export const _signInWithGoogle = (token: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-    try {
-        const state = getState();
-        dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
-        const res = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
-        const {user = {}, roles = [], accounts = []} = res;
-        user.roles = roles;
-        user.accounts = accounts;
-        auth.setToken(token);
-
-        const profile = getSignInProfile(token);
-        auth.setProfile({...profile, chums: {user}});
-        localStore.setItem(STORE_AUTHTYPE, AUTH_GOOGLE);
-        clearTimeout(reauthTimer);
-
-
-        dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
-        dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
-        dispatch(loadRepList());
-        dispatch(selectUserAccountIfNeeded(user));
-        const currentCustomer = selectCurrentCustomer(state);
-        if (!currentCustomer) {
-            return;
-        }
-        if (isCustomer(currentCustomer) && !!currentCustomer.CustomerNo && !isCustomer(selectCustomerAccount(state))) {
-            dispatch(setCustomerAccount(currentCustomer));
-            dispatch(loadCustomerAccount({fetchOrders: true}));
-        }
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            console.trace(err);
-            auth.logout();
-            dispatch(setLoggedIn({loggedIn: false}));
-            dispatch({type: FETCH_USER_PROFILE, status: FETCH_FAILURE, message: err.message});
-            dispatch(handleError(err, FETCH_USER_PROFILE));
-        }
-    }
-}
+// export const _signInWithGoogle = (token: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+//     try {
+//         const state = getState();
+//         dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
+//         const res = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
+//         const {user = {}, roles = [], accounts = []} = res;
+//         user.roles = roles;
+//         user.accounts = accounts;
+//         auth.setToken(token);
+//
+//         const profile = getSignInProfile(token);
+//         auth.setProfile({...profile, chums: {user}});
+//         localStore.setItem(STORE_AUTHTYPE, AUTH_GOOGLE);
+//         clearTimeout(reauthTimer);
+//
+//
+//         dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
+//         dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
+//         dispatch(loadRepList());
+//         dispatch(selectUserAccountIfNeeded(user));
+//         const currentCustomer = selectCurrentCustomer(state);
+//         if (!currentCustomer) {
+//             return;
+//         }
+//         if (isCustomer(currentCustomer) && !!currentCustomer.CustomerNo && !isCustomer(selectCustomerAccount(state))) {
+//             dispatch(setCustomerAccount(currentCustomer));
+//             dispatch(loadCustomerAccount({fetchOrders: true}));
+//         }
+//     } catch (err: unknown) {
+//         if (err instanceof Error) {
+//             console.trace(err);
+//             auth.logout();
+//             dispatch(setLoggedIn({loggedIn: false}));
+//             dispatch({type: FETCH_USER_PROFILE, status: FETCH_FAILURE, message: err.message});
+//             dispatch(handleError(err, FETCH_USER_PROFILE));
+//         }
+//     }
+// }
 
 
 export const logout = () => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -239,7 +228,7 @@ export const logout = () => async (dispatch: AppDispatch, getState: () => RootSt
     auth.logout();
     clearTimeout(reauthTimer);
     localStore.removeItem(STORE_CUSTOMER);
-    localStore.removeItem(STORE_USER_ACCOUNT);
+    localStore.removeItem(STORE_USER_ACCESS);
     localStore.removeItem(STORE_RECENT_ACCOUNTS);
     localStore.removeItem(STORE_AUTHTYPE);
     localStore.removeItem(STORE_CURRENT_CART);
@@ -247,12 +236,11 @@ export const logout = () => async (dispatch: AppDispatch, getState: () => RootSt
     dispatch(setLoggedIn({loggedIn: false}));
 };
 
-export const clearUserAccount = () => ({type: CLEAR_USER_ACCOUNT});
 
-export const setUserAccount = createAsyncThunk<UserCustomerAccess | null, UserCustomerAccess | null>(
+export const setUserAccess = createAsyncThunk<UserCustomerAccess | null, UserCustomerAccess | null>(
     'user/access/set',
     async (arg, {dispatch}) => {
-        localStore.setItem<UserCustomerAccess | null>(STORE_USER_ACCOUNT, arg);
+        localStore.setItem<UserCustomerAccess | null>(STORE_USER_ACCESS, arg);
         if (isCustomerAccess(arg)) {
             if (!arg.isRepAccount) {
                 const {ARDivisionNo, CustomerNo, CustomerName, ShipToCode} = arg;
@@ -265,22 +253,18 @@ export const setUserAccount = createAsyncThunk<UserCustomerAccess | null, UserCu
                 });
             } else {
                 dispatch(loadCustomerList(arg));
-                dispatch(loadRepList());
             }
         }
         return arg;
-    }
-)
-
-export const loadCustomerList = createAsyncThunk<Customer[], UserCustomerAccess | null>(
-    'user/customerList/load',
-    async (arg) => {
-        return await fetchCustomerList(arg!)
     },
     {
         condition: (arg, {getState}) => {
+            // only set the user access if the access is a rep account
+            // if not a rep access, then the access should be treated specifically as a customer and not an access object.
             const state = getState() as RootState;
-            return selectLoggedIn(state) && !!arg?.isRepAccount && !selectUserCustomersLoading(state);
+            return selectLoggedIn(state)
+                && !!arg?.isRepAccount
+                && selectUserAccount(state)?.id !== arg?.id;
         }
     }
 )
@@ -294,19 +278,6 @@ export const loadProfile = createAsyncThunk<UserProfileResponse>(
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
             return !selectUserLoading(state);
-        }
-    }
-)
-
-export const loadRepList = createAsyncThunk(
-    'user/loadReps',
-    async () => {
-        return await fetchRepList();
-    },
-    {
-        condition: (arg, {getState}) => {
-            const state = getState() as RootState;
-            return !selectUserRepsLoading(state) && !!selectUserRepAccounts(state).length;
         }
     }
 )
@@ -410,25 +381,23 @@ export const submitNewUser = ({email, name, account, accountName, telephone, add
         });
 };
 
-export const resetPassword = ({email}: {
-    email: string
-}) => (dispatch: AppDispatch) => {
-    dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_INIT});
-    fetchPOST(API_PATH_PASSWORD_RESET, {email})
-        .then(({success, result}) => {
-            // console.log({success, result});
-            dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_SUCCESS});
-            dispatch(setAlert({
-                type: 'success',
-                message: "We've sent you an email so you can validate your account and reset your password.",
-                context: 'login',
-                title: 'Thanks!'
-            }));
-        })
-        .catch(err => {
-            dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_FAILURE});
-            dispatch(handleError(err, 'RESET_PASSWORD'));
-            console.log(err.name, err.message);
-        })
-};
-
+export const resetPassword = createAsyncThunk<void, string>(
+    'user/resetPassword',
+    async (arg, {dispatch}) => {
+        await postResetPassword(arg);
+        dispatch(setAlert({
+            type: 'success',
+            message: "We've sent you an email so you can validate your account and reset your password.",
+            context: 'user/resetPassword',
+            title: 'Thanks!'
+        }));
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return !!arg.trim()
+                && !selectLoggedIn(state)
+                && !selectResettingPassword(state);
+        }
+    }
+)

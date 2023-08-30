@@ -1,6 +1,6 @@
-import React, {useId} from 'react';
+import React, {useEffect, useId, useRef, useState} from 'react';
 import {useSelector} from "react-redux";
-import {selectCurrentAccess, selectLoggedIn} from "@/ducks/user/selectors";
+import {selectCurrentAccess, selectLoggedIn, selectLoginExpiry} from "@/ducks/user/selectors";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
@@ -8,12 +8,36 @@ import GoogleSignInOneTap from "@/ducks/user/components/GoogleSignInOneTap";
 import UserAvatar from "@/ducks/user/components/UserAvatar";
 import {generatePath} from "react-router-dom";
 
+const isExpired = (expires: number) => {
+    if (!expires || expires < 0) {
+        return true;
+    }
+    return new Date(expires * 1000).valueOf() <= new Date().valueOf();
+}
+
+
 const UserMenu = () => {
     const isLoggedIn = useSelector(selectLoggedIn);
     const currentAccess = useSelector(selectCurrentAccess);
+    const expires = useSelector(selectLoginExpiry);
+    const timerRef = useRef<number>(0);
     const buttonId = useId();
     const menuId = useId();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [expired, setExpired] = useState(isExpired(expires));
+
+    useEffect(() => {
+        window.clearTimeout(timerRef.current);
+        if (!isExpired(expires)) {
+            timerRef.current = window.setInterval(() => {
+                setExpired(isExpired(expires));
+            })
+        }
+        return () => {
+            window.clearTimeout(timerRef.current);
+        }
+    }, [expires]);
+
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -37,7 +61,7 @@ const UserMenu = () => {
                 )}
                 <MenuItemRouterLink to="/logout">Logout</MenuItemRouterLink>
             </Menu>
-            {!isLoggedIn && <GoogleSignInOneTap/>}
+            {(!isLoggedIn || expired) && <GoogleSignInOneTap onSignIn={() => setAnchorEl(null)}/>}
         </>
     )
 }

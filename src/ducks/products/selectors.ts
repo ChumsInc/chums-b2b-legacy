@@ -1,7 +1,6 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {RootState} from "../../app/configureStore";
+import {RootState} from "@/app/configureStore";
 import {isCartProduct, isProduct} from "./utils";
-import {Product} from "b2b-types";
 
 export const selectProductKeywords = (state: RootState) => state.products.keywords ?? [];
 export const selectProductKeywordsLoading = (state: RootState) => state.products.loadingKeywords ?? false;
@@ -14,6 +13,7 @@ export const selectProductSalesUM = (state: RootState) => state.products.salesUM
 export const selectProductCustomerPrice = (state: RootState) => state.products.customerPrice;
 export const selectProductVariantId = (state: RootState) => state.products.variantId;
 export const selectProductCartItem = (state: RootState) => state.products.cartItem;
+export const selectCustomerPricing = (state:RootState) => state.products.pricing;
 
 export const selectProductSeasonActive = createSelector(
     [selectSelectedProduct],

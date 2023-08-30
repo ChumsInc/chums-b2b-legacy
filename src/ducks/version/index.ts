@@ -1,7 +1,7 @@
 import {createReducer, createSelector} from "@reduxjs/toolkit";
 import {ignoreVersion, loadVersion} from "./actions";
-import {RootState} from "../../app/configureStore";
-import {PreloadedState} from "../../_types";
+import {RootState} from "@/app/configureStore";
+import {PreloadedState} from "@/types/preload";
 
 export interface VersionState {
     versionNo: string|null,
@@ -40,7 +40,7 @@ export const selectShouldCheckVersion = createSelector(
     }
 )
 
-export const initialVersionState = (preload:PreloadedState = window?.__PRELOADED_STATE__ ?? {}):VersionState => ({
+export const initialVersionState = (preload:PreloadedState = {}):VersionState => ({
     versionNo: preload?.version?.versionNo ?? null,
     loading: false,
     changed: false,

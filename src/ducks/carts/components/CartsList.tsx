@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
-import {selectCartsList, selectCartsLoading} from "../selectors";
+import {selectCartsList, selectCartsLoaded, selectCartsLoading} from "../selectors";
 import {selectCartNo} from "../../cart/selectors";
 import {newCart, setCurrentCart} from "../../cart/actions";
 import {PATH_SALES_ORDER} from "@/constants/paths";
@@ -19,6 +19,9 @@ import {SalesOrderHeader} from "b2b-types";
 import Decimal from "decimal.js";
 import {generatePath, redirect} from "react-router-dom";
 import {calcOrderType} from "@/utils/orders";
+import {loadOrders} from "@/ducks/open-orders/actions";
+import Alert from "@mui/material/Alert";
+import {customerSlug} from "@/utils/customer";
 
 const cartFields: SortableTableField<SalesOrderHeader>[] = [
     {field: 'SalesOrderNo', title: 'Cart', render: (so) => <CartButton salesOrderNo={so.SalesOrderNo}/>},
@@ -40,7 +43,14 @@ const CartsList = () => {
     const dispatch = useAppDispatch();
     const currentCustomer = useSelector(selectCurrentCustomer);
     const cartsList = useSelector(selectCartsList);
-    const cartsLoading = useSelector(selectCartsLoading);
+    const loading = useSelector(selectCartsLoading);
+    const loaded = useSelector(selectCartsLoaded);
+
+    useEffect(() => {
+        if (!cartsList.length && !loading && !loaded && !!currentCustomer) {
+            dispatch(loadOrders(currentCustomer));
+        }
+    }, [cartsList, loading, loaded, currentCustomer]);
 
     const newCartHandler = () => {
         dispatch(newCart());
@@ -50,7 +60,7 @@ const CartsList = () => {
 
     const reloadHandler = () => {
         if (currentCustomer) {
-            dispatch(fetchOpenOrders(currentCustomer));
+            dispatch(loadOrders(currentCustomer));
         }
     }
 
@@ -67,9 +77,13 @@ const CartsList = () => {
     return (
         <div>
             <OrdersList list={cartsList} fields={cartFields}
-                        loading={cartsLoading}
+                        loading={loading}
                         onNewCart={newCartHandler}
                         onReload={reloadHandler}/>
+            <Alert severity="info">
+                <strong className="me-1">Hint:</strong>
+                Select a cart icon to make it your current cart.
+            </Alert>
         </div>
     )
 }

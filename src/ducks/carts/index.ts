@@ -12,8 +12,10 @@ import {isCartOrder} from "@/utils/orders";
 import {createReducer} from "@reduxjs/toolkit";
 import {defaultSalesOrderSort, salesOrderSorter} from "../salesOrder/utils";
 import {SalesOrderHeader} from "b2b-types";
-import {setUserAccount} from "@/ducks/user/actions";
+import {setUserAccess} from "@/ducks/user/actions";
 import {customerSlug} from "@/utils/customer";
+import {loadCustomer} from "@/ducks/customer/actions";
+import {loadOrders} from "@/ducks/open-orders/actions";
 
 export interface CartsState {
     customerKey: string | null;
@@ -32,12 +34,33 @@ export const initialCartsState = (): CartsState => ({
 
 const cartsReducer = createReducer(initialCartsState, builder => {
     builder
-        .addCase(setUserAccount.pending, (state, action) => {
+        .addCase(setUserAccess.pending, (state, action) => {
             if (!action.meta.arg?.isRepAccount && state.customerKey !== customerSlug(action.meta.arg)) {
                 state.list = [];
                 state.loaded = false;
                 state.customerKey = customerSlug(action.meta.arg);
             }
+        })
+        .addCase(loadCustomer.pending, (state, action) => {
+            const key = customerSlug(action.meta.arg);
+            if (state.customerKey !== key) {
+                state.list = [];
+                state.loaded = false;
+                state.customerKey = key
+            }
+        })
+        .addCase(loadOrders.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(loadOrders.fulfilled, (state, action) => {
+            state.loading = false;
+            state.loaded = true;
+            state.list = action.payload
+                .filter(so => so.OrderType === 'Q')
+                .sort(salesOrderSorter(defaultSalesOrderSort));
+        })
+        .addCase(loadOrders.rejected, (state) => {
+            state.loading = false;
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {

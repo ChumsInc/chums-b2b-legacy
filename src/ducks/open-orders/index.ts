@@ -6,7 +6,8 @@ import {SalesOrderHeader} from "b2b-types";
 import {loadOrders} from "@/ducks/open-orders/actions";
 import {setCustomerAccount} from "@/ducks/customer/actions";
 import {customerSlug} from "@/utils/customer";
-import {setLoggedIn, setUserAccount} from "@/ducks/user/actions";
+import {setLoggedIn, setUserAccess} from "@/ducks/user/actions";
+import {saveNewCart} from "@/ducks/cart/actions";
 
 export interface OpenOrdersState {
     customerKey: string | null;
@@ -37,7 +38,10 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         })
         .addCase(loadOrders.fulfilled, (state, action) => {
             state.loading = false;
-            state.list = action.payload.sort(salesOrderSorter(defaultSalesOrderSort));
+            state.loaded = true;
+            state.list = action.payload
+                .filter(so => so.OrderType !== 'Q')
+                .sort(salesOrderSorter(defaultSalesOrderSort));
         })
         .addCase(loadOrders.rejected, (state) => {
             state.loading = false;
@@ -49,10 +53,18 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
                 state.customerKey = null;
             }
         })
-        .addCase(setUserAccount.pending, (state, action) => {
+        .addCase(setUserAccess.pending, (state, action) => {
             if (!action.meta.arg?.isRepAccount && state.customerKey !== customerSlug(action.meta.arg)) {
                 state.list = [];
                 state.loaded = false;
+            }
+        })
+        .addCase(saveNewCart.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.list = [
+                    ...state.list.filter(so => so.SalesOrderNo !== action.payload?.SalesOrderNo),
+                    action.payload,
+                ].sort(salesOrderSorter(defaultSalesOrderSort));
             }
         })
         .addDefaultCase((state, action) => {

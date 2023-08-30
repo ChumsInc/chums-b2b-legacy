@@ -45,12 +45,12 @@ import {
     setCustomerAccount,
     setDefaultShipTo
 } from "./actions";
-import {setLoggedIn, setUserAccount} from "../user/actions";
-import {Selectable} from "../../_types";
+import {setLoggedIn, setUserAccess} from "../user/actions";
+import {Selectable} from "@/types/generic";
 import {CustomerPermissions} from "@/types/customer";
 
 export interface CustomerPermissionsState {
-    permissions: CustomerPermissions | null;
+    values: CustomerPermissions | null;
     loading: boolean;
     loaded: boolean;
 }
@@ -60,6 +60,8 @@ export interface CustomerState {
     company: string;
     key: string | null;
     account: (BillToCustomer & Editable) | null;
+    shipToCode: string|null;
+    shipTo: ShipToCustomer|null;
     contacts: CustomerContact[];
     pricing: CustomerPriceRecord[];
     shipToAddresses: (ShipToCustomer & Editable)[];
@@ -75,12 +77,14 @@ export const initialCustomerState = (): CustomerState => ({
     company: 'chums',
     key: null,
     account: localStore.getItem<BillToCustomer | null>(STORE_CUSTOMER, null) ?? null,
+    shipToCode: null,
+    shipTo: null,
     contacts: [],
     pricing: [],
     shipToAddresses: [],
     paymentCards: [],
     permissions: {
-        permissions: null,
+        values: null,
         loading: false,
         loaded: false,
     },
@@ -135,6 +139,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
                 state.shipToAddresses = [];
                 state.paymentCards = [];
                 state.users = [];
+                state.loaded = false;
             }
         })
         .addCase(saveBillingAddress.pending, (state) => {
@@ -167,12 +172,14 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(loadCustomer.pending, (state, action) => {
             if (state.key !== customerSlug(action.meta.arg)) {
                 state.account = null;
+                state.shipToCode = null;
                 state.contacts = [];
                 state.pricing = [];
                 state.shipToAddresses = [];
                 state.paymentCards = [];
                 state.users = [];
-                state.permissions.permissions = null;
+                state.permissions.values = null;
+                state.loaded = false;
             }
             state.key = customerSlug(action.meta.arg);
             state.loading = true;
@@ -180,17 +187,39 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(loadCustomer.fulfilled, (state, action) => {
             state.loading = false;
             state.account = action.payload?.customer ?? null;
+            state.shipToCode = action.payload?.customer?.PrimaryShipToCode ?? null;
+            state.permissions.values = action.payload?.permissions ?? null;
             state.contacts = [...(action.payload?.contacts ?? [])].sort(customerContactSorter);
             state.pricing = [...(action.payload?.pricing ?? [])].sort(customerPriceRecordSorter);
             state.shipToAddresses = [...(action.payload?.shipTo ?? [])].sort(customerShipToSorter(defaultShipToSort));
+            if (!!state.shipToCode && !state.shipToAddresses.filter(st => st.ShipToCode === state.shipToCode).length) {
+                state.shipToCode = null;
+            }
+            if (state.shipToCode && !state.permissions.values?.billTo && !state.permissions.values?.shipTo.includes(state.shipToCode)) {
+                state.shipToCode = null;
+            }
+            if (!state.shipToCode) {
+                if (state.permissions.values?.billTo) {
+                    state.shipToCode = '';
+                    state.shipTo = null;
+                } else if (state.permissions.values?.shipTo.length) {
+                    const [shipTo] = state.shipToAddresses.filter(st => st.ShipToCode === state.permissions.values?.shipTo[0])
+                    state.shipToCode = shipTo?.ShipToCode ?? null;
+                    state.shipTo = shipTo ?? null;
+                }
+            } else  {
+                const [shipTo] = state.shipToAddresses.filter(st => st.ShipToCode === state.shipToCode)
+                state.shipToCode = shipTo?.ShipToCode ?? null;
+                state.shipTo = shipTo ?? null;
+            }
             state.paymentCards = [...(action.payload?.paymentCards ?? [])].sort(customerPaymentCardSorter);
             state.users = [...(action.payload?.users ?? [])].sort(customerUserSorter);
-            state.permissions.permissions = action.payload?.permissions ?? null;
+            state.loaded = true;
         })
         .addCase(loadCustomer.rejected, (state) => {
             state.loading = false;
         })
-        .addCase(setUserAccount.pending, (state, action) => {
+        .addCase(setUserAccess.pending, (state, action) => {
             if (!action.meta.arg?.isRepAccount && customerSlug(state.account) !== customerSlug(action.meta.arg)) {
                 state.account = null;
                 state.contacts = [];
@@ -198,7 +227,8 @@ const customerReducer = createReducer(initialCustomerState, builder => {
                 state.shipToAddresses = [];
                 state.paymentCards = [];
                 state.users = [];
-                state.permissions.permissions = null;
+                state.permissions.values = null;
+                state.loaded = true;
             }
         })
         .addCase(loadCustomerPermissions.pending, (state, action) => {
@@ -206,14 +236,14 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             const key = customerSlug(action.meta.arg)
             if (key !== state.key) {
                 state.permissions.loaded = false;
-                state.permissions.permissions = null;
+                state.permissions.values = null;
 
             }
         })
         .addCase(loadCustomerPermissions.fulfilled, (state, action) => {
             state.permissions.loading = false;
             state.permissions.loaded = true;
-            state.permissions.permissions = action.payload ?? null;
+            state.permissions.values = action.payload ?? null;
         })
         .addCase(loadCustomerPermissions.rejected, (state) => {
             state.permissions.loading = false;

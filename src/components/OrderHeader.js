@@ -20,7 +20,7 @@ import {
     setShippingAccount,
     updateCart,
 } from "../ducks/cart/actions";
-import {applyPromoCode} from '../actions/promo_codes';
+import {applyPromoCode} from '@/ducks/cart/actions';
 import {connect} from "react-redux";
 import ShippingMethodSelect from "./ShippingMethodSelect";
 import {DEFAULT_SHIPPING_ACCOUNT, filteredTermsCode, getPaymentType, PAYMENT_TYPES} from "../constants/account";
@@ -55,7 +55,7 @@ const mapStateToProps = ({customer, user, cart, carts, openOrders, salesOrder}) 
     const {shipDate, cartProgress, shippingAccount, loading} = cart;
     const {header, readOnly, orderType, detail, processing} = salesOrder;
     const {shipToAddresses, account, paymentCards} = customer;
-    const {DefaultPaymentType, TermsCode} = account;
+    const {DefaultPaymentType = '', TermsCode = ''} = account ?? {};
     const isCart = orderType === ORDER_TYPE.cart;
     const isCurrentCart = cart.cartNo === header?.SalesOrderNo;
     const changed = header?.changed || detail.filter(line => line.changed || line.newLine).length > 0;
@@ -181,7 +181,7 @@ class OrderHeader extends Component {
         }
 
         // set the cart payment type to the default so that it's value is correct if it is not changed by the user.
-        if (!cartLoading && header.PaymentType === null && defaultPaymentType !== '') {
+        if (!cartLoading && header?.PaymentType === null && defaultPaymentType !== '') {
             updateCart({PaymentType: defaultPaymentType}, true);
         }
     }
@@ -206,13 +206,15 @@ class OrderHeader extends Component {
     }
 
     onSendEmail() {
+        if (!this.props.header) {
+            return;
+        }
         const {Company, SalesOrderNo} = this.props.header;
         this.props.sendOrderEmail({Company, SalesOrderNo});
     }
 
     onReload() {
-        const {SalesOrderNo} = this.props.header;
-        this.props.loadSalesOrder(SalesOrderNo);
+        this.props.loadSalesOrder(this.props.header?.SalesOrderNo);
     }
 
     onSetShipDate({value}) {
@@ -363,17 +365,14 @@ class OrderHeader extends Component {
 
         return (
             <form className="mb-1" onSubmit={this.promoteCart} method="post">
-                {confirmDuplicate && (
-                    <DuplicateCartAlert SalesOrderNo={SalesOrderNo} newCartName={newCartName}
-                                        loading={cartLoading}
-                                        onSetCartName={(value) => this.setState({newCartName: value})}
-                                        onCancel={this.onCancelDuplicate}
-                                        onConfirm={this.onDuplicateOrder}/>
-                )}
-                {confirmDelete && (
-                    <ConfirmDeleteCart SalesOrderNo={SalesOrderNo} onConfirm={this.onDeleteCart}
-                                       onCancel={this.onCancelDelete}/>
-                )}
+                <DuplicateCartAlert open={confirmDuplicate} SalesOrderNo={SalesOrderNo} newCartName={newCartName}
+                                    loading={cartLoading}
+                                    onSetCartName={(value) => this.setState({newCartName: value})}
+                                    onCancel={this.onCancelDuplicate}
+                                    onConfirm={this.onDuplicateOrder}/>
+                <ConfirmDeleteCart salesOrderNo={SalesOrderNo} onConfirm={this.onDeleteCart}
+                                   open={confirmDelete}
+                                   onCancel={this.onCancelDelete}/>
                 <div className="row">
                     <div className="col-md-6">
                         <FormGroup colWidth={8} label={isCart ? 'Cart Created' : 'Order Date'}>
@@ -480,6 +479,7 @@ class OrderHeader extends Component {
                             </div>
                             <div className="col-md-6">
                                 <FormGroupTextInput colWidth={8} label="Purchase Order #" onChange={this.onChangeField}
+
                                                     required={PaymentType ? getPaymentType(PaymentType).requirePO : false}
                                                     maxLength={30}
                                                     value={CustomerPONo || ''} field="CustomerPONo" readOnly={!isCart}/>

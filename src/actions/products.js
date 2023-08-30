@@ -25,7 +25,6 @@ import {
     hasVariants
 } from '../utils/products';
 import {API_PATH_KEYWORDS, API_PATH_PRODUCT} from "../constants/paths";
-import {ga_viewItem} from './gtag';
 import {priceRecord} from "../utils/customer";
 import {selectProductCartItem} from "../ducks/products/selectors";
 
@@ -75,7 +74,7 @@ export const fetchProduct = (keyword) => (dispatch, getState) => {
                     priceCode: cartItem.priceCode,
                     itemCode: cartItem.itemCode
                 });
-                cartItem.priceLevel = customer.account.PriceLevel;
+                cartItem.priceLevel = customer.account?.PriceLevel ?? '';
             }
             dispatch({
                 type: FETCH_PRODUCT,
@@ -157,7 +156,7 @@ export const setColorCode = (colorCode) => (dispatch, getState) => {
         cartItem.priceLevel = customer.account.PriceLevel;
     }
     dispatch({type: SELECT_COLOR, colorCode, cartItem});
-    ga_viewItem({cartItem, selectedProduct});
+
 };
 
 export const setCartItemQuantity = (quantity) => ({type: SET_CART_ITEM_QUANTITY, quantity});

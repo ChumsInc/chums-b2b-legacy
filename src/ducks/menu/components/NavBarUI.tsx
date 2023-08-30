@@ -9,7 +9,7 @@ import Divider from '@mui/material/Divider';
 import List from "@mui/material/List";
 import Stack from "@mui/material/Stack";
 import NavDrawer from "@/ducks/menu/components/NavDrawer";
-import HomeLink from "@/components/HomeLink";
+import HomeLink from "@/ducks/menu/components/HomeLink";
 import {navItems} from './NavItems'
 import {useAppDispatch} from "@/app/configureStore";
 import {useSelector} from "react-redux";
@@ -17,6 +17,7 @@ import {loadProductMenu, selectLoaded, selectLoading, toggleMenuDrawer} from "@/
 import Container from "@mui/material/Container";
 import UserMenu from "@/ducks/menu/components/UserMenu";
 import CartMenu from "@/ducks/menu/components/CartMenu";
+import SearchBar from "@/ducks/search/components/SearchBar";
 
 const drawerWidth = 240;
 // const navItems = ['Products', 'Accounts', 'Orders', 'Resources'];
@@ -63,12 +64,15 @@ const NavBarUI = () => {
                                 <MenuIcon/>
                             </IconButton>
                             <HomeLink/>
-                            <Box sx={{display: {xs: 'none', sm: 'block'}, flex: '1 1 auto'}}>
+                            <Box sx={{display: {xs: 'none', md: 'flex'}, flex: '1 1 auto', flexDirection: 'row', alignItems: 'center'}}>
                                 {navItems.map((item) => (
                                     <Fragment key={item.id}>
                                         {item.title ?? (!!item.render ? item.render({}) : null)}
                                     </Fragment>
                                 ))}
+                            </Box>
+                            <Box sx={{display: {xs: 'none', md: 'flex'}, flex: '1 1 auto'}}>
+                                <SearchBar />
                             </Box>
                             <Stack spacing={2} direction="row" useFlexGap >
                                 <CartMenu />

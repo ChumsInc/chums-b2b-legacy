@@ -6,12 +6,12 @@ import VariantSelector from "./VariantSelector";
 import SwatchSet from "./SwatchSet";
 import AddToCartForm from "../../carts/components/AddToCartForm";
 import Alert from "../../../common-components/Alert";
-import CartItemDetail from "../../../components/CartItemDetail";
-import {noop} from '../../../utils/general';
+import CartItemDetail from "./CartItemDetail";
+import {noop} from '@/utils/general';
 import {Link, redirect} from "react-router-dom";
-import MissingTaxScheduleAlert from "../../../components/MissingTaxScheduleAlert";
+import MissingTaxScheduleAlert from "../../customer/components/MissingTaxScheduleAlert";
 import RequireLogin from "../../../components/RequireLogin";
-import {useAppDispatch} from "../../../app/configureStore";
+import {useAppDispatch} from "@/app/configureStore";
 import {selectLoggedIn} from "../../user/selectors";
 import {
     selectCurrentProduct,
@@ -31,8 +31,9 @@ import ProductPageInfo from "./ProductPageInfo";
 import {isCartProduct, isProduct} from "../utils";
 import {useLocation} from "react-router";
 import {isSellAsVariants} from "b2b-types";
-import {isBillToCustomer} from "../../../utils/typeguards";
+import {isBillToCustomer} from "@/utils/typeguards";
 import ProductPreSeasonAlert from "./ProductPreSeasonAlert";
+import {loadProduct} from "@/ducks/products/actions";
 
 
 const ProductPage = ({keyword}: {
@@ -53,7 +54,7 @@ const ProductPage = ({keyword}: {
 
 
     useEffect(() => {
-        dispatch(fetchProduct(keyword));
+        dispatch(loadProduct(keyword));
     }, [keyword]);
 
     useEffect(() => {

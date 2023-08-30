@@ -1,17 +1,10 @@
-import {CartProgress, ItemAvailability, ShippingAccountState} from "../../_types";
+import {CartProgress} from "@/types/cart";
+import {ItemAvailability} from "@/types/product";
+import {CustomerShippingAccount} from "@/types/customer";
+import {CartItem} from "b2b-types";
 
 
-export interface CartState {
-    cartNo: string;
+export interface SaveNewCartProps extends CartItem {
+    shipToCode: string;
     cartName: string;
-    cartQuantity: number;
-    cartTotal: number;
-    loading: boolean;
-    loaded: boolean;
-    itemAvailability: ItemAvailability | null;
-    itemAvailabilityLoading: boolean;
-    cartProgress: CartProgress;
-    shipDate: string;
-    shippingAccount: ShippingAccountState;
-    cartMessage: string;
 }

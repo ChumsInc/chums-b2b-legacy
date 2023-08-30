@@ -2,6 +2,7 @@
  * Created by steve on 8/24/2016.
  */
 import {auth} from "./IntranetAuthService";
+import B2BError from "@/types/generic";
 
 function getCredentials():string|null {
     const token = auth.getToken();
@@ -15,12 +16,12 @@ function getCredentials():string|null {
 async function handleJSONResponse<T = any>(res:Response):Promise<T> {
     if (!res.ok) {
         const text = await res.text();
-        return Promise.reject(new Error(text));
+        return Promise.reject(new B2BError(text, res.url, null, res.status));
     }
     const json = await res.json();
     if (json.error) {
         console.warn(json.error);
-        return Promise.reject(new Error(json.error));
+        return Promise.reject(new B2BError(json.error, res.url));
     }
     return json || {};
 }

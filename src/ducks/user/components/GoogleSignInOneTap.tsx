@@ -13,7 +13,9 @@ const isExpired = (expires: number) => {
     return new Date(expires * 1000).valueOf() <= new Date().valueOf();
 }
 
-const GoogleSignInOneTap = () => {
+const GoogleSignInOneTap = ({onSignIn}:{
+    onSignIn: () => void;
+}) => {
     const dispatch = useAppDispatch();
     const isLoggedIn = useSelector(selectLoggedIn);
     const expires = useSelector(selectLoginExpiry);
@@ -21,6 +23,10 @@ const GoogleSignInOneTap = () => {
     const timerHandle = useRef(0);
     const [expired, setExpired] = useState(isExpired(expires));
 
+    const handleGoogleResponse = (response: google.accounts.id.CredentialResponse) => {
+        dispatch(signInWithGoogle(response.credential));
+        onSignIn();
+    }
 
     useEffect(() => {
         if (window?.google && google.accounts?.id) {
@@ -62,9 +68,6 @@ const GoogleSignInOneTap = () => {
         return null;
     }
 
-    const handleGoogleResponse = (response: google.accounts.id.CredentialResponse) => {
-        dispatch(signInWithGoogle(response.credential));
-    }
 
     return (
         <span ref={oneTapRef}/>

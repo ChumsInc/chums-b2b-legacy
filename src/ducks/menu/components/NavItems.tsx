@@ -6,6 +6,7 @@ import NavSignupLink from "@/ducks/menu/components/NavSignupLink";
 import NavAccountsLink from "@/ducks/menu/components/NavAccountsLink";
 import NavOrdersLink from "@/ducks/menu/components/NavOrdersLink";
 import NavResourcesLink from "@/ducks/menu/components/NavResourcesLink";
+import SearchBar from "@/ducks/search/components/SearchBar";
 
 export const navItems: NavItem[] = [
     {id: 'products', render: NavProductsLink},
@@ -14,5 +15,6 @@ export const navItems: NavItem[] = [
     {id: 'accounts', render: NavAccountsLink},
     {id: 'orders', render: NavOrdersLink},
     {id: 'resources', render: NavResourcesLink},
+    // {id: 'search', render: SearchBar}
 ];
 

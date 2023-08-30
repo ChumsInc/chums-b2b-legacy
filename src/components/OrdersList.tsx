@@ -1,13 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import SortableTable from "../common-components/SortableTable";
 import OrderFilter from "./OrderFilter";
-import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
 import {SalesOrderHeader} from "b2b-types";
 import {SortProps} from "@/types/generic";
 import {SortableTableField} from "@/common-components/DataTable";
 import TablePagination from "@mui/material/TablePagination";
-import {invoicesSorter} from "@/ducks/invoices/utils";
 import {salesOrderSorter} from "@/ducks/salesOrder/utils";
 
 export default function OrdersList({
@@ -60,23 +58,12 @@ export default function OrdersList({
             </OrderFilter>
             <SortableTable keyField="SalesOrderNo"
                            data={data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           fields={fields} currentSort={sort} onChangeSort={sortChangeHandler}
-                           tfoot={(
-                               <tfoot>
-                               <tr>
-
-                               </tr>
-                               </tfoot>
-                           )}
-            />
+                           fields={fields} currentSort={sort} onChangeSort={sortChangeHandler}/>
             <TablePagination component="div"
                              count={data.length} page={page} rowsPerPage={rowsPerPage}
                              onPageChange={(ev, page) => setPage(page)}
                              onRowsPerPageChange={(ev) => setRowsPerPage(+ev.target.value)}
-                             showFirstButton showLastButton />
-            {!!onNewCart && (
-                <Alert severity="info" title="Hint:">Select a cart icon to make that your current cart.</Alert>
-            )}
+                             showFirstButton showLastButton/>
         </div>
     );
 }

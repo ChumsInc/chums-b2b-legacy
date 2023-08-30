@@ -13,7 +13,7 @@ import {
 } from "../constants/actions";
 import {fetchGET, fetchPOST} from "../utils/fetch";
 import {API_PATH_INVOICE, API_PATH_OPEN_ORDERS, CART_ACTIONS} from "../constants/paths";
-import {isValidCustomer, sageCompanyCode} from "../utils/customer";
+import {customerSlug, isValidCustomer, sageCompanyCode} from "../utils/customer";
 import {handleError} from "../ducks/app/actions";
 import {setAlert} from "../ducks/alerts";
 import {isCartOrder} from "../utils/orders";
@@ -25,6 +25,7 @@ import {selectCustomerAccount} from "../ducks/customer/selectors";
 import {fetchSalesOrder, postOrderEmail} from "../api/sales-order";
 import {selectCartNo} from "../ducks/cart/selectors";
 import {selectIsSendingEmail, selectProcessing} from "../ducks/salesOrder/selectors";
+import {generatePath, redirect} from "react-router-dom";
 
 
 export const fetchOpenOrders = ({ARDivisionNo, CustomerNo}) => (dispatch, getState) => {
@@ -88,8 +89,13 @@ export const loadSalesOrder = (SalesOrderNo) => async (dispatch, getState) => {
     const {ARDivisionNo, CustomerNo} = customerAccount;
 
     try {
+        console.log('loadSalesOrder', SalesOrderNo);
         dispatch({type: FETCH_SALES_ORDER, status: FETCH_INIT, isCart});
         const salesOrder = await fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo});
+        if (salesOrder?.OrderStatus === 'Z') {
+            redirect(generatePath(`/account/:customerSlug/carts`, {customerSlug: customerSlug(customerAccount)}));
+            return;
+        }
         if (!salesOrder || !salesOrder.SalesOrderNo) {
             dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
             dispatch(setAlert({message: 'That sales order was not found!', context: FETCH_SALES_ORDER}));

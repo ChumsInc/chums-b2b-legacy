@@ -9,7 +9,8 @@ import {
     UserProfile,
     UserRole
 } from "b2b-types";
-import {EmptyObject, ExtendedUserProfile} from "../../_types";
+import {EmptyObject} from "@/types/generic";
+import {ExtendedUserProfile} from "@/types/user";
 
 export interface UserLoginState {
     // @TODO: migrate to Login Page internal state
@@ -77,6 +78,7 @@ export interface UserProfileResponse {
     roles?: string[];
     accounts?: UserCustomerAccess[];
     reps?: Salesperson[];
+    picture?: string|null;
 }
 
 export interface FunkyUserProfileResponse extends UserProfileResponse {

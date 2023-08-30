@@ -1,12 +1,18 @@
 import {CHANGE_SHIPTO, FETCH_CUSTOMER, FETCH_FAILURE, FETCH_INIT, FETCH_SUCCESS,} from "@/constants/actions";
 import {handleError} from "../app/actions";
-import {buildRecentAccounts, isValidCustomer, shipToAddressFromBillingAddress} from "@/utils/customer";
+import {
+    buildRecentAccounts,
+    buildRecentCustomers,
+    customerSlug,
+    isValidCustomer,
+    shipToAddressFromBillingAddress
+} from "@/utils/customer";
 import {fetchOpenOrders} from "../../actions/salesOrder";
 import {defaultCartItem, getPrices} from "@/utils/products";
 import localStore from "../../utils/LocalStore";
 import {STORE_RECENT_ACCOUNTS} from "@/constants/stores";
 import {loadInvoices} from "../invoices/actions";
-import {selectLoggedIn, selectRecentAccounts} from "../user/selectors";
+import {selectLoggedIn} from "../user/selectors";
 import {
     selectCustomerAccount,
     selectCustomerLoading,
@@ -26,11 +32,11 @@ import {selectProductCartItem, selectSelectedProduct} from "../products/selector
 import {BasicCustomer, BillToCustomer, CustomerKey, CustomerUser, RecentCustomer, ShipToCustomer} from "b2b-types";
 import {AppDispatch, RootState} from "@/app/configureStore";
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {buildRecentCustomers, customerSlug} from "@/utils/customer";
 import {isCartProduct, isProduct} from "../products/utils";
 import {FetchCustomerResponse} from "@/ducks/customer/types";
 import {loadOrders} from "@/ducks/open-orders/actions";
 import {CustomerPermissions} from "@/types/customer";
+import {selectRecentCustomers} from "@/ducks/customers/selectors";
 
 
 export const changeShipTo = (shipToCode: string, props: Partial<ShipToCustomer>) => ({
@@ -73,10 +79,10 @@ export const setCustomerAccount = createAsyncThunk<{
     customer: BasicCustomer,
     recent: RecentCustomer[]
 }, BasicCustomer>(
-    'customer/setCurrentCustomer',
+    'customer/setCurrent',
     async (arg, {getState}) => {
         const state = getState() as RootState;
-        const recentAccounts = buildRecentCustomers(selectRecentAccounts(state), arg);
+        const recentAccounts = buildRecentCustomers(selectRecentCustomers(state), arg);
         localStore.setItem(STORE_RECENT_ACCOUNTS, recentAccounts);
         return {customer: arg, recent: recentAccounts};
     }, {
@@ -87,14 +93,15 @@ export const setCustomerAccount = createAsyncThunk<{
         }
     })
 
-export const loadCustomer = createAsyncThunk<FetchCustomerResponse | null, CustomerKey|null>(
-    'customers/selected/load',
+export const loadCustomer = createAsyncThunk<FetchCustomerResponse | null, CustomerKey | null>(
+    'customer/load',
     async (arg, {dispatch, getState}) => {
         try {
             const response = await fetchCustomerAccount(arg!);
-            if (response?.customer) {
-                dispatch(loadOrders(response.customer));
-            }
+            dispatch(loadOrders(response.customer));
+            const state = getState() as RootState;
+            response.recent = buildRecentCustomers(selectRecentCustomers(state), response.customer);
+            localStore.setItem(STORE_RECENT_ACCOUNTS, response.recent);
             return response;
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -110,75 +117,12 @@ export const loadCustomer = createAsyncThunk<FetchCustomerResponse | null, Custo
     }
 )
 
-export const loadCustomerAccount = ({fetchOrders = false, force = false}: {
-    fetchOrders?: boolean;
-    force?: boolean;
-} = {}) =>
-    async (dispatch: AppDispatch, getState: () => RootState) => {
-        try {
-            const state = getState();
-            const customerAccount = selectCustomerAccount(state);
-            if (!customerAccount || !isValidCustomer(customerAccount)) {
-                return;
-            }
-            if (!force && selectCustomerLoading(state)) {
-                return;
-            }
-            let cartItem = selectProductCartItem(state);
-            const selectedProduct = selectSelectedProduct(state);
-            const recentAccounts = selectRecentAccounts(state);
-            const {ARDivisionNo, CustomerNo} = customerAccount;
-            dispatch({type: FETCH_CUSTOMER, status: FETCH_INIT, customer: customerAccount});
-            const {
-                contacts,
-                customer,
-                pricing,
-                shipTo,
-                users,
-                paymentCards,
-                promoCodes,
-                permissions,
-            } = await fetchCustomerAccount(customerAccount);
-            const customerPrice = isProduct(selectedProduct)
-                ? getPrices(selectedProduct, pricing ?? [])
-                : [];
-            if (isProduct(selectedProduct) && isCartProduct(cartItem)) {
-                cartItem = defaultCartItem(selectedProduct, undefined, cartItem.itemCode);
-            }
-            localStore.setItem(STORE_RECENT_ACCOUNTS, buildRecentAccounts(recentAccounts, customer));
-            shipTo.unshift(shipToAddressFromBillingAddress(customer));
-            console.log(FETCH_CUSTOMER, FETCH_SUCCESS, {
-                customer, contacts, pricing, shipTo, customerPrice, users, paymentCards,
-                cartItem, promoCodes
-            });
-            dispatch({
-                type: FETCH_CUSTOMER,
-                status: FETCH_SUCCESS,
-                customer, contacts, pricing, shipTo, customerPrice, users, paymentCards,
-                cartItem, promoCodes, permissions,
-            });
-            if (fetchOrders) {
-                dispatch(fetchOpenOrders({ARDivisionNo, CustomerNo}));
-                dispatch(loadInvoices({ARDivisionNo, CustomerNo}));
-            }
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                console.debug("loadCustomerAccount()", err.message);
-                dispatch(handleError(err, FETCH_CUSTOMER));
-                dispatch({type: FETCH_CUSTOMER, status: FETCH_FAILURE});
-                return
-            }
-            console.debug("loadCustomerAccount()", err);
-            dispatch(handleError(new Error('Unknown error in loadCustomerAccount'), FETCH_CUSTOMER));
-            dispatch({type: FETCH_CUSTOMER, status: FETCH_FAILURE});
-        }
-    };
 
 export const saveBillingAddress = createAsyncThunk<void, BillToCustomer>(
     'customer/saveBillingAddress',
     async (arg, {dispatch}) => {
         await postBillingAddress(arg);
-        (dispatch as AppDispatch)(loadCustomerAccount({force: true}));
+        (dispatch as AppDispatch)(loadCustomer(arg));
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
@@ -192,7 +136,7 @@ export const saveShipToAddress = createAsyncThunk<void, ShipToCustomer>(
     'customer/saveShipToAddress',
     async (arg, {dispatch}) => {
         await postShipToAddress(arg);
-        (dispatch as AppDispatch)(loadCustomerAccount({force: true}));
+        (dispatch as AppDispatch)(loadCustomer(arg));
     },
     {
         condition: (arg, {getState}) => {
@@ -208,7 +152,7 @@ export const setDefaultShipTo = createAsyncThunk<void, string>(
         const state = getState() as RootState;
         const customer = selectCustomerAccount(state) as CustomerKey;
         await postDefaultShipToCode(arg, customer);
-        (dispatch as AppDispatch)(loadCustomerAccount({force: true}));
+        (dispatch as AppDispatch)(loadCustomer(customer));
     },
     {
         condition: (arg, {getState}) => {
@@ -219,7 +163,7 @@ export const setDefaultShipTo = createAsyncThunk<void, string>(
 )
 
 export const loadCustomerPermissions = createAsyncThunk<CustomerPermissions | null, CustomerKey | null>(
-    'customer/permissions/load',
+    'customer/values/load',
     async (arg, {getState}) => {
         const state = getState() as RootState;
         return await fetchCustomerValidation(arg!);
@@ -230,3 +174,8 @@ export const loadCustomerPermissions = createAsyncThunk<CustomerPermissions | nu
         }
     }
 )
+// 87854183, 33888484, 55278385, 34156973, 81845234, 91405994, 57420316, 88428715, 02540498, 02837252
+
+// bS*RYjRHq&=54mT&
+
+// q2^yoFcViKc!@epg8*

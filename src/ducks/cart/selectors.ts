@@ -5,6 +5,7 @@ export const selectCartNo = (state:RootState) => state.cart.cartNo;
 export const selectCartName = (state:RootState) => state.cart.cartName;
 export const selectShipDate = (state:RootState) => state.cart.shipDate;
 export const selectCartProgress = (state:RootState) => state.cart.cartProgress;
+export const selectCartPromoCode = (state:RootState) => state.cart.promoCode;
 
 export const selectShippingAccount = (state:RootState) => state.cart.shippingAccount;
 export const selectCartLoading = (state:RootState) => state.cart.loading;

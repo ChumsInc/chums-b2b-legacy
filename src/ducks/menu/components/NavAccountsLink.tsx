@@ -5,7 +5,7 @@ import React, {useId} from "react";
 import {useSelector} from "react-redux";
 import {selectCurrentAccess, selectLoggedIn} from "@/ducks/user/selectors";
 import {salespersonPath} from "@/ducks/user/utils";
-import NavItemButton from "@/components/NavItemButton";
+import NavItemButton from "@/ducks/menu/components/NavItemButton";
 import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
 import Menu from "@mui/material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";

@@ -42,7 +42,7 @@ const AddToCartForm = ({
     itemCode: string;
     quantity: number;
     comment?: string;
-    setGlobalCart: unknown;
+    setGlobalCart?: boolean;
     season_code?: string | null;
     season_available?: boolean | null;
     disabled?: boolean;
@@ -155,9 +155,18 @@ const AddToCartForm = ({
                 </>
             )}
             <FormGroup colWidth={8} label="Quantity">
-                <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
-                                   disabled={disabled}
-                                   onAddToCart={submitHandler}/>
+                <div className="row g-3">
+                    <div className="col">
+                        <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
+                                           disabled={disabled} required/>
+                    </div>
+                    <div className="col-auto">
+                        <button type="submit" className="btn btn-sm btn-primary" disabled={disabled || quantity === 0}>
+                            <span className="me-3">Add to cart</span><span className="bi-bag-fill" title="Add to cart"/>
+                        </button>
+                    </div>
+                </div>
+
             </FormGroup>
             {loading && <ProgressBar striped height={5}/>}
             {!!cartMessage && <Alert severity="success">{cartMessage}</Alert>}
