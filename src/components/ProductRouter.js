@@ -10,6 +10,7 @@ import ProductPage from "./ProductPage";
 import {PATH_PRODUCT} from "../constants/paths";
 import {buildPath} from "../utils/fetch";
 import ErrorBoundary from "../common-components/ErrorBoundary";
+import ContentPage404 from "./ContentPage404";
 
 class ProductRouter extends Component {
 
@@ -73,7 +74,7 @@ class ProductRouter extends Component {
         return (
             <div className="product-page">
                 {!!keywordsLoading && <ProgressBar label="Loading Keywords" />}
-                {!keyword.pagetype && <Alert message={"Product not found!"}/>}
+                {!keyword.pagetype && <ContentPage404 />}
                 {keyword.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
                 {keyword.pagetype === 'product' && (
                     <ErrorBoundary>

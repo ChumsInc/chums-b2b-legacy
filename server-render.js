@@ -98,6 +98,7 @@ async function handleRender(req, res) {
     if (typeof window === 'undefined') {
         global.window = {};
     }
+    let status = 200;
 
     // this is only for local testing, when running on the server /api is routed to a different proxy.
     try {
@@ -211,7 +212,9 @@ async function handleRender(req, res) {
                 const {id = '', title = '', pageText = '', lifestyle = null, children = []} = category;
                 initialState.category = {id, title, pageText, lifestyle, children}
             }
-
+            if (!keyword) {
+                status = 404;
+            }
         } catch(err) {
             console.trace("handleRender() preload product", err.message);
         }
@@ -258,7 +261,7 @@ async function handleRender(req, res) {
                   cssTimestamp={Math.floor(cssMTime).toString(36)}
                   swatchTimestamp={Math.floor(swatchMTime).toString(36)} />
         )
-        res.send(`<!DOCTYPE html>${site}`);
+        res.status(status).send(`<!DOCTYPE html>${site}`);
     } catch(err) {
         debug("handleRender()", err.message);
         await res.status(500).json({error: err.message});
