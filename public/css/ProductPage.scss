@@ -1,4 +1,5 @@
 @import './variables.scss';
+@import "./carousel.scss";
 
 $product-image-width: 400px;
 $product-info-panel-width: 340px;
@@ -163,38 +164,6 @@ $product-minicart-panel-width: 200px;
     }
   }
 
-  .carousel-control-next {
-    &:hover {
-      .carousel-control-next-icon {
-        background-color: rgba(255,255,255,0.85);
-      }
-      //background: linear-gradient(to left, rgba(0, 0, 0, 0.25), transparent);
-    }
-  }
-  .carousel-control-prev {
-    &:hover {
-      .carousel-control-prev-icon {
-        background-color: rgba(255,255,255,0.85);
-      }
-      //background: linear-gradient(to right, rgba(0, 0, 0, 0.25), transparent);
-    }
-  }
-
-  .carousel-indicators {
-    position: unset;
-  }
-  .carousel-indicators li {
-    //background-color: rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: border-color 350ms;
-    &:hover {
-      border: 1px solid rgba(0,0,0,0.25);
-    }
-    &.active {
-      border: 1px solid rgba(0,0,0,0.25);
-    }
-  }
   .cart-qty-input {
     flex-wrap: nowrap;
     flex-direction: row;
