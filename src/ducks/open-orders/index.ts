@@ -1,4 +1,4 @@
-import {FETCH_INIT, FETCH_ORDERS, FETCH_SALES_ORDER, FETCH_SUCCESS, PROMOTE_CART} from "@/constants/actions";
+import {FETCH_INIT, FETCH_ORDERS, FETCH_SALES_ORDER, FETCH_SUCCESS} from "@/constants/actions";
 import {isOpenOrder} from "@/utils/orders";
 import {createReducer} from "@reduxjs/toolkit";
 import {defaultSalesOrderSort, salesOrderSorter} from "../salesOrder/utils";
@@ -7,7 +7,7 @@ import {loadOrders} from "@/ducks/open-orders/actions";
 import {setCustomerAccount} from "@/ducks/customer/actions";
 import {customerSlug} from "@/utils/customer";
 import {setLoggedIn, setUserAccess} from "@/ducks/user/actions";
-import {saveNewCart} from "@/ducks/cart/actions";
+import {promoteCart, saveCart, saveNewCart} from "@/ducks/cart/actions";
 
 export interface OpenOrdersState {
     customerKey: string | null;
@@ -67,6 +67,22 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
                 ].sort(salesOrderSorter(defaultSalesOrderSort));
             }
         })
+        .addCase(saveCart.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.list = [
+                    ...state.list.filter(so => so.SalesOrderNo !== action.meta.arg.SalesOrderNo),
+                    action.payload
+                ].sort(salesOrderSorter(defaultSalesOrderSort));
+            }
+        })
+        .addCase(promoteCart.fulfilled, (state, action) => {
+            if (action.payload) {
+                state.list = [
+                    ...state.list.filter(so => so.SalesOrderNo !== action.meta.arg.SalesOrderNo),
+                    action.payload
+                ].sort(salesOrderSorter(defaultSalesOrderSort));
+            }
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_ORDERS:
@@ -83,14 +99,6 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
                                 action.salesOrder
                             ].sort(salesOrderSorter(defaultSalesOrderSort));
                         }
-                    }
-                    return;
-                case PROMOTE_CART:
-                    if (action.status === FETCH_SUCCESS) {
-                        state.list = [
-                            ...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo),
-                            action.salesOrder
-                        ].sort(salesOrderSorter(defaultSalesOrderSort));
                     }
                     return;
             }

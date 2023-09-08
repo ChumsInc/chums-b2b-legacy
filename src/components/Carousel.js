@@ -26,16 +26,21 @@ const CarouselClassName = {
 
 
 const CarouselIndicator = ({index, active, onClick, children}) => (
-    <li className={classNames({active})} onClick={() => onClick(index)}>{children}</li>);
+    <button type="button" className={classNames('carousel-indicator', {active})}
+            onClick={() => onClick(index)}>
+        {children}
+    </button>);
+
+
 const CarouselIndicators = ({images, active, onClick}) => (
-    <ol className="carousel-indicators">
+    <div className="carousel-indicators">
         {images.map((img, index) => (
             <CarouselIndicator key={index} index={index} active={active === index} onClick={(id) => onClick(id)}>
                 <img src={CONTENT_PATH_PRODUCT_IMAGE.replace(':size', '80').replace(':image', encodeURIComponent(img))}
                      width="80" height="80"/>
             </CarouselIndicator>
         ))}
-    </ol>
+    </div>
 );
 
 const CarouselImage = ({filename, active, isNext, isPrev, direction, title}) => {

@@ -5,10 +5,11 @@ import {selectCartNo} from "../cart/selectors";
 import {RootState} from "../../app/configureStore";
 
 export const selectSalesOrderNo = (state: RootState) => state.salesOrder.salesOrderNo;
-export const selectProcessing = (state: RootState) => state.salesOrder.processing;
+export const selectSalesOrderProcessing = (state: RootState) => state.salesOrder.processing;
 export const selectSOLoading = (state: RootState) => state.salesOrder.loading;
-export const selectSendingEmailStatus = (state: RootState) => state.salesOrder.sendEmailStatus;
-export const selectIsSendingEmail = (state: RootState) => state.salesOrder.sendingEmail;
+export const selectSendEmailResponse = (state: RootState) => state.salesOrder.sendEmail.response;
+export const selectSendEmailStatus = (state: RootState) => state.salesOrder.sendEmail.status;
+export const selectSendEmailError = (state: RootState) => state.salesOrder.sendEmail.error;
 export const selectAttempts = (state: RootState) => state.salesOrder.attempts;
 export const selectSalesOrderHeader = (state: RootState) => state.salesOrder.header ?? null;
 export const selectSalesOrderDetail = (state: RootState) => state.salesOrder.detail ?? [];

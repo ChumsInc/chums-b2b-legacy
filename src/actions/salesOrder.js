@@ -24,7 +24,7 @@ import {NEW_CART} from "../constants/orders";
 import {selectCustomerAccount} from "../ducks/customer/selectors";
 import {fetchSalesOrder, postOrderEmail} from "../api/sales-order";
 import {selectCartNo} from "../ducks/cart/selectors";
-import {selectIsSendingEmail, selectProcessing} from "../ducks/salesOrder/selectors";
+import {selectSendEmailStatus, selectSalesOrderProcessing} from "../ducks/salesOrder/selectors";
 import {generatePath, redirect} from "react-router-dom";
 
 
@@ -78,7 +78,7 @@ export const loadSalesOrder = (SalesOrderNo) => async (dispatch, getState) => {
     const state = getState();
     const customerAccount = selectCustomerAccount(state);
     const cartNo = selectCartNo(state);
-    const processing = selectProcessing(state);
+    const processing = selectSalesOrderProcessing(state);
     const {cart, customer} = getState();
 
     if (processing || !customerAccount?.CustomerNo) {
@@ -142,7 +142,7 @@ export const selectSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState
 
 export const sendOrderEmail = ({Company, SalesOrderNo}) => async (dispatch, getState) => {
     const state = getState();
-    if (selectIsSendingEmail(state)) {
+    if (selectSendEmailStatus(state)) {
         return;
     }
     const customer = selectCustomerAccount(state);

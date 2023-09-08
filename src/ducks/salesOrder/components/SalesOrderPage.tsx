@@ -1,30 +1,29 @@
 import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {generatePath, redirect} from 'react-router-dom';
 import {setCurrentCart} from '../../cart/actions';
-import ProgressBar from "@/components/ProgressBar";
 import {NEW_CART} from "@/constants/orders";
-import OrderHeader from "@/components/OrderHeader";
 import OrderDetail from "@/components/OrderDetail";
-import SendEmailModal from "@/components/SendEmailModal";
+import SendEmailModal from "@/ducks/salesOrder/components/SendEmailModal";
 import CheckoutProgress from "@/components/CheckoutProgress";
 import Alert from "@mui/material/Alert";
 import DocumentTitle from "@/components/DocumentTitle";
-import {useMatch, useNavigate, useParams} from "react-router";
+import {useMatch, useNavigate} from "react-router";
 import {selectCustomerAccount, selectCustomerLoading} from "../../customer/selectors";
 import {
     selectAttempts,
-    selectIsCart, selectIsSendingEmail,
-    selectProcessing,
+    selectIsCart,
+    selectSendEmailStatus,
+    selectSalesOrderProcessing,
     selectSalesOrderHeader,
     selectSalesOrderNo,
-    selectSendingEmailStatus, selectSOLoading
+    selectSendEmailResponse,
+    selectSOLoading
 } from "../selectors";
 import {selectCartNo} from "../../cart/selectors";
 import {useAppDispatch} from "@/app/configureStore";
 import {loadSalesOrder} from "@/ducks/salesOrder/actions";
 import SalesOrderHeaderElement from "@/ducks/salesOrder/components/SalesOrderHeaderElement";
-import {customerSlug} from "@/utils/customer";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const SalesOrderPage = () => {
@@ -36,14 +35,14 @@ const SalesOrderPage = () => {
     const salesOrderHeader = useSelector(selectSalesOrderHeader);
     const loading = useSelector(selectSOLoading);
     const customerLoading = useSelector(selectCustomerLoading);
-    const salesOrderProcessing = useSelector(selectProcessing)
+    const salesOrderProcessing = useSelector(selectSalesOrderProcessing)
     const isCart = useSelector(selectIsCart);
-    const sendEmailStatus = useSelector(selectSendingEmailStatus);
-    const sendingEmail = useSelector(selectIsSendingEmail);
+    const sendEmailStatus = useSelector(selectSendEmailResponse);
+    const sendingEmail = useSelector(selectSendEmailStatus);
     const attempts = useSelector(selectAttempts);
     const cartNo = useSelector(selectCartNo);
 
-    const processing = customerLoading || salesOrderProcessing || loading;
+    const processing = customerLoading || salesOrderProcessing !== 'idle' || loading;
     const {OrderStatus, OrderType} = salesOrderHeader ?? {};
     const isCurrentCart = cartNo === salesOrderNo;
 
@@ -93,11 +92,8 @@ const SalesOrderPage = () => {
                     </Alert>
                 )}
                 {processing && <LinearProgress variant="indeterminate" sx={{my: 1}}/>}
-                <SalesOrderHeaderElement />
-                <OrderHeader/>
-                {isCart && <CheckoutProgress/>}
+                <SalesOrderHeaderElement/>
                 {match?.params?.salesOrderNo === salesOrderNo && <OrderDetail/>}
-                {(sendingEmail || sendEmailStatus?.messageId) && <SendEmailModal/>}
             </div>
         </div>
     )

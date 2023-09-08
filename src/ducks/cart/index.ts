@@ -22,7 +22,14 @@ import {CART_PROGRESS_STATES, NEW_CART} from "@/constants/orders";
 import {DEFAULT_SHIPPING_ACCOUNT} from "@/constants/account";
 import {createReducer} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
-import {getItemAvailability, saveNewCart, setCartProgress, setShipDate, setShippingAccount} from "./actions";
+import {
+    getItemAvailability,
+    promoteCart,
+    saveNewCart,
+    setCartProgress,
+    setShipDate,
+    setShippingAccount
+} from "./actions";
 import {setCustomerAccount} from "../customer/actions";
 import {setLoggedIn} from "../user/actions";
 import {SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
@@ -159,9 +166,21 @@ const cartReducer = createReducer(initialCartState, builder => {
                 state.cartProgress = CART_PROGRESS_STATES.cart;
             }
         })
+        .addCase(loadSalesOrder.rejected, (state, action) => {
+            if (action.payload && state.cartNo === action.meta.arg) {
+                state.loaded = true;
+            }
+        })
         .addCase(setShippingAccount, (state, action) => {
             state.shippingAccount.value = action.payload.value;
             state.shippingAccount.enabled = action.payload.enabled;
+        })
+        .addCase(promoteCart.fulfilled, (state, action) => {
+            state.cartNo = '';
+            state.cartTotal = 0;
+            state.cartQuantity = 0;
+            state.cartProgress = CART_PROGRESS_STATES.cart;
+            state.promoCode = null;
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {

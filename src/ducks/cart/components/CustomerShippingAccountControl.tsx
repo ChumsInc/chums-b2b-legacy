@@ -34,10 +34,10 @@ const CustomerShippingAccountControl = ({readOnly = false}) => {
     }
 
     return (
-        <FormControl variant="filled" fullWidth size="small">
+        <FormControl variant="filled" fullWidth size="small" error={shippingAccount.enabled && !shippingAccount.value}>
             <InputLabel htmlFor={id}>Use your shipping account</InputLabel>
             <FilledInput type="text" value={shippingAccount.enabled ? shippingAccount.value : ''}
-                   onChange={changeHandler} inputProps={{readOnly, id, ref}}
+                   onChange={changeHandler} inputProps={{readOnly, id, ref, maxLength: 9}}
                    startAdornment={
                        <InputAdornment position="start">
                            <IconButton aria-label="toggle use your shipping account"

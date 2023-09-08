@@ -29,21 +29,21 @@ export default function CartCheckoutProgress({current, onChange}: {
                             onClick={() => onChange(cartProgress_Cart)}>Cart</Button>
                 </Grid>
                 <Grid xs={3} sx={{textAlign: 'center'}}>
-                    <Button type="button" disabled={current <= cartProgress_Delivery}
+                    <Button type="button" disabled={current < cartProgress_Delivery}
                             size="small"
                             onClick={() => onChange(cartProgress_Delivery)}>
                         Shipping & Delivery
                     </Button>
                 </Grid>
                 <Grid xs={3} sx={{textAlign: 'center'}}>
-                    <Button type="button" disabled={current <= cartProgress_Delivery}
+                    <Button type="button" disabled={current < cartProgress_Payment}
                             size="small"
                             onClick={() => onChange(cartProgress_Payment)}>
                         Payment
                     </Button>
                 </Grid>
                 <Grid xs={3} sx={{textAlign: 'center'}}>
-                    <Button type="button" disabled={current <= cartProgress_Confirm}
+                    <Button type="button" disabled={current < cartProgress_Confirm}
                             size="small"
                             onClick={() => onChange(cartProgress_Confirm)}>
                         Confirm

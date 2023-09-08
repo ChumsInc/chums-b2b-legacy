@@ -2,7 +2,7 @@ import {BootstrapBGColor} from "../../types/colors";
 
 export type AlertType = BootstrapBGColor;
 
-export interface B2BAlert {
+export interface B2BContextAlert {
     id: number;
     type?: AlertType;
     title?: string;
@@ -13,7 +13,7 @@ export interface B2BAlert {
 
 export interface AlertsState {
     index: number;
-    list: B2BAlert[];
+    list: B2BContextAlert[];
 }
 
 export interface AlertProps {

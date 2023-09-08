@@ -32,3 +32,5 @@ export interface Selectable {
 
 export interface EmptyObject {
 }
+
+export type LoadStatus = 'pending'|'rejected'|'idle';

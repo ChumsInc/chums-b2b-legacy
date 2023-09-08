@@ -4,7 +4,6 @@ import {
     FETCH_ORDERS,
     FETCH_SALES_ORDER,
     FETCH_SUCCESS,
-    PROMOTE_CART,
     SET_LOGGED_IN,
     UPDATE_CART
 } from "@/constants/actions";
@@ -81,13 +80,6 @@ const cartsReducer = createReducer(initialCartsState, builder => {
                             ].sort(salesOrderSorter((defaultSalesOrderSort)))
                             : [...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo)]
                                 .sort(salesOrderSorter((defaultSalesOrderSort)));
-                    }
-                    return;
-                case PROMOTE_CART:
-                    if (action.status === FETCH_SUCCESS) {
-                        state.list = [
-                            ...state.list.filter(so => so.SalesOrderNo !== action.salesOrder.SalesOrderNo)
-                        ].sort(salesOrderSorter((defaultSalesOrderSort)));
                     }
                     return;
                 case UPDATE_CART:

@@ -13152,6 +13152,33 @@ body.scrolled .site-header .global-search-padder {
   background-repeat: no-repeat;
   background-image: url("data:image/svg+xml;utf8,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22xMidYMid%22%3E%3Cpath%20stroke%3D%22none%22%20d%3D%22M10%2050A40%2040%200%200%200%2090%2050A40%2042%200%200%201%2010%2050%22%20fill%3D%22%23c5523f%22%20transform%3D%22rotate(35.4082%2050%2051)%22%3E%3CanimateTransform%20attributeName%3D%22transform%22%20type%3D%22rotate%22%20calcMode%3D%22linear%22%20values%3D%220%2050%2051%3B360%2050%2051%22%20keyTimes%3D%220%3B1%22%20dur%3D%221.5s%22%20begin%3D%220s%22%20repeatCount%3D%22indefinite%22%3E%3C%2FanimateTransform%3E%3C%2Fpath%3E%3C%2Fsvg%3E");
 }
+.product-page .carousel .carousel-control-next:hover .carousel-control-next-icon {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+.product-page .carousel .carousel-control-prev:hover .carousel-control-prev-icon {
+  background-color: rgba(255, 255, 255, 0.85);
+}
+.product-page .carousel .carousel-indicators {
+  position: unset;
+}
+.product-page .carousel .carousel-indicators .carousel-indicator {
+  cursor: pointer;
+  border: 1px solid transparent;
+  box-sizing: content-box;
+  flex: 0 1 auto;
+  padding: 3px;
+  margin-right: 10px;
+  margin-left: 10px;
+  background-color: #fff;
+  background-clip: padding-box;
+  transition: opacity 0.6s ease, border-color 350ms;
+}
+.product-page .carousel .carousel-indicators .carousel-indicator:hover {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+.product-page .carousel .carousel-indicators .carousel-indicator.active {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
 .product-page .season-teaser {
   display: block;
   text-align: left;

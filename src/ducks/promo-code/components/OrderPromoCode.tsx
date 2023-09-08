@@ -1,10 +1,9 @@
 import React, {Fragment, useEffect, useId, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {setPromoCode} from '../actions/promo_codes';
 import {useAppDispatch} from "@/app/configureStore";
 import {selectCurrentPromoCode, selectPromoCodesLoading} from "@/ducks/promo-code/selectors";
 import {loadPromoCode} from "@/ducks/promo-code/actions";
-import {selectProcessing} from "@/ducks/salesOrder/selectors";
+import {selectSalesOrderProcessing} from "@/ducks/salesOrder/selectors";
 import {selectCartPromoCode} from "@/ducks/cart/selectors";
 import {applyPromoCode} from "@/ducks/cart/actions";
 
@@ -15,13 +14,9 @@ const OrderPromoCode = ({disabled}: {
     const promoCode = useSelector(selectCurrentPromoCode);
     const cartPromoCode = useSelector(selectCartPromoCode);
     const loading = useSelector(selectPromoCodesLoading);
-    const saving = useSelector(selectProcessing);
+    const saving = useSelector(selectSalesOrderProcessing);
     const [code, setCode] = useState<string>(promoCode?.promo_code ?? '');
     const id = useId();
-
-    useEffect(() => {
-        setPromoCode(promoCode?.promo_code ?? '');
-    }, [promoCode]);
 
     useEffect(() => {
         if (promoCode?.active && cartPromoCode !== promoCode.promo_code) {
@@ -49,7 +44,7 @@ const OrderPromoCode = ({disabled}: {
                     {!disabled && (
                         <button type="button" className="btn btn-sm btn-primary"
                                 onClick={onApplyPromoCode}
-                                disabled={!code || loading || saving}>
+                                disabled={!code || loading || saving !== 'idle'}>
                             Apply
                         </button>
                     )}

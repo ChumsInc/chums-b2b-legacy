@@ -18,6 +18,7 @@ const AlertDismisser = ({onDismiss}: {
 
 const Alert = ({
                    id, type, title, message, context, count, className, onDismiss,
+    onContextDismiss,
                    children,
                }: {
     id?: number;
@@ -28,6 +29,7 @@ const Alert = ({
     count?: number;
     className?: string;
     onDismiss?: (id: number) => void;
+    onContextDismiss?: (context:string) => void;
     children?: React.ReactNode;
 }) => {
 
@@ -53,7 +55,8 @@ const Alert = ({
                     {numeral(count).format('0,0')}
                 </Badge>
             )}
-            {!!id && dismissible && <AlertDismisser onDismiss={() => onDismiss(id)}/>}
+            {!!context && !!onContextDismiss && <AlertDismisser onDismiss={() => onContextDismiss(context)} />}
+            {!context && !!id && dismissible && <AlertDismisser onDismiss={() => onDismiss(id)}/>}
         </div>
     )
 }

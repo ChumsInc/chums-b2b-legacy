@@ -1,12 +1,12 @@
 import React, {useEffect} from 'react';
 import DocumentTitle from "../DocumentTitle";
 import {useSelector} from "react-redux";
-import {selectIsCart, selectProcessing, selectSalesOrderNo, selectSendingEmailStatus} from "../../ducks/salesOrder/selectors";
+import {selectIsCart, selectSalesOrderProcessing, selectSalesOrderNo, selectSendEmailResponse} from "../../ducks/salesOrder/selectors";
 import ProgressBar from "../ProgressBar";
 import CartHeader from "./CartHeader";
 import CheckoutProgress from "../CheckoutProgress";
 import CartDetail from "./CartDetail";
-import SendEmailModal from "../SendEmailModal";
+import SendEmailModal from "@/ducks/salesOrder/components/SendEmailModal";
 import {useParams} from "react-router";
 import {selectCurrentCustomer} from "../../ducks/user/selectors";
 
@@ -14,8 +14,8 @@ const CartPage = () => {
     const currentCustomer = useSelector(selectCurrentCustomer);
     const salesOrderNo = useSelector(selectSalesOrderNo);
     const isCart = useSelector(selectIsCart);
-    const processing = useSelector(selectProcessing);
-    const emailStatus = useSelector(selectSendingEmailStatus);
+    const processing = useSelector(selectSalesOrderProcessing);
+    const emailStatus = useSelector(selectSendEmailResponse);
     const params = useParams()
 
     useEffect(() => {

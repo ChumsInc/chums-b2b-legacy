@@ -28,7 +28,7 @@ import OrderFooter from "./OrderFooter";
 import Alert from "../common-components/Alert";
 import {PATH_PRODUCT_HOME, PATH_PRODUCT_HOME_BC, PATH_SALES_ORDER, PATH_SALES_ORDERS} from "../constants/paths";
 import {companyCode} from "../utils/customer";
-import OrderPromoCode from "./OrderPromoCode";
+import OrderPromoCode from "@/ducks/promo-code/components/OrderPromoCode";
 import {minShipDate, nextShipDate} from "../utils/orders";
 import DuplicateCartAlert from "./DuplicateCartAlert";
 import Button, {
@@ -154,7 +154,6 @@ class OrderHeader extends Component {
         this.onReload = this.onReload.bind(this);
         this.onSendEmail = this.onSendEmail.bind(this);
         this.onSetShipDate = this.onSetShipDate.bind(this);
-        this.onChangeShippingAccount = this.onChangeShippingAccount.bind(this);
         this.promoteCart = this.promoteCart.bind(this);
         this.onChangeShipTo = this.onChangeShipTo.bind(this);
         this.onDeleteCart = this.onDeleteCart.bind(this);

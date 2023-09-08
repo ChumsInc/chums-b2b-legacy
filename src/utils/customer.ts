@@ -321,16 +321,30 @@ export const customerSlug = (customer: CustomerKey | null): string | null => {
         : billToCustomerSlug(customer);
 }
 
-export const billToCustomerSlug = (customer:CustomerKey|null):string|null => {
+export const billToCustomerSlug = (customer:CustomerKey|string|null|undefined):string|null => {
     if (!customer) {
         return null;
+    }
+    if (typeof customer === "string") {
+        const parsed = parseCustomerSlug(customer)
+        if (!parsed) {
+            return null
+        }
+        customer = parsed;
     }
     return `${customer.ARDivisionNo}-${customer.CustomerNo}`;
 }
 
-export const shipToCustomerSlug = (customer:CustomerKey|null):string|null => {
+export const shipToCustomerSlug = (customer:CustomerKey|string|null|undefined):string|null => {
     if (!customer) {
         return null;
+    }
+    if (typeof customer === 'string') {
+        const parsed = parseCustomerSlug(customer);
+        if (!parsed) {
+            return null;
+        }
+        customer = parsed;
     }
     return `${customer.ARDivisionNo}-${customer.CustomerNo}-${customer.ShipToCode}`;
 }

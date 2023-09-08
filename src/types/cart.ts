@@ -1,4 +1,4 @@
-import {SalesOrderDetailLine} from "b2b-types";
+import {SalesOrderDetailLine, ShipToAddress} from "b2b-types";
 
 export interface Appendable {
     newLine?: boolean;
@@ -80,17 +80,10 @@ export interface NewCartBody extends CartQuoteBase {
     promo_code: string;
 }
 
-export interface UpdateCartBody extends CartQuoteBase {
+export interface UpdateCartBody extends CartQuoteBase, ShipToAddress {
     action: 'update';
     CartName: string;
     ShipToCode: string;
-    ShipToName: string;
-    ShipToAddress1: string;
-    ShipToAddress2: string;
-    ShipToAddress3: string;
-    ShipToCity: string;
-    ShipToState: string;
-    ShipToZipCode: string;
     ConfirmTo: string | null;
     changedLines: ChangeDetailLine[];
     newLines: NewCommentLine[];

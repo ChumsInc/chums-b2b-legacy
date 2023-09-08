@@ -46,8 +46,9 @@ import {
     setDefaultShipTo
 } from "./actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
-import {Selectable} from "@/types/generic";
+import {LoadStatus, Selectable} from "@/types/generic";
 import {CustomerPermissions} from "@/types/customer";
+import {dismissAlert, dismissContextAlert} from "@/ducks/alerts";
 
 export interface CustomerPermissionsState {
     values: CustomerPermissions | null;
@@ -67,6 +68,7 @@ export interface CustomerState {
     shipToAddresses: (ShipToCustomer & Editable)[];
     paymentCards: CustomerPaymentCard[];
     permissions: CustomerPermissionsState;
+    loadStatus: LoadStatus;
     loading: boolean;
     saving: boolean;
     loaded: boolean;
@@ -88,6 +90,7 @@ export const initialCustomerState = (): CustomerState => ({
         loading: false,
         loaded: false,
     },
+    loadStatus: 'idle',
     loading: false,
     loaded: false,
     saving: false,
@@ -170,6 +173,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.loading = false;
         })
         .addCase(loadCustomer.pending, (state, action) => {
+            state.loadStatus = 'pending';
             if (state.key !== customerSlug(action.meta.arg)) {
                 state.account = null;
                 state.shipToCode = null;
@@ -185,6 +189,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.loading = true;
         })
         .addCase(loadCustomer.fulfilled, (state, action) => {
+            state.loadStatus = 'idle';
             state.loading = false;
             state.account = action.payload?.customer ?? null;
             state.shipToCode = action.payload?.customer?.PrimaryShipToCode ?? null;
@@ -217,7 +222,13 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.loaded = true;
         })
         .addCase(loadCustomer.rejected, (state) => {
+            state.loadStatus = 'rejected';
             state.loading = false;
+        })
+        .addCase(dismissContextAlert, (state, action) => {
+            if (action.payload === loadCustomer.typePrefix) {
+                state.loadStatus = 'idle';
+            }
         })
         .addCase(setUserAccess.pending, (state, action) => {
             if (!action.meta.arg?.isRepAccount && customerSlug(state.account) !== customerSlug(action.meta.arg)) {
