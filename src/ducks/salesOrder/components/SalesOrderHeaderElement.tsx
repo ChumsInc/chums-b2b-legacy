@@ -1,7 +1,6 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import {selectSalesOrderHeader, selectSalesOrderInvoices, selectSOLoading} from "@/ducks/salesOrder/selectors";
-import LinearProgress from "@mui/material/LinearProgress";
 import {Button, Chip, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
@@ -13,7 +12,6 @@ import {selectCurrentCustomer} from "@/ducks/user/selectors";
 import {getShippingMethod} from "@/constants/account";
 import {useAppDispatch} from "@/app/configureStore";
 import {loadSalesOrder} from "@/ducks/salesOrder/actions";
-import {isCartHeader} from "@/utils/typeguards";
 import CartOrderHeaderElement from "@/ducks/cart/components/CartOrderHeaderElement";
 import SalesOrderSkeleton from "@/ducks/salesOrder/components/SalesOrderSkeleton";
 import Grid from '@mui/material/Unstable_Grid2';
@@ -26,13 +24,13 @@ const SalesOrderHeaderElement = () => {
     const loading = useSelector(selectSOLoading);
     if (!customer || !header) {
         return (
-            <SalesOrderSkeleton />
+            <SalesOrderSkeleton/>
         );
     }
 
     if (header?.OrderType === 'Q') {
         return (
-            <CartOrderHeaderElement />
+            <CartOrderHeaderElement/>
         )
     }
 

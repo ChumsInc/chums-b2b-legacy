@@ -7,7 +7,7 @@ import {loadOrders} from "@/ducks/open-orders/actions";
 import {setCustomerAccount} from "@/ducks/customer/actions";
 import {customerSlug} from "@/utils/customer";
 import {setLoggedIn, setUserAccess} from "@/ducks/user/actions";
-import {promoteCart, saveCart, saveNewCart} from "@/ducks/cart/actions";
+import {promoteCart, removeCart, saveCart, saveNewCart} from "@/ducks/cart/actions";
 
 export interface OpenOrdersState {
     customerKey: string | null;
@@ -82,6 +82,18 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
                     action.payload
                 ].sort(salesOrderSorter(defaultSalesOrderSort));
             }
+        })
+        .addCase(removeCart.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(removeCart.fulfilled, (state, action) => {
+            state.loaded = true;
+            state.list = action.payload
+                .filter(so => so.OrderType !== 'Q')
+                .sort(salesOrderSorter(defaultSalesOrderSort));
+        })
+        .addCase(removeCart.rejected, (state) => {
+            state.loading = false;
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {

@@ -17,28 +17,27 @@ export interface ShipDateInputProps extends Omit<FormControlProps, 'onChange'> {
 }
 
 export default React.forwardRef(function ShipDateInput({value, onChange, inputProps, readOnly, disabled, ...formControlProps}: ShipDateInputProps, ref: React.Ref<HTMLInputElement>) {
-    const [min, setMin] = useState<Dayjs>(dayjs(minShipDate()))
+    const [min, setMin] = useState<string>(minShipDate())
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
     const id = useId();
     const popoverId = useId();
 
     useEffect(() => {
-        const min = dayjs(minShipDate());
-        setMin(min);
+        setMin(minShipDate());
     }, []);
 
     const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
         const value = ev.target.value;
         if (!dayjs(value).isValid() || dayjs(value).isBefore(min)) {
-            return onChange(min.toISOString())
+            return onChange(dayjs(min).toISOString())
         }
         onChange(dayjs(value).toISOString());
     }
 
     const dateValue = (value: string | null): string => {
         if (!dayjs(value).isValid() || dayjs(value).isBefore(min)) {
-            return min.format('YYYY-MM-DD');
+            return dayjs(min).format('YYYY-MM-DD');
         }
         const offset = dayjs(value).toDate().getTimezoneOffset();
         return dayjs(value).add(offset, 'minutes').format('YYYY-MM-DD');
@@ -51,7 +50,7 @@ export default React.forwardRef(function ShipDateInput({value, onChange, inputPr
     const calendarChangeHandler = (value: Dayjs | null) => {
         setAnchorEl(null);
         if (!dayjs(value).isValid() || dayjs(value).isBefore(min)) {
-            return onChange(min.toISOString())
+            return onChange(dayjs(min).toISOString())
         }
         onChange(dayjs(value).toISOString());
     }
@@ -61,7 +60,11 @@ export default React.forwardRef(function ShipDateInput({value, onChange, inputPr
             <InputLabel htmlFor={id}>Requested Ship Date</InputLabel>
             <FilledInput type="date" value={dateValue(value)} inputRef={ref}
                          onChange={changeHandler}
-                         inputProps={{readOnly, id, ref, min: min.format('YYYY-MM-DD'), max: min.add(1, 'year').format('YYYY-MM-DD'), ...inputProps}}
+                         inputProps={{
+                             readOnly, id, ref,
+                             min: dayjs(min).format('YYYY-MM-DD'),
+                             max: dayjs(min).add(1, 'year').format('YYYY-MM-DD'),
+                             ...inputProps}}
                          startAdornment={
                              <InputAdornment position="start">
                                  <IconButton aria-label="Show available ship dates"
@@ -71,7 +74,7 @@ export default React.forwardRef(function ShipDateInput({value, onChange, inputPr
                              </InputAdornment>
                          }/>
             <Popover id={popoverId} open={!!anchorEl} anchorEl={anchorEl} onClose={() => setAnchorEl(null)}>
-                <DateCalendar value={dayjs(dateValue(value))} onChange={calendarChangeHandler} minDate={min}/>
+                <DateCalendar value={dayjs(dateValue(value))} onChange={calendarChangeHandler} minDate={dayjs(min)}/>
             </Popover>
         </FormControl>
     )

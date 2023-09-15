@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import {generatePath, redirect} from 'react-router-dom';
 import {setCurrentCart} from '../../cart/actions';
 import {NEW_CART} from "@/constants/orders";
-import OrderDetail from "@/components/OrderDetail";
+import OrderDetail from "@/ducks/salesOrder/components/OrderDetail";
 import SendEmailModal from "@/ducks/salesOrder/components/SendEmailModal";
 import CheckoutProgress from "@/components/CheckoutProgress";
 import Alert from "@mui/material/Alert";
@@ -18,7 +18,7 @@ import {
     selectSalesOrderHeader,
     selectSalesOrderNo,
     selectSendEmailResponse,
-    selectSOLoading
+    selectSOLoading, selectSOLoaded
 } from "../selectors";
 import {selectCartNo} from "../../cart/selectors";
 import {useAppDispatch} from "@/app/configureStore";
@@ -34,6 +34,7 @@ const SalesOrderPage = () => {
     const salesOrderNo = useSelector(selectSalesOrderNo);
     const salesOrderHeader = useSelector(selectSalesOrderHeader);
     const loading = useSelector(selectSOLoading);
+    const loaded = useSelector(selectSOLoaded);
     const customerLoading = useSelector(selectCustomerLoading);
     const salesOrderProcessing = useSelector(selectSalesOrderProcessing)
     const isCart = useSelector(selectIsCart);
@@ -47,13 +48,13 @@ const SalesOrderPage = () => {
     const isCurrentCart = cartNo === salesOrderNo;
 
     useEffect(() => {
-        console.debug(customer, match);
+        // console.debug(customer, match, {loading, loaded});
         if (customer && !!customer.CustomerNo) {
-            if (!salesOrderProcessing && !!match?.params?.salesOrderNo && match?.params?.salesOrderNo !== salesOrderNo && attempts < 4) {
+            if (!loading &&  !!match?.params?.salesOrderNo && (!loaded || match?.params?.salesOrderNo !== salesOrderNo)) {
                 dispatch(loadSalesOrder(match.params.salesOrderNo))
             }
         }
-    }, []);
+    }, [customer, match, loading, loaded]);
 
     useEffect(() => {
         if (salesOrderHeader?.OrderStatus === 'Z' && match?.params?.orderType && match?.params?.customerSlug) {

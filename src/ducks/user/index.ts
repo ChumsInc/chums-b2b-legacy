@@ -2,7 +2,6 @@ import {
     CHANGE_USER,
     CHANGE_USER_PASSWORD,
     CLEAR_USER_ACCOUNT,
-    FETCH_CUSTOMER,
     FETCH_FAILURE,
     FETCH_INIT,
     FETCH_LOCAL_LOGIN,
@@ -270,21 +269,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 case CLEAR_USER_ACCOUNT:
                     localStore.removeItem(STORE_USER_ACCESS);
                     state.access.current = null;
-                    return;
-                case FETCH_CUSTOMER:
-                    if (action.status === FETCH_INIT) {
-                        state.currentCustomer = {...action.customer};
-                    } else if (action.status === FETCH_SUCCESS) {
-                        const {Company, ARDivisionNo, CustomerNo, CustomerName, ShipToCode} = action.customer;
-                        localStore.setItem<BasicCustomer>(STORE_CUSTOMER, {
-                            ...state.currentCustomer,
-                            ARDivisionNo,
-                            CustomerNo,
-                            CustomerName,
-                            ShipToCode
-                        });
-                        state.currentCustomer = {ARDivisionNo, CustomerNo, CustomerName, ShipToCode};
-                    }
                     return;
                 case UPDATE_SIGNUP:
                     state.signUp = {...state.signUp, ...(action.props ?? {})};

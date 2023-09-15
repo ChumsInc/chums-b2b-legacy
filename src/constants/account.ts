@@ -53,8 +53,8 @@ export const TERMS_CODES:TermsCodeList = {
     '99': {description: '*Net 30 Days', due: 30},
 };
 
-export const getPaymentType = (paymentType:string):PaymentType => {
-    return PAYMENT_TYPES[paymentType] || PAYMENT_TYPES.OTHER;
+export const getPaymentType = (paymentType:string|null):PaymentType => {
+    return PAYMENT_TYPES[paymentType ?? ''] ?? PAYMENT_TYPES.OTHER;
 };
 
 export const PAYMENT_TYPES:PaymentTypeList = {

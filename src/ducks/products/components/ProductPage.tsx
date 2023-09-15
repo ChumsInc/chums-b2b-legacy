@@ -1,10 +1,10 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {fetchProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from '../../../actions/products';
+import {fetchProduct, setColorCode, setCurrentVariant} from '../../../actions/products';
 import classNames from "classnames";
 import VariantSelector from "./VariantSelector";
 import SwatchSet from "./SwatchSet";
-import AddToCartForm from "../../carts/components/AddToCartForm";
+import AddToCartForm from "../../cart/components/AddToCartForm";
 import Alert from "../../../common-components/Alert";
 import CartItemDetail from "./CartItemDetail";
 import {noop} from '@/utils/general';
@@ -33,7 +33,8 @@ import {useLocation} from "react-router";
 import {isSellAsVariants} from "b2b-types";
 import {isBillToCustomer} from "@/utils/typeguards";
 import ProductPreSeasonAlert from "./ProductPreSeasonAlert";
-import {loadProduct} from "@/ducks/products/actions";
+import {loadProduct, setCartItemQuantity} from "@/ducks/products/actions";
+import {number} from "prop-types";
 
 
 const ProductPage = ({keyword}: {
@@ -51,6 +52,8 @@ const ProductPage = ({keyword}: {
     const season_available = useSelector(selectProductSeasonAvailable);
     const season_description = useSelector(selectProductSeasonDescription);
     const location = useLocation();
+
+    const [quantity, setQuantity] = useState<number>(1);
 
 
     useEffect(() => {

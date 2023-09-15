@@ -54,3 +54,4 @@ export const loadProduct = createAsyncThunk<LoadProductResponse | null, string>(
 )
 
 export const setColorCode = createAction<string>('product/setColorCode');
+export const setCartItemQuantity = createAction<number>('product/cartItem/setQuantity');

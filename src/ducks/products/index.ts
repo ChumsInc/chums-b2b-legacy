@@ -1,25 +1,22 @@
 import {
     CLEAR_PRODUCT,
-    FETCH_CUSTOMER,
     FETCH_INIT,
     FETCH_KEYWORDS,
     FETCH_PRODUCT,
     FETCH_SUCCESS,
-    PRICE_FIELDS,
-    RECEIVE_CUSTOMER,
     SELECT_COLOR,
     SELECT_ITEM,
     SELECT_VARIANT,
     SET_CART_ITEM_QUANTITY
 } from "@/constants/actions";
-import {defaultCartItem, getDefaultColor, getItemPrice, getMSRP, getPrices, keywordSorter} from "@/utils/products";
-import {customerPriceRecordSorter, customerSlug, priceRecord,} from "@/utils/customer";
+import {defaultCartItem, getDefaultColor, getMSRP, getPrices, keywordSorter} from "@/utils/products";
+import {customerPriceRecordSorter, customerSlug,} from "@/utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
 import {PreloadedState} from "@/types/preload";
 import {isCartProduct, updateCartProductPricing} from "./utils";
 import {loadCustomer} from "@/ducks/customer/actions";
 import {CartProduct, CustomerPriceRecord, isSellAsColors, isSellAsMix, Keyword, Product} from "b2b-types";
-import {loadProduct, setColorCode} from "@/ducks/products/actions";
+import {loadProduct, setCartItemQuantity, setColorCode} from "@/ducks/products/actions";
 import {setLoggedIn} from "@/ducks/user/actions";
 
 
@@ -29,14 +26,14 @@ export interface ProductsState {
     product: Product | null;
     selectedProduct: Product | null;
     colorCode: string;
-    variantId: number|null;
+    variantId: number | null;
     loading: boolean;
-    msrp: (string|number)[],
-    customerPrice: (string|number)[],
-    salesUM: string|null;
-    cartItem: CartProduct|null;
+    msrp: (string | number)[],
+    customerPrice: (string | number)[],
+    salesUM: string | null;
+    cartItem: CartProduct | null;
     pricing: CustomerPriceRecord[];
-    customerKey: string|null;
+    customerKey: string | null;
 }
 
 export const initialProductsState = (preload: PreloadedState = {}): ProductsState => ({
@@ -72,7 +69,8 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
             state.msrp = getMSRP(state.selectedProduct);
             state.customerPrice = !!state.customerKey ? getPrices(state.selectedProduct, state.pricing) : state.msrp;
             if (isCartProduct(state.cartItem)) {
-                state.cartItem = updateCartProductPricing(state.cartItem, state.pricing)
+                state.cartItem.priceLevel = action.payload?.customer.PriceLevel ?? '';
+                state.cartItem = updateCartProductPricing(state.cartItem, state.pricing);
             }
         })
         .addCase(loadProduct.pending, (state) => {
@@ -99,7 +97,12 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         .addCase(setColorCode, (state, action) => {
             state.colorCode = action.payload;
             if (isSellAsColors(state.selectedProduct)) {
+                const quantity = state.cartItem?.quantity ?? 1;
+                const uom = state.cartItem?.salesUM;
                 let cartItem = defaultCartItem(state.selectedProduct, {colorCode: action.payload});
+                if (cartItem && cartItem?.salesUM === uom) {
+                    cartItem.quantity = quantity;
+                }
                 if (state.customerKey) {
                     cartItem = updateCartProductPricing(cartItem, state.pricing);
                 }
@@ -111,6 +114,11 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                 if (item.additionalData?.image_filename) {
                     state.cartItem.image = item.additionalData.image_filename;
                 }
+            }
+        })
+        .addCase(setCartItemQuantity, (state, action) => {
+            if (state.cartItem) {
+                state.cartItem.quantity = action.payload;
             }
         })
         .addDefaultCase((state, action) => {
@@ -153,29 +161,6 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                 case SELECT_COLOR:
                     state.colorCode = action.colorCode;
                     state.cartItem = action.cartItem ?? {};
-                    return;
-                case RECEIVE_CUSTOMER:
-                    if (action.status === FETCH_SUCCESS) {
-                        state.customerPrice = action.customerPrice ?? [];
-                    }
-                    return;
-                case FETCH_CUSTOMER:
-                    if (action.status === FETCH_SUCCESS && isCartProduct(state.cartItem)) {
-                        state.cartItem = {
-                            ...state.cartItem,
-                            priceCodeRecord: priceRecord({
-                                pricing: action.pricing,
-                                itemCode: state.cartItem.itemCode,
-                                priceCode: state.cartItem.priceCode,
-                            }),
-                            priceLevel: action.customer.priceLevel,
-                            price: getItemPrice({
-                                item: state.cartItem,
-                                priceField: PRICE_FIELDS.standard,
-                                priceCodes: action.pricing
-                            })
-                        }
-                    }
                     return;
                 case SELECT_ITEM:
                     state.cartItem = action.cartItem ?? {};

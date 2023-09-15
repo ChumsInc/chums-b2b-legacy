@@ -1,4 +1,12 @@
 import {BillToAddress, CustomerAddress, ShipToAddress} from "b2b-types";
+import {FetchCustomerResponse} from "@/ducks/customer/types";
+import {CustomerState} from "@/ducks/customer/index";
+import {
+    customerContactSorter, customerPaymentCardSorter,
+    customerPriceRecordSorter,
+    customerShipToSorter, customerUserSorter,
+    defaultShipToSort
+} from "@/utils/customer";
 
 export const addressFromShipToAddress = (address:ShipToAddress|null):CustomerAddress => {
     return {
@@ -36,4 +44,41 @@ export const multiLineAddress = (address:CustomerAddress, includeName?: boolean)
         address.AddressLine3 ?? '',
         finalLine
     ].filter(line => !!line);
+}
+
+export const customerResponseToState = (payload:FetchCustomerResponse|null, state:CustomerState):Partial<CustomerState> => {
+    const nextState:Partial<CustomerState> = {};
+    nextState.account = payload?.customer ?? null;
+    nextState.shipToCode = payload?.customer?.PrimaryShipToCode ?? null;
+    nextState.permissions = {
+        values: payload?.permissions ?? null,
+        loading: false,
+        loaded: true,
+    };
+    nextState.contacts = [...(payload?.contacts ?? [])].sort(customerContactSorter);
+    nextState.pricing = [...(payload?.pricing ?? [])].sort(customerPriceRecordSorter);
+    nextState.shipToAddresses = [...(payload?.shipTo ?? [])].sort(customerShipToSorter(defaultShipToSort));
+    if (!!state.shipToCode && !nextState.shipToAddresses.filter(st => st.ShipToCode === state.shipToCode).length) {
+        nextState.shipToCode = null;
+    }
+    if (nextState.shipToCode && !nextState.permissions.values?.billTo && !nextState.permissions.values?.shipTo.includes(nextState.shipToCode)) {
+        nextState.shipToCode = null;
+    }
+    if (!nextState.shipToCode) {
+        if (nextState.permissions.values?.billTo) {
+            nextState.shipToCode = '';
+            nextState.shipTo = null;
+        } else if (nextState.permissions.values?.shipTo.length) {
+            const [shipTo] = nextState.shipToAddresses.filter(st => st.ShipToCode === nextState.permissions!.values?.shipTo[0])
+            nextState.shipToCode = shipTo?.ShipToCode ?? null;
+            nextState.shipTo = shipTo ?? null;
+        }
+    } else  {
+        const [shipTo] = nextState.shipToAddresses.filter(st => st.ShipToCode === nextState.shipToCode)
+        nextState.shipToCode = shipTo?.ShipToCode ?? null;
+        nextState.shipTo = shipTo ?? null;
+    }
+    nextState.paymentCards = [...(payload?.paymentCards ?? [])].sort(customerPaymentCardSorter);
+    nextState.users = [...(payload?.users ?? [])].sort(customerUserSorter);
+    return nextState;
 }

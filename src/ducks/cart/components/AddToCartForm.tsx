@@ -1,8 +1,8 @@
-import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
 import {useSelector} from 'react-redux';
 import CartSelect from "@/components/CartSelect";
 import FormGroupTextInput from "@/common-components/FormGroupTextInput";
-import {newCart, saveCartItem, saveNewCart, setCurrentCart} from "@/ducks/cart/actions";
+import {addToCart, newCart, saveCartItem, saveNewCart, setCurrentCart} from "@/ducks/cart/actions";
 import FormGroup from "@/common-components/FormGroup";
 import CartQuantityInput from "@/components/CartQuantityInput";
 import ProgressBar from "@/components/ProgressBar";
@@ -17,6 +17,7 @@ import {
     selectItemAvailabilityLoading
 } from "@/ducks/cart/selectors";
 import {
+    selectCustomerAccount,
     selectCustomerPermissions,
     selectCustomerPermissionsLoaded,
     selectCustomerPermissionsLoading
@@ -26,7 +27,14 @@ import {loadCustomerPermissions} from "@/ducks/customer/actions";
 import {selectCurrentCustomer} from "@/ducks/user/selectors";
 import {useAppDispatch} from "@/app/configureStore";
 import {FieldValue} from "@/types/generic";
-
+import Stack from "@mui/material/Stack";
+import {Button} from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import LinearProgress from "@mui/material/LinearProgress";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import CartNameInput from "@/ducks/cart/components/CartNameInput";
+import AddToCartButton from "@/ducks/cart/components/AddToCartButton";
 
 const AddToCartForm = ({
                            itemCode,
@@ -50,7 +58,7 @@ const AddToCartForm = ({
     onChangeQuantity: (val: number) => void;
 }) => {
     const dispatch = useAppDispatch();
-    const customer = useSelector(selectCurrentCustomer);
+    const customer = useSelector(selectCustomerAccount);
     const cartsList = useSelector(selectCartsList);
     const cartsLoading = useSelector(selectCartsLoading);
     const cartNo = useSelector(selectCartNo);
@@ -61,6 +69,7 @@ const AddToCartForm = ({
     const permissionsLoading = useSelector(selectCustomerPermissionsLoading);
     const permissionsLoaded = useSelector(selectCustomerPermissionsLoaded);
     const availabilityLoading = useSelector(selectItemAvailabilityLoading);
+    const cartNameId = useId();
 
     const [_comment, setComment] = useState<string>(comment ?? '');
     const [_cartName, setCartName] = useState<string>(cartName ?? '');
@@ -80,15 +89,16 @@ const AddToCartForm = ({
 
     useEffect(() => {
         if (permissions?.billTo) {
-            setShipToCode('');
+            setShipToCode(customer?.PrimaryShipToCode ?? '');
         }
         setShipToCode(permissions?.shipTo[0] ?? '');
     }, [permissions])
 
-    const cartChangeHandler = (ev: ChangeEvent<HTMLSelectElement>) => {
-        const value = ev.target.value;
+    const cartChangeHandler = (value:string) => {
         if (value === NEW_CART && setGlobalCart) {
-            dispatch(newCart());
+            setCartName('');
+            setCartNo(value);
+            // dispatch(newCart());
             return;
         }
         const [cart] = cartsList.filter(so => so.SalesOrderNo === value);
@@ -102,7 +112,7 @@ const AddToCartForm = ({
         setShipToCode(value === NEW_CART ? '' : cart.ShipToCode ?? '');
     }
 
-    const onChangeCartName = ({value}: FieldValue) => {
+    const onChangeCartName = (value:string) => {
         setCartName(value)
     }
 
@@ -120,11 +130,9 @@ const AddToCartForm = ({
             comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
         if (!!_cartNo && _cartNo !== NEW_CART) {
-            dispatch(saveCartItem({
-                SalesOrderNo: _cartNo,
-                ItemCode: itemCode,
-                QuantityOrdered: quantity,
-                CommentText: comment,
+            dispatch(addToCart({
+                itemCode,
+                quantity
             }));
             onDone();
             return;
@@ -142,34 +150,24 @@ const AddToCartForm = ({
     return (
         <form onSubmit={submitHandler} className="add-to-cart" method="post">
             {availabilityLoading && <ProgressBar striped label="Checking Availability"/>}
-            <FormGroup colWidth={8} label="Select Cart">
-                <CartSelect cartList={cartsList} cartNo={_cartNo} onChange={cartChangeHandler}/>
-            </FormGroup>
-            {(!_cartNo || _cartNo === NEW_CART) && (
-                <>
-                    <FormGroupTextInput colWidth={8} label="Cart Name" onChange={onChangeCartName} value={_cartName}
-                                        required helpText="Please name your cart."/>
-                    <FormGroup colWidth={8} label="Ship To">
+            <Stack spacing={2} direction="column">
+                <CartSelect cartNo={_cartNo} onChange={cartChangeHandler}/>
+                {(!_cartNo || _cartNo === NEW_CART) && (
+                    <Stack spacing={2} direction="row">
+                        <CartNameInput  value={_cartName} onChange={onChangeCartName}
+                        fullWidth
+                                        helperText="Please name your cart." />
                         <ShipToSelect value={shipToCode} onChange={code => setShipToCode(code)}/>
-                    </FormGroup>
-                </>
-            )}
-            <FormGroup colWidth={8} label="Quantity">
-                <div className="row g-3">
-                    <div className="col">
-                        <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
-                                           disabled={disabled} required/>
-                    </div>
-                    <div className="col-auto">
-                        <button type="submit" className="btn btn-sm btn-primary" disabled={disabled || quantity === 0}>
-                            <span className="me-3">Add to cart</span><span className="bi-bag-fill" title="Add to cart"/>
-                        </button>
-                    </div>
-                </div>
-
-            </FormGroup>
-            {loading && <ProgressBar striped height={5}/>}
-            {!!cartMessage && <Alert severity="success">{cartMessage}</Alert>}
+                    </Stack>
+                )}
+                <Stack direction="row" spacing={2} justifyContent="flex-end">
+                    <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
+                                       disabled={disabled} required/>
+                    <AddToCartButton disabled={disabled || !quantity}/>
+                </Stack>
+                {loading && <LinearProgress variant="indeterminate"/>}
+                {!!cartMessage && <Alert severity="success">{cartMessage}</Alert>}
+            </Stack>
         </form>
     );
 }

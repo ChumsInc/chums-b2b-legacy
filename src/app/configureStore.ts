@@ -23,6 +23,7 @@ import keywordsReducer from "../ducks/keywords";
 import pageReducer from "../ducks/page";
 import customersReducer from "@/ducks/customers";
 import repsReducer from "@/ducks/reps";
+import itemLookupReducer from "@/ducks/item-lookup";
 
 
 export const rootReducer = combineReducers({
@@ -34,6 +35,7 @@ export const rootReducer = combineReducers({
     customer: customerReducer,
     customers: customersReducer,
     invoices: invoicesReducer,
+    itemLookup: itemLookupReducer,
     keywords: keywordsReducer,
     menu: menuReducer,
     messages: messagesReducer,

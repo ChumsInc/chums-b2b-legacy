@@ -86,7 +86,7 @@ export const minShipDate = (): string => {
         _printDate = _dayjs().startOf('day').add(24 + 8, 'hours');
     }
 
-    return addWorkDays(_printDate, 5);
+    return _dayjs(addWorkDays(_printDate, 5)).startOf('day').toISOString();
 }
 
 export const nextShipDate = (shipDate: Date | number | string | Dayjs = new Date()): string => {

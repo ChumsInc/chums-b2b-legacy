@@ -1,6 +1,7 @@
 import React, {ChangeEvent, FormEvent, useEffect, useRef, useState} from 'react';
 import {useSelector} from "react-redux";
 import {
+    selectDetailChanged,
     selectSalesOrderHeader,
     selectSalesOrderInvoices,
     selectSendEmailStatus,
@@ -38,11 +39,14 @@ import Paper from "@mui/material/Paper";
 import {selectCustomerAccount} from "@/ducks/customer/selectors";
 import {promoteCart, saveCart} from "@/ducks/cart/actions";
 import SendEmailModal from "@/ducks/salesOrder/components/SendEmailModal";
+import Alert from "@mui/material/Alert";
+import DeleteCartButton from "@/ducks/cart/components/DeleteCartButton";
 
 const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
     const customer = useSelector(selectCustomerAccount);
     const header = useSelector(selectSalesOrderHeader);
+    const detailChanged = useSelector(selectDetailChanged);
     const invoices = useSelector(selectSalesOrderInvoices);
     const loading = useSelector(selectSOLoading);
     const shippingAccount = useSelector(selectShippingAccount);
@@ -189,7 +193,6 @@ const CartOrderHeaderElement = () => {
 
     return (
         <Box component="div">
-            {loading && <LinearProgress variant="indeterminate" sx={{my: 1}}/>}
             <Grid container spacing={2}>
                 <Grid xs={12} lg={6}>
                     <Stack spacing={2} direction="column">
@@ -251,22 +254,36 @@ const CartOrderHeaderElement = () => {
                 </Grid>
             </Grid>
             <CartCheckoutProgress current={cartProgress} onChange={setCartProgress}/>
-            <Stack spacing={2} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
+            <Stack spacing={2} direction={{sm: 'column', md: 'row'}} justifyContent="space-between">
+                <Stack sx={{flex: '1 1 auto'}}>
+                    {(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart && (
+                        <Alert severity="warning">Don't forget to save your changes!</Alert>
+                    )}
+                </Stack>
+                <Stack spacing={3} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
+                    <DeleteCartButton disabled={loading || cartHeader?.changed}>
+                        Delete Cart
+                    </DeleteCartButton>
 
-                <Button type="button" variant="text" onClick={saveCartHandler} disabled={loading} >
-                    Save Cart
-                </Button>
+                    <Button type="button" variant="text" onClick={reloadHandler} disabled={loading}>
+                        {detailChanged || cartHeader?.changed ? 'Cancel Changes' : 'Reload'}
+                    </Button>
 
-                <Button type="button" variant="text" onClick={reloadHandler} disabled={loading}>
-                    Reload
-                </Button>
+                    <Button type="button"
+                            variant={(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart ? 'contained': "text"}
+                            size="small"
+                            color={(detailChanged || cartHeader?.changed) ? 'warning' : 'primary'}
+                            onClick={saveCartHandler} disabled={loading || cartProgress !== cartProgress_Cart} >
+                        Save Cart
+                    </Button>
 
-                <Button type="button" variant="text" onClick={sendEmailHandler}
-                        disabled={loading || sendEmailStatus !== 'idle'}>
-                    Send Email
-                </Button>
+                    <Button type="button" variant="text" onClick={sendEmailHandler}
+                            disabled={loading || sendEmailStatus !== 'idle'}>
+                        Send Email
+                    </Button>
 
-                <CheckoutButton cartProgress={cartProgress} onClick={submitHandler} disabled={loading}/>
+                    <CheckoutButton cartProgress={cartProgress} onClick={submitHandler} disabled={loading}/>
+                </Stack>
             </Stack>
             <SendEmailModal />
         </Box>

@@ -1,28 +1,5 @@
-import {
-    CANCEL_CREATE_ACCOUNT_USER,
-    CHANGE_ACCOUNT_FIELD,
-    CHANGE_ACCOUNT_USER,
-    CHANGE_SHIPTO,
-    CREATE_SHIPTO,
-    FETCH_ACCOUNT_USERS,
-    FETCH_CUSTOMER,
-    FETCH_CUSTOMER_FAILURE,
-    FETCH_FAILURE,
-    FETCH_INIT,
-    FETCH_SUCCESS,
-    SELECT_ACCOUNT_USER,
-    SET_LOGGED_IN
-} from "@/constants/actions";
-import {
-    companyCode,
-    customerContactSorter,
-    customerPaymentCardSorter,
-    customerPriceRecordSorter,
-    customerShipToSorter,
-    customerSlug,
-    customerUserSorter, defaultShipToSort,
-    emptyCustomer
-} from "@/utils/customer";
+import {SET_LOGGED_IN} from "@/constants/actions";
+import {companyCode, customerSlug, customerUserSorter, emptyCustomer} from "@/utils/customer";
 import localStore from "../../utils/LocalStore";
 import {STORE_CUSTOMER} from "@/constants/stores";
 import {createReducer} from "@reduxjs/toolkit";
@@ -48,7 +25,8 @@ import {
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {LoadStatus, Selectable} from "@/types/generic";
 import {CustomerPermissions} from "@/types/customer";
-import {dismissAlert, dismissContextAlert} from "@/ducks/alerts";
+import {dismissContextAlert} from "@/ducks/alerts";
+import {customerResponseToState} from "@/ducks/customer/utils";
 
 export interface CustomerPermissionsState {
     values: CustomerPermissions | null;
@@ -61,8 +39,8 @@ export interface CustomerState {
     company: string;
     key: string | null;
     account: (BillToCustomer & Editable) | null;
-    shipToCode: string|null;
-    shipTo: ShipToCustomer|null;
+    shipToCode: string | null;
+    shipTo: ShipToCustomer | null;
     contacts: CustomerContact[];
     pricing: CustomerPriceRecord[];
     shipToAddresses: (ShipToCustomer & Editable)[];
@@ -148,17 +126,42 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(saveBillingAddress.pending, (state) => {
             state.loading = true;
         })
-        .addCase(saveBillingAddress.fulfilled, (state) => {
+        .addCase(saveBillingAddress.fulfilled, (state, action) => {
+            state.loadStatus = 'idle';
             state.loading = false;
+            const {account, shipToCode, permissions, contacts, pricing, shipToAddresses, paymentCards, users} = customerResponseToState(action.payload, state);
+            state.account = account ?? null;
+            state.shipToCode = shipToCode ?? null;
+            state.permissions.values = permissions?.values ?? null;
+            state.contacts = contacts ?? [];
+            state.pricing = pricing ?? [];
+            state.shipToAddresses = shipToAddresses ?? [];
+            state.paymentCards = paymentCards ?? [];
+            state.users = users ?? [];
+            state.loaded = true;
         })
         .addCase(saveBillingAddress.rejected, (state) => {
             state.loading = false;
+            state.loadStatus = 'idle';
         })
         .addCase(saveShipToAddress.pending, (state) => {
             state.loading = true;
+            state.loadStatus = 'pending';
         })
-        .addCase(saveShipToAddress.fulfilled, (state) => {
+        .addCase(saveShipToAddress.fulfilled, (state, action) => {
             state.loading = false;
+            state.loadStatus = 'idle';
+            const {account, shipToCode, permissions, contacts, pricing, shipToAddresses, paymentCards, users} = customerResponseToState(action.payload, state);
+            state.account = account ?? null;
+            state.shipToCode = shipToCode ?? null;
+            state.permissions.values = permissions?.values ?? null;
+            state.contacts = contacts ?? [];
+            state.pricing = pricing ?? [];
+            state.shipToAddresses = shipToAddresses ?? [];
+            state.paymentCards = paymentCards ?? [];
+            state.users = users ?? [];
+            state.loaded = true;
+
         })
         .addCase(saveShipToAddress.rejected, (state) => {
             state.loading = false;
@@ -191,34 +194,15 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(loadCustomer.fulfilled, (state, action) => {
             state.loadStatus = 'idle';
             state.loading = false;
-            state.account = action.payload?.customer ?? null;
-            state.shipToCode = action.payload?.customer?.PrimaryShipToCode ?? null;
-            state.permissions.values = action.payload?.permissions ?? null;
-            state.contacts = [...(action.payload?.contacts ?? [])].sort(customerContactSorter);
-            state.pricing = [...(action.payload?.pricing ?? [])].sort(customerPriceRecordSorter);
-            state.shipToAddresses = [...(action.payload?.shipTo ?? [])].sort(customerShipToSorter(defaultShipToSort));
-            if (!!state.shipToCode && !state.shipToAddresses.filter(st => st.ShipToCode === state.shipToCode).length) {
-                state.shipToCode = null;
-            }
-            if (state.shipToCode && !state.permissions.values?.billTo && !state.permissions.values?.shipTo.includes(state.shipToCode)) {
-                state.shipToCode = null;
-            }
-            if (!state.shipToCode) {
-                if (state.permissions.values?.billTo) {
-                    state.shipToCode = '';
-                    state.shipTo = null;
-                } else if (state.permissions.values?.shipTo.length) {
-                    const [shipTo] = state.shipToAddresses.filter(st => st.ShipToCode === state.permissions.values?.shipTo[0])
-                    state.shipToCode = shipTo?.ShipToCode ?? null;
-                    state.shipTo = shipTo ?? null;
-                }
-            } else  {
-                const [shipTo] = state.shipToAddresses.filter(st => st.ShipToCode === state.shipToCode)
-                state.shipToCode = shipTo?.ShipToCode ?? null;
-                state.shipTo = shipTo ?? null;
-            }
-            state.paymentCards = [...(action.payload?.paymentCards ?? [])].sort(customerPaymentCardSorter);
-            state.users = [...(action.payload?.users ?? [])].sort(customerUserSorter);
+            const {account, shipToCode, permissions, contacts, pricing, shipToAddresses, paymentCards, users} = customerResponseToState(action.payload, state);
+            state.account = account ?? null;
+            state.shipToCode = shipToCode ?? null;
+            state.permissions.values = permissions?.values ?? null;
+            state.contacts = contacts ?? [];
+            state.pricing = pricing ?? [];
+            state.shipToAddresses = shipToAddresses ?? [];
+            state.paymentCards = paymentCards ?? [];
+            state.users = users ?? [];
             state.loaded = true;
         })
         .addCase(loadCustomer.rejected, (state) => {
@@ -262,29 +246,6 @@ const customerReducer = createReducer(initialCustomerState, builder => {
 
         .addDefaultCase((state, action) => {
             switch (action.type) {
-                case FETCH_CUSTOMER:
-                    state.loading = action.status === FETCH_INIT;
-                    if (action.status === FETCH_INIT) {
-                        state.company = companyCode(action.customer?.Company ?? 'chums');
-                        state.account = {...state.account, ...action.customer};
-                        state.users = [];
-                    }
-                    if (action.status === FETCH_SUCCESS) {
-                        state.account = action.customer;
-                        state.contacts = [...action.contacts].sort(customerContactSorter);
-                        state.pricing = [...action.pricing].sort(customerPriceRecordSorter);
-                        state.shipToAddresses = [...action.shipTo].sort(customerShipToSorter(defaultShipToSort));
-                        state.paymentCards = [...action.paymentCards].sort(customerPaymentCardSorter);
-                        state.users = [...action.users].sort(customerUserSorter);
-                    }
-                    if (action.status === FETCH_FAILURE) {
-                        state.contacts = [];
-                        state.pricing = [];
-                        state.shipToAddresses = [];
-                        state.paymentCards = [];
-                        state.users = [];
-                    }
-                    return;
                 case SET_LOGGED_IN:
                     if (action.loggedIn === false) {
                         state.account = null;
@@ -295,49 +256,6 @@ const customerReducer = createReducer(initialCustomerState, builder => {
                         state.users = [];
                     }
                     return;
-                case FETCH_CUSTOMER_FAILURE:
-                    state.account = null;
-                    return;
-                case CHANGE_ACCOUNT_FIELD:
-                    state.account = {...state.account, ...action.props, changed: true};
-                    return;
-                case CHANGE_SHIPTO:
-                    state.shipToAddresses = [
-                        ...state.shipToAddresses.filter(st => st.ShipToCode !== action.shipToCode),
-                        ...state.shipToAddresses.filter(st => st.ShipToCode === action.shipToCode)
-                            .map(st => ({...st, ...action.props, changed: true})),
-                    ].sort(customerShipToSorter(defaultShipToSort));
-                    return;
-                case CREATE_SHIPTO:
-                    state.shipToAddresses = [
-                        ...state.shipToAddresses,
-                        {...action.props, changed: true}
-                    ].sort(customerShipToSorter(defaultShipToSort));
-                    return;
-                case FETCH_ACCOUNT_USERS:
-                    state.loading = action.status === FETCH_INIT;
-                    if (action.status === FETCH_SUCCESS) {
-                        state.users = [...action.users].sort(customerUserSorter);
-                    }
-                    return;
-                case CANCEL_CREATE_ACCOUNT_USER:
-                    state.users = state.users.filter(u => u.id !== 0)
-                        .map(({selected, ...user}) => user)
-                        .sort(customerUserSorter);
-                    return;
-                case CHANGE_ACCOUNT_USER:
-                    state.users = [
-                        ...state.users.filter(user => user.id !== action.id),
-                        ...state.users.filter(user => user.id === action.id)
-                            .map(u => ({...u, ...action.props, changed: true}))
-                    ].sort(customerUserSorter);
-                    return;
-                case SELECT_ACCOUNT_USER:
-                    state.users = [
-                        ...state.users.filter(u => u.id !== action.id).map(({selected, ...user}) => user),
-                        ...state.users.filter(u => u.id === action.id).map(user => ({...user, selected: true})),
-                    ].sort(customerUserSorter);
-
             }
         })
 })

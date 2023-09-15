@@ -1,17 +1,6 @@
-import {CHANGE_SHIPTO, FETCH_CUSTOMER, FETCH_FAILURE, FETCH_INIT, FETCH_SUCCESS,} from "@/constants/actions";
-import {handleError} from "../app/actions";
-import {
-    buildRecentAccounts,
-    buildRecentCustomers,
-    customerSlug,
-    isValidCustomer,
-    shipToAddressFromBillingAddress
-} from "@/utils/customer";
-import {fetchOpenOrders} from "../../actions/salesOrder";
-import {defaultCartItem, getPrices} from "@/utils/products";
+import {buildRecentCustomers, customerSlug} from "@/utils/customer";
 import localStore from "../../utils/LocalStore";
 import {STORE_RECENT_ACCOUNTS} from "@/constants/stores";
-import {loadInvoices} from "../invoices/actions";
 import {selectLoggedIn} from "../user/selectors";
 import {
     selectCustomerAccount,
@@ -28,22 +17,13 @@ import {
     postDefaultShipToCode,
     postShipToAddress
 } from "@/api/customer";
-import {selectProductCartItem, selectSelectedProduct} from "../products/selectors";
 import {BasicCustomer, BillToCustomer, CustomerKey, CustomerUser, RecentCustomer, ShipToCustomer} from "b2b-types";
 import {AppDispatch, RootState} from "@/app/configureStore";
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {isCartProduct, isProduct} from "../products/utils";
 import {FetchCustomerResponse} from "@/ducks/customer/types";
 import {loadOrders} from "@/ducks/open-orders/actions";
 import {CustomerPermissions} from "@/types/customer";
 import {selectRecentCustomers} from "@/ducks/customers/selectors";
-
-
-export const changeShipTo = (shipToCode: string, props: Partial<ShipToCustomer>) => ({
-    type: CHANGE_SHIPTO,
-    shipToCode,
-    props
-});
 
 export const saveUser = createAsyncThunk<CustomerUser[], CustomerUser>(
     'customer/saveUser',
@@ -118,11 +98,10 @@ export const loadCustomer = createAsyncThunk<FetchCustomerResponse | null, Custo
 )
 
 
-export const saveBillingAddress = createAsyncThunk<void, BillToCustomer>(
+export const saveBillingAddress = createAsyncThunk<FetchCustomerResponse | null, BillToCustomer>(
     'customer/saveBillingAddress',
-    async (arg, {dispatch}) => {
-        await postBillingAddress(arg);
-        (dispatch as AppDispatch)(loadCustomer(arg));
+    async (arg) => {
+        return await postBillingAddress(arg);
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
@@ -132,16 +111,18 @@ export const saveBillingAddress = createAsyncThunk<void, BillToCustomer>(
 )
 
 
-export const saveShipToAddress = createAsyncThunk<void, ShipToCustomer>(
+export const saveShipToAddress = createAsyncThunk<FetchCustomerResponse | null, ShipToCustomer>(
     'customer/saveShipToAddress',
     async (arg, {dispatch}) => {
-        await postShipToAddress(arg);
-        (dispatch as AppDispatch)(loadCustomer(arg));
+        return await postShipToAddress(arg);
     },
     {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
-            return selectLoggedIn(state) && !selectCustomerLoading(state) && !!arg.ShipToCode && arg.ShipToCode.length <= 4;
+            return selectLoggedIn(state)
+                && !!arg.ShipToCode && arg.ShipToCode.length <= 4
+                && !selectCustomerLoading(state)
+                ;
         }
     }
 )

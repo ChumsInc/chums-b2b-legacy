@@ -1,16 +1,17 @@
 import React, {Component, Fragment} from 'react';
 import PropTypes from 'prop-types';
-import {orderDetailPropType} from "../constants/myPropTypes";
-import AddToCartModal from "./AddToCartModal";
-import OrderDetailLine from "./OrderDetailLine";
-import OrderFooter from "./OrderFooter";
-import {appendCommentLine, saveCartItem, updateCartItem} from "../ducks/cart/actions";
+import {orderDetailPropType} from "@/constants/myPropTypes";
+import AddToCartModal from "@/components/AddToCartModal";
+import OrderDetailLine from "@/ducks/salesOrder/components/OrderDetailLine";
+import {appendCommentLine, saveCartItem, updateCartItem} from "../../cart/actions";
 import {connect} from "react-redux";
-import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "../constants/orders";
-import OrderCommentInput from "./OrderCommentInput";
-import CartAddItem from "./CartAddItem";
+import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "@/constants/orders";
+import OrderCommentInput from "@/components/OrderCommentInput";
+import ItemAutocomplete from "@/ducks/item-lookup/ItemAutocomplete";
+import SalesOrderTotal from "@/ducks/salesOrder/components/SalesOrderTotal";
+import {useAppDispatch} from "@/app/configureStore";
 
-class OrderDetail extends Component {
+class _OrderDetail extends Component {
     static propTypes = {
         SalesOrderNo: PropTypes.string,
         detail: PropTypes.arrayOf(orderDetailPropType),
@@ -110,9 +111,7 @@ class OrderDetail extends Component {
 
 
     render() {
-        const {detail, isCart, readOnly, cartProgress, orderType, DepositAmt, DiscountAmt, FreightAmt, DiscountRate,
-            NonTaxableAmt, TaxableAmt, SalesTaxAmt, TaxSchedule,
-        } = this.props;
+        const {detail, isCart, readOnly} = this.props;
         const {showAddToCart, ItemCode, QuantityOrdered, CommentText, LineCommentText} = this.state;
         return (
             <Fragment>
@@ -121,7 +120,7 @@ class OrderDetail extends Component {
                         <div className="row">
                             <div className="col-sm-6">
                                 <h3>Add Item</h3>
-                                <CartAddItem />
+                                <ItemAutocomplete cartNo={this.props.SalesOrderNo}/>
                             </div>
                             <div className="col-sm-6">
                                 <h3>Add Comment</h3>
@@ -141,24 +140,14 @@ class OrderDetail extends Component {
                             <th>Item</th>
                             <th>Description</th>
                             <th>U/M</th>
-                            <th className="right">Ordered</th>
-                            <th className="right">Unit Price</th>
-                            <th className="right hidden-xs">MSRP</th>
-                            <th className="right hidden-xs">Item Price</th>
-                            <th className="right">Ext Price</th>
-                            <th className="center">Action</th>
+                            <th>Ordered</th>
+                            <th className="text-end">Unit Price</th>
+                            <th className="text-end">MSRP</th>
+                            <th className="text-end">Item Price</th>
+                            <th className="text-end">Ext Price</th>
+                            <th className="text-center">Action</th>
                         </tr>
                         </thead>
-
-                        {(isCart === false || cartProgress === CART_PROGRESS_STATES.cart) &&
-                        <tfoot>
-                        <OrderFooter renderForDetail={true} orderType={orderType}
-                                     DepositAmt={DepositAmt} DiscountAmt={DiscountAmt}
-                                     FreightAmt={FreightAmt}
-                                     TaxableAmt={TaxableAmt} NonTaxableAmt={NonTaxableAmt}
-                                     SalesTaxAmt={SalesTaxAmt} TaxSchedule={TaxSchedule}/>
-                        </tfoot>
-                        }
 
                         <tbody>
                         {[...detail]
@@ -172,6 +161,7 @@ class OrderDetail extends Component {
                             ))
                         }
                         </tbody>
+                        <SalesOrderTotal/>
                     </table>
                 </div>
 
@@ -214,4 +204,4 @@ const mapDispatchToProps = {
     appendCommentLine,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(OrderDetail);
+// export default connect(mapStateToProps, mapDispatchToProps)(OrderDetail);

@@ -14,6 +14,7 @@ import {
 import {generatePath, redirect} from "react-router-dom";
 import {customerSlug} from "@/utils/customer";
 import {selectCustomerAccount} from "@/ducks/customer/selectors";
+import {DetailLineChangeProps} from "@/types/salesorder";
 
 export const loadSalesOrder = createAsyncThunk<SalesOrder | null, string>(
     'orders/loadSalesOrder',
@@ -55,4 +56,4 @@ export const sendOrderEmail = createAsyncThunk<EmailResponse|null, SalesOrderHea
 
 export const closeEmailResponse = createAction('orders/sendEmail/confirmed');
 
-export const submitSalesOrder = createAsyncThunk
+export const updateDetailLine = createAction<DetailLineChangeProps>('salesOrder/detail/update');

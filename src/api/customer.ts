@@ -65,7 +65,7 @@ export async function deleteCustomerUser(arg: CustomerUser, customer: CustomerKe
     }
 }
 
-export async function postBillingAddress(arg: BillToCustomer): Promise<void> {
+export async function postBillingAddress(arg: BillToCustomer): Promise<FetchCustomerResponse|null> {
     try {
         const {
             ARDivisionNo, CustomerNo, CustomerName, AddressLine1, AddressLine2, AddressLine3,
@@ -90,6 +90,7 @@ export async function postBillingAddress(arg: BillToCustomer): Promise<void> {
         });
         const url = `/sage/b2b/billto.php?${params.toString()}`;
         await fetchJSON(url, {method: 'POST', body});
+        return await fetchCustomerAccount(arg);
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postBillingAddress()", err.message);
@@ -100,7 +101,7 @@ export async function postBillingAddress(arg: BillToCustomer): Promise<void> {
     }
 }
 
-export async function postShipToAddress(arg: ShipToCustomer): Promise<void> {
+export async function postShipToAddress(arg: ShipToCustomer): Promise<FetchCustomerResponse|null> {
     try {
         const {
             ARDivisionNo, CustomerNo, ShipToCode, ShipToName, ShipToAddress1, ShipToAddress2 = '', ShipToAddress3 = '',
@@ -125,6 +126,7 @@ export async function postShipToAddress(arg: ShipToCustomer): Promise<void> {
             ContactCode,
         });
         await fetchJSON(url, {method: 'POST', body});
+        return await fetchCustomerAccount(arg);
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postShipToAddress()", err.message);

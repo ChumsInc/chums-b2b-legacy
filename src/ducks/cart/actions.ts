@@ -23,9 +23,14 @@ import {NEW_CART} from "../../constants/orders";
 import {selectCartsList} from "../carts/selectors";
 import {selectCustomerAccount, selectCustomerPermissions} from "../customer/selectors";
 import {selectCartLoading, selectCartNo, selectItemAvailabilityLoading, selectShippingAccount} from "./selectors";
-import {fetchSalesOrder, postApplyPromoCode} from "../../api/sales-order";
+import {fetchSalesOrder, fetchSalesOrders, postApplyPromoCode} from "../../api/sales-order";
 import {fetchItemAvailability, postCartAction} from "../../api/cart";
-import {selectSalesOrderDetail, selectSalesOrderNo, selectSalesOrderProcessing} from "../salesOrder/selectors";
+import {
+    selectSalesOrderDetail,
+    selectSalesOrderHeader,
+    selectSalesOrderNo,
+    selectSalesOrderProcessing, selectSOLoading
+} from "../salesOrder/selectors";
 import {selectCurrentCustomer, selectLoggedIn} from "../user/selectors";
 import {changedDetailLine, newCommentLine} from "../../utils/cart";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
@@ -34,7 +39,7 @@ import {isCustomer} from "../user/utils";
 import {B2BError, PromoCode, SalesOrder, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {isBillToCustomer} from "../../utils/typeguards";
 import {
-    ApplyPromoCodeBody,
+    ApplyPromoCodeBody, CartAppendBody,
     CartAppendCommentBody,
     CartDeleteItemBody,
     DeleteCartBody,
@@ -48,6 +53,7 @@ import {ItemAvailability} from "@/types/product";
 import {SaveNewCartProps} from "@/ducks/cart/types";
 import {selectCurrentPromoCode} from "@/ducks/promo-code/selectors";
 import {CustomerShippingAccount} from "@/types/customer";
+import {loadOrders} from "@/ducks/open-orders/actions";
 
 export const customerFromState = (state: RootState) => {
     if (!isCustomer(state.user.currentCustomer)) {
@@ -161,6 +167,36 @@ export const saveNewCart = createAsyncThunk<SalesOrder | null, SaveNewCartProps>
                 && !selectCartLoading(state)
                 && !!arg.cartName.trim()
                 && arg.quantity > 0;
+        }
+    }
+)
+
+export interface AddToCartProps {
+    itemCode: string;
+    quantity: string|number;
+}
+export const addToCart = createAsyncThunk<SalesOrder|null, AddToCartProps>(
+    'cart/addItem',
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const customer = selectCurrentCustomer(state)!;
+        const promo_code = selectCurrentPromoCode(state);
+        const header = selectSalesOrderHeader(state);
+        const body:CartAppendBody = {
+            action: 'append',
+            SalesOrderNo: header!.SalesOrderNo,
+            ItemCode: arg.itemCode,
+            QuantityOrdered: arg.quantity.toString(),
+            promo_code: promo_code?.promo_code ?? '',
+        }
+        return await postCartAction('chums', customer.ARDivisionNo, customer.CustomerNo, header!.ShipToCode, body);
+    }, {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return !!arg.itemCode
+                && +arg.quantity > 0
+                && selectLoggedIn(state)
+                && !!selectSalesOrderHeader(state);
         }
     }
 )
@@ -299,7 +335,28 @@ export const promoteCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>
     }
 )
 
-export const removeCart = (cart: SalesOrderHeader) =>
+export const removeCart = createAsyncThunk<SalesOrderHeader[], SalesOrderHeader>(
+    'cart/remove',
+    async (arg, {dispatch}) => {
+        const {Company, ARDivisionNo, CustomerNo} = arg;
+        const data: DeleteCartBody = {
+            action: 'delete',
+            SalesOrderNo: arg.SalesOrderNo,
+        };
+        await postCartAction(Company, ARDivisionNo, CustomerNo, null, data);
+        return await fetchSalesOrders({ARDivisionNo, CustomerNo});
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return arg.OrderType === 'Q'
+                && !selectSOLoading(state)
+                && selectSalesOrderProcessing(state) === 'idle';
+        }
+    }
+)
+
+export const _removeCart = (cart: SalesOrderHeader) =>
     async (dispatch: AppDispatch, getState: () => RootState) => {
         try {
             if (!isCartOrder(cart)) {
@@ -327,6 +384,8 @@ export const removeCart = (cart: SalesOrderHeader) =>
         }
 
     };
+
+
 
 
 export const saveCartItem = ({

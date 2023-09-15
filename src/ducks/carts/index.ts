@@ -15,6 +15,7 @@ import {setUserAccess} from "@/ducks/user/actions";
 import {customerSlug} from "@/utils/customer";
 import {loadCustomer} from "@/ducks/customer/actions";
 import {loadOrders} from "@/ducks/open-orders/actions";
+import {addToCart, removeCart, saveNewCart} from "@/ducks/cart/actions";
 
 export interface CartsState {
     customerKey: string | null;
@@ -61,6 +62,36 @@ const cartsReducer = createReducer(initialCartsState, builder => {
         .addCase(loadOrders.rejected, (state) => {
             state.loading = false;
         })
+        .addCase(saveNewCart.fulfilled, (state, action) => {
+            if (action.payload && action.payload.OrderType === 'Q') {
+                state.list = [
+                    ...state.list.filter(so => so.SalesOrderNo !== action.payload?.SalesOrderNo),
+                    action.payload,
+                ].sort(salesOrderSorter(defaultSalesOrderSort));
+            }
+        })
+        .addCase(addToCart.fulfilled, (state, action) => {
+            if (action.payload && action.payload.OrderType === 'Q') {
+                state.list = [
+                    ...state.list.filter(so => so.SalesOrderNo !== action.payload?.SalesOrderNo),
+                    action.payload,
+                ].sort(salesOrderSorter(defaultSalesOrderSort));
+            }
+        })
+        .addCase(removeCart.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(removeCart.fulfilled, (state, action) => {
+            state.loaded = true;
+            state.loading = false;
+            state.list = action.payload
+                .filter(so => so.OrderType === 'Q')
+                .sort(salesOrderSorter(defaultSalesOrderSort));
+        })
+        .addCase(removeCart.rejected, (state) => {
+            state.loading = false;
+        })
+
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_ORDERS:

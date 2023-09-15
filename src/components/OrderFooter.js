@@ -44,41 +44,41 @@ class OrderFooter extends Component {
         const subTotal = NonTaxableAmt + TaxableAmt;
         const total = subTotal + FreightAmt + SalesTaxAmt - DepositAmt - DiscountAmt;
         const freightTBD = !(orderType === ORDER_TYPE.invoices || (getShippingMethod(ShipVia)?.allowCustomerAccount && shippingAccount.enabled) || getPaymentType(PaymentType).prepaid);
-        const colSpan = renderForDetail ? 3 : 1;
+        const colSpan = renderForDetail ? 5 : 1;
         return (
             <Fragment>
                 <tr>
-                    <th colSpan={colSpan} className="right">Sub Total</th>
+                    <th colSpan={colSpan} className="text-end">Sub Total</th>
                     {renderForDetail && <th colSpan={2} className="d-none d-sm-table-cell">&nbsp;</th>}
                     <th className="right">{numeral(NonTaxableAmt + TaxableAmt).format('0,0.00')}</th>
                     {renderForDetail && <th>&nbsp;</th>}
                 </tr>
                 <tr>
-                    <th colSpan={colSpan} className="right">Sales Tax {!!SalesTaxAmt ? TaxSchedule : ''}</th>
+                    <th colSpan={colSpan} className="text-end">Sales Tax {!!SalesTaxAmt ? TaxSchedule : ''}</th>
                     {renderForDetail && <th colSpan={2} className="d-none d-sm-table-cell">&nbsp;</th>}
                     <th className="right">{numeral(SalesTaxAmt || 0).format('0,0.00')}</th>
                     {renderForDetail && <th>&nbsp;</th>}
                 </tr>
                 <tr>
-                    <th colSpan={colSpan} className="right">Freight</th>
+                    <th colSpan={colSpan} className="text-end">Freight</th>
                     {renderForDetail && <th colSpan={2} className="d-none d-sm-table-cell">&nbsp;</th>}
                     <th className="right">{freightTBD ? 'TBD' : numeral(FreightAmt || 0).format('0,0.00')}</th>
                     {renderForDetail && <th>&nbsp;</th>}
                 </tr>
                 {!!DiscountAmt && <tr>
-                    <th colSpan={colSpan} className="right">Discount</th>
+                    <th colSpan={colSpan} className="text-end">Discount</th>
                     {renderForDetail && <th colSpan={2} className="d-none d-sm-table-cell">&nbsp;</th>}
                     <th className="right">{numeral(DiscountAmt).format('0,0.00')}</th>
                     {renderForDetail && <th>&nbsp;</th>}
                 </tr>}
                 {!!DepositAmt && <tr>
-                    <th colSpan={colSpan} className="right">Deposit</th>
+                    <th colSpan={colSpan} className="text-end">Deposit</th>
                     {renderForDetail && <th colSpan={2} className="d-none d-sm-table-cell">&nbsp;</th>}
                     <th className="right">{numeral(DepositAmt).format('0,0.00')}</th>
                     {renderForDetail && <th>&nbsp;</th>}
                 </tr>}
                 <tr className="order-detail total">
-                    <th colSpan={colSpan} className="right">Total</th>
+                    <th colSpan={colSpan} className="text-end">Total</th>
                     {renderForDetail && <th colSpan={2} className="d-none d-sm-table-cell">&nbsp;</th>}
                     <th className="right">{freightTBD ? 'TBD' : numeral(total).format('0,0.00')}</th>
                     {renderForDetail && <th>&nbsp;</th>}

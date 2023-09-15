@@ -4,7 +4,7 @@ import {getItemAvailability} from "../ducks/cart/actions";
 import {itemPrice} from "../utils/customer";
 import CartItemInfo from "./CartItemInfo";
 import CartItemDetail from "@/ducks/products/components/CartItemDetail";
-import AddToCartForm from "@/ducks/carts/components/AddToCartForm";
+import AddToCartForm from "@/ducks/cart/components/AddToCartForm";
 import MissingTaxScheduleAlert from "@/ducks/customer/components/MissingTaxScheduleAlert";
 import {selectItemAvailability} from "../ducks/cart/selectors";
 import {selectCustomerPricing, selectTaxSchedule} from "../ducks/customer/selectors";

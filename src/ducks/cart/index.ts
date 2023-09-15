@@ -23,8 +23,9 @@ import {DEFAULT_SHIPPING_ACCOUNT} from "@/constants/account";
 import {createReducer} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
 import {
+    addToCart,
     getItemAvailability,
-    promoteCart,
+    promoteCart, removeCart,
     saveNewCart,
     setCartProgress,
     setShipDate,
@@ -155,6 +156,30 @@ const cartReducer = createReducer(initialCartState, builder => {
         .addCase(saveNewCart.rejected, (state) => {
             state.loading = false;
         })
+        .addCase(addToCart.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(addToCart.fulfilled, (state, action) => {
+            state.loading = false;
+            if (!action.payload) {
+                state.cartNo = '';
+                state.cartTotal = 0;
+                state.cartQuantity = 0;
+                state.cartProgress = CART_PROGRESS_STATES.cart;
+                state.promoCode = null;
+                return;
+            }
+            state.cartNo = action.payload?.SalesOrderNo ?? '';
+            state.cartName = action.payload?.CustomerPONo ?? '';
+            state.cartTotal = new Decimal(action.payload?.TaxableAmt).add(action.payload.NonTaxableAmt).toNumber();
+            state.cartQuantity = (action.payload.detail ?? [])
+                .map(row => new Decimal(row.QuantityOrdered).times(row.UnitOfMeasureConvFactor).toNumber())
+                .reduce((row, cv) => row + cv, 0);
+            state.cartProgress = CART_PROGRESS_STATES.cart;
+        })
+        .addCase(addToCart.rejected, (state) => {
+            state.loading = false;
+        })
         .addCase(loadSalesOrder.fulfilled, (state, action) => {
             if (action.payload && state.cartNo === action.payload?.SalesOrderNo) {
                 state.loaded = true;
@@ -176,6 +201,13 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.shippingAccount.enabled = action.payload.enabled;
         })
         .addCase(promoteCart.fulfilled, (state, action) => {
+            state.cartNo = '';
+            state.cartTotal = 0;
+            state.cartQuantity = 0;
+            state.cartProgress = CART_PROGRESS_STATES.cart;
+            state.promoCode = null;
+        })
+        .addCase(removeCart.fulfilled, (state) => {
             state.cartNo = '';
             state.cartTotal = 0;
             state.cartQuantity = 0;

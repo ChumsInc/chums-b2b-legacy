@@ -50,16 +50,14 @@ const ProductRouter = () => {
     }
 
     return (
-        <div className="product-page">
-            {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
-            {!keyword?.pagetype && <Alert message={"Product not found!"}/>}
-            {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
-            {keyword?.pagetype === 'product' && (
-                <ErrorBoundary>
-                    <ProductPage keyword={keyword.keyword}/>
-                </ErrorBoundary>
-            )}
-        </div>
+        <ErrorBoundary>
+            <div className="product-page">
+                {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
+                {!keyword?.pagetype && <Alert message={"Product not found!"}/>}
+                {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
+                {keyword?.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
+            </div>
+        </ErrorBoundary>
     );
 }
 

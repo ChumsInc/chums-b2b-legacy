@@ -15,15 +15,25 @@ import {
 } from "@/constants/actions";
 import {defaultDetailSorter, emptyDetailLine} from "./utils";
 import {calcOrderType, isCartOrder} from "@/utils/orders";
-import {setCustomerAccount} from "../customer/actions";
+import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {isCartHeader} from "@/utils/typeguards";
-import {Editable, EmailResponse, SalesOrderDetailLine, SalesOrderHeader, SalesOrderItemType} from "b2b-types";
+import {
+    BillToCustomer,
+    Editable,
+    EmailResponse,
+    SalesOrderDetailLine,
+    SalesOrderHeader,
+    SalesOrderItemType
+} from "b2b-types";
 import {customerSlug} from "@/utils/customer";
 import {Appendable, LoadStatus} from "@/types/generic";
 import {OrderType} from "@/types/salesorder";
-import {closeEmailResponse, loadSalesOrder, sendOrderEmail} from "@/ducks/salesOrder/actions";
-import {promoteCart, saveCart} from "@/ducks/cart/actions";
+import {closeEmailResponse, loadSalesOrder, sendOrderEmail, updateDetailLine} from "@/ducks/salesOrder/actions";
+import {promoteCart, removeCart, saveCart, saveNewCart} from "@/ducks/cart/actions";
+import localStore from "@/utils/LocalStore";
+import {STORE_CURRENT_CART, STORE_CUSTOMER} from "@/constants/stores";
+import {loadOrders} from "@/ducks/open-orders/actions";
 
 export interface SalesOrderState {
     customerKey: string | null;
@@ -42,11 +52,12 @@ export interface SalesOrderState {
     }
     attempts: number;
     loading: boolean;
+    loaded: boolean;
 }
 
 export const initialSalesOrderState = (): SalesOrderState => ({
-    customerKey: null,
-    salesOrderNo: '',
+    customerKey: customerSlug(localStore.getItem<BillToCustomer | null>(STORE_CUSTOMER, null)),
+    salesOrderNo: localStore.getItem<string>(STORE_CURRENT_CART, ''),
     header: null,
     detail: [],
     invoices: [],
@@ -61,6 +72,7 @@ export const initialSalesOrderState = (): SalesOrderState => ({
     },
     attempts: 0,
     loading: false,
+    loaded: false,
 })
 
 const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
@@ -76,6 +88,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.payment = [];
                 state.orderType = 'past';
                 state.attempts = 0;
+                state.loaded = false;
             }
         })
         .addCase(setLoggedIn, (state, action) => {
@@ -87,6 +100,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.payment = [];
                 state.orderType = 'past';
                 state.attempts = 0;
+                state.loaded = false;
             }
         })
         .addCase(setUserAccess.pending, (state, action) => {
@@ -99,23 +113,48 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.payment = [];
                 state.orderType = 'past';
                 state.attempts = 0;
+                state.loaded = false;
             }
         })
-        .addCase(loadSalesOrder.pending, (state) => {
+        .addCase(loadCustomer.pending, (state, action) => {
+            const customerKey = customerSlug(action.meta.arg);
+            if (state.customerKey !== customerKey) {
+                state.customerKey = customerKey;
+                state.salesOrderNo = '';
+                state.header = null;
+                state.detail = [];
+                state.invoices = [];
+                state.payment = [];
+                state.orderType = 'past';
+                state.attempts = 0;
+                state.loaded = false;
+            }
+        })
+        .addCase(loadSalesOrder.pending, (state, action) => {
             state.loading = true;
+            if (state.salesOrderNo !== action.meta.arg) {
+                state.header = null;
+                state.detail = [];
+                state.invoices = [];
+                state.payment = [];
+                state.orderType = 'past';
+                state.readOnly = true;
+                state.loaded = false;
+            }
         })
         .addCase(loadSalesOrder.fulfilled, (state, action) => {
             state.salesOrderNo = action.payload?.SalesOrderNo ?? '';
             if (action.payload) {
                 const {detail, invoices, payment, ...header} = action.payload
                 state.header = header;
-                state.detail = [...detail];
+                state.detail = [...detail].sort(defaultDetailSorter);
                 state.invoices = invoices ?? [];
                 state.payment = payment ?? [];
                 state.orderType = calcOrderType(action.payload);
                 state.readOnly = !isCartOrder(action.payload);
             }
             state.loading = false;
+            state.loaded = true;
         })
         .addCase(loadSalesOrder.rejected, (state) => {
             state.loading = false;
@@ -147,11 +186,12 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             if (action.payload) {
                 const {detail, invoices, payment, ...header} = action.payload
                 state.header = header;
-                state.detail = [...detail];
+                state.detail = [...detail].sort(defaultDetailSorter);
                 state.invoices = invoices ?? [];
                 state.payment = payment ?? [];
                 state.orderType = calcOrderType(action.payload);
                 state.readOnly = !isCartOrder(action.payload);
+                state.loaded = true;
             }
         })
         .addCase(saveCart.rejected, (state) => {
@@ -165,11 +205,12 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             if (action.payload) {
                 const {detail, invoices, payment, ...header} = action.payload
                 state.header = header;
-                state.detail = [...detail];
+                state.detail = [...detail].sort(defaultDetailSorter);
                 state.invoices = invoices ?? [];
                 state.payment = payment ?? [];
                 state.orderType = calcOrderType(action.payload);
                 state.readOnly = !isCartOrder(action.payload);
+                state.loaded = true;
             } else {
                 state.header = null;
                 state.detail = [];
@@ -177,9 +218,55 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.payment = [];
                 state.orderType = null;
                 state.readOnly = true;
+                state.loaded = false;
             }
         })
         .addCase(promoteCart.rejected, (state) => {
+            state.processing = 'idle';
+        })
+        .addCase(updateDetailLine, (state, action) => {
+            state.detail = [
+                ...state.detail.filter(row => row.LineKey !== action.payload.LineKey),
+                ...state.detail.filter(row => row.LineKey === action.payload.LineKey).map(row => ({...row, ...action.payload, changed: true}))
+            ].sort(defaultDetailSorter);
+        })
+        .addCase(loadOrders.fulfilled, (state, action) => {
+            const [so] = action.payload.filter(so => so.SalesOrderNo === state.salesOrderNo);
+            state.header = so ?? null;
+            state.orderType = calcOrderType(so);
+            state.readOnly = !isCartOrder(so);
+            if (!so) {
+                state.detail = [];
+                state.invoices = [];
+                state.payment = [];
+            }
+        })
+        .addCase(saveNewCart.fulfilled, (state, action) => {
+            if (action.payload) {
+                const {detail, invoices, payment, ...header} = action.payload;
+                state.customerKey = customerSlug(action.payload);
+                state.header = header;
+                state.detail = [...detail].sort(defaultDetailSorter);
+                state.invoices = invoices ?? [];
+                state.payment = payment ?? [];
+                state.orderType = calcOrderType(action.payload);
+                state.readOnly = !isCartOrder(action.payload);
+                state.loaded = true;
+            }
+        })
+        .addCase(removeCart.pending, (state) => {
+            state.processing = 'pending';
+        })
+        .addCase(removeCart.fulfilled, (state) => {
+            state.processing = 'idle';
+            state.header = null;
+            state.orderType = null;
+            state.readOnly = true;
+            state.detail = [];
+            state.invoices = [];
+            state.payment = [];
+        })
+        .addCase(removeCart.rejected, (state) => {
             state.processing = 'idle';
         })
         .addDefaultCase((state, action) => {
@@ -204,7 +291,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                         const {detail, ...salesOrder} = action.salesOrder;
                         state.salesOrderNo = salesOrder?.SalesOrderNo ?? '';
                         state.header = salesOrder ?? {};
-                        state.detail = detail ?? [];
+                        state.detail = (detail ?? []).sort(defaultDetailSorter);
                         state.orderType = calcOrderType(action.salesOrder);
                         state.readOnly = !isCartOrder(action.salesOrder);
                         state.attempts = 1;
