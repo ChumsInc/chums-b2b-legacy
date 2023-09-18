@@ -107,6 +107,9 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                     cartItem = updateCartProductPricing(cartItem, state.pricing);
                 }
                 state.cartItem = cartItem;
+                if (cartItem?.image) {
+                    state.selectedProduct.image = cartItem.image;
+                }
             } else if (!!state.cartItem && isSellAsMix(state.selectedProduct)) {
                 const [item] = state.selectedProduct.mix.items
                     .filter(item => item.color?.code === action.payload);

@@ -30,7 +30,7 @@ const ProductPageImage = () => {
                       selectedItem={cartItem.itemCode || ''}
                       loading={loading}
                       altImages={product?.images}
-                      alt={product?.name}/>
+                      altText={product?.name}/>
     )
 }
 export default ProductPageImage;

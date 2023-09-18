@@ -189,10 +189,10 @@ export const colorCartItem = (item:ProductColorItem, product?:BasicProduct):Cart
         price: item.msrp?.toString(),
         productId: item.productId,
         stdUM: item.stdUM,
-        image: product?.image ?? item.additionalData?.image_filename ?? '',
+        image: (item.additionalData?.image_filename ?? '') || (product?.image ?? ''),
         name: product?.name ?? item.colorName,
         quantity: 1,
-        seasonCode: item.additionalData?.swatch_code,
+        seasonCode: item.additionalData?.season?.code,
         seasonAvailable: item.additionalData?.season?.product_available,
         seasonDescription: item.additionalData?.season?.description,
         seasonTeaser: item.additionalData?.season?.product_teaser

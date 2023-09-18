@@ -1,4 +1,4 @@
-import {CustomerAddress, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {CartItem, CustomerAddress, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {SortProps} from "@/types/generic";
 import dayjs from "dayjs";
 
@@ -94,4 +94,16 @@ const multiLineAddress = (address:CustomerAddress):string[] => {
         address.AddressLine3 ?? '',
         finalLine
     ].filter(line => !!line);
+}
+
+
+export const detailToCartItem = (line:SalesOrderDetailLine):CartItem|null => {
+    if (line.InactiveItem !== 'N' || line.ProductType === 'D') {
+        return null;
+    }
+    return {
+        itemCode: line.ItemCode,
+        quantity: (+line.QuantityOrdered) || 1,
+        comment: line.CommentText,
+    }
 }

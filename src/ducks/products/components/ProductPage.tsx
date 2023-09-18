@@ -91,7 +91,7 @@ const ProductPage = ({keyword}: {
                     </div>
                     <div className="col-12 col-md-6 col-lg-5">
                         <ProductPageTitle/>
-                        <ProductSeasonTeaser/>
+
                         <ProductPageInfo/>
                         <VariantSelector/>
                         <SwatchSet/>

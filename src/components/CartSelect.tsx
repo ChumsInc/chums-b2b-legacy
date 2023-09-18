@@ -27,6 +27,9 @@ const CartSelect = ({cartNo = '', onChange}: {
         onChange(ev.target.value);
     }
 
+    if (!cartList.length) {
+        return null;
+    }
     return (
         <FormControl fullWidth size="small" variant="filled">
             <InputLabel id={id}>Cart</InputLabel>

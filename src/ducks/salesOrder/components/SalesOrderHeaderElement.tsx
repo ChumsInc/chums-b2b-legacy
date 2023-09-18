@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useSelector} from "react-redux";
 import {selectSalesOrderHeader, selectSalesOrderInvoices, selectSOLoading} from "@/ducks/salesOrder/selectors";
 import {Button, Chip, TextField} from "@mui/material";
@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import {addressFromShipToAddress, multiLineAddress} from "@/ducks/customer/utils";
 import Typography from "@mui/material/Typography";
-import {NavLink} from "react-router-dom";
+import {generatePath, NavLink} from "react-router-dom";
 import {genInvoicePath} from "@/utils/path-utils";
 import {selectCurrentCustomer} from "@/ducks/user/selectors";
 import {getShippingMethod} from "@/constants/account";
@@ -15,6 +15,8 @@ import {loadSalesOrder} from "@/ducks/salesOrder/actions";
 import CartOrderHeaderElement from "@/ducks/cart/components/CartOrderHeaderElement";
 import SalesOrderSkeleton from "@/ducks/salesOrder/components/SalesOrderSkeleton";
 import Grid from '@mui/material/Unstable_Grid2';
+import {customerSlug} from "@/utils/customer";
+import {useNavigate} from "react-router";
 
 const SalesOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -22,22 +24,22 @@ const SalesOrderHeaderElement = () => {
     const header = useSelector(selectSalesOrderHeader);
     const invoices = useSelector(selectSalesOrderInvoices);
     const loading = useSelector(selectSOLoading);
-    if (!customer || !header) {
-        return (
-            <SalesOrderSkeleton/>
-        );
-    }
-
-    if (header?.OrderType === 'Q') {
-        return (
-            <CartOrderHeaderElement/>
-        )
-    }
+    const navigate = useNavigate();
 
     const hasCancelDate = header?.UDF_CANCEL_DATE ? dayjs(header?.UDF_CANCEL_DATE).valueOf() > 0 : false;
     const cancelDate = hasCancelDate ? dayjs(header?.UDF_CANCEL_DATE).format('YYYY-MM-DD') : '';
     const orderDate = header?.OrderDate ? dayjs(header.OrderDate).format('YYYY-MM-DD') : '';
     const shipDate = header?.ShipExpireDate ? dayjs(header.ShipExpireDate).format('YYYY-MM-DD') : '';
+
+    useEffect(() => {
+        if (!!header && header?.OrderType !== 'Q' && !!header.SalesOrderNo) {
+            navigate(generatePath('/account/:customerSlug/orders/:salesOrderNo', {
+                customerSlug: customerSlug(customer),
+                salesOrderNo: header.SalesOrderNo,
+            }), {replace: true});
+            return;
+        }
+    }, [header]);
 
     const reloadHandler = () => {
         if (!customer || !header) {
@@ -45,7 +47,9 @@ const SalesOrderHeaderElement = () => {
         }
         dispatch(loadSalesOrder(header?.SalesOrderNo))
     }
-
+    if (!customer || !header) {
+        return null;
+    }
     return (
         <div>
             <Grid container spacing={2}>

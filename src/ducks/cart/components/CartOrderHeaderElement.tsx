@@ -41,6 +41,9 @@ import {promoteCart, saveCart} from "@/ducks/cart/actions";
 import SendEmailModal from "@/ducks/salesOrder/components/SendEmailModal";
 import Alert from "@mui/material/Alert";
 import DeleteCartButton from "@/ducks/cart/components/DeleteCartButton";
+import {useNavigate} from "react-router";
+import {generatePath} from "react-router-dom";
+import {customerSlug} from "@/utils/customer";
 
 const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -55,6 +58,7 @@ const CartOrderHeaderElement = () => {
     const shipMethodRef = useRef<HTMLDivElement|null>(null);
     const paymentMethodRef = useRef<HTMLDivElement|null>(null);
     const customerPORef = useRef<HTMLInputElement>();
+    const navigate = useNavigate();
 
     const [cartHeader, setCartHeader] = useState<(SalesOrderHeader & Editable) | null>(header);
     const [cartProgress, setCartProgress] = useState<CartProgress>(cartProgress_Cart);
@@ -179,7 +183,7 @@ const CartOrderHeaderElement = () => {
         dispatch(saveCart(cartHeader));
     }
 
-    const submitHandler = (ev: FormEvent) => {
+    const submitHandler = async (ev: FormEvent) => {
         if (!cartHeader) {
             return;
         }
@@ -188,7 +192,11 @@ const CartOrderHeaderElement = () => {
             setCartProgress(next);
             return;
         }
-        dispatch(promoteCart(cartHeader));
+        await dispatch(promoteCart(cartHeader));
+        navigate(generatePath('/account/:customerSlug/orders/:salesOrderNo', {
+            customerSlug: customerSlug(customer),
+            salesOrderNo: header.SalesOrderNo,
+        }), {replace: true});
     }
 
     return (
@@ -271,9 +279,9 @@ const CartOrderHeaderElement = () => {
 
                     <Button type="button"
                             variant={(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart ? 'contained': "text"}
-                            size="small"
                             color={(detailChanged || cartHeader?.changed) ? 'warning' : 'primary'}
-                            onClick={saveCartHandler} disabled={loading || cartProgress !== cartProgress_Cart} >
+                            onClick={saveCartHandler}
+                            disabled={loading || (cartProgress !== cartProgress_Cart && !detailChanged)} >
                         Save Cart
                     </Button>
 
@@ -282,7 +290,8 @@ const CartOrderHeaderElement = () => {
                         Send Email
                     </Button>
 
-                    <CheckoutButton cartProgress={cartProgress} onClick={submitHandler} disabled={loading}/>
+                    <CheckoutButton cartProgress={cartProgress}
+                                    onClick={submitHandler} disabled={loading || detailChanged}/>
                 </Stack>
             </Stack>
             <SendEmailModal />

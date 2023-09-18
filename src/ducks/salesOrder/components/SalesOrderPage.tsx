@@ -25,6 +25,8 @@ import {useAppDispatch} from "@/app/configureStore";
 import {loadSalesOrder} from "@/ducks/salesOrder/actions";
 import SalesOrderHeaderElement from "@/ducks/salesOrder/components/SalesOrderHeaderElement";
 import LinearProgress from "@mui/material/LinearProgress";
+import SalesOrderSkeleton from "@/ducks/salesOrder/components/SalesOrderSkeleton";
+import CartOrderHeaderElement from "@/ducks/cart/components/CartOrderHeaderElement";
 
 const SalesOrderPage = () => {
     const dispatch = useAppDispatch();
@@ -92,8 +94,16 @@ const SalesOrderPage = () => {
                         This order has been cancelled. Please contact Customer Service if you have any questions.
                     </Alert>
                 )}
+                {(!customer || !salesOrderHeader) && (
+                    <SalesOrderSkeleton/>
+                )}
+                {salesOrderHeader?.OrderType === 'Q' && (
+                    <CartOrderHeaderElement/>
+                )}
+                {salesOrderHeader?.OrderType !== 'Q' && (
+                    <SalesOrderHeaderElement/>
+                )}
                 {processing && <LinearProgress variant="indeterminate" sx={{my: 1}}/>}
-                <SalesOrderHeaderElement/>
                 {match?.params?.salesOrderNo === salesOrderNo && <OrderDetail/>}
             </div>
         </div>

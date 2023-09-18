@@ -77,7 +77,7 @@ export default function SalesOrderItemLine({
                                            onAddComment={() => setShowCommentInput(true)}
                                            addCommentDisabled={readOnly || showCommentInput || !!line.CommentText}
                                            onCopyToCart={onAddToCart}
-                                           copyToCartDisabled={readOnly || (!line.ProductType || line.ProductType === 'D' || line.InactiveItem === 'Y' || line.ItemType !== '1')}
+                                           copyToCartDisabled={(!line.ProductType || line.ProductType === 'D' || line.InactiveItem === 'Y' || line.ItemType !== '1')}
                     />
                 </td>
             </tr>

@@ -36,6 +36,12 @@ export const loadProduct = createAsyncThunk<LoadProductResponse | null, string>(
         if (cartItem && customerPrice.length) {
             cartItem.price = customerPrice[0];
         }
+        if (!!variant?.product && cartItem?.image) {
+            variant.product.image = cartItem.image;
+        } else if (!!product && cartItem?.image) {
+            product.image = cartItem.image;
+        }
+
         return {
             product,
             variant,

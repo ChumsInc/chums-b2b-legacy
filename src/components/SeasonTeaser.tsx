@@ -8,7 +8,7 @@ const SeasonTeaser = ({season_teaser, season_active}:{
         return null;
     }
     return (
-        <div className="season-teaser mb-1">
+        <div className="season-teaser">
             <span className="bi-info-circle-fill me-3 season-teaser--icon" />
             {season_teaser}
         </div>
