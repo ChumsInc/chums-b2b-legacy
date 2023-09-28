@@ -1,40 +1,34 @@
-import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
+import React, {FormEvent, useEffect, useId, useState} from 'react';
 import {useSelector} from 'react-redux';
-import CartSelect from "@/components/CartSelect";
-import FormGroupTextInput from "@/common-components/FormGroupTextInput";
-import {addToCart, newCart, saveCartItem, saveNewCart, setCurrentCart} from "@/ducks/cart/actions";
-import FormGroup from "@/common-components/FormGroup";
-import CartQuantityInput from "@/components/CartQuantityInput";
-import ProgressBar from "@/components/ProgressBar";
+import {addToCart, saveNewCart, setCurrentCart} from "../actions";
+
 import Alert from "@mui/material/Alert";
-import {NEW_CART} from "@/constants/orders";
-import {selectCartsList, selectCartsLoading} from "@/ducks/carts/selectors";
+import {NEW_CART} from "../../../constants/orders";
+import {selectCartsList, selectOpenOrdersLoading} from "../../open-orders/selectors";
 import {
     selectCartLoading,
     selectCartMessage,
     selectCartName,
     selectCartNo,
     selectItemAvailabilityLoading
-} from "@/ducks/cart/selectors";
+} from "../selectors";
 import {
     selectCustomerAccount,
     selectCustomerPermissions,
     selectCustomerPermissionsLoaded,
     selectCustomerPermissionsLoading
-} from "@/ducks/customer/selectors";
-import ShipToSelect from "@/ducks/customer/components/ShipToSelect";
-import {loadCustomerPermissions} from "@/ducks/customer/actions";
-import {selectCurrentCustomer} from "@/ducks/user/selectors";
-import {useAppDispatch} from "@/app/configureStore";
-import {FieldValue} from "@/types/generic";
+} from "../../customer/selectors";
+import ShipToSelect from "../../customer/components/ShipToSelect";
+import {loadCustomerPermissions} from "../../customer/actions";
 import Stack from "@mui/material/Stack";
-import {Button} from "@mui/material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import LinearProgress from "@mui/material/LinearProgress";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import CartNameInput from "@/ducks/cart/components/CartNameInput";
-import AddToCartButton from "@/ducks/cart/components/AddToCartButton";
+import CartNameInput from "./CartNameInput";
+import AddToCartButton from "./AddToCartButton";
+import {useAppDispatch} from "../../../app/configureStore";
+import ProgressBar from "../../../components/ProgressBar";
+import CartSelect from "../../open-orders/components/CartSelect";
+import CartQuantityInput from "../../../components/CartQuantityInput";
+import {ShipToAddress} from "b2b-types";
 
 const AddToCartForm = ({
                            itemCode,
@@ -45,7 +39,8 @@ const AddToCartForm = ({
                            season_available,
                            disabled,
                            onDone,
-                           onChangeQuantity
+                           onChangeQuantity,
+                           excludeSalesOrder,
                        }: {
     itemCode: string;
     quantity: number;
@@ -56,11 +51,12 @@ const AddToCartForm = ({
     disabled?: boolean;
     onDone: () => void;
     onChangeQuantity: (val: number) => void;
+    excludeSalesOrder?: string;
 }) => {
     const dispatch = useAppDispatch();
     const customer = useSelector(selectCustomerAccount);
     const cartsList = useSelector(selectCartsList);
-    const cartsLoading = useSelector(selectCartsLoading);
+    const cartsLoading = useSelector(selectOpenOrdersLoading);
     const cartNo = useSelector(selectCartNo);
     const cartName = useSelector(selectCartName);
     const loading = useSelector(selectCartLoading);
@@ -72,8 +68,8 @@ const AddToCartForm = ({
     const cartNameId = useId();
 
     const [_comment, setComment] = useState<string>(comment ?? '');
-    const [_cartName, setCartName] = useState<string>(cartName ?? '');
-    const [_cartNo, setCartNo] = useState<string>(cartNo ?? '');
+    const [localCartName, setLocalCartName] = useState<string>(cartName ?? '');
+    const [localCartNo, setLocalCartNo] = useState<string>(cartNo ?? '');
     const [shipToCode, setShipToCode] = useState<string>('');
 
     useEffect(() => {
@@ -81,23 +77,27 @@ const AddToCartForm = ({
             dispatch(loadCustomerPermissions(customer));
         }
     }, [])
+
     useEffect(() => {
-        setCartName(cartName ?? '');
-        setCartNo(cartNo ?? '');
+        setLocalCartName(cartName ?? '');
+        setLocalCartNo(cartNo ?? '');
         setComment(comment ?? '');
     }, [cartNo, cartName, comment]);
 
+
     useEffect(() => {
+        console.log('useEffect()[customer,permissions]', customer, permissions)
         if (permissions?.billTo) {
             setShipToCode(customer?.PrimaryShipToCode ?? '');
+        } else {
+            setShipToCode(permissions?.shipTo[0] ?? '');
         }
-        setShipToCode(permissions?.shipTo[0] ?? '');
-    }, [permissions])
+    }, [customer, permissions])
 
-    const cartChangeHandler = (value:string) => {
+    const cartChangeHandler = (value: string) => {
         if (value === NEW_CART && setGlobalCart) {
-            setCartName('');
-            setCartNo(value);
+            setLocalCartName('');
+            setLocalCartNo(value);
             // dispatch(newCart());
             return;
         }
@@ -107,20 +107,25 @@ const AddToCartForm = ({
             return;
         }
         console.log(value, cart);
-        setCartNo(value);
-        setCartName(value === NEW_CART ? '' : cart.CustomerPONo ?? '');
+        setLocalCartNo(value);
+        setLocalCartName(value === NEW_CART ? '' : cart.CustomerPONo ?? '');
         setShipToCode(value === NEW_CART ? '' : cart.ShipToCode ?? '');
     }
 
-    const onChangeCartName = (value:string) => {
-        setCartName(value)
+    const onChangeCartName = (value: string) => {
+        setLocalCartName(value)
     }
 
     const quantityChangeHandler = (quantity: number) => {
         onChangeQuantity(quantity);
     }
 
-    const submitHandler = (ev: FormEvent) => {
+    const shipToCodeChangeHandler = (code: string, address: ShipToAddress | null) => {
+        console.log('shipToCodeChangeHandler', code, address);
+        setShipToCode(code)
+    }
+
+    const submitHandler = async (ev: FormEvent) => {
         ev.preventDefault();
         if (disabled) {
             return;
@@ -129,16 +134,17 @@ const AddToCartForm = ({
         if (!!season_code && !season_available) {
             comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
-        if (!!_cartNo && _cartNo !== NEW_CART) {
-            dispatch(addToCart({
+        if (!!localCartNo && localCartNo !== NEW_CART) {
+            await dispatch(addToCart({
+                salesOrderNo: localCartNo,
                 itemCode,
                 quantity
             }));
             onDone();
             return;
         }
-        dispatch(saveNewCart({
-            cartName: _cartName,
+        await dispatch(saveNewCart({
+            cartName: localCartName,
             itemCode,
             quantity,
             comment,
@@ -151,13 +157,15 @@ const AddToCartForm = ({
         <form onSubmit={submitHandler} className="add-to-cart" method="post">
             {availabilityLoading && <ProgressBar striped label="Checking Availability"/>}
             <Stack spacing={2} direction="column">
-                <CartSelect cartNo={_cartNo} onChange={cartChangeHandler}/>
-                {(!_cartNo || _cartNo === NEW_CART) && (
+                <CartSelect cartNo={localCartNo} onChange={cartChangeHandler} excludeCartNo={excludeSalesOrder}/>
+                {(!localCartNo || localCartNo === NEW_CART) && (
                     <Stack spacing={2} direction="row">
-                        <CartNameInput  value={_cartName} onChange={onChangeCartName}
-                        fullWidth
-                                        helperText="Please name your cart." />
-                        <ShipToSelect value={shipToCode} onChange={code => setShipToCode(code)}/>
+                        <CartNameInput value={localCartName} onChange={onChangeCartName}
+                                       error={!localCartName}
+                                       fullWidth
+                                       helperText="Please name your cart."/>
+                        <ShipToSelect value={shipToCode}
+                                      onChange={shipToCodeChangeHandler}/>
                     </Stack>
                 )}
                 <Stack direction="row" spacing={2} justifyContent="flex-end">

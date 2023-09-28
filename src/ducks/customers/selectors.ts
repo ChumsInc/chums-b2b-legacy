@@ -1,6 +1,6 @@
-import {RootState} from "@/app/configureStore";
+import {RootState} from "../../app/configureStore";
 import {createSelector} from "@reduxjs/toolkit";
-import {customerListSorter, shortCustomerKey} from "@/utils/customer";
+import {customerListSorter, shortCustomerKey} from "../../utils/customer";
 
 export const selectCustomerList = (state:RootState) => state.customers.list;
 export const selectCustomersLoading = (state:RootState) => state.customers.loading;

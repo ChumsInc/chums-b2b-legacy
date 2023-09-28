@@ -1,11 +1,10 @@
 import React, {useId} from 'react';
 import Select, {SelectChangeEvent} from "@mui/material/Select";
-import {SHIPPING_METHODS} from "@/constants/account";
+import {SHIPPING_METHODS} from "../constants/account";
 import {InputBaseComponentProps} from "@mui/material/InputBase";
 import InputLabel from "@mui/material/InputLabel";
-import ListSubheader from "@mui/material/ListSubheader";
 import MenuItem from "@mui/material/MenuItem";
-import FormControl, {FormControlProps, FormControlState} from '@mui/material/FormControl'
+import FormControl, {FormControlProps} from '@mui/material/FormControl'
 
 export interface ShippingMethodSelectProps extends Omit<FormControlProps, 'onChange'> {
     value: string;
@@ -16,13 +15,13 @@ export interface ShippingMethodSelectProps extends Omit<FormControlProps, 'onCha
 }
 
 export default React.forwardRef(function ShippingMethodSelect({
-                                                 value,
-                                                 onChange,
-                                                 readOnly,
-                                                 required,
-                                                 inputProps,
-                                                 ...formControlProps
-                                             }: ShippingMethodSelectProps, ref:React.Ref<HTMLDivElement>) {
+                                                                  value,
+                                                                  onChange,
+                                                                  readOnly,
+                                                                  required,
+                                                                  inputProps,
+                                                                  ...formControlProps
+                                                              }: ShippingMethodSelectProps, ref: React.Ref<HTMLDivElement>) {
     const labelId = useId();
     const selectId = useId();
 

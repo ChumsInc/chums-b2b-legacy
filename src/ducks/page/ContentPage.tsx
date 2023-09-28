@@ -6,7 +6,7 @@ import {selectPageContent, selectPageKeyword, selectPageLoaded, selectPageLoadin
 import {useParams} from "react-router";
 import {loadPage} from "./actions";
 import LinearProgress from "@mui/material/LinearProgress";
-import ContentPage404 from "@/components/ContentPage404";
+import ContentPage404 from "../../components/ContentPage404";
 
 const ContentPage = () => {
     const dispatch = useAppDispatch();

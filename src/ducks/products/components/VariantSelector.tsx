@@ -1,16 +1,17 @@
 import React, {useState} from 'react';
 import classNames from "classnames";
-import {getMSRP, getPrices, getSalesUM, sortVariants} from "@/utils/products";
+import {getMSRP, getPrices, getSalesUM, sortVariants} from "../../../utils/products";
 import numeral from 'numeral';
 import {useSelector} from "react-redux";
 import {selectLoggedIn} from "../../user/selectors";
 import {ClickAwayListener} from '@mui/base';
 import VariantItem from "./VariantItem";
 import {selectCurrentProduct, selectProductColorCode, selectProductVariantId} from "../selectors";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {setCurrentVariant} from "../../../actions/products";
 import {selectCustomerPricing} from "../../customer/selectors";
-import {isSellAsVariants, ProductVariant} from "b2b-types";
+import {ProductVariant} from "b2b-types";
+import {isSellAsVariants} from "../utils";
 
 /**
  *

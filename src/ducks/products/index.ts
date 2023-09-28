@@ -8,16 +8,16 @@ import {
     SELECT_ITEM,
     SELECT_VARIANT,
     SET_CART_ITEM_QUANTITY
-} from "@/constants/actions";
-import {defaultCartItem, getDefaultColor, getMSRP, getPrices, keywordSorter} from "@/utils/products";
-import {customerPriceRecordSorter, customerSlug,} from "@/utils/customer";
+} from "../../constants/actions";
+import {defaultCartItem, getDefaultColor, getMSRP, getPrices, keywordSorter} from "../../utils/products";
+import {customerPriceRecordSorter, customerSlug,} from "../../utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
-import {PreloadedState} from "@/types/preload";
-import {isCartProduct, updateCartProductPricing} from "./utils";
-import {loadCustomer} from "@/ducks/customer/actions";
-import {CartProduct, CustomerPriceRecord, isSellAsColors, isSellAsMix, Keyword, Product} from "b2b-types";
-import {loadProduct, setCartItemQuantity, setColorCode} from "@/ducks/products/actions";
-import {setLoggedIn} from "@/ducks/user/actions";
+import {PreloadedState} from "../../types/preload";
+import {isCartProduct, isSellAsColors, isSellAsMix, updateCartProductPricing} from "./utils";
+import {loadCustomer} from "../customer/actions";
+import {CartProduct, CustomerPriceRecord, Keyword, Product} from "b2b-types";
+import {loadProduct, setCartItemQuantity, setColorCode} from "./actions";
+import {setLoggedIn} from "../user/actions";
 
 
 export interface ProductsState {

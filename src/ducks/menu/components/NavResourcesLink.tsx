@@ -1,9 +1,9 @@
-import {NavItemProps} from "@/types/ui-features";
+import {NavItemProps} from "../../../types/ui-features";
 import {useSelector} from "react-redux";
-import {selectLoggedIn} from "@/ducks/user/selectors";
-import ListItemLink from "@/components/ListItemLink";
+import {selectLoggedIn} from "../../user/selectors";
+import ListItemLink from "../../../components/ListItemLink";
 import React from "react";
-import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
+import NavItemButtonLink from "./NavItemButtonLink";
 
 export default function NavResourcesLink({inDrawer}: NavItemProps) {
     const isLoggedIn = useSelector(selectLoggedIn);

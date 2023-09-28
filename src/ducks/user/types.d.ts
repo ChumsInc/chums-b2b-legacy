@@ -9,8 +9,8 @@ import {
     UserProfile,
     UserRole
 } from "b2b-types";
-import {EmptyObject} from "@/types/generic";
-import {ExtendedUserProfile} from "@/types/user";
+import {EmptyObject} from "../../types/generic";
+import {ExtendedUserProfile} from "../../types/user";
 
 export interface UserLoginState {
     // @TODO: migrate to Login Page internal state

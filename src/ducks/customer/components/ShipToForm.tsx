@@ -3,27 +3,27 @@
  */
 import React, {FormEvent, useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
-import {saveShipToAddress, setDefaultShipTo} from '@/ducks/customer/actions';
-import FormGroupTextInput from "@/common-components/FormGroupTextInput";
-import FormGroup from "@/common-components/FormGroup";
+import {saveShipToAddress, setDefaultShipTo} from '../actions';
+import FormGroupTextInput from "../../../common-components/FormGroupTextInput";
+import FormGroup from "../../../common-components/FormGroup";
 import Alert from "@mui/material/Alert";
-import ShipToAddressFormFields from "@/components/ShipToAddressFormFields";
-import ContactFormFields from "@/ducks/customer/components/ContactFormFields";
-import {selectCanEdit} from "@/ducks/user/selectors";
+import ShipToAddressFormFields from "../../../components/ShipToAddressFormFields";
+import ContactFormFields from "./ContactFormFields";
+import {selectCanEdit} from "../../user/selectors";
 import {
     selectCustomerLoading,
     selectCustomerPermissions,
     selectPermittedShipToAddresses,
     selectPrimaryShipTo
-} from "@/ducks/customer/selectors";
-import StoreMapToggle from "@/components/StoreMapToggle";
+} from "../selectors";
+import StoreMapToggle from "../../../components/StoreMapToggle";
 import {Editable, ShipToCustomer} from "b2b-types";
-import {useAppDispatch} from "@/app/configureStore";
-import {FieldValue} from "@/types/generic";
+import {useAppDispatch} from "../../../app/configureStore";
+import {FieldValue} from "../../../types/generic";
 import {useParams} from "react-router";
-import DeliveryAddress from "@/components/Address/DeliveryAddress";
+import DeliveryAddress from "../../../components/Address/DeliveryAddress";
 import LinearProgress from "@mui/material/LinearProgress";
-import ReloadCustomerButton from "@/ducks/customer/components/ReloadCustomerButton";
+import ReloadCustomerButton from "./ReloadCustomerButton";
 
 const ShipToForm = () => {
     const dispatch = useAppDispatch();

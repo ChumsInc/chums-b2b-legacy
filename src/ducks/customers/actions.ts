@@ -1,10 +1,10 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {SortProps} from "@/types/generic";
+import {SortProps} from "../../types/generic";
 import {Customer, UserCustomerAccess} from "b2b-types";
-import {fetchCustomerList} from "@/api/customer-list";
-import {RootState} from "@/app/configureStore";
-import {selectLoggedIn} from "@/ducks/user/selectors";
-import {selectCustomersLoading} from "@/ducks/customers/selectors";
+import {fetchCustomerList} from "../../api/customer-list";
+import {RootState} from "../../app/configureStore";
+import {selectLoggedIn} from "../user/selectors";
+import {selectCustomersLoading} from "./selectors";
 
 export const setCustomersFilter = createAction<string>('customers/setFilter');
 export const setCustomersRepFilter = createAction<string | null>('customers/setRepFilter');

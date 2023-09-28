@@ -1,8 +1,8 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {FETCH_INIT, FETCH_KEYWORDS, FETCH_PAGE, FETCH_SUCCESS} from "@/constants/actions";
+import {FETCH_INIT, FETCH_KEYWORDS, FETCH_PAGE, FETCH_SUCCESS} from "../../constants/actions";
 import {ContentPage, Keyword} from "b2b-types";
 import {keywordsSorter, pageKeywordsFilter} from "../keywords/utils";
-import {RootState} from "@/app/configureStore";
+import {RootState} from "../../app/configureStore";
 import {loadPage} from "./actions";
 
 export interface PageState {
@@ -13,7 +13,7 @@ export interface PageState {
     content: ContentPage | null;
 }
 
-export const initialPageState = (preload = window?.__PRELOADED_STATE__ ?? {}): PageState => ({
+export const initialPageState = (preload = typeof window === 'undefined' ? {} : window?.__PRELOADED_STATE__ ?? {}): PageState => ({
     list: preload?.keywords?.list?.filter(pageKeywordsFilter)?.sort(keywordsSorter) ?? [],
     keyword: null,
     loading: false,

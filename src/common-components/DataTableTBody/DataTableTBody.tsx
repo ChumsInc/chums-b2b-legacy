@@ -1,7 +1,7 @@
 import React from 'react';
 import DataTableRow from "../DataTableRow/DataTableRow";
 import {DataTableTBodyProps} from "./DataTableTBody.types";
-import {noop} from "@/utils/general";
+import {noop} from "../../utils/general";
 
 
 const DataTableTBody = ({

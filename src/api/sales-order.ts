@@ -1,7 +1,6 @@
-import {API_PATH_OPEN_ORDERS, API_PATH_SALES_ORDER, CART_ACTIONS} from "@/constants/paths";
-import {CustomerKey, EmailResponse, PromoCode, SalesOrder, SalesOrderHeader} from 'b2b-types'
-import {fetchJSON} from "@/api/fetch";
-import {ApplyPromoCodeBody, CartQuoteBase, DuplicateSalesOrderBody} from "@/types/cart";
+import {CustomerKey, EmailResponse, SalesOrder, SalesOrderHeader} from 'b2b-types'
+import {fetchJSON} from "./fetch";
+import {ApplyPromoCodeBody} from "../types/cart";
 
 
 export async function fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo}: {
@@ -10,8 +9,7 @@ export async function fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo}: 
     SalesOrderNo: string;
 }): Promise<SalesOrder | null> {
     try {
-        const url = API_PATH_SALES_ORDER
-                .replace(':Company', 'CHI')
+        const url = '/node-sage/api/CHI/salesorder/:ARDivisionNo-:CustomerNo/:SalesOrderNo'
                 .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))
                 .replace(':CustomerNo', encodeURIComponent(CustomerNo))
                 .replace(':SalesOrderNo', encodeURIComponent(SalesOrderNo))
@@ -29,21 +27,20 @@ export async function fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo}: 
 
 }
 
-export async function fetchSalesOrders({ARDivisionNo, CustomerNo}: CustomerKey): Promise<SalesOrderHeader[]> {
+export async function fetchOpenSalesOrders({ARDivisionNo, CustomerNo}: CustomerKey): Promise<SalesOrderHeader[]> {
     try {
-        const url = API_PATH_OPEN_ORDERS
-            .replace(':Company', encodeURIComponent('CHI'))
+        const url = '/node-sage/api/CHI/salesorder/:ARDivisionNo-:CustomerNo/open'
             .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))
             .replace(':CustomerNo', encodeURIComponent(CustomerNo));
         const {result} = await fetchJSON<{ result: SalesOrderHeader[] }>(url);
         return result;
     } catch (err: unknown) {
         if (err instanceof Error) {
-            console.debug("fetchSalesOrders()", err.message);
+            console.debug("fetchOpenSalesOrders()", err.message);
             return Promise.reject(err);
         }
-        console.debug("fetchSalesOrders()", err);
-        return Promise.reject(new Error('Error in fetchSalesOrders()'));
+        console.debug("fetchOpenSalesOrders()", err);
+        return Promise.reject(new Error('Error in fetchOpenSalesOrders()'));
     }
 }
 
@@ -70,7 +67,7 @@ export async function postOrderEmail({ARDivisionNo, CustomerNo, SalesOrderNo}: {
     }
 }
 
-export async function postApplyPromoCode(customer:CustomerKey, body: ApplyPromoCodeBody):Promise<SalesOrder|null> {
+export async function postApplyPromoCode(customer: CustomerKey, body: ApplyPromoCodeBody): Promise<SalesOrder | null> {
     try {
         const params = new URLSearchParams();
         params.set('co', 'chums');
@@ -83,7 +80,7 @@ export async function postApplyPromoCode(customer:CustomerKey, body: ApplyPromoC
             SalesOrderNo: body.SalesOrderNo,
         }
         return await fetchSalesOrder(soArg)
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postApplyPromoCode()", err.message);
             return Promise.reject(err);

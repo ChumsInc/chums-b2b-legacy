@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import UserIcon from "@/ducks/customer/components/UserIcon";
-import {customerUserSorter} from "@/utils/customer";
+import UserIcon from "./UserIcon";
+import {customerUserSorter} from "../../../utils/customer";
 import classNames from "classnames";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BusinessIcon from '@mui/icons-material/Business';
 import {useSelector} from "react-redux";
-import {selectIsEmployee} from "@/ducks/user/selectors";
+import {selectIsEmployee} from "../../user/selectors";
 import {CustomerUser} from "b2b-types";
 import TablePagination from "@mui/material/TablePagination";
 

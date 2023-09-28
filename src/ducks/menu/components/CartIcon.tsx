@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
-import {selectCartLoading, selectCartNo, selectCartQuantity, selectCartTotal} from "@/ducks/cart/selectors";
-import {NEW_CART} from "@/constants/orders";
+import {selectCartLoading, selectCartNo, selectCartQuantity, selectCartTotal} from "../../cart/selectors";
+import {NEW_CART} from "../../../constants/orders";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";

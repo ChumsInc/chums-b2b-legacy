@@ -1,9 +1,9 @@
 import React from 'react';
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
-import {selectIsDrawerOpen, toggleMenuDrawer} from "@/ducks/menu";
+import {selectIsDrawerOpen, toggleMenuDrawer} from "../index";
 
 const drawerWidth = 240;
 
@@ -16,6 +16,9 @@ const NavDrawer = ({children}:NavDrawerProps) => {
 
     const closeHandler = () => {
         dispatch(toggleMenuDrawer());
+    }
+    if (typeof window === 'undefined') {
+        return null;
     }
     return (
         <Box component="nav">

@@ -1,10 +1,10 @@
 import React, {useId} from 'react';
 import {useSelector} from "react-redux";
-import {selectProductMenu} from "@/ducks/menu";
+import {selectProductMenu} from "../../menu";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import NavItemButton from "@/ducks/menu/components/NavItemButton";
-import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
+import NavItemButton from "./NavItemButton";
+import MenuItemRouterLink from "./MenuItemRouterLink";
 import {SxProps} from "@mui/system";
 import {Theme} from "@mui/material/styles";
 import Box from "@mui/material/Box";

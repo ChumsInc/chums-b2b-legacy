@@ -1,8 +1,8 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {fetchRepList} from "@/api/user";
-import {RootState} from "@/app/configureStore";
-import {selectIsEmployee, selectIsRep, selectLoggedIn} from "@/ducks/user/selectors";
-import {selectRepsLoading} from "@/ducks/reps/selectors";
+import {fetchRepList} from "../../api/user";
+import {RootState} from "../../app/configureStore";
+import {selectIsEmployee, selectIsRep, selectLoggedIn} from "../user/selectors";
+import {selectRepsLoading} from "./selectors";
 
 export const loadRepList = createAsyncThunk(
     'reps/load',

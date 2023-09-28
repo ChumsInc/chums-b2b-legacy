@@ -1,8 +1,8 @@
 import React, {ButtonHTMLAttributes} from 'react';
-import {useAppDispatch} from "@/app/configureStore";
-import {selectCurrentCustomer} from "@/ducks/user/selectors";
+import {useAppDispatch} from "../../../app/configureStore";
+import {selectCurrentCustomer} from "../../user/selectors";
 import {useSelector} from "react-redux";
-import {loadCustomer} from "@/ducks/customer/actions";
+import {loadCustomer} from "../actions";
 
 export interface ReloadCustomerButton extends ButtonHTMLAttributes<HTMLButtonElement> {
 }

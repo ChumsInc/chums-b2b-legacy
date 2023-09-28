@@ -1,17 +1,16 @@
-import {Customer, CustomerSalesperson, Salesperson, UserCustomerAccess, UserProfile} from "b2b-types";
-import {SortProps} from "@/types/generic";
-import {CustomerKey} from "b2b-types/src/customer";
+import {CustomerKey, CustomerSalesperson, Salesperson, UserCustomerAccess, UserProfile} from "b2b-types";
+import {SortProps} from "../../types/generic";
 import {generatePath} from "react-router-dom";
-import {PATH_CUSTOMER_ACCOUNT, PATH_INVOICE, PATH_PROFILE_ACCOUNT} from "@/constants/paths";
-import {shortCustomerKey} from "@/utils/customer";
+import {PATH_CUSTOMER_ACCOUNT, PATH_PROFILE_ACCOUNT} from "../../constants/paths";
+import {shortCustomerKey} from "../../utils/customer";
 
 export const salespersonKey = (sp: Salesperson) => `${sp.SalespersonDivisionNo}-${sp.SalespersonNo}`;
 
-export const userAccountSort = (a:UserCustomerAccess, b:UserCustomerAccess):number => {
+export const userAccountSort = (a: UserCustomerAccess, b: UserCustomerAccess): number => {
     return a.id - b.id;
 }
 
-export const getPrimaryAccount = (accountList:UserCustomerAccess[]):UserCustomerAccess|null => {
+export const getPrimaryAccount = (accountList: UserCustomerAccess[]): UserCustomerAccess | null => {
     if (!accountList.length) {
         return null;
     }
@@ -19,19 +18,19 @@ export const getPrimaryAccount = (accountList:UserCustomerAccess[]):UserCustomer
     return primary ?? accountList[0];
 }
 
-export const userRepListSort = (a:Salesperson, b:Salesperson) => {
+export const userRepListSort = (a: Salesperson, b: Salesperson) => {
     return salespersonKey(a).toUpperCase() > salespersonKey(b).toUpperCase() ? 1 : -1;
 }
 
-export const isCustomerAccess = (value:UserCustomerAccess|null):value is UserCustomerAccess  => {
+export const isCustomerAccess = (value: UserCustomerAccess | null): value is UserCustomerAccess => {
     return !!value && (value as UserCustomerAccess).id !== undefined;
 }
 
-export const isUserProfile = (user:UserProfile|null): user is UserProfile => {
+export const isUserProfile = (user: UserProfile | null): user is UserProfile => {
     return (user as UserProfile).id !== undefined;
 }
 
-export const isCustomer = (customer:CustomerKey|null): customer is CustomerKey => {
+export const isCustomer = (customer: CustomerKey | null): customer is CustomerKey => {
     return !!customer && (customer as CustomerKey).CustomerNo !== undefined;
 }
 
@@ -42,7 +41,7 @@ export const customerAccessAccountSorter = (sort: SortProps<UserCustomerAccess>)
             : ((a[sort.field] || '') > (b[sort.field] || '') ? 1 : -1)) * (sort.ascending ? 1 : -1)
     };
 
-export const salespersonPath = (rep: CustomerSalesperson|null) => {
+export const salespersonPath = (rep: CustomerSalesperson | null) => {
     if (!rep) {
         return '---';
     }
@@ -54,7 +53,7 @@ export const salespersonPath = (rep: CustomerSalesperson|null) => {
 export const customerPath = (customer: CustomerKey) => `${customer.ARDivisionNo}-${customer.CustomerNo}`;
 
 export const customerURL = (customer: CustomerKey) => `/account/${encodeURIComponent(customerPath(customer))}`;
-export const customerCartURL = (customer: CustomerKey, salesOrderNo?:string|null) => `/account/${encodeURIComponent(customerPath(customer))}/carts/${encodeURIComponent(salesOrderNo ?? '')}`;
+export const customerCartURL = (customer: CustomerKey, salesOrderNo?: string | null) => `/account/${encodeURIComponent(customerPath(customer))}/carts/${encodeURIComponent(salesOrderNo ?? '')}`;
 export const repAccountListURL = (rep: CustomerSalesperson) => `/profile/rep/${encodeURIComponent(salespersonPath(rep))}`;
 
 export const accessListURL = (access: UserCustomerAccess) => {
@@ -67,7 +66,7 @@ export const accessListURL = (access: UserCustomerAccess) => {
 
 export const canEditAccountRoles: string[] = ['root', 'admin', 'cs', 'sales'];
 
-export const repAccessCode = (row: UserCustomerAccess):string => {
+export const repAccessCode = (row: UserCustomerAccess): string => {
     if (row.SalespersonDivisionNo === '%' && row.SalespersonNo === '%') {
         return 'ALL';
     }

@@ -3,10 +3,10 @@ import StateSelect from './StateSelect';
 import CountrySelect from './CountrySelect';
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
-import {isCanada, isUSA} from "@/utils/customer";
 import TextInput from "../common-components/TextInput";
 import {CustomerAddress} from "b2b-types";
-import {FieldValue} from "@/types/generic";
+import {FieldValue} from "../types/generic";
+import {isCanada, isUSA} from "../utils/customer";
 
 const AddressFormFields = ({address, onChange, colWidth = 8, readOnly}:{
     address:CustomerAddress;

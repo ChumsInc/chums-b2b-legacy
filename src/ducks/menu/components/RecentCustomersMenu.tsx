@@ -1,12 +1,12 @@
 import React from 'react';
 import {useSelector} from "react-redux";
-import {selectRepAccessList} from "@/ducks/user/selectors";
-import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
+import {selectRepAccessList} from "../../user/selectors";
+import MenuItemRouterLink from "./MenuItemRouterLink";
 import Box from "@mui/material/Box";
-import {customerURL} from "@/ducks/user/utils";
-import {selectRecentCustomers} from "@/ducks/customers/selectors";
-import {customerNo, shortCustomerKey} from "@/utils/customer";
-import MenuLinkProfile from "@/ducks/menu/components/MenuLinkProfile";
+import {customerURL} from "../../user/utils";
+import {selectRecentCustomers} from "../../customers/selectors";
+import {customerNo, shortCustomerKey} from "../../../utils/customer";
+import MenuLinkProfile from "./MenuLinkProfile";
 import MenuItem from "@mui/material/MenuItem";
 
 const RecentCustomersMenu = ({onClick}: { onClick: () => void }) => {

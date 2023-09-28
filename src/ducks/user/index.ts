@@ -10,11 +10,11 @@ import {
     SET_LOGGED_IN,
     UPDATE_LOGIN,
     UPDATE_SIGNUP
-} from "@/constants/actions";
-import {auth} from '@/api/IntranetAuthService';
+} from "../../constants/actions";
+import {auth} from '../../api/IntranetAuthService';
 import localStore from "../../utils/LocalStore";
-import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_USER_ACCESS} from "@/constants/stores";
-import {getFirstCustomer,} from "@/utils/customer";
+import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_USER_ACCESS} from "../../constants/stores";
+import {getFirstCustomer,} from "../../utils/customer";
 import jwtDecode, {JwtPayload} from "jwt-decode";
 import {createReducer, isRejected} from "@reduxjs/toolkit";
 import {loadProfile, resetPassword, setLoggedIn, setUserAccess, signInWithGoogle} from "./actions";
@@ -22,7 +22,7 @@ import {getPrimaryAccount, isCustomerAccess, userAccountSort} from "./utils";
 import {UserLoginState, UserPasswordState, UserSignupState} from "./types";
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
-import {ExtendedUserProfile} from "@/types/user";
+import {ExtendedUserProfile} from "../../types/user";
 
 
 export interface UserState {

@@ -1,4 +1,4 @@
-import {fetchGET, fetchPOST} from '@/utils/fetch';
+import {fetchGET, fetchPOST} from '../../utils/fetch';
 import {
     CHANGE_USER,
     CHANGE_USER_PASSWORD,
@@ -9,12 +9,12 @@ import {
     FETCH_USER_SIGNUP,
     SET_LOGGED_IN,
     UPDATE_LOGIN,
-} from "@/constants/actions";
+} from "../../constants/actions";
 
 import {handleError} from '../app/actions';
 import {setAlert} from '../alerts';
 
-import localStore from '@/utils/LocalStore';
+import localStore from '../../utils/LocalStore';
 import {
     STORE_AUTHTYPE,
     STORE_CURRENT_CART,
@@ -23,10 +23,10 @@ import {
     STORE_RECENT_ACCOUNTS,
     STORE_TOKEN,
     STORE_USER_ACCESS
-} from '@/constants/stores';
+} from '../../constants/stores';
 
-import {auth} from '@/api/IntranetAuthService';
-import {getProfile, getSignInProfile, getTokenExpirationDate} from "@/utils/jwtHelper";
+import {auth} from '../../api/IntranetAuthService';
+import {getProfile, getSignInProfile, getTokenExpirationDate} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {
     API_PATH_CHANGE_PASSWORD,
@@ -35,17 +35,17 @@ import {
     API_PATH_PASSWORD_RESET,
     API_PATH_USER_SET_PASSWORD,
     API_PATH_USER_SIGN_UP
-} from "@/constants/paths";
-import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "@/constants/app";
+} from "../../constants/paths";
+import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../../constants/app";
 import {selectLoggedIn, selectResettingPassword, selectUserAccount, selectUserLoading} from "./selectors";
-import {fetchGoogleLogin, fetchUserProfile, postLocalLogin, postResetPassword} from "@/api/user";
+import {fetchGoogleLogin, fetchUserProfile, postLocalLogin, postResetPassword} from "../../api/user";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {SetLoggedInProps, UserLoginState, UserPasswordState, UserProfileResponse} from "./types";
-import {AppDispatch, RootState} from "@/app/configureStore";
+import {AppDispatch, RootState} from "../../app/configureStore";
 import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
 import {isCustomerAccess} from "./utils";
-import {StoredProfile} from "@/types/user";
-import {loadCustomerList} from "@/ducks/customers/actions";
+import {StoredProfile} from "../../types/user";
+import {loadCustomerList} from "../customers/actions";
 
 let reauthTimer: number = 0;
 
@@ -99,6 +99,7 @@ export const updateLocalAuth = (forceReAuth = false) => (dispatch: AppDispatch, 
     const retry = 60 * 1000; // 60 seconds
 
     if (!forceReAuth) {
+        console.log('updateLocalAuth():!forceAuth');
         // sleep until 5 minutes out.
         if (expiresIn > 5 * 60 * 1000) {
             reauthTimer = window.setTimeout(() => {

@@ -4,6 +4,9 @@ import Decimal from "decimal.js";
 export const googleTagId = 'G-KMH9RBEF98';
 
 export function ga_search(term:string) {
+    if (typeof window === 'undefined') {
+        return;
+    }
     if (window.gtag) {
         window.gtag('event', 'search', {
             search_term: term,
@@ -12,7 +15,7 @@ export function ga_search(term:string) {
 }
 
 export function ga_selectContent(contentType: string, contentId: string) {
-    if (!window.gtag) {
+    if (typeof window === 'undefined' || !window.gtag) {
         return;
     }
     window.gtag('event', 'select_content', {
@@ -24,7 +27,7 @@ export function ga_selectContent(contentType: string, contentId: string) {
 
 
 export function ga_viewItem(cartItem:CartProduct) {
-    if (!window || !window.gtag) {
+    if (typeof window === 'undefined' || !window || !window.gtag) {
         return;
     }
     window.gtag('event', 'view_item', {
@@ -38,7 +41,7 @@ export function ga_viewItem(cartItem:CartProduct) {
 };
 
 export function ga_login(user_id:number, method = 'Google') {
-    if (!window || !window.gtag) {
+    if (typeof window === 'undefined' || !window || !window.gtag) {
         return;
     }
     if (user_id) {
@@ -48,7 +51,7 @@ export function ga_login(user_id:number, method = 'Google') {
 }
 
 export function ga_addToCart(itemCode:string, quantity:string|number, price:string|number) {
-    if (!window || !window.gtag) {
+    if (typeof window === 'undefined' || !window || !window.gtag) {
         return;
     }
     window.gtag('event', 'add_to_cart', {
@@ -63,7 +66,7 @@ export function ga_addToCart(itemCode:string, quantity:string|number, price:stri
 }
 
 export function ga_beginCheckout(value: string|number, items:CartProduct[]) {
-    if (!window || !window.gtag) {
+    if (typeof window === 'undefined' || !window || !window.gtag) {
         return;
     }
     window.gtag('event', 'begin_checkout', {
@@ -74,7 +77,7 @@ export function ga_beginCheckout(value: string|number, items:CartProduct[]) {
 }
 
 export function ga_purchase(salesOrderNo:string, value:string|number, items:CartProduct[]) {
-    if (!window || !window.gtag) {
+    if (typeof window === 'undefined' || !window || !window.gtag) {
         return;
     }
     window.gtag('event', 'purchase', {

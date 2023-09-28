@@ -1,4 +1,4 @@
-import {RootState} from "@/app/configureStore";
+import {RootState} from "../../app/configureStore";
 
 export const selectRepsList = (state:RootState) => state.reps.list;
 export const selectRepsLoading = (state:RootState) => state.reps.loading;

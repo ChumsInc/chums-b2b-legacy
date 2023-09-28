@@ -1,7 +1,7 @@
 import {createReducer, createSelector} from "@reduxjs/toolkit";
 import {ignoreVersion, loadVersion} from "./actions";
-import {RootState} from "@/app/configureStore";
-import {PreloadedState} from "@/types/preload";
+import {RootState} from "../../app/configureStore";
+import {PreloadedState} from "../../types/preload";
 
 export interface VersionState {
     versionNo: string|null,

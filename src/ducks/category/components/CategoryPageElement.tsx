@@ -4,7 +4,8 @@ import ProductLink from "./ProductLink";
 import ProductImage from "../../../components/ProductImage";
 import {Link} from "react-router-dom";
 import {ProductCategoryChild} from "b2b-types";
-import {isCategoryChildCategory, isCategoryChildLink, isCategoryChildProduct} from "b2b-types";
+import {isCategoryChildCategory, isCategoryChildLink, isCategoryChildProduct} from "../../products/utils";
+
 
 
 export const ITEM_TYPES = {

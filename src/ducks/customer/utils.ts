@@ -1,12 +1,12 @@
 import {BillToAddress, CustomerAddress, ShipToAddress} from "b2b-types";
-import {FetchCustomerResponse} from "@/ducks/customer/types";
-import {CustomerState} from "@/ducks/customer/index";
+import {FetchCustomerResponse} from "./types";
+import {CustomerState} from "./index";
 import {
     customerContactSorter, customerPaymentCardSorter,
     customerPriceRecordSorter,
     customerShipToSorter, customerUserSorter,
     defaultShipToSort
-} from "@/utils/customer";
+} from "../../utils/customer";
 
 export const addressFromShipToAddress = (address:ShipToAddress|null):CustomerAddress => {
     return {

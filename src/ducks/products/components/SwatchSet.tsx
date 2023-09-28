@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {SELL_AS_COLOR, SELL_AS_MIX} from "@/constants/actions";
+import {SELL_AS_COLOR, SELL_AS_MIX} from "../../../constants/actions";
 import Swatch from "./Swatch";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectProductCartItem, selectProductColorCode, selectSelectedProduct} from "../selectors";
-import {setColorCode} from "@/ducks/products/actions";
-import {isSellAsColors, isSellAsMix, ProductSwatchBase} from "b2b-types";
-import {ga_viewItem} from "@/utils/google-analytics";
+import {setColorCode} from "../actions";
+import {ProductSwatchBase} from "b2b-types";
+import {ga_viewItem} from "../../../utils/google-analytics";
+import {isSellAsColors, isSellAsMix} from "../utils";
 
 
 const SwatchSet = () => {
@@ -23,7 +24,7 @@ const SwatchSet = () => {
             return;
         }
         setSwatchFormat(selectedProduct?.additionalData?.swatch_format || '?');
-        if (isSellAsMix((selectedProduct))) {
+        if (isSellAsMix(selectedProduct)) {
             setItems(selectedProduct.mix.items);
         } else if (isSellAsColors(selectedProduct)) {
             setItems(selectedProduct.items.filter(item => item.status))

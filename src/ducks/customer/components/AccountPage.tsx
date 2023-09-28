@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useSelector} from "react-redux";
 import {loadCustomer} from '../actions';
-import AccountBreadcrumbs from "@/ducks/customer/components/AccountBreadcrumbs";
+import AccountBreadcrumbs from "./AccountBreadcrumbs";
 import {
     selectCustomerAccount,
     selectCustomerLoading,
@@ -9,12 +9,12 @@ import {
     selectCustomerLoadStatus
 } from "../selectors";
 import {useParams} from "react-router";
-import DocumentTitle from "@/components/DocumentTitle";
-import AccountTabs from "@/ducks/customer/components/AccountTabs";
-import {useAppDispatch} from "@/app/configureStore";
+import DocumentTitle from "../../../components/DocumentTitle";
+import AccountTabs from "./AccountTabs";
+import {useAppDispatch} from "../../../app/configureStore";
 import {Outlet, redirect} from "react-router-dom";
-import {billToCustomerSlug, customerSlug, parseCustomerSlug} from "@/utils/customer";
-import {PATH_PROFILE} from "@/constants/paths";
+import {billToCustomerSlug, customerSlug, parseCustomerSlug} from "../../../utils/customer";
+import {PATH_PROFILE} from "../../../constants/paths";
 
 const AccountPage = () => {
     const dispatch = useAppDispatch();

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import FormGroupTextInput from "../../../common-components/FormGroupTextInput";
 import FormGroup from "../../../common-components/FormGroup";
-import DeliveryAddress from "@/components/Address/DeliveryAddress";
+import DeliveryAddress from "../../../components/Address/DeliveryAddress";
 import {duplicateOrder} from "../../../actions/salesOrder";
 import {loadInvoice} from '../actions';
 import {useSelector} from "react-redux";

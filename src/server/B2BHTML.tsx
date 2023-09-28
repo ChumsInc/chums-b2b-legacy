@@ -15,7 +15,7 @@ const InlineJSHeadContent = (versionNo: string) => {
         window.Chums = {"version": "${versionNo}"};
         `;
 }
-
+// YxcW6JwfR!KwAPsgiJ
 
 export interface B2BHtmlProps {
     html: string;

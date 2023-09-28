@@ -1,12 +1,12 @@
-import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "@/constants/actions";
+import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "../../constants/actions";
 import {createReducer} from "@reduxjs/toolkit";
 import {invoicesSorter} from "./utils";
 import {loadInvoices} from "./actions";
-import {customerSlug} from "@/utils/customer";
+import {customerSlug} from "../../utils/customer";
 import {setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {InvoicesState} from "./types";
-import {SortProps} from "@/types/generic";
+import {SortProps} from "../../types/generic";
 import {InvoiceHeader} from "b2b-types";
 
 export const defaultSort: SortProps<InvoiceHeader> = {

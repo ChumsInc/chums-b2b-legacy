@@ -3,7 +3,7 @@ import SizeIconList from "../../../components/SizeIconList";
 import {useSelector} from "react-redux";
 import {selectCurrentProduct} from "../selectors";
 import DocumentTitle from "../../../components/DocumentTitle";
-import ProductSeasonTeaser from "@/ducks/products/components/ProductSeasonTeaser";
+import ProductSeasonTeaser from "./ProductSeasonTeaser";
 
 const ProductPageTitle = () => {
     const product = useSelector(selectCurrentProduct);

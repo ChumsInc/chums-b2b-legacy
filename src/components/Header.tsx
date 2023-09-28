@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBarUI from "@/ducks/menu/components/NavBarUI";
+import NavBarUI from "../ducks/menu/components/NavBarUI";
 
 const Header = () => {
     return (

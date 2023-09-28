@@ -1,29 +1,28 @@
-import {BasicCustomer, Customer, RecentCustomer} from "b2b-types";
-import {PreloadedState} from "@/types/preload";
+import {Customer, RecentCustomer} from "b2b-types";
+import {PreloadedState} from "../../types/preload";
 import {createReducer} from "@reduxjs/toolkit";
-import {setLoggedIn, setUserAccess} from "@/ducks/user/actions";
+import {setLoggedIn, setUserAccess} from "../user/actions";
 
-import {buildRecentAccounts, customerListSorter} from "@/utils/customer";
-import {SortProps} from "@/types/generic";
+import {customerListSorter} from "../../utils/customer";
+import {SortProps} from "../../types/generic";
 import {loadCustomerList, setCustomersFilter, setCustomersRepFilter, setCustomersSort} from "./actions";
-import RecentCustomersMenu from "@/ducks/menu/components/RecentCustomersMenu";
-import {auth} from "@/api/IntranetAuthService";
-import localStore from "@/utils/LocalStore";
-import {STORE_CUSTOMER, STORE_RECENT_ACCOUNTS} from "@/constants/stores";
-import {loadCustomer, setCustomerAccount} from "@/ducks/customer/actions";
+import {auth} from "../../api/IntranetAuthService";
+import localStore from "../../utils/LocalStore";
+import {STORE_RECENT_ACCOUNTS} from "../../constants/stores";
+import {loadCustomer, setCustomerAccount} from "../customer/actions";
 
 export interface CustomersState {
-    key: number|null;
+    key: number | null;
     list: Customer[];
     loading: boolean;
     loaded: boolean;
     filter: string;
     repFilter: string;
-    sort:SortProps<Customer>;
+    sort: SortProps<Customer>;
     recent: RecentCustomer[];
 }
 
-export const initialUserState = (preload:PreloadedState = {}):CustomersState => {
+export const initialUserState = (preload: PreloadedState = {}): CustomersState => {
     const isLoggedIn = auth.loggedIn();
     const recentCustomers = isLoggedIn
         ? localStore.getItem<RecentCustomer[]>(STORE_RECENT_ACCOUNTS, [])
@@ -86,7 +85,6 @@ export const customersReducer = createReducer(initialUserState, builder => {
         .addCase(setCustomersSort, (state, action) => {
             state.sort = action.payload;
         })
-
 
 
 });

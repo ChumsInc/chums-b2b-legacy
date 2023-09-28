@@ -1,69 +1,71 @@
 import React, {ChangeEvent, FormEvent, useEffect, useRef, useState} from 'react';
 import {useSelector} from "react-redux";
-import {
-    selectDetailChanged,
-    selectSalesOrderHeader,
-    selectSalesOrderInvoices,
-    selectSendEmailStatus,
-    selectSOLoading
-} from "@/ducks/salesOrder/selectors";
-import LinearProgress from "@mui/material/LinearProgress";
-import {Button, Collapse, Fade, TextField} from "@mui/material";
+import {selectSendEmailStatus} from "../../salesOrder/selectors";
+import {Button, Collapse, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
-import {addressFromShipToAddress, multiLineAddress} from "@/ducks/customer/utils";
-import {selectCurrentCustomer} from "@/ducks/user/selectors";
-import {useAppDispatch} from "@/app/configureStore";
-import {loadSalesOrder, sendOrderEmail} from "@/ducks/salesOrder/actions";
+import {addressFromShipToAddress, multiLineAddress} from "../../customer/utils";
+import {RootState, useAppDispatch, useAppSelector} from "../../../app/configureStore";
+import {loadSalesOrder} from "../../open-orders/actions";
+import {sendOrderEmail} from "../../salesOrder/actions";
 import {Editable, SalesOrderHeader, ShipToAddress} from "b2b-types";
-import {selectShippingAccount} from "@/ducks/cart/selectors";
-import CustomerShippingAccountControl from "@/ducks/cart/components/CustomerShippingAccountControl";
+import {selectShippingAccount} from "../selectors";
+import CustomerShippingAccountControl from "./CustomerShippingAccountControl";
 import {
     CartProgress,
     cartProgress_Cart,
     cartProgress_Confirm,
     cartProgress_Delivery,
-    cartProgress_Payment, nextCartProgress
-} from "@/types/cart";
-import ShipDateInput from "@/ducks/cart/components/ShipDateInput";
-import {minShipDate, nextShipDate} from "@/utils/orders";
-import ShippingMethodSelect from "@/components/ShippingMethodSelect";
+    cartProgress_Payment,
+    nextCartProgress
+} from "../../../types/cart";
+import ShipDateInput from "./ShipDateInput";
+import {minShipDate, nextShipDate} from "../../../utils/orders";
+import ShippingMethodSelect from "../../../components/ShippingMethodSelect";
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Unstable_Grid2';
-import ShipToSelect from "@/ducks/customer/components/ShipToSelect";
-import CheckoutProgress from "@/components/CheckoutProgress";
-import CartCheckoutProgress from "@/ducks/cart/components/CartCheckoutProgress";
-import CartPaymentSelect from "@/ducks/cart/components/CartPaymentSelect";
-import CheckoutButton from "@/ducks/cart/components/CheckoutButton";
-import Paper from "@mui/material/Paper";
-import {selectCustomerAccount} from "@/ducks/customer/selectors";
-import {promoteCart, saveCart} from "@/ducks/cart/actions";
-import SendEmailModal from "@/ducks/salesOrder/components/SendEmailModal";
+import ShipToSelect from "../../customer/components/ShipToSelect";
+import CartCheckoutProgress from "./CartCheckoutProgress";
+import CartPaymentSelect from "./CartPaymentSelect";
+import CheckoutButton from "./CheckoutButton";
+import {selectCustomerAccount} from "../../customer/selectors";
+import {promoteCart, saveCart} from "../actions";
+import SendEmailModal from "../../open-orders/components/SendEmailModal";
 import Alert from "@mui/material/Alert";
-import DeleteCartButton from "@/ducks/cart/components/DeleteCartButton";
-import {useNavigate} from "react-router";
+import DeleteCartButton from "./DeleteCartButton";
+import {useMatch, useNavigate} from "react-router";
 import {generatePath} from "react-router-dom";
-import {customerSlug} from "@/utils/customer";
+import {customerSlug} from "../../../utils/customer";
+import AlertList from "../../alerts/AlertList";
+import {selectDetailChanged, selectSalesOrder, selectSalesOrderActionStatus} from "../../open-orders/selectors";
+import SendEmailButton from "../../open-orders/components/SendEmailButton";
+import ItemAutocomplete from "../../item-lookup/ItemAutocomplete";
+import CartCommentInput from "./CartCommentInput";
+import Divider from "@mui/material/Divider";
 
 const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
+    const match = useMatch('/account/:customerSlug/:orderType/:salesOrderNo');
     const customer = useSelector(selectCustomerAccount);
-    const header = useSelector(selectSalesOrderHeader);
-    const detailChanged = useSelector(selectDetailChanged);
-    const invoices = useSelector(selectSalesOrderInvoices);
-    const loading = useSelector(selectSOLoading);
+    const header = useAppSelector((state) => selectSalesOrder(state, match?.params.salesOrderNo ?? ''));
+    const detailChanged = useAppSelector((state: RootState) => selectDetailChanged(state, header?.SalesOrderNo ?? ''));
+    const loadingStatus = useAppSelector(state => selectSalesOrderActionStatus(state, match?.params.salesOrderNo ?? ''));
     const shippingAccount = useSelector(selectShippingAccount);
-    const sendEmailStatus = useSelector(selectSendEmailStatus);
-    const shipDateRef = useRef<HTMLInputElement|null>(null);
-    const shipMethodRef = useRef<HTMLDivElement|null>(null);
-    const paymentMethodRef = useRef<HTMLDivElement|null>(null);
+    const sendEmailStatus = useAppSelector(selectSendEmailStatus);
+    const shipDateRef = useRef<HTMLInputElement | null>(null);
+    const shipMethodRef = useRef<HTMLDivElement | null>(null);
+    const paymentMethodRef = useRef<HTMLDivElement | null>(null);
     const customerPORef = useRef<HTMLInputElement>();
     const navigate = useNavigate();
 
     const [cartHeader, setCartHeader] = useState<(SalesOrderHeader & Editable) | null>(header);
     const [cartProgress, setCartProgress] = useState<CartProgress>(cartProgress_Cart);
 
-    const validateForm = (cartProgress:CartProgress):CartProgress => {
+    useEffect(() => {
+
+    }, []);
+
+    const validateForm = (cartProgress: CartProgress): CartProgress => {
         console.log('cartProgress:', cartProgress);
         if (!cartHeader) {
             return cartProgress_Cart;
@@ -150,15 +152,17 @@ const CartOrderHeaderElement = () => {
         }
     }
 
-    const shipToChangeHandler = (value:string|null, address: ShipToAddress|null) => {
+    const shipToChangeHandler = (value: string | null, address: ShipToAddress | null) => {
         if (!cartHeader) {
             return;
         }
         if (!address) {
             setCartHeader({...cartHeader, ShipToCode: value, changed: true});
+            setCartProgress(cartProgress_Cart);
             return;
         }
         setCartHeader({...cartHeader, ShipToCode: value, ...address, changed: true});
+        setCartProgress(cartProgress_Cart);
     }
 
     const reloadHandler = () => {
@@ -223,7 +227,9 @@ const CartOrderHeaderElement = () => {
                 </Grid>
                 <Grid xs={12} lg={6}>
                     <Stack spacing={2} direction="column">
-                        <ShipToSelect value={cartHeader?.ShipToCode ?? customer.PrimaryShipToCode ?? ''} defaultName="Default Address"
+                        <ShipToSelect value={cartHeader?.ShipToCode ?? ''}
+                                      disabled={loadingStatus !== 'idle'}
+                                      defaultName="Default Address"
                                       onChange={shipToChangeHandler}/>
                         <TextField label="Delivery Address" type="text" multiline variant="filled" size="small"
                                    value={multiLineAddress(addressFromShipToAddress(cartHeader), true).join('\n')}
@@ -236,11 +242,14 @@ const CartOrderHeaderElement = () => {
                     <Collapse in={cartProgress >= cartProgress_Delivery} collapsedSize={0}>
                         <Stack spacing={2} direction="column">
                             <ShipDateInput value={cartHeader?.ShipExpireDate ?? ''}
+                                           disabled={loadingStatus !== 'idle'}
                                            error={!cartHeader?.ShipExpireDate || !dayjs(cartHeader.ShipExpireDate).isValid() || dayjs(cartHeader?.ShipExpireDate).isBefore(nextShipDate())}
                                            onChange={valueChangeHandler('ShipExpireDate')}
-                                           inputProps={{required: true}} ref={shipDateRef} />
+                                           inputProps={{required: true}} ref={shipDateRef}/>
                             <Stack spacing={2} direction={{xs: 'column', md: 'row'}}>
-                                <ShippingMethodSelect value={cartHeader?.ShipVia ?? ''} required error={!cartHeader?.ShipVia}
+                                <ShippingMethodSelect value={cartHeader?.ShipVia ?? ''} required
+                                                      disabled={loadingStatus !== 'idle'}
+                                                      error={!cartHeader?.ShipVia}
                                                       ref={shipMethodRef}
                                                       onChange={valueChangeHandler('ShipVia')}/>
                                 <CustomerShippingAccountControl/>
@@ -251,10 +260,12 @@ const CartOrderHeaderElement = () => {
                 <Grid xs={12} lg={6}>
                     <Collapse in={cartProgress >= cartProgress_Payment} collapsedSize={0}>
                         <Stack spacing={2} direction="column">
-                            <CartPaymentSelect value={cartHeader?.PaymentType ?? ''}  error={!cartHeader?.PaymentType}
+                            <CartPaymentSelect value={cartHeader?.PaymentType ?? ''} error={!cartHeader?.PaymentType}
                                                ref={paymentMethodRef} required
+                                               disabled={loadingStatus !== 'idle'}
                                                onChange={valueChangeHandler('PaymentType')}/>
                             <TextField label="Purchase Order No" type="text" fullWidth variant="filled" size="small"
+                                       disabled={loadingStatus !== 'idle'}
                                        error={!header.CustomerPONo}
                                        value={header?.CustomerPONo ?? ''} required/>
                         </Stack>
@@ -269,32 +280,38 @@ const CartOrderHeaderElement = () => {
                     )}
                 </Stack>
                 <Stack spacing={3} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
-                    <DeleteCartButton disabled={loading || cartHeader?.changed}>
+                    <DeleteCartButton disabled={loadingStatus !== 'idle' || cartHeader?.changed}>
                         Delete Cart
                     </DeleteCartButton>
 
-                    <Button type="button" variant="text" onClick={reloadHandler} disabled={loading}>
+                    <Button type="button" variant="text" onClick={reloadHandler} disabled={loadingStatus !== 'idle'}>
                         {detailChanged || cartHeader?.changed ? 'Cancel Changes' : 'Reload'}
                     </Button>
 
                     <Button type="button"
-                            variant={(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart ? 'contained': "text"}
+                            variant={(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart ? 'contained' : "text"}
                             color={(detailChanged || cartHeader?.changed) ? 'warning' : 'primary'}
                             onClick={saveCartHandler}
-                            disabled={loading || (cartProgress !== cartProgress_Cart && !detailChanged)} >
+                            disabled={loadingStatus !== 'idle' || (cartProgress !== cartProgress_Cart && !detailChanged)}>
                         Save Cart
                     </Button>
-
-                    <Button type="button" variant="text" onClick={sendEmailHandler}
-                            disabled={loading || sendEmailStatus !== 'idle'}>
+                    <SendEmailButton salesOrderNo={header.SalesOrderNo}
+                                     disabled={cartProgress !== cartProgress_Cart || detailChanged}>
                         Send Email
-                    </Button>
+                    </SendEmailButton>
 
                     <CheckoutButton cartProgress={cartProgress}
-                                    onClick={submitHandler} disabled={loading || detailChanged}/>
+                                    onClick={submitHandler} disabled={loadingStatus !== 'idle' || detailChanged}/>
                 </Stack>
             </Stack>
-            <SendEmailModal />
+            <AlertList context={promoteCart.typePrefix}/>
+            <hr />
+            <Stack spacing={2} direction={{sm: 'column', md: 'row'}} justifyContent="space-between"
+                   divider={<Divider orientation="vertical" flexItem />}>
+                <ItemAutocomplete salesOrderNo={header.SalesOrderNo}/>
+                <CartCommentInput salesOrderNo={header.SalesOrderNo}/>
+            </Stack>
+
         </Box>
     )
 }

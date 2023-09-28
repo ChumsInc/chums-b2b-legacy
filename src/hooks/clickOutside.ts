@@ -8,9 +8,17 @@ export function useClickOutside(ref:React.RefObject<any>, handler: () => void) {
             }
             handler();
         }
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         window.addEventListener('mousedown', listener);
         window.addEventListener('touchstart', listener);
         return () => {
+            if (typeof window === 'undefined') {
+                return;
+            }
+
             window.removeEventListener('mousedown', listener);
             window.removeEventListener('touchstart', listener);
         }

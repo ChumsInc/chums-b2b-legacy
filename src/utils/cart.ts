@@ -1,5 +1,5 @@
 import {SalesOrderDetailLine} from "b2b-types";
-import {ChangeDetailLine, NewCommentLine} from "@/types/cart";
+import {ChangeDetailLine, NewCommentLine} from "../types/cart";
 
 export const changedDetailLine = (line:SalesOrderDetailLine):ChangeDetailLine => {
     const {LineKey, ItemCode, QuantityOrdered, CommentText} = line;

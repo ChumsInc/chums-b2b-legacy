@@ -1,13 +1,13 @@
 import React, {useId} from 'react';
-import {PaymentType} from "@/types/customer";
+import {PaymentType} from "../../../types/customer";
 import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl, {FormControlProps} from "@mui/material/FormControl";
 import {InputBaseComponentProps} from "@mui/material/InputBase";
 import {useSelector} from "react-redux";
-import {selectCustomerPaymentCards} from "@/ducks/customer/selectors";
-import {PAYMENT_TYPES} from "@/constants/account";
+import {selectCustomerPaymentCards} from "../../customer/selectors";
+import {PAYMENT_TYPES} from "../../../constants/account";
 
 export interface CartPaymentSelectProps extends Omit<FormControlProps, 'onChange'> {
     value: string;

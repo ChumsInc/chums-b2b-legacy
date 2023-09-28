@@ -1,6 +1,6 @@
-import {createAction, createReducer, isRejected} from "@reduxjs/toolkit";
-import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "@/constants/actions";
-import {RootState} from "@/app/configureStore";
+import {createAction, createReducer, createSelector, isRejected} from "@reduxjs/toolkit";
+import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
+import {RootState} from "../../app/configureStore";
 import {AlertsState, B2BContextAlert} from "./types";
 import {setLoggedIn} from "../user/actions";
 
@@ -15,7 +15,12 @@ export const dismissAlert = createAction<number>('alerts/dismissAlert');
 export const dismissContextAlert = createAction<string>('alerts/dismissByContext');
 
 export const selectAlerts = (state: RootState) => state.alerts.list ?? [];
-export const selectContextAlerts = (context: string) => (state: RootState) => state.alerts.list.filter(alert => alert.context === context);
+export const selectContextAlerts = createSelector(
+    [selectAlerts, (state:RootState, context?:string) => context],
+    (list, context) => {
+        return list.filter(alert => !context || alert.context === context).sort(alertSorter);
+    }
+)// (state: RootState, context?: string) => state.alerts.list.filter(alert => !context || alert.context === context).sort(alertSorter);
 
 const alertSorter = (a: B2BContextAlert, b: B2BContextAlert): number => a.id - b.id;
 
@@ -59,7 +64,7 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                 } else {
                     const newAlert: B2BContextAlert = {
                         type: 'warning',
-                        message: action.error.message ?? '',
+                        message: action.error.message?.replace('\x8a', '') ?? '',
                         context,
                         id: state.index,
                         count: 1

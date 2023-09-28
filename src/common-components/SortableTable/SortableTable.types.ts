@@ -1,5 +1,5 @@
 import {DataTableProps} from "../DataTable";
-import {SortProps} from "@/types/generic";
+import {SortProps} from "../../types/generic";
 
 
 export interface SortableTableProps<T = any> extends DataTableProps<T> {

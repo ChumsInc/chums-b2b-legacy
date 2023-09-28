@@ -1,13 +1,13 @@
 import React from 'react';
 import {Editable, SalesOrderDetailLine} from "b2b-types";
-import {Appendable} from "@/types/generic";
+import {Appendable} from "../../../types/generic";
 import classNames from "classnames";
-import OrderItemImage from "@/components/OrderItemImage";
+import OrderItemImage from "../../../components/OrderItemImage";
 import UPCA from "../../../common/upc-a";
-import AvailabilityAlert from "@/components/AvailabilityAlert";
+import AvailabilityAlert from "../../../components/AvailabilityAlert";
 import numeral from "numeral";
 import Decimal from "decimal.js";
-import SalesOrderLineButtons from "@/ducks/salesOrder/components/SalesOrderLineButtons";
+import SalesOrderLineButtons from "./SalesOrderLineButtons";
 
 export default function SalesOrderKitComponentLine({
                                                        line,

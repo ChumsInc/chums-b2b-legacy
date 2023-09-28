@@ -1,6 +1,8 @@
-import {CartItem, CustomerAddress, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
-import {SortProps} from "@/types/generic";
+import {CartItem, CustomerAddress, SalesOrder, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {SortProps} from "../../types/generic";
 import dayjs from "dayjs";
+import {SalesOrderStatus} from "b2b-types/src/sales-order";
+import {EditableSalesOrder} from "../open-orders/types";
 
 export const defaultDetailSorter = (a: SalesOrderDetailLine, b: SalesOrderDetailLine) => {
     return +a.LineKey - +b.LineKey;
@@ -106,4 +108,30 @@ export const detailToCartItem = (line:SalesOrderDetailLine):CartItem|null => {
         quantity: (+line.QuantityOrdered) || 1,
         comment: line.CommentText,
     }
+}
+
+export const isOpenSalesOrder = (so:SalesOrderHeader|null) => {
+    if (!so) {
+        return false;
+    }
+    switch (so.OrderStatus) {
+        case 'C':
+        case 'X':
+        case 'Z':
+            return false;
+        default:
+            return true;
+    }
+}
+
+export const isEditableSalesOrder = (so:SalesOrderHeader|EditableSalesOrder|null):so is EditableSalesOrder => {
+    return !!so
+        // && so.OrderType === 'Q'
+        && (so as EditableSalesOrder).detail !== undefined;
+}
+
+export const detailSequenceSorter = (a:SalesOrderDetailLine, b:SalesOrderDetailLine): number => {
+    return +a.LineSeqNo === +b.LineSeqNo
+        ? defaultDetailSorter(a, b)
+        : +a.LineSeqNo - +b.LineSeqNo;
 }

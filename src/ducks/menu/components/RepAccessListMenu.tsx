@@ -1,10 +1,10 @@
 import React from 'react';
 import {useSelector} from "react-redux";
-import {selectRepAccessList} from "@/ducks/user/selectors";
-import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
+import {selectRepAccessList} from "../../user/selectors";
+import MenuItemRouterLink from "./MenuItemRouterLink";
 import Box from "@mui/material/Box";
-import {accessListURL, repAccessCode} from "@/ducks/user/utils";
-import MenuLinkProfile from "@/ducks/menu/components/MenuLinkProfile";
+import {accessListURL, repAccessCode} from "../../user/utils";
+import MenuLinkProfile from "./MenuLinkProfile";
 import MenuItem from "@mui/material/MenuItem";
 import {generatePath} from "react-router-dom";
 

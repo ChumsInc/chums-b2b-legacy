@@ -4,20 +4,20 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import HideOnScroll from "@/components/HideOnScroll";
+import HideOnScroll from "../../../components/HideOnScroll";
 import Divider from '@mui/material/Divider';
 import List from "@mui/material/List";
 import Stack from "@mui/material/Stack";
-import NavDrawer from "@/ducks/menu/components/NavDrawer";
-import HomeLink from "@/ducks/menu/components/HomeLink";
+import NavDrawer from "./NavDrawer";
+import HomeLink from "./HomeLink";
 import {navItems} from './NavItems'
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
-import {loadProductMenu, selectLoaded, selectLoading, toggleMenuDrawer} from "@/ducks/menu";
+import {loadProductMenu, selectLoaded, selectLoading, toggleMenuDrawer} from "../index";
 import Container from "@mui/material/Container";
-import UserMenu from "@/ducks/menu/components/UserMenu";
-import CartMenu from "@/ducks/menu/components/CartMenu";
-import SearchBar from "@/ducks/search/components/SearchBar";
+import UserMenu from "./UserMenu";
+import CartMenu from "./CartMenu";
+import SearchBar from "../../search/components/SearchBar";
 
 const drawerWidth = 240;
 // const navItems = ['Products', 'Accounts', 'Orders', 'Resources'];

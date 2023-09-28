@@ -2,7 +2,7 @@
  * Created by steve on 8/24/2016.
  */
 import {auth} from "./IntranetAuthService";
-import B2BError from "@/types/generic";
+import B2BError from "../types/generic";
 
 function getCredentials():string|null {
     const token = auth.getToken();

@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from "classnames";
 import {DataTableRowProps} from "./DataTableRow.types";
-import {noop} from "@/utils/general";
+import {noop} from "../../utils/general";
 
 
 const DataTableRow = ({

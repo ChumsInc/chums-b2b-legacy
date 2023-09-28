@@ -1,11 +1,11 @@
 import React, {useEffect, useId, useRef, useState} from 'react';
 import {useSelector} from "react-redux";
-import {selectCurrentAccess, selectLoggedIn, selectLoginExpiry} from "@/ducks/user/selectors";
+import {selectCurrentAccess, selectLoggedIn, selectLoginExpiry} from "../../user/selectors";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
-import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
-import GoogleSignInOneTap from "@/ducks/user/components/GoogleSignInOneTap";
-import UserAvatar from "@/ducks/user/components/UserAvatar";
+import MenuItemRouterLink from "./MenuItemRouterLink";
+import GoogleSignInOneTap from "../../user/components/GoogleSignInOneTap";
+import UserAvatar from "../../user/components/UserAvatar";
 import {generatePath} from "react-router-dom";
 
 const isExpired = (expires: number) => {
@@ -27,6 +27,9 @@ const UserMenu = () => {
     const [expired, setExpired] = useState(isExpired(expires));
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
         window.clearTimeout(timerRef.current);
         if (!isExpired(expires)) {
             timerRef.current = window.setInterval(() => {
@@ -34,6 +37,9 @@ const UserMenu = () => {
             })
         }
         return () => {
+            if (typeof window === 'undefined') {
+                return;
+            }
             window.clearTimeout(timerRef.current);
         }
     }, [expires]);
@@ -61,7 +67,7 @@ const UserMenu = () => {
                 )}
                 <MenuItemRouterLink to="/logout">Logout</MenuItemRouterLink>
             </Menu>
-            {(!isLoggedIn || expired) && <GoogleSignInOneTap onSignIn={() => setAnchorEl(null)}/>}
+            {(!isLoggedIn || expired) && typeof window !== 'undefined' && <GoogleSignInOneTap onSignIn={() => setAnchorEl(null)}/>}
         </>
     )
 }

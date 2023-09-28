@@ -35,10 +35,3 @@ export const selectDetailChanged = createSelector(
         return detail.filter(row => row.changed || row.newLine).length > 0;
     }
 )
-
-export const selectSortedDetail = createSelector(
-    [selectSalesOrderDetail],
-    (detail) => {
-        return [...detail].sort((a, b) => +a.LineSeqNo - +b.LineSeqNo);
-    }
-)

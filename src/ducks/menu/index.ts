@@ -1,11 +1,11 @@
 import {createAction, createAsyncThunk, createReducer, createSelector} from "@reduxjs/toolkit";
 import {Menu, MenuItem} from "b2b-types";
-import {PreloadedState} from "@/types/preload";
-import {RootState} from "@/app/configureStore";
-import {fetchProductMenu} from "@/api/menu";
-import {selectCustomerAccessList, selectRepAccessList} from "@/ducks/user/selectors";
-import {defaultMenuItem} from "@/ducks/menu/utils";
-import {accessListURL} from "@/ducks/user/utils";
+import {PreloadedState} from "../../types/preload";
+import {RootState} from "../../app/configureStore";
+import {fetchProductMenu} from "../../api/menu";
+import {selectCustomerAccessList, selectRepAccessList} from "../user/selectors";
+import {defaultMenuItem} from "./utils";
+import {accessListURL} from "../user/utils";
 
 export interface MenuState {
     productMenu: Menu|null;

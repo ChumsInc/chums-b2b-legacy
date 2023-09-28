@@ -1,10 +1,9 @@
 import {fetchGET} from "../../utils/fetch";
 import {API_PATH_INVOICE} from "../../constants/paths";
-import {isValidCustomer, sageCompanyCode} from "../../utils/customer";
+import {isValidCustomer} from "../../utils/customer";
 import {FETCH_FAILURE, FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "../../constants/actions";
 import {handleError} from "../app/actions";
 import {setAlert} from "../alerts";
-import {buildPath} from "../../utils/path-utils";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {STORE_INVOICES_ROWS_PER_PAGE} from "../../constants/stores";
 import localStore from "../../utils/LocalStore";
@@ -12,7 +11,7 @@ import {fetchInvoices} from "../../api/invoices";
 import {selectInvoicesList, selectInvoicesLoading} from "./selectors";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {CustomerKey, InvoiceHeader} from "b2b-types";
-import {selectLoggedIn} from "@/ducks/user/selectors";
+import {selectLoggedIn} from "../user/selectors";
 
 export const setInvoicesSort = createAction('invoices/setSort');
 export const setInvoicesPage = createAction('invoices/setPage');
@@ -46,7 +45,11 @@ export const loadInvoice = ({InvoiceNo, InvoiceType}: { InvoiceNo: string; Invoi
     }
     InvoiceType = InvoiceType || 'IN';
 
-    const url = buildPath(API_PATH_INVOICE, {Company: sageCompanyCode(Company), InvoiceNo, InvoiceType}) + '?images=1';
+    const url = API_PATH_INVOICE
+            .replace(':Company', 'CHI')
+            .replace(':InvoiceType', encodeURIComponent(InvoiceType))
+            .replace(':InvoiceNo', encodeURIComponent(InvoiceNo))
+        + '?images=1'
     dispatch({type: FETCH_INVOICE, status: FETCH_INIT});
     fetchGET(url, {cache: 'no-cache'})
         .then(res => {

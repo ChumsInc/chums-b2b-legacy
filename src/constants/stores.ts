@@ -1,4 +1,4 @@
-export const STORE_CURRENT_CART = 'com.chums.b2b.current_cart';
+export const STORE_CURRENT_CART = 'chums::b2b::current-cart';
 export const STORE_AUTHTYPE = 'com.chums.b2b.authtype';
 export const STORE_PROFILE = 'com.chums.b2b.profile';
 export const STORE_TOKEN = 'com.chums.b2b.id_token';

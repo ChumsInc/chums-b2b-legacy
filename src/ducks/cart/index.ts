@@ -10,35 +10,37 @@ import {
     SAVE_CART,
     SELECT_COLOR,
     SELECT_VARIANT,
-    SET_CART,
     SET_CART_ITEM_QUANTITY,
     UPDATE_CART
-} from "@/constants/actions";
+} from "../../constants/actions";
 
 import localStore from "../../utils/LocalStore";
-import {STORE_CURRENT_CART, STORE_CUSTOMER_SHIPPING_ACCOUNT} from "@/constants/stores";
-import {isCartOrder, nextShipDate} from "@/utils/orders";
-import {CART_PROGRESS_STATES, NEW_CART} from "@/constants/orders";
-import {DEFAULT_SHIPPING_ACCOUNT} from "@/constants/account";
+import {STORE_CURRENT_CART, STORE_CUSTOMER_SHIPPING_ACCOUNT} from "../../constants/stores";
+import {isCartOrder, nextShipDate} from "../../utils/orders";
+import {CART_PROGRESS_STATES, NEW_CART} from "../../constants/orders";
 import {createReducer} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
 import {
     addToCart,
     getItemAvailability,
-    promoteCart, removeCart,
+    promoteCart,
+    removeCart,
     saveNewCart,
     setCartProgress,
+    setCurrentCart,
     setShipDate,
     setShippingAccount
 } from "./actions";
 import {setCustomerAccount} from "../customer/actions";
 import {setLoggedIn} from "../user/actions";
-import {SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
-import {CustomerShippingAccount} from "@/types/customer";
-import {loadOrders} from "@/ducks/open-orders/actions";
-import {ItemAvailability} from "@/types/product";
-import {CartProgress} from "@/types/cart";
-import {loadSalesOrder} from "@/ducks/salesOrder/actions";
+import {Editable, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {CustomerShippingAccount} from "../../types/customer";
+import {loadOpenOrders} from "../open-orders/actions";
+import {ItemAvailability} from "../../types/product";
+import {CartProgress} from "../../types/cart";
+import {loadSalesOrder} from "../open-orders/actions";
+import {Appendable} from "../../types/generic";
+import {isEditableSalesOrder} from "../salesOrder/utils";
 
 
 export interface CartState {
@@ -46,7 +48,9 @@ export interface CartState {
     cartName: string;
     cartQuantity: number;
     cartTotal: number;
-    promoCode: string|null;
+    promoCode: string | null;
+    header: (SalesOrderHeader & Editable) | null;
+    detail: (SalesOrderDetailLine & Editable & Appendable)[];
     loading: boolean;
     loaded: boolean;
     itemAvailability: ItemAvailability | null;
@@ -58,11 +62,13 @@ export interface CartState {
 }
 
 export const initialCartState = (): CartState => ({
-    cartNo: localStore.getItem<string>(STORE_CURRENT_CART, ''),
+    cartNo: localStore.getItem<string>(STORE_CURRENT_CART, NEW_CART),
     cartName: '',
     cartQuantity: 0,
     cartTotal: 0,
     promoCode: null,
+    header: null,
+    detail: [],
     loading: false,
     loaded: false,
     itemAvailability: null,
@@ -96,40 +102,44 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.shipDate = action.payload ?? nextShipDate();
         })
         .addCase(setCustomerAccount.fulfilled, (state) => {
-            state.cartNo = '';
+            state.cartNo = NEW_CART;
             state.cartName = '';
             state.cartTotal = 0;
             state.cartQuantity = 0;
         })
         .addCase(setLoggedIn, (state, action) => {
             if (!action.payload.loggedIn) {
-                state.cartNo = '';
+                state.cartNo = NEW_CART;
                 state.cartName = '';
                 state.cartTotal = 0;
                 state.cartQuantity = 0;
             }
         })
-        .addCase(loadOrders.pending, (state) => {
+        .addCase(loadOpenOrders.pending, (state) => {
             state.loading = true;
         })
-        .addCase(loadOrders.fulfilled, (state, action) => {
+        .addCase(loadOpenOrders.fulfilled, (state, action) => {
             state.loading = false;
             state.loaded = true;
-            const [cart] = action.payload.filter(so => so.OrderType === 'Q' && so.SalesOrderNo === state.cartNo);
+            let [cart] = action.payload.filter(so => so.OrderType === 'Q' && so.SalesOrderNo === state.cartNo);
+            if (!cart && state.cartNo === NEW_CART) {
+                [cart] = action.payload.filter(so => so.OrderType === 'Q');
+            }
             if (!cart) {
-                state.cartNo = '';
+                state.cartNo = NEW_CART;
                 state.cartName = '';
                 state.cartTotal = 0;
                 state.cartQuantity = 0;
                 state.cartProgress = CART_PROGRESS_STATES.cart;
                 state.promoCode = null;
             } else {
+                state.cartNo = cart.SalesOrderNo;
                 state.cartName = cart.CustomerPONo ?? state.cartName;
                 state.cartTotal = new Decimal(cart.TaxableAmt).add(cart.NonTaxableAmt).sub(cart.DiscountAmt).toNumber();
                 state.promoCode = cart.UDF_PROMO_DEAL ?? null;
             }
         })
-        .addCase(loadOrders.rejected, (state) => {
+        .addCase(loadOpenOrders.rejected, (state) => {
             state.loading = false;
         })
         .addCase(saveNewCart.pending, (state) => {
@@ -138,7 +148,7 @@ const cartReducer = createReducer(initialCartState, builder => {
         .addCase(saveNewCart.fulfilled, (state, action) => {
             state.loading = false;
             if (!action.payload) {
-                state.cartNo = '';
+                state.cartNo = NEW_CART;
                 state.cartTotal = 0;
                 state.cartQuantity = 0;
                 state.cartProgress = CART_PROGRESS_STATES.cart;
@@ -162,7 +172,7 @@ const cartReducer = createReducer(initialCartState, builder => {
         .addCase(addToCart.fulfilled, (state, action) => {
             state.loading = false;
             if (!action.payload) {
-                state.cartNo = '';
+                state.cartNo = NEW_CART;
                 state.cartTotal = 0;
                 state.cartQuantity = 0;
                 state.cartProgress = CART_PROGRESS_STATES.cart;
@@ -201,18 +211,33 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.shippingAccount.enabled = action.payload.enabled;
         })
         .addCase(promoteCart.fulfilled, (state, action) => {
-            state.cartNo = '';
+            state.cartNo = NEW_CART;
             state.cartTotal = 0;
             state.cartQuantity = 0;
             state.cartProgress = CART_PROGRESS_STATES.cart;
             state.promoCode = null;
         })
         .addCase(removeCart.fulfilled, (state) => {
-            state.cartNo = '';
+            state.cartNo = NEW_CART;
             state.cartTotal = 0;
             state.cartQuantity = 0;
             state.cartProgress = CART_PROGRESS_STATES.cart;
             state.promoCode = null;
+        })
+        .addCase(setCurrentCart.fulfilled, (state, action) => {
+            state.cartNo = action.payload?.SalesOrderNo ?? 'new';
+            state.cartName = action.payload?.CustomerPONo ?? '';
+            state.cartTotal = 0;
+            state.cartQuantity = 0;
+            if (action.payload) {
+                state.cartTotal = new Decimal(action.payload?.TaxableAmt).add(action.payload.NonTaxableAmt).toNumber();
+            }
+            if (isEditableSalesOrder(action.payload)) {
+                state.cartQuantity = Object.values(action.payload.detail)
+                    .map(row => new Decimal(row.QuantityOrdered).times(row.UnitOfMeasureConvFactor).toNumber())
+                    .reduce((row, cv) => row + cv, 0);
+            }
+            state.cartProgress = CART_PROGRESS_STATES.cart;
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {
@@ -222,7 +247,7 @@ const cartReducer = createReducer(initialCartState, builder => {
                         const [existing] = receivedOrders.filter(so => so.SalesOrderNo === state.cartNo);
 
                         if (state.cartNo !== NEW_CART && !existing) {
-                            state.cartNo = '';
+                            state.cartNo = NEW_CART;
                             state.cartName = '';
                             state.cartTotal = 0;
                             state.cartQuantity = 0;
@@ -241,7 +266,7 @@ const cartReducer = createReducer(initialCartState, builder => {
                     if (action.status === FETCH_SUCCESS) {
                         if (action.salesOrder && action.salesOrder.SalesOrderNo === state.cartNo) {
                             if (!isCartOrder(action.salesOrder)) {
-                                state.cartNo = '';
+                                state.cartNo = NEW_CART;
                                 state.cartName = '';
                                 state.cartTotal = 0;
                                 state.cartQuantity = 0;
@@ -261,21 +286,12 @@ const cartReducer = createReducer(initialCartState, builder => {
                     state.loading = action.isCart && action.status === FETCH_INIT;
                     return;
                 case CREATE_NEW_CART:
-                    state.cartNo = action.cart?.SalesOrderNo ?? '';
+                    state.cartNo = action.cart?.SalesOrderNo ?? NEW_CART;
                     state.cartName = action.cart?.CustomerPONo ?? '';
                     state.cartTotal = new Decimal(action.cart?.TaxableAmt ?? 0).add(action.cart?.NonTaxableAmt ?? 0).toNumber();
-                    return;
-                case SET_CART:
-                    state.cartNo = action.cart?.SalesOrderNo ?? '';
-                    state.cartName = action.cart?.CustomerPONo ?? '';
-                    state.cartTotal = new Decimal(action.cart?.TaxableAmt ?? 0).add(action.cart?.NonTaxableAmt ?? 0).toNumber();
-                    state.shippingAccount = DEFAULT_SHIPPING_ACCOUNT;
-                    if (action.status === FETCH_SUCCESS) {
-                        state.cartMessage = action.message ?? '';
-                    }
                     return;
                 case DELETE_CART:
-                    state.cartNo = action.status === FETCH_SUCCESS ? '' : state.cartNo;
+                    state.cartNo = action.status === FETCH_SUCCESS ? NEW_CART : state.cartNo;
                     state.cartName = action.status === FETCH_SUCCESS ? '' : state.cartName;
                     state.cartTotal = 0;
                     state.cartQuantity = 0;

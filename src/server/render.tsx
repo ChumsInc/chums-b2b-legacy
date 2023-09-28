@@ -44,17 +44,19 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         const initialState = prepState(preload ?? {});
         const store = createStore(rootReducer, initialState);
         const helmetContext: Partial<FilledContext> = {};
+        console.log('rendering App', Object.keys(helmetContext));
         const app = renderToString(
             <Provider store={store}>
                 <HelmetProvider context={helmetContext}>
                     <StaticRouter location={req.url}>
-                        <Route element={<App />}/>
+                        <App />
                     </StaticRouter>
                 </HelmetProvider>
             </Provider>
         );
         const {mtimeMs: swatchMTime} = await fs.stat("./public/css/swatches-2020.css");
         const css = await loadMainCSS();
+        console.log('rendering HTML')
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles} helmet={helmetContext.helmet}
                                              swatchTimestamp={swatchMTime.toString(36)}/>)
@@ -62,6 +64,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
     } catch (err: unknown) {
         if (err instanceof Error) {
             debug("renderApp()", err.message);
+            console.trace(err.message);
             return res.json({error: err.message, name: err.name});
         }
         res.json({error: 'unknown error in renderApp'});
@@ -113,7 +116,9 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         const app = renderToString(
             <Provider store={store}>
                 <HelmetProvider context={helmetContext}>
-                    <App/>
+                    <StaticRouter location={req.url}>
+                        <App/>
+                    </StaticRouter>
                 </HelmetProvider>
             </Provider>
         );
@@ -162,7 +167,9 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
         const app = renderToString(
             <Provider store={store}>
                 <HelmetProvider context={helmetContext}>
-                    <App/>
+                    <StaticRouter location={req.url}>
+                        <App/>
+                    </StaticRouter>
                 </HelmetProvider>
             </Provider>
         );

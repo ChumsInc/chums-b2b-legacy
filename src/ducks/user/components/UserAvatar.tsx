@@ -2,7 +2,7 @@ import React from 'react';
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import Avatar from "@mui/material/Avatar";
 import {useSelector} from "react-redux";
-import {selectLoggedIn, selectUserProfile, selectProfilePicture} from "@/ducks/user/selectors";
+import {selectLoggedIn, selectUserProfile, selectProfilePicture} from "../selectors";
 import Box,{BoxProps} from "@mui/material/Box";
 
 

@@ -1,7 +1,7 @@
-import {LoadStatus} from "@/types/generic";
+import {LoadStatus} from "../../types/generic";
 import {createAction, createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {fetchItemLookup} from "@/api/itemLookup";
-import {RootState} from "@/app/configureStore";
+import {fetchItemLookup} from "../../api/itemLookup";
+import {RootState} from "../../app/configureStore";
 
 export interface ItemSearchResult {
     ItemCode: string;
@@ -53,7 +53,7 @@ const itemLookupReducer = createReducer(initialItemLookupState, builder => {
         })
         .addCase(loadItemLookup.fulfilled, (state, action) => {
             state.loadStatus = 'fulfilled';
-            state.items = action.payload;
+            state.items = action.payload.filter(item => !item.ItemCode.endsWith('IMP'));
         })
         .addCase(loadItemLookup.rejected, (state) => {
             state.loadStatus = 'idle';

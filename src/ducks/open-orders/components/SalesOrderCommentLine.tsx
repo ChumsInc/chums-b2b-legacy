@@ -1,9 +1,7 @@
 import React, {ChangeEvent} from 'react';
 import classNames from "classnames";
 import {Editable, SalesOrderDetailLine} from "b2b-types";
-import {Appendable} from "@/types/generic";
-import SalesOrderLineButtons from "@/ducks/salesOrder/components/SalesOrderLineButtons";
-import TextField from "@mui/material/TextField";
+import {Appendable} from "../../../types/generic";
 import FilledInput from "@mui/material/Input";
 import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import Box from "@mui/material/Box";
@@ -27,14 +25,15 @@ const SalesOrderCommentLine = ({line, readOnly, onChange, onDelete}: {
 
     return (
         <tr className={classNames('order-detail line-comment', rowClassName)}>
-            {line.ItemType === '4' && (<td className="text-center"><TextSnippetIcon /></td>)}
+            {line.ItemType === '4' && (<td className="text-center"><TextSnippetIcon/></td>)}
             <td colSpan={4}>
                 <Box sx={{display: 'flex', flexDirection: 'row'}}>
                     <FilledInput value={line.CommentText ?? ''} fullWidth size="small"
                                  sx={{flex: '1 1 auto'}}
                                  inputProps={{readOnly}}
                                  multiline maxRows={4} minRows={1}
-                                 onChange={changeHandler} endAdornment={<IconButton size="small" onClick={onDelete}><ClearIcon /></IconButton>}/>
+                                 onChange={changeHandler}
+                                 endAdornment={<IconButton size="small" onClick={onDelete}><ClearIcon/></IconButton>}/>
                 </Box>
             </td>
             <td colSpan={3}>&nbsp;</td>

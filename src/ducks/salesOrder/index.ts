@@ -12,12 +12,12 @@ import {
     SELECT_SO,
     UPDATE_CART,
     UPDATE_CART_ITEM
-} from "@/constants/actions";
-import {defaultDetailSorter, emptyDetailLine} from "./utils";
-import {calcOrderType, isCartOrder} from "@/utils/orders";
+} from "../../constants/actions";
+import {defaultDetailSorter, emptyDetailLine, isEditableSalesOrder} from "./utils";
+import {calcOrderType, isCartOrder} from "../../utils/orders";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
-import {isCartHeader} from "@/utils/typeguards";
+import {isCartHeader} from "../../utils/typeguards";
 import {
     BillToCustomer,
     Editable,
@@ -26,14 +26,14 @@ import {
     SalesOrderHeader,
     SalesOrderItemType
 } from "b2b-types";
-import {customerSlug} from "@/utils/customer";
-import {Appendable, LoadStatus} from "@/types/generic";
-import {OrderType} from "@/types/salesorder";
-import {closeEmailResponse, loadSalesOrder, sendOrderEmail, updateDetailLine} from "@/ducks/salesOrder/actions";
-import {promoteCart, removeCart, saveCart, saveNewCart} from "@/ducks/cart/actions";
-import localStore from "@/utils/LocalStore";
-import {STORE_CURRENT_CART, STORE_CUSTOMER} from "@/constants/stores";
-import {loadOrders} from "@/ducks/open-orders/actions";
+import {customerSlug} from "../../utils/customer";
+import {Appendable, LoadStatus} from "../../types/generic";
+import {OrderType} from "../../types/salesorder";
+import {closeEmailResponse, sendOrderEmail, updateDetailLine} from "./actions";
+import {promoteCart, removeCart, saveCart, saveNewCart, setCurrentCart} from "../cart/actions";
+import localStore from "../../utils/LocalStore";
+import {STORE_CURRENT_CART, STORE_CUSTOMER} from "../../constants/stores";
+import {loadOpenOrders} from "../open-orders/actions";
 
 export interface SalesOrderState {
     customerKey: string | null;
@@ -130,35 +130,6 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.loaded = false;
             }
         })
-        .addCase(loadSalesOrder.pending, (state, action) => {
-            state.loading = true;
-            if (state.salesOrderNo !== action.meta.arg) {
-                state.header = null;
-                state.detail = [];
-                state.invoices = [];
-                state.payment = [];
-                state.orderType = 'past';
-                state.readOnly = true;
-                state.loaded = false;
-            }
-        })
-        .addCase(loadSalesOrder.fulfilled, (state, action) => {
-            state.salesOrderNo = action.payload?.SalesOrderNo ?? '';
-            if (action.payload) {
-                const {detail, invoices, payment, ...header} = action.payload
-                state.header = header;
-                state.detail = [...detail].sort(defaultDetailSorter);
-                state.invoices = invoices ?? [];
-                state.payment = payment ?? [];
-                state.orderType = calcOrderType(action.payload);
-                state.readOnly = !isCartOrder(action.payload);
-            }
-            state.loading = false;
-            state.loaded = true;
-        })
-        .addCase(loadSalesOrder.rejected, (state) => {
-            state.loading = false;
-        })
         .addCase(sendOrderEmail.pending, (state) => {
             state.sendEmail.status = 'pending';
             state.sendEmail.response = null;
@@ -224,13 +195,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         .addCase(promoteCart.rejected, (state) => {
             state.processing = 'idle';
         })
-        .addCase(updateDetailLine, (state, action) => {
-            state.detail = [
-                ...state.detail.filter(row => row.LineKey !== action.payload.LineKey),
-                ...state.detail.filter(row => row.LineKey === action.payload.LineKey).map(row => ({...row, ...action.payload, changed: true}))
-            ].sort(defaultDetailSorter);
-        })
-        .addCase(loadOrders.fulfilled, (state, action) => {
+        .addCase(loadOpenOrders.fulfilled, (state, action) => {
             const [so] = action.payload.filter(so => so.SalesOrderNo === state.salesOrderNo);
             state.header = so ?? null;
             state.orderType = calcOrderType(so);

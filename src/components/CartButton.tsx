@@ -1,9 +1,9 @@
 import classNames from "classnames";
 import React from "react";
 import {useSelector} from "react-redux";
-import {selectCartNo} from "@/ducks/cart/selectors";
-import {useAppDispatch} from "@/app/configureStore";
-import {setCurrentCart} from "@/ducks/cart/actions";
+import {selectCartNo} from "../ducks/cart/selectors";
+import {useAppDispatch} from "../app/configureStore";
+import {setCurrentCart} from "../ducks/cart/actions";
 
 export const CartButton = ({salesOrderNo}: {
     salesOrderNo: string;

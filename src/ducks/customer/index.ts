@@ -1,7 +1,7 @@
-import {SET_LOGGED_IN} from "@/constants/actions";
-import {companyCode, customerSlug, customerUserSorter, emptyCustomer} from "@/utils/customer";
+import {SET_LOGGED_IN} from "../../constants/actions";
+import {companyCode, customerSlug, customerUserSorter, emptyCustomer} from "../../utils/customer";
 import localStore from "../../utils/LocalStore";
-import {STORE_CUSTOMER} from "@/constants/stores";
+import {STORE_CUSTOMER} from "../../constants/stores";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     BillToCustomer,
@@ -23,10 +23,10 @@ import {
     setDefaultShipTo
 } from "./actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
-import {LoadStatus, Selectable} from "@/types/generic";
-import {CustomerPermissions} from "@/types/customer";
-import {dismissContextAlert} from "@/ducks/alerts";
-import {customerResponseToState} from "@/ducks/customer/utils";
+import {LoadStatus, Selectable} from "../../types/generic";
+import {CustomerPermissions} from "../../types/customer";
+import {dismissContextAlert} from "../alerts";
+import {customerResponseToState} from "./utils";
 
 export interface CustomerPermissionsState {
     values: CustomerPermissions | null;

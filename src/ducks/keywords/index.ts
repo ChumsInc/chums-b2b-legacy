@@ -1,7 +1,7 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {FETCH_INIT, FETCH_KEYWORDS, FETCH_SUCCESS} from "@/constants/actions";
+import {FETCH_INIT, FETCH_KEYWORDS, FETCH_SUCCESS} from "../../constants/actions";
 import {Keyword} from "b2b-types";
-import {PreloadedState} from "@/types/preload";
+import {PreloadedState} from "../../types/preload";
 
 export interface KeywordsState {
     list: Keyword[],

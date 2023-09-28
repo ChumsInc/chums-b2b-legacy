@@ -1,6 +1,6 @@
-import {API_PATH_HOME_SLIDES} from "@/constants/paths";
+import {API_PATH_HOME_SLIDES} from "../constants/paths";
 import {Slide} from "b2b-types";
-import {fetchJSON} from "@/api/fetch";
+import {fetchJSON} from "./fetch";
 
 export async function fetchSlides(): Promise<Slide[]> {
     try {

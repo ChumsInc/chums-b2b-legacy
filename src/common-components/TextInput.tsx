@@ -1,7 +1,7 @@
 import React, {ChangeEvent, InputHTMLAttributes} from 'react';
 import classNames from 'classnames';
 import {noop} from '../utils/general';
-import {FieldValue} from "@/types/generic";
+import {FieldValue} from "../types/generic";
 
 export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
     field: string;

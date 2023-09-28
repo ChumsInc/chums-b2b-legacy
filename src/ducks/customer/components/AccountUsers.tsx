@@ -5,11 +5,11 @@ import AccountUserTable from "./AccountUserTable";
 import {selectCustomerLoading, selectCustomerUsers} from "../selectors";
 import EditAccountUserForm from "./EditAccountUserForm";
 import {selectIsEmployee, selectIsRep} from "../../user/selectors";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {CustomerUser, Editable} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
-import ReloadCustomerButton from "@/ducks/customer/components/ReloadCustomerButton";
+import ReloadCustomerButton from "./ReloadCustomerButton";
 
 const newUser: CustomerUser = {id: 0, name: '', email: '', accountType: 4};
 

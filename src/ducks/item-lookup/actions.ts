@@ -1,7 +1,7 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {ItemSearchResult} from "@/ducks/item-lookup/index";
-import {fetchItemLookup} from "@/api/itemLookup";
-import {RootState} from "@/app/configureStore";
+import {ItemSearchResult} from "./index";
+import {fetchItemLookup} from "../../api/itemLookup";
+import {RootState} from "../../app/configureStore";
 
 export const setItemSearch = createAction<string>('itemLookup/search');
 

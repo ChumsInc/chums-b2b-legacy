@@ -1,15 +1,14 @@
 import React, {useEffect} from 'react';
 import {useSelector} from "react-redux";
-import {selectLoggedIn} from "@/ducks/user/selectors";
-import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
+import {selectLoggedIn} from "../../user/selectors";
+import NavItemButtonLink from "./NavItemButtonLink";
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import {selectCustomerAccount} from "@/ducks/customer/selectors";
-import {selectCartLoaded, selectCartLoading, selectCartNo} from "@/ducks/cart/selectors";
-import {customerCartURL} from "@/ducks/user/utils";
-import CustomerIndicator from "@/ducks/customer/components/CustomerIndicator";
-import CartIcon from "@/ducks/menu/components/CartIcon";
-import {useAppDispatch} from "@/app/configureStore";
-import {loadSalesOrder} from "@/ducks/salesOrder/actions";
+import {selectCustomerAccount} from "../../customer/selectors";
+import {selectCartLoaded, selectCartLoading, selectCartNo} from "../../cart/selectors";
+import {customerCartURL} from "../../user/utils";
+import CustomerIndicator from "../../customer/components/CustomerIndicator";
+import CartIcon from "./CartIcon";
+import {useAppDispatch} from "../../../app/configureStore";
 
 
 const CartMenu = () => {

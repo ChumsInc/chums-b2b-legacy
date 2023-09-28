@@ -2,19 +2,21 @@ import React, {useEffect} from 'react';
 import {redirect} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import LoginLocal from "./LoginLocal";
-import {DOCUMENT_TITLES, PATH_HOME} from "@/constants/paths";
+import {DOCUMENT_TITLES, PATH_HOME} from "../../../constants/paths";
 import Alert from '@mui/material/Alert';
-import GoogleSignInButton from "@/ducks/user/components/GoogleSignInButton";
-import DocumentTitle from "@/components/DocumentTitle";
-import {selectLoggedIn} from "@/ducks/user/selectors";
+import GoogleSignInButton from "./GoogleSignInButton";
+import DocumentTitle from "../../../components/DocumentTitle";
+import {selectLoggedIn} from "../selectors";
 import Typography from "@mui/material/Typography";
+import {useNavigate} from "react-router";
 
 const LoginPage = () => {
     const loggedIn = useSelector(selectLoggedIn);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (loggedIn) {
-            redirect(PATH_HOME);
+            navigate(PATH_HOME, {replace: true});
         }
     }, [loggedIn])
 

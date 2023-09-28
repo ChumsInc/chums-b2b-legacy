@@ -1,6 +1,6 @@
-import React, {ChangeEvent, SyntheticEvent, useEffect, useRef, useState} from 'react';
-import {useAppDispatch, useAppSelector} from "@/app/configureStore";
-import {getSearchResults, selectSearchLoading, selectSearchResults, selectSearchTerm} from "../index";
+import React, {SyntheticEvent, useEffect, useState} from 'react';
+import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
+import {getSearchResults, selectSearchLoading, selectSearchResults} from "../index";
 import {Autocomplete, TextField} from "@mui/material";
 import {
     CONTENT_PATH_SEARCH_IMAGE,
@@ -8,8 +8,8 @@ import {
     PATH_PAGE,
     PATH_PRODUCT,
     PATH_PRODUCT_WITHOUT_PARENT
-} from "@/constants/paths";
-import {generatePath, Link, redirect} from 'react-router-dom';
+} from "../../../constants/paths";
+import {generatePath, Link} from 'react-router-dom';
 import {SearchResult} from "b2b-types";
 import {useDebounce} from 'usehooks-ts'
 import {useNavigate} from "react-router";
@@ -60,7 +60,7 @@ export default function SearchBar() {
         }
     }
 
-    const inputChangeHandler = (ev:SyntheticEvent, value:string) => {
+    const inputChangeHandler = (ev: SyntheticEvent, value: string) => {
         setInputValue(value);
     }
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import FormGroupEmailAddress from "../common-components/FormGroupEmailAddress";
-import {FieldValue} from "@/types/generic";
+import {FieldValue} from "../types/generic";
 
 
 const splitEmailAddresses = (emailAddress:string|null, separator:string = ';'):string[] => {

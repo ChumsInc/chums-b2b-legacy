@@ -8,7 +8,6 @@ import {
     FETCH_SUCCESS,
     SAVE_CART,
     SAVE_CART_FAILURE,
-    SET_CART,
     UPDATE_CART,
     UPDATE_CART_ITEM
 } from "../../constants/actions";
@@ -20,40 +19,39 @@ import {CREDIT_CARD_PAYMENT_TYPES} from "../../constants/account";
 import localStore from "../../utils/LocalStore";
 import {STORE_CURRENT_CART} from "../../constants/stores";
 import {NEW_CART} from "../../constants/orders";
-import {selectCartsList} from "../carts/selectors";
+import {
+    selectCartsList,
+    selectSalesOrder,
+    selectSalesOrderActionStatus,
+    selectSalesOrderDetail
+} from "../open-orders/selectors";
 import {selectCustomerAccount, selectCustomerPermissions} from "../customer/selectors";
 import {selectCartLoading, selectCartNo, selectItemAvailabilityLoading, selectShippingAccount} from "./selectors";
-import {fetchSalesOrder, fetchSalesOrders, postApplyPromoCode} from "../../api/sales-order";
+import {fetchOpenSalesOrders, fetchSalesOrder, postApplyPromoCode} from "../../api/sales-order";
 import {fetchItemAvailability, postCartAction} from "../../api/cart";
-import {
-    selectSalesOrderDetail,
-    selectSalesOrderHeader,
-    selectSalesOrderNo,
-    selectSalesOrderProcessing, selectSOLoading
-} from "../salesOrder/selectors";
 import {selectCurrentCustomer, selectLoggedIn} from "../user/selectors";
 import {changedDetailLine, newCommentLine} from "../../utils/cart";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {isCustomer} from "../user/utils";
-import {B2BError, PromoCode, SalesOrder, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {PromoCode, SalesOrder, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {isBillToCustomer} from "../../utils/typeguards";
 import {
-    ApplyPromoCodeBody, CartAppendBody,
+    ApplyPromoCodeBody,
+    CartAppendBody,
     CartAppendCommentBody,
     CartDeleteItemBody,
     DeleteCartBody,
     DuplicateSalesOrderBody,
     NewCartBody,
     PromoteCartBody,
-    UpdateCartBody,
-    UpdateCartItemBody
-} from "@/types/cart";
-import {ItemAvailability} from "@/types/product";
-import {SaveNewCartProps} from "@/ducks/cart/types";
-import {selectCurrentPromoCode} from "@/ducks/promo-code/selectors";
-import {CustomerShippingAccount} from "@/types/customer";
-import {loadOrders} from "@/ducks/open-orders/actions";
+    UpdateCartBody
+} from "../../types/cart";
+import {ItemAvailability} from "../../types/product";
+import {SaveNewCartProps} from "./types";
+import {selectCurrentPromoCode} from "../promo-code/selectors";
+import {CustomerShippingAccount} from "../../types/customer";
+import B2BError from "../../types/generic";
 
 export const customerFromState = (state: RootState) => {
     if (!isCustomer(state.user.currentCustomer)) {
@@ -92,30 +90,28 @@ export const newCart = () => (dispatch: AppDispatch, getState: () => RootState) 
     // dispatch({type: SET_CART, cart});
 };
 
-export const setCurrentCart = (SalesOrderNo: string, skipLoad: boolean = false) =>
-    (dispatch: AppDispatch, getState: () => RootState) => {
-        const state = getState();
+export const setCurrentCart = createAsyncThunk<SalesOrderHeader | SalesOrder | null, string>(
+    'cart/setCurrentCart',
+    async (arg, {dispatch, getState}) => {
+        const state = getState() as RootState;
         const carts = selectCartsList(state);
-        const account = selectCustomerAccount(state);
-        if (!account) {
-            return;
+        const [cart] = carts.filter(so => so.SalesOrderNo === arg);
+        localStore.setItem<string>(STORE_CURRENT_CART, arg);
+        dispatch(loadSalesOrder(arg))
+        return cart;
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            const carts = selectCartsList(state);
+            const [cart] = carts.filter(so => so.SalesOrderNo === arg);
+            if (!cart) {
+                localStore.removeItem(STORE_CURRENT_CART);
+            }
+            return !!cart;
         }
-        const {ARDivisionNo, CustomerNo} = account;
-        // const [cart = {Company, SalesOrderNo, CustomerPONo}] = [...carts.list]
-        //     .filter(so => so.SalesOrderNo === SalesOrderNo);
-        const [cart] = carts.filter(so => so.SalesOrderNo === SalesOrderNo);
-        if (!cart) {
-            return;
-        }
-        localStore.setItem(STORE_CURRENT_CART, cart.SalesOrderNo);
-        dispatch({type: SET_CART, cart});
-        if (skipLoad || SalesOrderNo === NEW_CART) {
-            return;
-        }
-        if (!!SalesOrderNo) {
-            dispatch(loadSalesOrder(SalesOrderNo));
-        }
-    };
+    }
+)
 
 
 export const loadCurrentCart = () => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -172,17 +168,19 @@ export const saveNewCart = createAsyncThunk<SalesOrder | null, SaveNewCartProps>
 )
 
 export interface AddToCartProps {
+    salesOrderNo: string;
     itemCode: string;
-    quantity: string|number;
+    quantity: string | number;
 }
-export const addToCart = createAsyncThunk<SalesOrder|null, AddToCartProps>(
+
+export const addToCart = createAsyncThunk<SalesOrder | null, AddToCartProps>(
     'cart/addItem',
     async (arg, {getState}) => {
         const state = getState() as RootState;
         const customer = selectCurrentCustomer(state)!;
         const promo_code = selectCurrentPromoCode(state);
-        const header = selectSalesOrderHeader(state);
-        const body:CartAppendBody = {
+        const header = selectSalesOrder(state, arg.salesOrderNo);
+        const body: CartAppendBody = {
             action: 'append',
             SalesOrderNo: header!.SalesOrderNo,
             ItemCode: arg.itemCode,
@@ -196,7 +194,7 @@ export const addToCart = createAsyncThunk<SalesOrder|null, AddToCartProps>(
             return !!arg.itemCode
                 && +arg.quantity > 0
                 && selectLoggedIn(state)
-                && !!selectSalesOrderHeader(state);
+                && !!selectSalesOrder(state, arg.salesOrderNo);
         }
     }
 )
@@ -235,7 +233,7 @@ export const saveCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>(
             return Promise.reject(new Error(`Invalid permissions for ShipTo Code '${ShipToCode}'`));
         }
         const promo_code = selectCurrentPromoCode(state);
-        const detail = selectSalesOrderDetail(state);
+        const detail = selectSalesOrderDetail(state, arg.SalesOrderNo);
         const {
             ShipToName, ShipToAddress1, ShipToAddress2, ShipToAddress3, ShipToCity, ShipToState,
             ShipToZipCode, ShipToCountryCode, ConfirmTo
@@ -270,7 +268,7 @@ export const saveCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>(
             if (!selectLoggedIn(state)) {
                 return false;
             }
-            if (selectSalesOrderProcessing(state) !== 'idle') {
+            if (selectSalesOrderActionStatus(state, arg.SalesOrderNo) !== 'idle') {
                 return false;
             }
             const customer = selectCustomerAccount(state)!;
@@ -328,7 +326,7 @@ export const promoteCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
             return selectLoggedIn(state)
-                && selectSalesOrderProcessing(state) === 'idle'
+                && selectSalesOrderActionStatus(state, arg.SalesOrderNo) === 'idle'
                 && arg.OrderType === 'Q'
                 && !selectCartLoading(state);
         }
@@ -344,14 +342,13 @@ export const removeCart = createAsyncThunk<SalesOrderHeader[], SalesOrderHeader>
             SalesOrderNo: arg.SalesOrderNo,
         };
         await postCartAction(Company, ARDivisionNo, CustomerNo, null, data);
-        return await fetchSalesOrders({ARDivisionNo, CustomerNo});
+        return await fetchOpenSalesOrders({ARDivisionNo, CustomerNo});
     },
     {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
             return arg.OrderType === 'Q'
-                && !selectSOLoading(state)
-                && selectSalesOrderProcessing(state) === 'idle';
+                && selectSalesOrderActionStatus(state, arg.SalesOrderNo) === 'idle';
         }
     }
 )
@@ -386,80 +383,37 @@ export const _removeCart = (cart: SalesOrderHeader) =>
     };
 
 
-
-
-export const saveCartItem = ({
-                                 SalesOrderNo,
-                                 LineKey,
-                                 ItemCode,
-                                 QuantityOrdered,
-                                 CommentText = '',
-                                 ItemType = '1'
-                             }: {
-    SalesOrderNo: string;
-    LineKey?: string;
-    ItemCode: string;
-    QuantityOrdered: number;
-    CommentText?: string;
-    ItemType?: string;
-}) =>
-    async (dispatch: AppDispatch, getState: () => RootState) => {
-        try {
-            const state = getState();
-            const customer = selectCurrentCustomer(state);
-            const _salesOrderNo = selectSalesOrderNo(state);
-
-            if (!customer?.ARDivisionNo || !customer?.CustomerNo) {
-                return;
-            }
-
-            if (ItemType === '4' && ItemCode === '/C') {
-                return dispatch(addCommentLine({SalesOrderNo, LineKey, CommentText}));
-            }
-            if (!!LineKey && QuantityOrdered === 0) {
-                return dispatch(deleteCartItem({SalesOrderNo, LineKey}));
-            }
-
-            const {ARDivisionNo, CustomerNo, ShipToCode = ''} = customer;
-            /**
-             *
-             * @type {UpdateCartItemBody}
-             */
-            const data: UpdateCartItemBody = {
-                action: !LineKey ? 'append' : 'update-item',
-                SalesOrderNo,
-                LineKey,
-                ItemCode,
-                QuantityOrdered,
-                Comment: CommentText,
-            };
-            // dispatch({type: SAVE_CART, status: FETCH_INIT});
-            // const response = await postCartAction('chums', ARDivisionNo, CustomerNo, ShipToCode, data);
-            // if (!response?.success) {
-            //     dispatch(setAlert({message: 'Unable to update cart', context: SAVE_CART}));
-            //     dispatch({type: SAVE_CART, status: FETCH_FAILURE});
-            //     return;
-            // }
-            // dispatch({
-            //     type: SAVE_CART,
-            //     status: FETCH_SUCCESS,
-            //     message: `Added to cart: ${ItemCode} (qty: ${QuantityOrdered})`
-            // });
-            // if (SalesOrderNo === _salesOrderNo) {
-            //     dispatch(loadSalesOrder(SalesOrderNo));
-            // } else {
-            //     dispatch(loadCurrentCart());
-            // }
-        } catch (err) {
-            dispatch({type: SAVE_CART, status: FETCH_FAILURE});
-            if (err instanceof B2BError) {
-                dispatch(handleError(err, SAVE_CART));
-                dispatch(logError({message: err.message, debug: err.debug}));
-            }
-        }
-    };
-
 export const appendCommentLine = (commentText: string) => ({type: APPEND_ORDER_COMMENT, commentText});
+
+export interface AddCartCommentProps {
+    salesOrderNo: string;
+    comment:string;
+}
+
+export const addCartComment = createAsyncThunk<SalesOrder|null,AddCartCommentProps >(
+    'cart/addComment',
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const salesOrder = selectSalesOrder(state, arg.salesOrderNo);
+        const {Company, ARDivisionNo, CustomerNo, ShipToCode} = salesOrder!;
+        const data: CartAppendCommentBody = {
+            SalesOrderNo: arg.salesOrderNo,
+            action: 'line-comment',
+            LineKey: '',
+            Comment: arg.comment,
+        }
+        return await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, data);
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return selectLoggedIn(state)
+                && selectSalesOrderActionStatus(state, arg.salesOrderNo) === 'idle'
+                && !!selectSalesOrder(state, arg.salesOrderNo)
+                && !selectCartLoading(state);
+        }
+    }
+)
 
 export const addCommentLine = ({SalesOrderNo, LineKey = '', CommentText = ''}: {
     SalesOrderNo: string;
@@ -475,7 +429,7 @@ export const addCommentLine = ({SalesOrderNo, LineKey = '', CommentText = ''}: {
             }
             const {ARDivisionNo, CustomerNo, ShipToCode = ''} = customer;
             const data: CartAppendCommentBody = {
-                action: 'append-comment',
+                action: 'line-comment',
                 SalesOrderNo: SalesOrderNo,
                 LineKey,
                 Comment: CommentText,

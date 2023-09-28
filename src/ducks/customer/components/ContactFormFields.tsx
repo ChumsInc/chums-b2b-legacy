@@ -1,8 +1,8 @@
 import React from 'react';
-import EmailAddressEditor from "@/components/EmailAddressEditor";
-import FormGroup from "@/common-components/FormGroup";
+import EmailAddressEditor from "../../../components/EmailAddressEditor";
+import FormGroup from "../../../common-components/FormGroup";
 import {BillToCustomer, ShipToCustomer} from "b2b-types";
-import {FieldValue} from "@/types/generic";
+import {FieldValue} from "../../../types/generic";
 
 export interface ContactFormFieldsProps {
     account: BillToCustomer | ShipToCustomer;

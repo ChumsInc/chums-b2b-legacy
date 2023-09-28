@@ -33,6 +33,10 @@ const AppVersion = () => {
     }
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         if (!version) {
             onUpdateVersion();
         }
@@ -41,6 +45,10 @@ const AppVersion = () => {
             setIntervalId(intervalId);
         }
         return () => {
+            if (typeof window === 'undefined') {
+                return;
+            }
+
             window.clearInterval(intervalId);
             window.removeEventListener('visibilityChange', visibilityChangeHandler)
         }

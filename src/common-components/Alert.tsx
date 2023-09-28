@@ -1,9 +1,9 @@
 import React from 'react';
 import classNames from "classnames";
-import {ALERT_TYPES} from '@/constants/actions';
+import {ALERT_TYPES} from '../constants/actions';
 import Badge from "./Badge";
 import numeral from 'numeral';
-import {BootstrapBGColor} from "@/types/colors";
+import {BootstrapBGColor} from "../types/colors";
 
 
 const AlertDismisser = ({onDismiss}: {
@@ -45,6 +45,9 @@ const Alert = ({
         'alert-light': type === ALERT_TYPES.light,
         'alert-dark': type === ALERT_TYPES.dark,
     });
+    // if (message) {
+    //     message = message.replace('\\u008a', '');
+    // }
     return (
         <div className={_className}>
             {!!context && (<strong className="mr-1">[{context}]</strong>)}

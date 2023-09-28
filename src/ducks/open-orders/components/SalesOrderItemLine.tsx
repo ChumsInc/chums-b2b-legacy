@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
 import {Editable, SalesOrderDetailLine} from "b2b-types";
-import {Appendable} from "@/types/generic";
+import {Appendable} from "../../../types/generic";
 import classNames from "classnames";
-import OrderItemImage from "@/components/OrderItemImage";
+import OrderItemImage from "../../../components/OrderItemImage";
 import UPCA from "../../../common/upc-a";
-import AvailabilityAlert from "@/components/AvailabilityAlert";
+import AvailabilityAlert from "../../../components/AvailabilityAlert";
 import numeral from "numeral";
-import CartQuantityInput from "@/components/CartQuantityInput";
-import PriceLevelNotice from "@/components/PriceLevelNotice";
+import CartQuantityInput from "../../../components/CartQuantityInput";
+import PriceLevelNotice from "../../../components/PriceLevelNotice";
 import Decimal from "decimal.js";
-import SalesOrderLineButtons from "@/ducks/salesOrder/components/SalesOrderLineButtons";
-import SalesOrderCommentLine from "@/ducks/salesOrder/components/SalesOrderCommentLine";
+import SalesOrderLineButtons from "./SalesOrderLineButtons";
+import SalesOrderCommentLine from "./SalesOrderCommentLine";
 
 export default function SalesOrderItemLine({
                                                line,
@@ -58,10 +58,13 @@ export default function SalesOrderItemLine({
                     )}
                 </td>
                 <td>{line.UnitOfMeasure}</td>
-                <td>
-                    <CartQuantityInput quantity={+line.QuantityOrdered} min={0}
-                                       disabled={readOnly}
-                                       onChange={onChangeQuantity}/>
+                <td className="text-end">
+                    {readOnly && (<span>{line.QuantityOrdered}</span>)}
+                    {!readOnly && (
+                        <CartQuantityInput quantity={+line.QuantityOrdered} min={0}
+                                           disabled={readOnly}
+                                           onChange={onChangeQuantity}/>
+                    )}
                 </td>
                 <td className="text-end">
                     <div>{numeral(unitPrice).format('0,0.00')}</div>

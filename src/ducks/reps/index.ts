@@ -1,9 +1,9 @@
 import {Salesperson} from "b2b-types";
-import {PreloadedState} from "@/types/preload";
+import {PreloadedState} from "../../types/preload";
 import {createReducer} from "@reduxjs/toolkit";
-import {setLoggedIn} from "@/ducks/user/actions";
-import {userRepListSort} from "@/ducks/user/utils";
-import {loadRepList} from "@/ducks/reps/actions";
+import {setLoggedIn} from "../user/actions";
+import {userRepListSort} from "../user/utils";
+import {loadRepList} from "./actions";
 
 export interface RepsState {
     list: Salesperson[];

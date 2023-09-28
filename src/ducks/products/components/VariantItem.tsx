@@ -1,11 +1,11 @@
 import classNames from "classnames";
-import {getMSRP, getPrices, getSalesUM} from "@/utils/products";
+import {getMSRP, getPrices, getSalesUM} from "../../../utils/products";
 import numeral from "numeral";
 import React from "react";
 import {useSelector} from "react-redux";
 import {selectLoggedIn} from "../../user/selectors";
 import {ProductVariant} from "b2b-types";
-import {selectCustomerPricing} from "@/ducks/products/selectors";
+import {selectCustomerPricing} from "../selectors";
 
 const VariantItem = ({variant, selected = false, onClick}:{
     variant: ProductVariant;

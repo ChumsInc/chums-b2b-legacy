@@ -1,23 +1,23 @@
 import React, {useEffect, useState} from 'react';
-import {SortableTableField} from "@/common-components/DataTable";
+import {SortableTableField} from "../../../common-components/DataTable";
 import {ShipToCustomer} from "b2b-types";
-import {billToCustomerSlug, customerShipToSorter, customerSlug, stateCountry} from "@/utils/customer";
+import {billToCustomerSlug, customerShipToSorter, customerSlug, stateCountry} from "../../../utils/customer";
 import {useSelector} from "react-redux";
 import {
     selectCustomerLoading,
     selectPermittedShipToAddresses, selectPrimaryShipTo,
     selectPrimaryShipToCode
-} from "@/ducks/customer/selectors";
-import {SortProps} from "@/types/generic";
-import SortableTable from "@/common-components/SortableTable";
+} from "../selectors";
+import {SortProps} from "../../../types/generic";
+import SortableTable from "../../../common-components/SortableTable";
 import TablePagination from "@mui/material/TablePagination";
 import LinearProgress from "@mui/material/LinearProgress";
 import {generatePath, NavLink, redirect} from "react-router-dom";
-import {PATH_CUSTOMER_DELIVERY} from "@/constants/paths";
+import {PATH_CUSTOMER_DELIVERY} from "../../../constants/paths";
 import classNames from "classnames";
-import {useAppDispatch} from "@/app/configureStore";
-import {loadCustomer} from "@/ducks/customer/actions";
-import {selectCurrentCustomer} from "@/ducks/user/selectors";
+import {useAppDispatch} from "../../../app/configureStore";
+import {loadCustomer} from "../actions";
+import {selectCurrentCustomer} from "../../user/selectors";
 
 const ShipToLink = ({shipTo, children}: {shipTo:ShipToCustomer, children: React.ReactNode }) => {
     const path = generatePath(PATH_CUSTOMER_DELIVERY, {

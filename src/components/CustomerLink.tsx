@@ -1,8 +1,8 @@
 import React from 'react';
 import {generatePath, Link} from 'react-router-dom';
 import classNames from "classnames";
-import {PATH_CUSTOMER_ACCOUNT} from "@/constants/paths";
-import {customerSlug, longCustomerNo} from "@/utils/customer";
+import {PATH_CUSTOMER_ACCOUNT} from "../constants/paths";
+import {customerSlug, longCustomerNo} from "../utils/customer";
 import {BasicCustomer} from "b2b-types";
 
 const CustomerLink = ({customer, selected = false}: {

@@ -1,20 +1,20 @@
-import {NavItemProps} from "@/types/ui-features";
-import {useAppDispatch} from "@/app/configureStore";
-import ListItemLink from "@/components/ListItemLink";
+import {NavItemProps} from "../../../types/ui-features";
+import {useAppDispatch} from "../../../app/configureStore";
+import ListItemLink from "../../../components/ListItemLink";
 import React, {useId} from "react";
 import {useSelector} from "react-redux";
-import {selectCurrentAccess, selectLoggedIn} from "@/ducks/user/selectors";
-import {salespersonPath} from "@/ducks/user/utils";
-import NavItemButton from "@/ducks/menu/components/NavItemButton";
-import MenuItemRouterLink from "@/ducks/menu/components/MenuItemRouterLink";
+import {selectCurrentAccess, selectLoggedIn} from "../../user/selectors";
+import {salespersonPath} from "../../user/utils";
+import NavItemButton from "./NavItemButton";
+import MenuItemRouterLink from "./MenuItemRouterLink";
 import Menu from "@mui/material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import RepAccessListMenu from "@/ducks/menu/components/RepAccessListMenu";
-import RecentCustomersMenu from "@/ducks/menu/components/RecentCustomersMenu";
+import RepAccessListMenu from "./RepAccessListMenu";
+import RecentCustomersMenu from "./RecentCustomersMenu";
 import {MenuItem} from "b2b-types";
 import {SlotComponentProps} from "@mui/base";
 import Paper from "@mui/material/Paper";
-import UserAvatar from "@/ducks/user/components/UserAvatar";
+import UserAvatar from "../../user/components/UserAvatar";
 
 const items: MenuItem[] = [
     {

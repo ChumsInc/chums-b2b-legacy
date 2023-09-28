@@ -1,15 +1,14 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {RootState} from "@/app/configureStore";
-import {selectProductLoading} from "@/ducks/products/selectors";
-import {CartProduct, Product, ProductVariant} from "b2b-types";
-import {fetchProduct} from "@/api/product";
-import {selectCustomerPricing} from "@/ducks/customer/selectors";
-import {defaultCartItem, defaultVariant, getMSRP, getPrices, getSalesUM, hasVariants} from "@/utils/products";
-import {SellAsVariantsProduct} from "b2b-types/src/products";
-import {selectLoggedIn} from "@/ducks/user/selectors";
+import {RootState} from "../../app/configureStore";
+import {selectProductLoading} from "./selectors";
+import {CartProduct, Product, ProductVariant, SellAsVariantsProduct} from "b2b-types";
+import {fetchProduct} from "../../api/product";
+import {selectCustomerPricing} from "../customer/selectors";
+import {defaultCartItem, defaultVariant, getMSRP, getPrices, getSalesUM, hasVariants} from "../../utils/products";
+import {selectLoggedIn} from "../user/selectors";
 
 export interface LoadProductResponse {
-    product: Product|null;
+    product: Product | null;
     variant: ProductVariant | null;
     msrp: string[],
     customerPrice: string[],

@@ -1,6 +1,6 @@
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes} from 'react';
-import FormGroup from "@/common-components/FormGroup";
-import {FieldValue} from "@/types/generic";
+import FormGroup from "../common-components/FormGroup";
+import {FieldValue} from "../types/generic";
 
 const FormGroupEmailAddress = ({
                                    field,

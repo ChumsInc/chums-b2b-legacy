@@ -1,9 +1,9 @@
 import {useSelector} from "react-redux";
-import {selectCustomerAccount, selectCustomerShipTo, selectCustomerShipToCode} from "@/ducks/customer/selectors";
+import {selectCustomerAccount, selectCustomerShipTo, selectCustomerShipToCode} from "../selectors";
 import React from "react";
 import {Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
-import {customerNo} from "@/utils/customer";
+import {customerNo} from "../../../utils/customer";
 import Typography from "@mui/material/Typography";
 
 export default function CustomerIndicator() {

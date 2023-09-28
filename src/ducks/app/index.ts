@@ -1,11 +1,11 @@
-import {FETCH_CATEGORY, FETCH_KEYWORDS, FETCH_PRODUCT, FETCH_SUCCESS,} from "@/constants/actions";
-import {CUSTOMER_TABS, SUB_NAV_TYPES} from "@/constants/app";
+import {FETCH_CATEGORY, FETCH_KEYWORDS, FETCH_PRODUCT, FETCH_SUCCESS,} from "../../constants/actions";
+import {CUSTOMER_TABS, SUB_NAV_TYPES} from "../../constants/app";
 import localStore from "../../utils/LocalStore";
-import {STORE_USER_PREFS} from "@/constants/stores";
+import {STORE_USER_PREFS} from "../../constants/stores";
 import {createReducer} from "@reduxjs/toolkit";
 import {setCustomerTab, setLifestyle, setRowsPerPage, setSubNavBar, toggleXSNavBar} from "./actions";
 import {setCustomerAccount} from "../customer/actions";
-import {PreloadedState} from "@/types/preload";
+import {PreloadedState} from "../../types/preload";
 import {AppState} from "./types";
 
 export const initialAppState = (preload?: PreloadedState): AppState => ({

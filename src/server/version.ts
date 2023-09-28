@@ -22,8 +22,8 @@ export async function loadVersion():Promise<{versionNo: string}> {
 
 export const getVersion = async (req:Request, res:Response) => {
     try {
-        const {versionNo} = await loadVersion();
-        res.json({versionNo});
+        const version = await loadVersion();
+        res.json({version});
     } catch(err:unknown) {
         if (err instanceof Error) {
             debug("getVersion()", err.message);

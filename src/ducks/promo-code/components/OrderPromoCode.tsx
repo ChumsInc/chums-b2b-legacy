@@ -1,11 +1,11 @@
 import React, {Fragment, useEffect, useId, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {useAppDispatch} from "@/app/configureStore";
-import {selectCurrentPromoCode, selectPromoCodesLoading} from "@/ducks/promo-code/selectors";
-import {loadPromoCode} from "@/ducks/promo-code/actions";
-import {selectSalesOrderProcessing} from "@/ducks/salesOrder/selectors";
-import {selectCartPromoCode} from "@/ducks/cart/selectors";
-import {applyPromoCode} from "@/ducks/cart/actions";
+import {useAppDispatch} from "../../../app/configureStore";
+import {selectCurrentPromoCode, selectPromoCodesLoading} from "../selectors";
+import {loadPromoCode} from "../actions";
+import {selectSalesOrderProcessing} from "../../salesOrder/selectors";
+import {selectCartPromoCode} from "../../cart/selectors";
+import {applyPromoCode} from "../../cart/actions";
 
 const OrderPromoCode = ({disabled}: {
     disabled?: boolean;

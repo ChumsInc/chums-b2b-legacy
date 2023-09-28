@@ -10,7 +10,8 @@ import {
     PRICE_FIELDS,
     SELECT_COLOR,
     SELECT_VARIANT,
-    SELL_AS_COLOR, SELL_AS_MIX,
+    SELL_AS_COLOR,
+    SELL_AS_MIX,
     SET_CART_ITEM_QUANTITY
 } from "../constants/actions";
 import {handleError} from "../ducks/app/actions";

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
-import {GOOGLE_CLIENT_ID} from "@/constants/app";
+import {GOOGLE_CLIENT_ID} from "../../../constants/app";
 import {signInWithGoogle} from "../actions";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 
 const GoogleSignInButton = () => {
     const dispatch = useAppDispatch();
@@ -13,6 +13,9 @@ const GoogleSignInButton = () => {
     }
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
         if (window.google && googleButtonRef.current) {
             window.google.accounts.id.initialize({
                 client_id: GOOGLE_CLIENT_ID,

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import AddToCartModal from "../../../components/AddToCartModal";
-import OrderDetailLine from "../../salesOrder/components/OrderDetailLine";
+import OrderDetailLine from "../../open-orders/components/OrderDetailLine";
 import OrderFooter from "../../../components/OrderFooter";
 import {useSelector} from "react-redux";
 import {noop} from "../../../utils/general";

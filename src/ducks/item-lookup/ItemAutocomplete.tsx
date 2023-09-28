@@ -1,22 +1,26 @@
 import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from 'react';
-import {useAppDispatch, useAppSelector} from "@/app/configureStore";
+import {useAppDispatch, useAppSelector} from "../../app/configureStore";
 import {ItemSearchResult, loadItemLookup, selectSearchLoading, selectSearchResults} from "./index";
 import {Autocomplete, InputAdornment, TextField} from "@mui/material";
-import {CONTENT_PATH_SEARCH_IMAGE} from "@/constants/paths";
+import {CONTENT_PATH_SEARCH_IMAGE} from "../../constants/paths";
 import {useDebounce} from 'usehooks-ts'
 import {useNavigate} from "react-router";
 import Stack from "@mui/material/Stack";
 import IconButton from "@mui/material/IconButton";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import {saveCartItem} from "@/ducks/cart/actions";
+import {addToCart} from "../cart/actions";
+import AddToCartButton from "../cart/components/AddToCartButton";
+import {selectSalesOrderActionStatus} from "../open-orders/selectors";
+import CircularProgress from "@mui/material/CircularProgress";
 
 
-export default function ItemAutocomplete({cartNo}:{
-    cartNo: string;
+export default function ItemAutocomplete({salesOrderNo}: {
+    salesOrderNo: string;
 }) {
     const dispatch = useAppDispatch();
     const results = useAppSelector(selectSearchResults);
     const loading = useAppSelector(selectSearchLoading);
+    const actionStatus = useAppSelector((state) => selectSalesOrderActionStatus(state, salesOrderNo));
     const navigate = useNavigate();
 
     const [quantity, setQuantity] = useState(1);
@@ -54,14 +58,14 @@ export default function ItemAutocomplete({cartNo}:{
         setQuantity(Math.max(qty, 1));
     }
 
-    const addToCartHandler = () => {
+    const addToCartHandler = async () => {
         if (!value) {
             return;
         }
-        dispatch(saveCartItem({
-            SalesOrderNo: cartNo,
-            ItemCode: value.ItemCode,
-            QuantityOrdered: quantity,
+        await dispatch(addToCart({
+            salesOrderNo: salesOrderNo,
+            itemCode: value.ItemCode,
+            quantity: quantity,
         }));
     }
 
@@ -71,7 +75,17 @@ export default function ItemAutocomplete({cartNo}:{
                 size="small"
                 sx={{width: 300, display: 'inline-block'}}
                 renderInput={(params) => (
-                    <TextField {...params} variant="filled" size="small" label="Search Items" fullWidth/>
+                    <TextField {...params} variant="filled" size="small" label="Search Items" fullWidth
+                               InputProps={{
+                                   ...params.InputProps,
+                                   endAdornment: (
+                                       <>
+                                           {loading && (<CircularProgress color="inherit" size={20} />)}
+                                           {params.InputProps.endAdornment}
+                                       </>
+                                   )
+                               }}
+                    />
                 )}
                 inputValue={inputValue}
                 onInputChange={inputChangeHandler}
@@ -112,9 +126,10 @@ export default function ItemAutocomplete({cartNo}:{
                            )
                        }}
             />
-            <IconButton type="button" size="small" disabled={!value} color="primary" onClick={addToCartHandler}>
-                <AddShoppingCartIcon/>
-            </IconButton>
+            <AddToCartButton disabled={!quantity || !value || actionStatus !== 'idle'}
+                             type="button" size="small" color="primary" fullWidth={false}
+                             onClick={addToCartHandler} />
+            <div/>
         </Stack>
     )
 }

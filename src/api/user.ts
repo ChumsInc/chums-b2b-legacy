@@ -5,16 +5,16 @@ import {
     API_PATH_PASSWORD_RESET,
     API_PATH_PROFILE,
     API_PATH_REP_LIST
-} from "@/constants/paths";
-import {FunkyUserProfileResponse, UserProfileResponse} from "@/ducks/user/types";
-import {fetchJSON} from "@/api/fetch";
-import {LocalAuth, StoredProfile} from "@/types/user";
-import {auth} from '@/api/IntranetAuthService';
-import {getSignInProfile, isTokenExpired} from "@/utils/jwtHelper";
-import localStore from "@/utils/LocalStore";
-import {STORE_AUTHTYPE} from "@/constants/stores";
-import {AUTH_GOOGLE} from "@/constants/app";
-import {isUserRole} from "@/utils/typeguards";
+} from "../constants/paths";
+import {FunkyUserProfileResponse, UserProfileResponse} from "../ducks/user/types";
+import {fetchJSON} from "./fetch";
+import {LocalAuth, StoredProfile} from "../types/user";
+import {auth} from './IntranetAuthService';
+import {getSignInProfile, isTokenExpired} from "../utils/jwtHelper";
+import localStore from "../utils/LocalStore";
+import {STORE_AUTHTYPE} from "../constants/stores";
+import {AUTH_GOOGLE} from "../constants/app";
+import {isUserRole} from "../utils/typeguards";
 
 
 export async function postLocalLogin(arg: LocalAuth): Promise<string> {

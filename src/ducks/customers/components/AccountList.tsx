@@ -1,24 +1,24 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {loadCustomerList} from '../actions';
-import SortableTable from "@/common-components/SortableTable";
-import {compareCustomerAccountNumber, longAccountNumber, stateCountry} from "@/utils/customer";
-import RepSelect from "@/ducks/reps/components/RepSelect";
-import CustomerLink from "@/components/CustomerLink";
-import ErrorBoundary from "@/common-components/ErrorBoundary";
-import {selectCurrentCustomer, selectUserAccount,} from "@/ducks/user/selectors";
-import {useAppDispatch} from "@/app/configureStore";
-import localStore from "@/utils/LocalStore";
-import {STORE_ACCOUNT_LIST_RPP} from "@/constants/stores";
-import {SortableTableField} from "@/common-components/DataTable";
+import SortableTable from "../../../common-components/SortableTable";
+import {compareCustomerAccountNumber, longAccountNumber, stateCountry} from "../../../utils/customer";
+import RepSelect from "../../../ducks/reps/components/RepSelect";
+import CustomerLink from "../../../components/CustomerLink";
+import ErrorBoundary from "../../../common-components/ErrorBoundary";
+import {selectCurrentCustomer, selectUserAccount,} from "../../user/selectors";
+import {useAppDispatch} from "../../../app/configureStore";
+import localStore from "../../../utils/LocalStore";
+import {STORE_ACCOUNT_LIST_RPP} from "../../../constants/stores";
+import {SortableTableField} from "../../../common-components/DataTable";
 import {Customer} from "b2b-types";
-import {SortProps} from "@/types/generic";
+import {SortProps} from "../../../types/generic";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
 import TablePagination from "@mui/material/TablePagination";
-import {DOCUMENT_TITLES, PATH_PROFILE} from "@/constants/paths";
-import DocumentTitle from "@/components/DocumentTitle";
-import Breadcrumb from "@/components/Breadcrumb";
+import {DOCUMENT_TITLES, PATH_PROFILE} from "../../../constants/paths";
+import DocumentTitle from "../../../components/DocumentTitle";
+import Breadcrumb from "../../../components/Breadcrumb";
 import {useLocation, useMatch} from "react-router";
 import {
     selectCustomersFilter,
@@ -27,9 +27,9 @@ import {
     selectCustomerSort,
     selectCustomersRepFilter,
     selectFilteredCustomerList
-} from "@/ducks/customers/selectors";
-import {setCustomersFilter, setCustomersRepFilter, setCustomersSort} from "@/ducks/customers/actions";
-import TelephoneLink from "@/components/TelephoneLink";
+} from "../selectors";
+import {setCustomersFilter, setCustomersRepFilter, setCustomersSort} from "../actions";
+import TelephoneLink from "../../../components/TelephoneLink";
 
 const ACCOUNT_LIST_FIELDS: SortableTableField<Customer>[] = [
     {field: 'CustomerNo', title: 'Account', render: (row) => <CustomerLink customer={row}/>, sortable: true},

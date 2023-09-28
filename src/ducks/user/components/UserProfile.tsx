@@ -1,11 +1,11 @@
 import React, {ChangeEvent, FormEvent, Fragment, useEffect, useId, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {changeUserPassword, logout} from "../actions";
-import {AUTH_LOCAL} from "@/constants/app";
-import {useAppDispatch} from "@/app/configureStore";
-import {selectAuthType, selectProfilePicture, selectUserProfile} from "@/ducks/user/selectors";
+import {AUTH_LOCAL} from "../../../constants/app";
+import {useAppDispatch} from "../../../app/configureStore";
+import {selectAuthType, selectProfilePicture, selectUserProfile} from "../selectors";
 import {Editable} from "b2b-types";
-import {ExtendedUserProfile} from "@/types/user";
+import {ExtendedUserProfile} from "../../../types/user";
 
 const defaultProfilePic = '/images/chums/Chums_Logo_Booby.png';
 

@@ -1,12 +1,10 @@
 import React from 'react';
 import classNames from "classnames";
-import {CONTENT_PATH_SWATCH} from "@/constants/paths";
-import {} from '@/utils/products';
-import {parseColor} from "@/utils/products";
+import {parseColor} from '../../../utils/products';
 import {ProductColor} from "b2b-types";
 
-const Swatch = ({color, itemQuantity, swatchFormat = '?', active = false, onClick}:{
-    color: ProductColor|null;
+const Swatch = ({color, itemQuantity, swatchFormat = '?', active = false, onClick}: {
+    color: ProductColor | null;
     itemQuantity?: number;
     swatchFormat: string;
     active: boolean;
@@ -17,7 +15,7 @@ const Swatch = ({color, itemQuantity, swatchFormat = '?', active = false, onClic
         <div className={classNames('swatch', {active})} onClick={() => onClick(color?.code ?? null)}>
             <div className="color-code">{color?.code}</div>
             {!!itemQuantity && <div className="color-qty">x{itemQuantity}</div>}
-            <div className={swatchClassname} />
+            <div className={swatchClassname}/>
         </div>
     )
 };

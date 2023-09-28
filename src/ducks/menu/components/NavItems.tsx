@@ -1,12 +1,10 @@
-import React from 'react';
-import {NavItem} from "@/types/ui-features";
-import NavLoginLink from "@/ducks/menu/components/NavLoginLink";
-import NavProductsLink from "@/ducks/menu/components/NavProductsLink";
-import NavSignupLink from "@/ducks/menu/components/NavSignupLink";
-import NavAccountsLink from "@/ducks/menu/components/NavAccountsLink";
-import NavOrdersLink from "@/ducks/menu/components/NavOrdersLink";
-import NavResourcesLink from "@/ducks/menu/components/NavResourcesLink";
-import SearchBar from "@/ducks/search/components/SearchBar";
+import {NavItem} from "../../../types/ui-features";
+import NavLoginLink from "./NavLoginLink";
+import NavProductsLink from "./NavProductsLink";
+import NavSignupLink from "./NavSignupLink";
+import NavAccountsLink from "./NavAccountsLink";
+import NavOrdersLink from "./NavOrdersLink";
+import NavResourcesLink from "./NavResourcesLink";
 
 export const navItems: NavItem[] = [
     {id: 'products', render: NavProductsLink},

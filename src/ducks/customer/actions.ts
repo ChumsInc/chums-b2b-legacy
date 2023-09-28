@@ -1,6 +1,6 @@
-import {buildRecentCustomers, customerSlug} from "@/utils/customer";
+import {buildRecentCustomers, customerSlug} from "../../utils/customer";
 import localStore from "../../utils/LocalStore";
-import {STORE_RECENT_ACCOUNTS} from "@/constants/stores";
+import {STORE_RECENT_ACCOUNTS} from "../../constants/stores";
 import {selectLoggedIn} from "../user/selectors";
 import {
     selectCustomerAccount,
@@ -16,14 +16,14 @@ import {
     postCustomerUser,
     postDefaultShipToCode,
     postShipToAddress
-} from "@/api/customer";
+} from "../../api/customer";
 import {BasicCustomer, BillToCustomer, CustomerKey, CustomerUser, RecentCustomer, ShipToCustomer} from "b2b-types";
-import {AppDispatch, RootState} from "@/app/configureStore";
+import {AppDispatch, RootState} from "../../app/configureStore";
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {FetchCustomerResponse} from "@/ducks/customer/types";
-import {loadOrders} from "@/ducks/open-orders/actions";
-import {CustomerPermissions} from "@/types/customer";
-import {selectRecentCustomers} from "@/ducks/customers/selectors";
+import {FetchCustomerResponse} from "./types";
+import {loadOpenOrders} from "../open-orders/actions";
+import {CustomerPermissions} from "../../types/customer";
+import {selectRecentCustomers} from "../customers/selectors";
 
 export const saveUser = createAsyncThunk<CustomerUser[], CustomerUser>(
     'customer/saveUser',
@@ -78,7 +78,7 @@ export const loadCustomer = createAsyncThunk<FetchCustomerResponse | null, Custo
     async (arg, {dispatch, getState}) => {
         try {
             const response = await fetchCustomerAccount(arg!);
-            dispatch(loadOrders(response.customer));
+            dispatch(loadOpenOrders(response.customer));
             const state = getState() as RootState;
             response.recent = buildRecentCustomers(selectRecentCustomers(state), response.customer);
             localStore.setItem(STORE_RECENT_ACCOUNTS, response.recent);

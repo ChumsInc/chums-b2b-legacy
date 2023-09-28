@@ -7,7 +7,6 @@ import productsReducer from "../ducks/products";
 import categoryReducer from "../ducks/category";
 import customerReducer from "../ducks/customer";
 import cartReducer from "../ducks/cart";
-import cartsReducer from "../ducks/carts";
 import openOrdersReducer from "../ducks/open-orders";
 import promoCodeReducer from "../ducks/promo-code";
 import invoicesReducer from "../ducks/invoices";
@@ -21,16 +20,15 @@ import menuReducer from "../ducks/menu";
 import slidesReducer from "../ducks/slides";
 import keywordsReducer from "../ducks/keywords";
 import pageReducer from "../ducks/page";
-import customersReducer from "@/ducks/customers";
-import repsReducer from "@/ducks/reps";
-import itemLookupReducer from "@/ducks/item-lookup";
+import customersReducer from "../ducks/customers";
+import repsReducer from "../ducks/reps";
+import itemLookupReducer from "../ducks/item-lookup";
 
 
 export const rootReducer = combineReducers({
     alerts: alertsReducer,
     app: appReducer,
     cart: cartReducer,
-    carts: cartsReducer,
     category: categoryReducer,
     customer: customerReducer,
     customers: customersReducer,
@@ -53,7 +51,7 @@ export const rootReducer = combineReducers({
 
 const store = configureStore({
     reducer: rootReducer,
-    preloadedState: prepState(window?.__PRELOADED_STATE__ ?? {}),
+    preloadedState: prepState(typeof window === 'undefined' ? {} : window?.__PRELOADED_STATE__ ?? {}),
 });
 
 export type RootState = ReturnType<typeof store.getState>

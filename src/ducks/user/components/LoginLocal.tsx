@@ -1,14 +1,14 @@
 import React, {FormEvent, useState} from 'react';
-import FormGroupTextInput from '@/common-components/FormGroupTextInput';
+import FormGroupTextInput from '../../../common-components/FormGroupTextInput';
 import Alert from "@mui/material/Alert";
 import {useSelector} from 'react-redux';
-import {loginUser, resetPassword} from "@/ducks/user/actions";
-import PasswordInput from "@/common-components/PasswordInput";
-import FormGroup from "@/common-components/FormGroup";
-import {useAppDispatch} from "@/app/configureStore";
-import {selectUserLoading} from "@/ducks/user/selectors";
+import {loginUser, resetPassword} from "../actions";
+import PasswordInput from "../../../common-components/PasswordInput";
+import FormGroup from "../../../common-components/FormGroup";
+import {useAppDispatch} from "../../../app/configureStore";
+import {selectUserLoading} from "../selectors";
 import LinearProgress from "@mui/material/LinearProgress";
-import {FieldValue} from "@/types/generic";
+import {FieldValue} from "../../../types/generic";
 
 
 const LoginLocal = () => {

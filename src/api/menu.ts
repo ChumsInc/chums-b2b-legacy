@@ -1,5 +1,5 @@
 import {Menu} from "b2b-types";
-import {fetchJSON} from "@/api/fetch";
+import {fetchJSON} from "./fetch";
 
 // generally loaded in Preloaded State, here in case we need to refresh.
 export async function fetchProductMenu():Promise<Menu|null> {

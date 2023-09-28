@@ -1,12 +1,8 @@
-import React, {Component, useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
-import {connect, useSelector} from 'react-redux';
-import {confirmEmailSent} from "../../../actions/salesOrder";
-import ModalAlert from "@/components/ModalAlert";
-import ProgressBar from "@/components/ProgressBar";
-import {useAppDispatch} from "@/app/configureStore";
-import {selectSendEmailError, selectSendEmailResponse, selectSendEmailStatus} from "@/ducks/salesOrder/selectors";
-import {closeEmailResponse} from "@/ducks/salesOrder/actions";
+import React, {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {useAppDispatch} from "../../../app/configureStore";
+import {selectSendEmailError, selectSendEmailResponse, selectSendEmailStatus} from "../selectors";
+import {closeEmailResponse} from "../actions";
 import Dialog from "@mui/material/Dialog";
 import {Button, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -29,10 +25,10 @@ export default function SendEmailModal() {
 
     return (
         <Dialog onClose={onClose} open={open} maxWidth="sm">
-            <DialogTitle>Send Order Email</DialogTitle>
+            <DialogTitle>Sending proposed order email</DialogTitle>
             <DialogContent>
-                {status === 'pending' && <LinearProgress variant="indeterminate" />}
-                {status === 'fulfilled' && <LinearProgress variant="determinate" value={100} /> }
+                {status === 'pending' && <LinearProgress variant="indeterminate"/>}
+                {status === 'fulfilled' && <LinearProgress variant="determinate" value={100}/>}
                 {!!error && <Alert severity="error">{error}</Alert>}
                 {response && (
                     <table className="table table-sm">

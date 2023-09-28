@@ -1,6 +1,6 @@
 import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes} from 'react';
 import FormGroup from "./FormGroup";
-import {FieldValue} from "@/types/generic";
+import {FieldValue} from "../types/generic";
 import classNames from "classnames";
 
 

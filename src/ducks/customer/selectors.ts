@@ -1,6 +1,6 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {isBillToCustomer} from "@/utils/typeguards";
-import {RootState} from "@/app/configureStore";
+import {isBillToCustomer} from "../../utils/typeguards";
+import {RootState} from "../../app/configureStore";
 import {ShipToCustomer} from "b2b-types";
 
 export const selectCustomerKey = (state:RootState) => state.customer.key;

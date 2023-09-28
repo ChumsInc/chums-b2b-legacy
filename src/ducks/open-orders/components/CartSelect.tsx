@@ -1,19 +1,21 @@
 import React, {ChangeEvent, useEffect, useId, useState} from 'react';
-import {NEW_CART} from "../constants/orders";
+import {NEW_CART} from "../../../constants/orders";
 import {SalesOrderHeader} from "b2b-types";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {useSelector} from "react-redux";
-import {selectCartsList} from "@/ducks/carts/selectors";
+import {selectCartsList} from "../selectors";
 
 const checkHasCart = (list:SalesOrderHeader[], cartNo:string) => {
     return cartNo === NEW_CART || list.filter(so => so.SalesOrderNo === cartNo).length > 0;
 }
-const CartSelect = ({cartNo = '', onChange}: {
+
+const CartSelect = ({cartNo = '', onChange, excludeCartNo}: {
     cartNo: string;
     onChange: (value:string) => void;
+    excludeCartNo?: string;
 }) => {
     const id = useId();
     const cartList = useSelector(selectCartsList);
@@ -36,9 +38,11 @@ const CartSelect = ({cartNo = '', onChange}: {
             <Select labelId={id} value={cartNo}
                     onChange={changeHandler} label="Cart">
                 <MenuItem value={NEW_CART}>New Cart</MenuItem>
-                {!hasCart && <MenuItem value={cartNo}>{cartNo}</MenuItem>}
                 {cartList.map(so => (
-                    <MenuItem key={so.SalesOrderNo} value={so.SalesOrderNo}>{so.CustomerPONo}</MenuItem>
+                    <MenuItem key={so.SalesOrderNo} value={so.SalesOrderNo}
+                              disabled={so.SalesOrderNo === excludeCartNo}>
+                        {so.CustomerPONo}
+                    </MenuItem>
                 ))}
             </Select>
             {/*<select className="form-select form-select-sm" value={cartNo} onChange={onChange}>*/}

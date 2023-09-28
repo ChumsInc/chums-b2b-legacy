@@ -1,10 +1,10 @@
 import React, {useRef} from 'react';
 import ProductSubNav from "./ProductSubNav";
-import {SUB_NAV_TYPES} from "@/constants/app";
+import {SUB_NAV_TYPES} from "../../../constants/app";
 import AccountSubNav from "./AccountSubNav";
 import OrdersSubNav from "./OrdersSubNav";
 import ResourcesSubNav from "./ResourcesSubNav";
-import {useClickOutside} from "@/hooks/clickOutside";
+import {useClickOutside} from "../../../hooks/clickOutside";
 
 export interface SubNavProps {
     subNav: string,

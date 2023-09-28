@@ -1,6 +1,6 @@
 import {SearchResult} from "b2b-types";
-import {API_PATH_SEARCH} from "@/constants/paths";
-import {fetchJSON} from "@/api/fetch";
+import {API_PATH_SEARCH} from "../constants/paths";
+import {fetchJSON} from "./fetch";
 
 export async function fetchSearchResults(arg:string):Promise<SearchResult[]> {
     try {

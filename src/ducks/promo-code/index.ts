@@ -1,25 +1,17 @@
-import {
-    FETCH_INIT,
-    FETCH_PROMO_CODE,
-    FETCH_SALES_ORDER,
-    FETCH_SUCCESS,
-    FETCH_VALID_PROMO_CODES,
-    SET_PROMO_CODE
-} from "@/constants/actions";
 import {createReducer} from "@reduxjs/toolkit";
-import {PreloadedState} from "@/types/preload";
+import {PreloadedState} from "../../types/preload";
 import {PromoCode} from "b2b-types";
-import {loadPromoCode, loadPromoCodes} from "@/ducks/promo-code/actions";
-import {promoCodeSorter} from "@/ducks/promo-code/utils";
+import {loadPromoCode, loadPromoCodes} from "./actions";
+import {promoCodeSorter} from "./utils";
 
 
 export interface PromoCodeState {
-    current: PromoCode|null;
+    current: PromoCode | null;
     list: PromoCode[];
     loading: boolean;
 }
 
-export const initialPromoCodeState = (preload: PreloadedState = {}):PromoCodeState => ({
+export const initialPromoCodeState = (preload: PreloadedState = {}): PromoCodeState => ({
     current: preload?.promoCodes?.current ?? null,
     list: preload?.promoCodes?.list ?? [],
     loading: false,

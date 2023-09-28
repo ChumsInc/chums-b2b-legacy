@@ -1,7 +1,7 @@
 import React from 'react';
-import SubNavColumn from "@/components/SubNavColumn";
-import {PATH_SALES_ORDERS} from "@/constants/paths";
-import {ORDER_TYPE} from "@/constants/orders";
+import SubNavColumn from "../../../components/SubNavColumn";
+import {PATH_SALES_ORDERS} from "../../../constants/paths";
+import {ORDER_TYPE} from "../../../constants/orders";
 
 const OrdersSubNav = ({}) => {
     const items = [

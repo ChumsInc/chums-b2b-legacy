@@ -1,9 +1,9 @@
 export default class B2BError extends Error {
     url?: string;
     debug?: any;
-    code?: string|number;
+    code?: string | number;
 
-    constructor(message: string, url?: string, debug?: any, code?: string|number) {
+    constructor(message: string, url?: string, debug?: any, code?: string | number) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.debug = debug;
@@ -33,4 +33,6 @@ export interface Selectable {
 export interface EmptyObject {
 }
 
-export type LoadStatus = 'pending'|'rejected'|'idle';
+export type LoadStatus = 'pending' | 'rejected' | 'idle';
+export type OrderActionStatus = LoadStatus | 'saving' | 'promoting' | 'deleting';
+export type EmailActionStatus = LoadStatus | 'fulfilled'

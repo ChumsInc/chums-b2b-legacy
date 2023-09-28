@@ -1,20 +1,21 @@
-import {PRICE_FIELDS, PriceField, SELL_AS_COLOR, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
+import {PRICE_FIELDS, PriceField, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
 import {calcPrice, priceRecord} from "./customer";
 import {
     BasicProduct,
     CartProduct,
     CustomerPriceRecord,
-    isSellAsColors,
-    isSellAsMix, isSellAsSelf,
-    isSellAsVariants, Keyword,
+    Keyword,
     Product,
-    ProductColorItem, ProductVariant
+    ProductAdditionalData,
+    ProductColorItem,
+    ProductVariant,
+    SellAsVariantsProduct
 } from "b2b-types";
-import {ProductAdditionalData, SellAsVariantsProduct} from "b2b-types/src/products";
 import Decimal from "decimal.js";
-import {CartItemColorProps} from "@/types/product";
+import {CartItemColorProps} from "../types/product";
+import {isSellAsColors, isSellAsMix, isSellAsSelf, isSellAsVariants} from "../ducks/products/utils";
 
-export const hasVariants = (product: Product|null):boolean => isSellAsVariants(product) && product.variants.filter(v => v.status).length > 0;
+export const hasVariants = (product: Product | null): boolean => isSellAsVariants(product) && product.variants.filter(v => v.status).length > 0;
 
 export const defaultVariant = (product: SellAsVariantsProduct) => {
     const activeVariants = product.variants.filter(v => v.status);
@@ -22,7 +23,7 @@ export const defaultVariant = (product: SellAsVariantsProduct) => {
     return variant;
 };
 
-export const getSalesUM = (product: Product|null|undefined): string => {
+export const getSalesUM = (product: Product | null | undefined): string => {
     if (!product) {
         return '';
     }
@@ -93,24 +94,24 @@ export const getPrice = ({product, priceField = PRICE_FIELDS.standard, priceCode
     }
 };
 
-export const getMSRP = (product: Product|null|undefined) => {
+export const getMSRP = (product: Product | null | undefined) => {
     if (!product) {
         return [];
     }
     return getPrice({product, priceField: PRICE_FIELDS.msrp});
 };
 
-export const getPrices = (product:Product|null|undefined, priceCodes:CustomerPriceRecord[] = []) => {
+export const getPrices = (product: Product | null | undefined, priceCodes: CustomerPriceRecord[] = []) => {
     if (!product) {
         return [];
     }
     return getPrice({product, priceField: PRICE_FIELDS.standard, priceCodes});
 };
 
-export const defaultCartItem = (product: Product|null, option?: CartItemColorProps): CartProduct|null => {
+export const defaultCartItem = (product: Product | null, option?: CartItemColorProps): CartProduct | null => {
     if (isSellAsColors(product)) {
         const items = product.items.filter(item => item.status);
-        let cartItem:ProductColorItem|undefined;
+        let cartItem: ProductColorItem | undefined;
         [cartItem] = items.filter(item => item.itemCode === option?.itemCode);
         if (!cartItem) {
             [cartItem] = items.filter(item => item.colorCode === option?.colorCode || item.color.code === option?.colorCode);
@@ -175,7 +176,7 @@ export const defaultCartItem = (product: Product|null, option?: CartItemColorPro
     };
 };
 
-export const colorCartItem = (item:ProductColorItem, product?:BasicProduct):CartProduct => {
+export const colorCartItem = (item: ProductColorItem, product?: BasicProduct): CartProduct => {
     return {
         quantityAvailable: item.QuantityAvailable,
         msrp: item.msrp,
@@ -200,7 +201,7 @@ export const colorCartItem = (item:ProductColorItem, product?:BasicProduct):Cart
 };
 
 
-export const sortVariants = (a:ProductVariant, b:ProductVariant) => a.priority === b.priority
+export const sortVariants = (a: ProductVariant, b: ProductVariant) => a.priority === b.priority
     ? (a.title.toLowerCase() === b.title.toLowerCase() ? 0 : (a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1))
     : (a.priority > b.priority ? 1 : -1);
 
@@ -214,7 +215,7 @@ export const sortVariants = (a:ProductVariant, b:ProductVariant) => a.priority =
  * @param preferredColor
  * @return {string}
  */
-export const getDefaultColor = (product:Product|null, preferredColor:string = ''):string => {
+export const getDefaultColor = (product: Product | null, preferredColor: string = ''): string => {
     if (isSellAsSelf(product)) {
         return product.defaultColor ?? '';
     }
@@ -233,7 +234,7 @@ export const getDefaultColor = (product:Product|null, preferredColor:string = ''
     return (product?.defaultColor || '');
 };
 
-export const parseColor = (str:string, colorCode:string = ''):string => {
+export const parseColor = (str: string, colorCode: string = ''): string => {
     if (!str) {
         return '';
     }
@@ -247,6 +248,6 @@ export const parseColor = (str:string, colorCode:string = ''):string => {
 };
 
 
-export const keywordSorter = (a:Keyword, b:Keyword) => {
+export const keywordSorter = (a: Keyword, b: Keyword) => {
     return a.keyword.toLowerCase() > b.keyword.toLowerCase() ? 1 : -1;
 }

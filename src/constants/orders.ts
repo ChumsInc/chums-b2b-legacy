@@ -1,5 +1,5 @@
-import {CartProgress} from "@/types/cart";
-import {OrderType} from "@/types/salesorder";
+import {CartProgress} from "../types/cart";
+import {OrderType} from "../types/salesorder";
 
 export const cartProcess = ['cart', 'delivery', 'payment', 'confirm'];
 

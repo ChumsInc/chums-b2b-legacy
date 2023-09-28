@@ -1,18 +1,16 @@
 import {
     FETCH_FAILURE,
     FETCH_INIT,
-    FETCH_INVOICE,
     FETCH_ORDERS,
     FETCH_SALES_ORDER,
     FETCH_SUCCESS,
     SAVE_CART,
     SELECT_SO,
-    SEND_ORDER_EMAIL,
     SEND_ORDER_EMAIL_ACK,
     SET_CART,
 } from "../constants/actions";
 import {fetchGET, fetchPOST} from "../utils/fetch";
-import {API_PATH_INVOICE, API_PATH_OPEN_ORDERS, CART_ACTIONS} from "../constants/paths";
+import {API_PATH_OPEN_ORDERS, CART_ACTIONS} from "../constants/paths";
 import {customerSlug, isValidCustomer, sageCompanyCode} from "../utils/customer";
 import {handleError} from "../ducks/app/actions";
 import {setAlert} from "../ducks/alerts";
@@ -22,9 +20,9 @@ import {STORE_CURRENT_CART} from "../constants/stores";
 import {customerFromState, setCurrentCart} from "../ducks/cart/actions";
 import {NEW_CART} from "../constants/orders";
 import {selectCustomerAccount} from "../ducks/customer/selectors";
-import {fetchSalesOrder, postOrderEmail} from "../api/sales-order";
+import {fetchSalesOrder} from "../api/sales-order";
 import {selectCartNo} from "../ducks/cart/selectors";
-import {selectSendEmailStatus, selectSalesOrderProcessing} from "../ducks/salesOrder/selectors";
+import {selectSalesOrderProcessing} from "../ducks/salesOrder/selectors";
 import {generatePath, redirect} from "react-router-dom";
 
 
@@ -53,7 +51,7 @@ export const fetchOpenOrders = ({ARDivisionNo, CustomerNo}) => (dispatch, getSta
                 .filter(so => isCartOrder(so));
             const [cart] = carts.filter(so => cartNo === '' || so.SalesOrderNo === cartNo);
             if (cart) {
-                dispatch(setCurrentCart(cart, true));
+                dispatch(setCurrentCart(cart));
             }
         })
         .catch(err => {
@@ -140,33 +138,6 @@ export const selectSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState
     dispatch(loadSalesOrder(SalesOrderNo));
 };
 
-export const sendOrderEmail = ({Company, SalesOrderNo}) => async (dispatch, getState) => {
-    const state = getState();
-    if (selectSendEmailStatus(state)) {
-        return;
-    }
-    const customer = selectCustomerAccount(state);
-    if (!customer || !customer.CustomerNo) {
-        return;
-    }
-
-    try {
-        dispatch({type: SEND_ORDER_EMAIL, status: FETCH_INIT});
-        const {ARDivisionNo, CustomerNo} = customer;
-        const result = await postOrderEmail({ARDivisionNo, CustomerNo, SalesOrderNo});
-        if (!result) {
-            dispatch({type: SEND_ORDER_EMAIL, status: FETCH_FAILURE});
-            dispatch(handleError(new Error('sending email returned null'), SEND_ORDER_EMAIL));
-        }
-        dispatch({type: SEND_ORDER_EMAIL, status: FETCH_SUCCESS, payload: {...result, confirmed: false}});
-    } catch (err) {
-        dispatch({type: SEND_ORDER_EMAIL, status: FETCH_FAILURE});
-        dispatch(handleError(err, SEND_ORDER_EMAIL));
-        if (err instanceof Error) {
-            console.debug("sendOrderEmail()", err.message);
-        }
-    }
-};
 
 export const confirmEmailSent = () => ({type: SEND_ORDER_EMAIL_ACK});
 

@@ -1,5 +1,5 @@
 import {Invoice, InvoiceHeader, CustomerKey} from "b2b-types";
-import {SortProps} from "@/types/generic";
+import {SortProps} from "../../types/generic";
 
 export interface InvoicesState {
     customerKey: string|null;

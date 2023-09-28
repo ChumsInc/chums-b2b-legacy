@@ -5,7 +5,7 @@ import {
     cartProgress_Confirm,
     cartProgress_Delivery,
     cartProgress_Payment
-} from "@/types/cart";
+} from "../../../types/cart";
 import Box from "@mui/material/Box";
 import LinearProgress from '@mui/material/LinearProgress'
 import Grid from '@mui/material/Unstable_Grid2'

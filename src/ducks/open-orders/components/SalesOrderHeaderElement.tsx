@@ -1,29 +1,27 @@
 import React, {useEffect} from 'react';
 import {useSelector} from "react-redux";
-import {selectSalesOrderHeader, selectSalesOrderInvoices, selectSOLoading} from "@/ducks/salesOrder/selectors";
 import {Button, Chip, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
-import {addressFromShipToAddress, multiLineAddress} from "@/ducks/customer/utils";
+import {addressFromShipToAddress, multiLineAddress} from "../../customer/utils";
 import Typography from "@mui/material/Typography";
 import {generatePath, NavLink} from "react-router-dom";
-import {genInvoicePath} from "@/utils/path-utils";
-import {selectCurrentCustomer} from "@/ducks/user/selectors";
-import {getShippingMethod} from "@/constants/account";
-import {useAppDispatch} from "@/app/configureStore";
-import {loadSalesOrder} from "@/ducks/salesOrder/actions";
-import CartOrderHeaderElement from "@/ducks/cart/components/CartOrderHeaderElement";
-import SalesOrderSkeleton from "@/ducks/salesOrder/components/SalesOrderSkeleton";
+import {genInvoicePath} from "../../../utils/path-utils";
+import {selectCurrentCustomer} from "../../user/selectors";
+import {getShippingMethod} from "../../../constants/account";
+import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
+import {loadSalesOrder} from "../actions";
 import Grid from '@mui/material/Unstable_Grid2';
-import {customerSlug} from "@/utils/customer";
-import {useNavigate} from "react-router";
+import {customerSlug} from "../../../utils/customer";
+import {useMatch, useNavigate} from "react-router";
+import {selectSalesOrder, selectSalesOrderInvoices, selectSalesOrderLoading} from "../selectors";
 
 const SalesOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
+    const match = useMatch('/account/:customerSlug/:orderType/:salesOrderNo');
     const customer = useSelector(selectCurrentCustomer);
-    const header = useSelector(selectSalesOrderHeader);
-    const invoices = useSelector(selectSalesOrderInvoices);
-    const loading = useSelector(selectSOLoading);
+    const header = useAppSelector((state) => selectSalesOrder(state, match?.params.salesOrderNo ?? ''));
+    const invoices = useAppSelector((state) => selectSalesOrderInvoices(state, match?.params.salesOrderNo ?? ''));
     const navigate = useNavigate();
 
     const hasCancelDate = header?.UDF_CANCEL_DATE ? dayjs(header?.UDF_CANCEL_DATE).valueOf() > 0 : false;

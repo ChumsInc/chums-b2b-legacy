@@ -37,7 +37,7 @@ export interface CartAppendBody extends CartQuoteBase {
 
 //@TODO: Verify this is valid!
 export interface CartAppendCommentBody extends CartQuoteBase {
-    action: 'append-comment';
+    action: 'line-comment';
     LineKey: string;
     Comment: string;
 }

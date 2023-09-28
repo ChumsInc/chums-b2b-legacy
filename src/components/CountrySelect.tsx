@@ -3,8 +3,8 @@
  */
 
 import React, {SelectHTMLAttributes} from 'react';
-import {COUNTRIES} from '@/constants/countries';
-import {FieldValue} from "@/types/generic";
+import {COUNTRIES} from '../constants/countries';
+import {FieldValue} from "../types/generic";
 import classNames from "classnames";
 
 

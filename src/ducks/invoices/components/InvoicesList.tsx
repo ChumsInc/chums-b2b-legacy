@@ -1,25 +1,24 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "../../user/selectors";
 import {selectCurrentInvoiceNo, selectInvoicesList, selectInvoicesLoaded, selectInvoicesLoading} from "../selectors";
 import {loadInvoices} from "../actions";
-import {InvoiceLink} from "@/ducks/invoices/components/InvoiceLink";
-import {DateString} from "@/components/DateString";
-import OrderLink from "@/components/OrderLink";
+import {InvoiceLink} from "./InvoiceLink";
+import {DateString} from "../../../components/DateString";
+import OrderLink from "../../../components/OrderLink";
 import numeral from "numeral";
-import {SortableTableField} from "@/common-components/DataTable";
+import {SortableTableField} from "../../../common-components/DataTable";
 import {InvoiceHeader} from "b2b-types";
 import Decimal from "decimal.js";
-import {SortProps} from "@/types/generic";
+import {SortProps} from "../../../types/generic";
 import LinearProgress from "@mui/material/LinearProgress";
-import OrderFilter from "@/components/OrderFilter";
-import SortableTable from "@/common-components/SortableTable";
+import OrderFilter from "../../open-orders/components/OrderFilter";
+import SortableTable from "../../../common-components/SortableTable";
 import TablePagination from "@mui/material/TablePagination";
-import {invoicesSorter} from "@/ducks/invoices/utils";
-import localStore from "@/utils/LocalStore";
-import {STORE_INVOICES_ROWS_PER_PAGE} from "@/constants/stores";
-import {customerSlug} from "@/utils/customer";
+import {invoicesSorter} from "../utils";
+import localStore from "../../../utils/LocalStore";
+import {STORE_INVOICES_ROWS_PER_PAGE} from "../../../constants/stores";
 
 
 const invoiceFields: SortableTableField<InvoiceHeader>[] = [

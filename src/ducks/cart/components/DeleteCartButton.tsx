@@ -1,15 +1,14 @@
 import React, {useState} from 'react';
 import {useSelector} from "react-redux";
-import {selectSalesOrderHeader} from "@/ducks/salesOrder/selectors";
+import {selectSalesOrderHeader} from "../../salesOrder/selectors";
 import {ButtonProps} from "@mui/material/Button";
 import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
-import {useAppDispatch} from "@/app/configureStore";
-import {removeCart} from "@/ducks/cart/actions";
+import {useAppDispatch} from "../../../app/configureStore";
+import {removeCart} from "../actions";
 import {useNavigate} from "react-router";
-import {selectCurrentCustomer} from "@/ducks/user/selectors";
 import {generatePath} from "react-router-dom";
-import {customerSlug} from "@/utils/customer";
+import {customerSlug} from "../../../utils/customer";
 import LinearProgress from "@mui/material/LinearProgress";
 
 export default function DeleteCartButton({disabled, children, ...rest}: ButtonProps) {
@@ -54,7 +53,7 @@ export default function DeleteCartButton({disabled, children, ...rest}: ButtonPr
                     <DialogContentText>
                         Are you sure you want to delete cart <strong>{header.CustomerPONo}</strong>?
                     </DialogContentText>
-                    {busy && <LinearProgress variant="indeterminate" />}
+                    {busy && <LinearProgress variant="indeterminate"/>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={confirmHandler} disabled={busy} color="error">Delete</Button>

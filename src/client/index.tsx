@@ -6,6 +6,7 @@ import {createRoot} from "react-dom/client";
 import store from '../app/configureStore';
 import {HelmetProvider} from "react-helmet-async";
 
+
 const container = document.getElementById('app')!;
 const root = createRoot(container);
 

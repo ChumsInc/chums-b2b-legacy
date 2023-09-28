@@ -1,7 +1,3 @@
-import {buildPath} from '../utils/path-utils';
-import {ORDER_TYPE, ORDER_TYPE_NAMES} from "./orders";
-
-
 /*
 For any paths that use a query string, the question mark needs to be escaped for the parameters in the
 query string to be replaced:
@@ -41,8 +37,6 @@ export const PATH_SALES_ORDER_BREADCRUMB = '/orders/:orderType?/:Company?/:Sales
 export const PATH_INVOICE_BREADCRUMB = '/orders/:orderType?/:Company?/:SalesOrderNo?';
 export const PATH_SIGNUP = '/signup';
 export const PATH_SET_PASSWORD = '/set-password';
-
-
 
 
 export const CONTENT_PATH_SEARCH_IMAGE = '/images/products/80/:image';
@@ -98,8 +92,6 @@ export const API_PATH_PAGE = '/api/pages/:keyword';
 export const API_PATH_VERSION = '/version';
 
 
-
-
 export const SUB_NAV_PROFILE = {
     url: PATH_PROFILE,
     title: 'Login Profile',
@@ -151,14 +143,6 @@ export const SUB_NAV_SIGNUP = {
         items: []
     }
 };
-
-
-
-export const NAV_ORDERS = [
-    {path: buildPath(PATH_SALES_ORDERS, {orderType: ORDER_TYPE.cart}), title: ORDER_TYPE_NAMES.cart, id: ORDER_TYPE.cart},
-    {path: buildPath(PATH_SALES_ORDERS, {orderType: ORDER_TYPE.open}), title: ORDER_TYPE_NAMES.open, id: ORDER_TYPE.open},
-    {path: buildPath(PATH_SALES_ORDERS, {orderType: ORDER_TYPE.invoices}), title: ORDER_TYPE_NAMES.invoices, id: ORDER_TYPE.invoices},
-];
 
 export const CART_ACTIONS = {
     // cart actions

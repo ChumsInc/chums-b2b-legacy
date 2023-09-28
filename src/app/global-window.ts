@@ -1,4 +1,4 @@
-import {PreloadedState} from "@/types/preload";
+import {PreloadedState} from "../types/preload";
 
 declare global {
     interface Window {
@@ -7,6 +7,9 @@ declare global {
     }
 }
 
-if (!global.window.__PRELOADED_STATE__) {
-    global.window.__PRELOADED_STATE__ = {};
+if (typeof global.window !== 'undefined') {
+    console.log('initiating global window');
+    if (!global.window?.__PRELOADED_STATE__) {
+        global.window.__PRELOADED_STATE__ = {};
+    }
 }

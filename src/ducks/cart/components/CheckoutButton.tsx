@@ -5,7 +5,7 @@ import {
     cartProgress_Confirm,
     cartProgress_Delivery,
     cartProgress_Payment
-} from "@/types/cart";
+} from "../../../types/cart";
 import {Button} from "@mui/material";
 import {ButtonProps} from "@mui/material/Button";
 

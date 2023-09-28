@@ -1,12 +1,12 @@
 import React, {ChangeEventHandler, useEffect} from 'react';
-import Select from '@/common-components/Select';
-import {longRepNo} from "@/utils/customer";
+import Select from '../../../common-components/Select';
+import {longRepNo} from "../../../utils/customer";
 import {useSelector} from "react-redux";
-import {selectUserAccount} from "@/ducks/user/selectors";
+import {selectUserAccount} from "../../user/selectors";
 import {loadRepList} from "../actions";
-import {useAppDispatch} from "@/app/configureStore";
-import {FieldValue} from "@/types/generic";
-import {selectRepsList, selectRepsLoaded, selectRepsLoading} from "@/ducks/reps/selectors";
+import {useAppDispatch} from "../../../app/configureStore";
+import {FieldValue} from "../../../types/generic";
+import {selectRepsList, selectRepsLoaded, selectRepsLoading} from "../selectors";
 
 
 const RepSelect = ({value = '', onChange}:{

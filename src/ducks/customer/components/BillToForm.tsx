@@ -2,26 +2,26 @@
  * Created by steve on 9/6/2016.
  */
 import React, {FormEvent, useEffect, useState} from 'react';
-import AddressFormFields from '@/components/AddressFormFields';
-import {filteredTermsCode} from '@/constants/account';
+import AddressFormFields from '../../../components/AddressFormFields';
+import {filteredTermsCode} from '../../../constants/account';
 import {useSelector} from "react-redux";
-import {longCustomerNo} from "@/utils/customer";
+import {longCustomerNo} from "../../../utils/customer";
 import {saveBillingAddress} from '../actions';
 import Alert from "@mui/material/Alert";
-import FormGroup from "@/common-components/FormGroup";
-import ContactFormFields from "@/ducks/customer/components/ContactFormFields";
-import MissingTaxScheduleAlert from "@/ducks/customer/components/MissingTaxScheduleAlert";
+import FormGroup from "../../../common-components/FormGroup";
+import ContactFormFields from "./ContactFormFields";
+import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 import {selectCustomerAccount, selectCustomerLoading, selectCustomerPermissions} from "../selectors";
 import {selectCanEdit} from "../../user/selectors";
-import StoreMapToggle from "@/components/StoreMapToggle";
-import ErrorBoundary from "@/common-components/ErrorBoundary";
-import {isBillToCustomer} from "@/utils/typeguards";
-import Address from "@/components/Address/Address";
-import {useAppDispatch} from "@/app/configureStore";
+import StoreMapToggle from "../../../components/StoreMapToggle";
+import ErrorBoundary from "../../../common-components/ErrorBoundary";
+import {isBillToCustomer} from "../../../utils/typeguards";
+import Address from "../../../components/Address/Address";
+import {useAppDispatch} from "../../../app/configureStore";
 import {BillToCustomer} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
-import {FieldValue} from "@/types/generic";
-import ReloadCustomerButton from "@/ducks/customer/components/ReloadCustomerButton";
+import {FieldValue} from "../../../types/generic";
+import ReloadCustomerButton from "./ReloadCustomerButton";
 
 const BillToForm = () => {
     const dispatch = useAppDispatch();

@@ -3,7 +3,7 @@ import Alert from "@mui/material/Alert";
 import Dialog from "@mui/material/Dialog";
 import {DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Button} from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../app/configureStore";
 
 const DuplicateCartAlert = ({open, SalesOrderNo, loading = false, onConfirm, onCancel}: {
     open: boolean;

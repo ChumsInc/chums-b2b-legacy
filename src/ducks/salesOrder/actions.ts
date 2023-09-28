@@ -1,23 +1,19 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {CustomerKey, EmailResponse, SalesOrder, SalesOrderHeader} from "b2b-types";
-import {fetchSalesOrder, fetchSalesOrders, postOrderEmail} from "@/api/sales-order";
-import {SortProps} from "@/types/generic";
-import {RootState} from "@/app/configureStore";
-import {selectCurrentCustomer, selectLoggedIn} from "@/ducks/user/selectors";
+import {EmailResponse, SalesOrder, SalesOrderHeader} from "b2b-types";
+import {fetchSalesOrder, postOrderEmail} from "../../api/sales-order";
+import {SortProps} from "../../types/generic";
+import {RootState} from "../../app/configureStore";
+import {selectCurrentCustomer, selectLoggedIn} from "../user/selectors";
 import {
-    selectSendEmailStatus,
     selectSalesOrderHeader,
-    selectSalesOrderNo,
     selectSalesOrderProcessing,
+    selectSendEmailStatus,
     selectSOLoading
-} from "@/ducks/salesOrder/selectors";
-import {generatePath, redirect} from "react-router-dom";
-import {customerSlug} from "@/utils/customer";
-import {selectCustomerAccount} from "@/ducks/customer/selectors";
-import {DetailLineChangeProps} from "@/types/salesorder";
+} from "./selectors";
+import {DetailLineChangeProps} from "../../types/salesorder";
 
 export const loadSalesOrder = createAsyncThunk<SalesOrder | null, string>(
-    'orders/loadSalesOrder',
+    'salesOrder/load',
     async (arg, {getState}) => {
         const state = getState() as RootState;
         const customer = selectCurrentCustomer(state)!;
@@ -38,7 +34,7 @@ export const setSort = createAction<SortProps<SalesOrderHeader>>('orders/setSort
 export const setPage = createAction<number>('orders/setPage');
 export const setRowsPerPage = createAction<number>('orders/setRowsPerPage');
 
-export const sendOrderEmail = createAsyncThunk<EmailResponse|null, SalesOrderHeader>(
+export const sendOrderEmail = createAsyncThunk<EmailResponse | null, SalesOrderHeader>(
     'salesOrder/sendEmail',
     async (arg) => {
         return await postOrderEmail(arg);

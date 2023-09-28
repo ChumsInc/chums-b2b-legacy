@@ -1,4 +1,4 @@
-import {PRICE_METHODS} from "@/constants/account";
+import {PRICE_METHODS} from "../constants/account";
 import Decimal from "decimal.js";
 import {
     BasicCustomer,
@@ -11,11 +11,11 @@ import {
     CustomerPriceRecord,
     CustomerUser,
     RecentCustomer,
+    ShipToAddress,
     ShipToCustomer,
     UserCustomerAccess
 } from "b2b-types";
-import {SortProps} from "@/types/generic";
-import {ShipToAddress} from "b2b-types/src/customer";
+import {SortProps} from "../types/generic";
 
 export const companyName = (code: string = ''): string => {
     switch (code.toLowerCase()) {
@@ -321,7 +321,7 @@ export const customerSlug = (customer: CustomerKey | null): string | null => {
         : billToCustomerSlug(customer);
 }
 
-export const billToCustomerSlug = (customer:CustomerKey|string|null|undefined):string|null => {
+export const billToCustomerSlug = (customer: CustomerKey | string | null | undefined): string | null => {
     if (!customer) {
         return null;
     }
@@ -335,7 +335,7 @@ export const billToCustomerSlug = (customer:CustomerKey|string|null|undefined):s
     return `${customer.ARDivisionNo}-${customer.CustomerNo}`;
 }
 
-export const shipToCustomerSlug = (customer:CustomerKey|string|null|undefined):string|null => {
+export const shipToCustomerSlug = (customer: CustomerKey | string | null | undefined): string | null => {
     if (!customer) {
         return null;
     }
@@ -390,7 +390,7 @@ export const emptyCustomer: BillToCustomer = {
 
 }
 
-export const defaultShipToSort:SortProps<ShipToCustomer> = {field: "ShipToCode", ascending: true};
+export const defaultShipToSort: SortProps<ShipToCustomer> = {field: "ShipToCode", ascending: true};
 export const customerShipToSorter = ({field, ascending}: SortProps<ShipToCustomer>) => (a: ShipToCustomer, b: ShipToCustomer) => {
     const sortMod = ascending ? 1 : -1;
     switch (field) {

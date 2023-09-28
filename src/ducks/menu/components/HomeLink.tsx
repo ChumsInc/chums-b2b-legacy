@@ -1,6 +1,6 @@
 import React from 'react';
-import RoutedLink from "@/ducks/menu/components/RoutedLink";
-import ChumsLogo from "@/components/ChumsLogo";
+import RoutedLink from "./RoutedLink";
+import ChumsLogo from "../../../components/ChumsLogo";
 import Typography from "@mui/material/Typography";
 import {SxProps} from "@mui/material/styles";
 

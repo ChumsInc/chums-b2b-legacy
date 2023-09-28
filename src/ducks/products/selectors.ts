@@ -1,5 +1,5 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {RootState} from "@/app/configureStore";
+import {RootState} from "../../app/configureStore";
 import {isCartProduct, isProduct} from "./utils";
 
 export const selectProductKeywords = (state: RootState) => state.products.keywords ?? [];

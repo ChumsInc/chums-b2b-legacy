@@ -1,7 +1,7 @@
 import React from "react";
 import {generatePath, Link} from "react-router-dom";
 import {InvoiceHeader} from "b2b-types";
-import {billToCustomerSlug} from "@/utils/customer";
+import {billToCustomerSlug} from "../../../utils/customer";
 
 export const PATH_INVOICE = '/account/:customerSlug/invoices/:InvoiceType/:InvoiceNo';
 

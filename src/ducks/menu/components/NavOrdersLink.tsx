@@ -1,14 +1,13 @@
-import {NavItemProps} from "@/types/ui-features";
-import {useAppDispatch} from "@/app/configureStore";
+import {NavItemProps} from "../../../types/ui-features";
 import {useSelector} from "react-redux";
-import {selectLoggedIn} from "@/ducks/user/selectors";
-import {selectCustomerAccount} from "@/ducks/customer/selectors";
+import {selectLoggedIn} from "../../user/selectors";
+import {selectCustomerAccount} from "../../customer/selectors";
 import {generatePath} from "react-router-dom";
-import {customerBasePath} from "@/ducks/customer/constants";
-import {customerPath} from "@/ducks/user/utils";
-import ListItemLink from "@/components/ListItemLink";
+import {customerBasePath} from "../../customer/constants";
+import {customerPath} from "../../user/utils";
+import ListItemLink from "../../../components/ListItemLink";
 import React from "react";
-import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
+import NavItemButtonLink from "./NavItemButtonLink";
 
 export default function NavOrdersLink({inDrawer}: NavItemProps) {
     const isLoggedIn = useSelector(selectLoggedIn);

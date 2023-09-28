@@ -2,9 +2,9 @@ import React from 'react';
 import numeral from "numeral";
 import Alert from "@mui/material/Alert";
 import classNames from 'classnames';
-import CartItemPriceDescription from "@/components/CartItemPriceDescription";
+import CartItemPriceDescription from "../../../components/CartItemPriceDescription";
 import {useSelector} from "react-redux";
-import {selectCanViewAvailable} from "@/ducks/user/selectors";
+import {selectCanViewAvailable} from "../../user/selectors";
 import Decimal from "decimal.js";
 import {CartProduct} from "b2b-types";
 

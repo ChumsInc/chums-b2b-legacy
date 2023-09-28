@@ -1,5 +1,5 @@
 import {createSelector} from "@reduxjs/toolkit";
-import {RootState} from "@/app/configureStore";
+import {RootState} from "../../app/configureStore";
 import {isUserProfile} from "./utils";
 import {UserCustomerAccess} from "b2b-types";
 

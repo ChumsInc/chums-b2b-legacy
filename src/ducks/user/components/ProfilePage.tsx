@@ -1,15 +1,15 @@
 import React from 'react';
-import AccountSelector from "@/components/AccountSelector";
-import UserProfile from "@/ducks/user/components/UserProfile";
-import {DOCUMENT_TITLES} from '@/constants/paths';
-import DocumentTitle from "@/components/DocumentTitle";
-import {useAppSelector} from "@/app/configureStore";
+import AccountSelector from "../../../components/AccountSelector";
+import UserProfile from "./UserProfile";
+import {DOCUMENT_TITLES} from '../../../constants/paths';
+import DocumentTitle from "../../../components/DocumentTitle";
+import {useAppSelector} from "../../../app/configureStore";
 import {
     selectAccessListLoading,
     selectCurrentAccess,
     selectCustomerAccessList,
     selectRepAccessList
-} from "@/ducks/user/selectors";
+} from "../selectors";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const ProfilePage = () => {

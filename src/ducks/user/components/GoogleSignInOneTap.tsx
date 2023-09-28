@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {GOOGLE_CLIENT_ID} from "@/constants/app";
+import {GOOGLE_CLIENT_ID} from "../../../constants/app";
 import {signInWithGoogle} from "../actions";
 import {useSelector} from "react-redux";
 import {selectLoggedIn, selectLoginExpiry} from "../selectors";
-import {useAppDispatch} from "@/app/configureStore";
+import {useAppDispatch} from "../../../app/configureStore";
 import {redirect} from "react-router-dom";
 
 const isExpired = (expires: number) => {
@@ -29,6 +29,10 @@ const GoogleSignInOneTap = ({onSignIn}:{
     }
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         if (window?.google && google.accounts?.id) {
             google.accounts?.id?.initialize({
                 client_id: GOOGLE_CLIENT_ID,
@@ -48,6 +52,10 @@ const GoogleSignInOneTap = ({onSignIn}:{
     }, [isLoggedIn]);
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         window.clearInterval(timerHandle.current);
         if (expires > 0) {
             const now = new Date();
@@ -59,6 +67,10 @@ const GoogleSignInOneTap = ({onSignIn}:{
     }, [expires]);
 
     useEffect(() => {
+        if (typeof window === 'undefined') {
+            return;
+        }
+
         if (expired) {
             window.google?.accounts?.id?.prompt();
         }
@@ -68,6 +80,9 @@ const GoogleSignInOneTap = ({onSignIn}:{
         return null;
     }
 
+    if (typeof window === 'undefined') {
+        return null;
+    }
 
     return (
         <span ref={oneTapRef}/>

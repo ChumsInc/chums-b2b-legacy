@@ -1,19 +1,21 @@
 import React, {Fragment, useState} from 'react';
-import SalesOrderCommentLine from "@/ducks/salesOrder/components/SalesOrderCommentLine";
+import SalesOrderCommentLine from "./SalesOrderCommentLine";
 import {Editable, SalesOrderDetailLine} from "b2b-types";
-import {Appendable} from "@/types/generic";
-import {useAppDispatch} from "@/app/configureStore";
-import {updateDetailLine} from "@/ducks/salesOrder/actions";
-import SalesOrderItemLine from "@/ducks/salesOrder/components/SalesOrderItemLine";
-import SalesOrderKitComponentLine from "@/ducks/salesOrder/components/SalesOrderKitComponentLine";
+import {Appendable} from "../../../types/generic";
+import {useAppDispatch} from "../../../app/configureStore";
+import {updateDetailLine} from "../actions";
+import SalesOrderItemLine from "./SalesOrderItemLine";
+import SalesOrderKitComponentLine from "./SalesOrderKitComponentLine";
 
 
 export default function OrderDetailLine({
+                                            salesOrderNo,
                                             line,
                                             readOnly,
                                             customerPriceLevel,
                                             onAddToCart,
                                         }: {
+    salesOrderNo: string;
     line: SalesOrderDetailLine & Editable & Appendable;
     readOnly?: boolean;
     customerPriceLevel?: string;
@@ -27,14 +29,14 @@ export default function OrderDetailLine({
         if (readOnly) {
             return;
         }
-        dispatch(updateDetailLine({LineKey: line.LineKey, QuantityOrdered: 0}));
+        dispatch(updateDetailLine({SalesOrderNo: salesOrderNo, LineKey: line.LineKey, QuantityOrdered: 0}));
     }
 
     const deleteCommentHandler = () => {
         if (readOnly) {
             return;
         }
-        dispatch(updateDetailLine({LineKey: line.LineKey, CommentText: ''}));
+        dispatch(updateDetailLine({SalesOrderNo: salesOrderNo, LineKey: line.LineKey, CommentText: ''}));
         setAddComment(false);
     }
 
@@ -42,14 +44,14 @@ export default function OrderDetailLine({
         if (readOnly) {
             return;
         }
-        dispatch(updateDetailLine({LineKey, QuantityOrdered: value}));
+        dispatch(updateDetailLine({SalesOrderNo: salesOrderNo, LineKey, QuantityOrdered: value}));
     }
 
     const commentChangeHandler = (value: string) => {
         if (readOnly) {
             return;
         }
-        dispatch(updateDetailLine({LineKey, CommentText: value}));
+        dispatch(updateDetailLine({SalesOrderNo: salesOrderNo, LineKey, CommentText: value}));
     }
 
     const addToCartHandler = () => {

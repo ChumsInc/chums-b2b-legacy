@@ -1,8 +1,8 @@
 import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {fetchSlides} from "@/api/slides";
-import {RootState} from "@/app/configureStore";
+import {fetchSlides} from "../../api/slides";
+import {RootState} from "../../app/configureStore";
 import {Slide} from "b2b-types";
-import {PreloadedState} from "@/types/preload";
+import {PreloadedState} from "../../types/preload";
 
 export interface SlidesState {
     list: Slide[];

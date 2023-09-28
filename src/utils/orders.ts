@@ -1,8 +1,8 @@
-import {ORDER_TYPE} from "@/constants/orders";
+import {ORDER_TYPE} from "../constants/orders";
 import dayjs, {Dayjs} from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone'
-import {OrderType} from "@/types/salesorder";
+import {OrderType} from "../types/salesorder";
 import {SalesOrderHeader} from "b2b-types";
 import {isSalesOrderHeader} from "./typeguards";
 

@@ -34,3 +34,4 @@ const ProductPageImage = () => {
     )
 }
 export default ProductPageImage;
+

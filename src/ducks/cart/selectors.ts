@@ -1,4 +1,4 @@
-import {RootState} from "@/app/configureStore";
+import {RootState} from "../../app/configureStore";
 
 
 export const selectCartNo = (state:RootState) => state.cart.cartNo;

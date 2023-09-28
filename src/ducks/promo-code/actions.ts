@@ -1,9 +1,8 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {PromoCode} from "b2b-types";
-import {fetchPromoCode, fetchPromoCodes} from "@/api/promoCodes";
-import {RootState} from "@/app/configureStore";
-import {selectPromoCodesLoading} from "@/ducks/promo-code/selectors";
-import {setAlert} from "@/ducks/alerts";
+import {fetchPromoCode, fetchPromoCodes} from "../../api/promoCodes";
+import {RootState} from "../../app/configureStore";
+import {selectPromoCodesLoading} from "./selectors";
 
 export const loadPromoCodes = createAsyncThunk<PromoCode[]>(
     'promoCodes/load',
@@ -18,9 +17,9 @@ export const loadPromoCodes = createAsyncThunk<PromoCode[]>(
     }
 )
 
-export const setPromoCode = createAction<PromoCode|null>('promoCodes/setCurrent');
+export const setPromoCode = createAction<PromoCode | null>('promoCodes/setCurrent');
 
-export const loadPromoCode = createAsyncThunk<PromoCode|null, string>(
+export const loadPromoCode = createAsyncThunk<PromoCode | null, string>(
     'promoCodes/current/load',
     async (arg) => {
         const promoCode = await fetchPromoCode(arg);

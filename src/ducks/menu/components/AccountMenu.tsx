@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector} from "react-redux";
-import {selectCustomerAccount} from "@/ducks/customer/selectors";
-import NavItemButtonLink from "@/ducks/menu/components/NavItemButtonLink";
+import {selectCustomerAccount} from "../../customer/selectors";
+import NavItemButtonLink from "./NavItemButtonLink";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const AccountMenu = () => {

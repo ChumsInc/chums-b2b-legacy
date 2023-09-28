@@ -5,7 +5,7 @@
 
 export default class LocalStore {
     static getItem<T = any>(key:string, defaultValue:T):T {
-        if (!window.localStorage) {
+        if (typeof window === 'undefined' || !window.localStorage) {
             return defaultValue;
         }
         const data = window.localStorage.getItem(key);
@@ -24,14 +24,14 @@ export default class LocalStore {
     }
 
     static setItem<T>(key:string, data:any) {
-        if (!window.localStorage) {
+        if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }
         window.localStorage.setItem(key, JSON.stringify(data));
     }
 
     static removeItem(key:string) {
-        if (!window.localStorage) {
+        if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }
         window.localStorage.removeItem(key);

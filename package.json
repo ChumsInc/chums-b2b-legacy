@@ -13,6 +13,7 @@
     "start-dev-server": "webpack serve --config webpack.dev.server.js --progress",
     "build-client": "npx tsc && webpack --config webpack.prod.client.js --progress",
     "build-server": "npx tsc",
+    "start-server": "nodemon ./dist/server/index.js",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "author": "Steve Montgomery, Chums Inc",
@@ -106,5 +107,10 @@
     "template": "keepachangelog",
     "unreleased": true,
     "commitLimit": false
+  },
+  "nodemonConfig": {
+    "delay": 1500,
+    "ignore": ["**/node_modules/*"],
+    "watch": ["./dist"]
   }
 }

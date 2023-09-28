@@ -1,12 +1,14 @@
-import {fetchGET, fetchPOST} from "../utils/fetch";
-import {CartActionBody, CartQuoteResponse} from "@/types/cart";
-import {ItemAvailability} from "@/types/product";
-import {fetchJSON} from "@/api/fetch";
-import {B2BError, SalesOrder} from "b2b-types";
-import {fetchSalesOrder, fetchSalesOrders} from "@/api/sales-order";
+import {fetchGET} from "../utils/fetch";
+
+import {ItemAvailability} from "../types/product";
+import {fetchJSON} from "./fetch";
+import {SalesOrder} from "b2b-types";
+import {fetchSalesOrder} from "./sales-order";
+import {CartActionBody, CartQuoteResponse} from "../types/cart";
+import B2BError from "../types/generic";
 
 
-export async function postCartAction(company:string, arDivisionNo:string, customerNo:string, shipToCode:string|null, body:CartActionBody):Promise<SalesOrder|null> {
+export async function postCartAction(company: string, arDivisionNo: string, customerNo: string, shipToCode: string | null, body: CartActionBody): Promise<SalesOrder | null> {
     try {
         const params = new URLSearchParams();
         params.set('co', company);
@@ -15,7 +17,7 @@ export async function postCartAction(company:string, arDivisionNo:string, custom
             params.set('account', `${arDivisionNo}-${customerNo}:${shipToCode}`);
         }
         let url = `/sage/b2b/cart-quote.php?${params.toString()}`;
-        const response =  await fetchJSON<CartQuoteResponse>(url, {method: 'POST', body: JSON.stringify(body)});
+        const response = await fetchJSON<CartQuoteResponse>(url, {method: 'POST', body: JSON.stringify(body)});
         if (!response.success || !response.SalesOrderNo) {
             const error = new B2BError('Unable to save cart', url, response);
             return Promise.reject(error);
@@ -31,7 +33,7 @@ export async function postCartAction(company:string, arDivisionNo:string, custom
     }
 }
 
-export async function fetchItemAvailability(itemCode:string):Promise<ItemAvailability|null> {
+export async function fetchItemAvailability(itemCode: string): Promise<ItemAvailability | null> {
     try {
         const url = '/node-sage/api/CHI/production/item/available/:ItemCode'
             .replace(':ItemCode', encodeURIComponent(itemCode));

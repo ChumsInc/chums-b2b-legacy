@@ -3,7 +3,7 @@ import {loadCategory} from "./actions";
 import {categoryKeywordSorter} from "./utils";
 import {CategoryState} from "./types";
 
-export const initialCategoryState = (preload = window?.__PRELOADED_STATE__ ?? {}):CategoryState => ({
+export const initialCategoryState = (preload = typeof window === 'undefined' ? {} : window?.__PRELOADED_STATE__ ?? {}):CategoryState => ({
     list: preload?.category?.keywords?.filter(kw => kw.pagetype === 'category')?.sort(categoryKeywordSorter) ?? [],
     category: preload?.category?.content ?? null,
     content: preload?.category?.content ?? null,

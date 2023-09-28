@@ -1,9 +1,9 @@
 
 import {BillToCustomer, CustomerKey, CustomerUser, ShipToCustomer} from "b2b-types";
-import {FetchCustomerResponse} from "@/ducks/customer/types";
+import {FetchCustomerResponse} from "../ducks/customer/types";
 import {fetchJSON} from "./fetch";
-import {sageCompanyCode} from "@/utils/customer";
-import {CustomerPermissions} from "@/types/customer";
+import {sageCompanyCode} from "../utils/customer";
+import {CustomerPermissions} from "../types/customer";
 
 
 export async function fetchCustomerAccount({ARDivisionNo, CustomerNo}: CustomerKey): Promise<FetchCustomerResponse> {
