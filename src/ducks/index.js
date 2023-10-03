@@ -13,11 +13,13 @@ import cart from '../reducers/cart';
 import page from '../reducers/page';
 import promo_code from "../reducers/promo_code";
 import {default as versionReducer} from './version/index';
+import menuReducer from "./menu";
 
 
 const rootReducer = combineReducers({
     app,
     user,
+    menu: menuReducer,
     products,
     category,
     customer,
