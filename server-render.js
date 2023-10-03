@@ -43,6 +43,7 @@ app.use('/css', express.static('./public/css', {fallthrough: false}));
 app.use('/js', express.static('./public/js', {fallthrough: false}));
 app.use('/build', express.static('./public/build', {fallthrough: false}));
 app.use('/images', express.static('./public/images', {fallthrough: false}));
+app.use('/content', express.static('./public/content', {fallthrough: false}))
 app.set('view engine', 'pug');
 app.set('trust proxy', true);
 

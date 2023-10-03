@@ -68,6 +68,9 @@ app.use('/build', _express["default"]["static"]('./public/build', {
 app.use('/images', _express["default"]["static"]('./public/images', {
   fallthrough: false
 }));
+app.use('/content', _express["default"]["static"]('./public/content', {
+  fallthrough: false
+}));
 app.set('view engine', 'pug');
 app.set('trust proxy', true);
 function loadManifest() {
