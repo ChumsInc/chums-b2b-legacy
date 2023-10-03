@@ -145,8 +145,6 @@ class NavBar extends Component {
                                                  active={location.pathname === PATH_LOGIN}/>
                                         <NavItem path={PATH_SIGNUP} title="Sign Up"
                                                  active={location.pathname === PATH_SIGNUP}/>
-                                        <NavItem path={PATH_RESOURCES_CUSTOMER} title="Resources"
-                                                 active={location.pathname === PATH_RESOURCES_CUSTOMER}/>
                                     </Fragment>
                                 )}
                                 {loggedIn && (
@@ -158,10 +156,10 @@ class NavBar extends Component {
                                         <DropDownToggle title="Orders" show={subNav === SUB_NAV_TYPES.orders}
                                                         active={isPathOrders.test(location.pathname)}
                                                         onClick={() => this.onSetSubNav(SUB_NAV_TYPES.orders)}/>
-                                        <NavItem path={PATH_RESOURCES_CHUMS_REPS} title="Resources"
-                                                 active={location.pathname === PATH_RESOURCES_CHUMS_REPS}/>
                                     </Fragment>
                                 )}
+                                <DropDownToggle title="Resources" show={subNav === SUB_NAV_TYPES.resources}
+                                                onClick={() => this.onSetSubNav(SUB_NAV_TYPES.resources)}/>
                             </ul>
                         </div>
 
