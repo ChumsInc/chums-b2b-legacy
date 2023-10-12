@@ -21,6 +21,7 @@ import DocumentTitle from "./DocumentTitle";
 import customer from "../reducers/customer";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 import SizeIconList from "./SizeIconList";
+import {productSeasonShape} from "../constants/myPropTypes";
 
 
 const mapStateToProps = ({user, products, customer, app}) => {
@@ -38,6 +39,7 @@ const mapStateToProps = ({user, products, customer, app}) => {
     const season_available = selectedProduct.season_available || (cartItem.additionalData.season || {}).product_available;
     const season_description = selectedProduct.season_description || (cartItem.additionalData.season || {}).description;
     const season_teaser = selectedProduct.season_teaser || (cartItem.additionalData.season || {}).teaser;
+    const season = selectedProduct.season ?? cartItem.season ?? null;
 
     return {
         loggedIn,
@@ -59,7 +61,8 @@ const mapStateToProps = ({user, products, customer, app}) => {
         season_available,
         season_description,
         season_teaser,
-        TaxSchedule
+        TaxSchedule,
+        season
     }
 };
 
@@ -94,14 +97,7 @@ class ProductPage extends Component {
             additionalData: PropTypes.shape({
                 size: PropTypes.string,
                 image_filename: PropTypes.string,
-                season: PropTypes.shape({
-                    active: PropTypes.bool,
-                    code: PropTypes.string,
-                    description: PropTypes.string,
-                    product_available: PropTypes.bool,
-                    product_season_id: PropTypes.number,
-                    product_teaser: PropTypes.string,
-                })
+                season: PropTypes.shape(productSeasonShape)
             }),
         }),
         pricing: PropTypes.array,
@@ -113,6 +109,7 @@ class ProductPage extends Component {
         season_available: PropTypes.bool,
         season_description: PropTypes.string,
         TaxSchedule: PropTypes.string,
+        season:PropTypes.shape(productSeasonShape),
 
         fetchProduct: PropTypes.func.isRequired,
         selectVariant: PropTypes.func.isRequired,
@@ -135,6 +132,7 @@ class ProductPage extends Component {
         hasCustomer: false,
         canViewAvailable: false,
         documentTitle: '',
+        season: null,
         season_code: null,
         season_available: false,
         season_description: '',
@@ -199,7 +197,7 @@ class ProductPage extends Component {
         const {
             loggedIn, product, selectedProduct, loading, colorCode, msrp, salesUM, variantId,
             cartItem, pricing, hasCustomer, canViewAvailable, season_code, season_available, season_description,
-            season_teaser, TaxSchedule
+            season_teaser, TaxSchedule, season
         } = this.props;
         const {images = [], name = '', variants = []} = product ?? {};
         const {image, defaultColor, availableForSale, dateAvailable} = selectedProduct ?? {};
@@ -237,9 +235,11 @@ class ProductPage extends Component {
                                             <SizeIconList size={product.additionalData.size} />
                                         </div>
                                     )}
+                                    <div className="col-auto">
+                                        <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
+                                    </div>
                                 </div>
                             </div>
-                            <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
                             <ProductInfo msrp={msrp} salesUM={salesUM}
                                          itemCode={cartItem.itemCode || !!selectedProduct?.itemCode}
                                          upc={selectedProduct?.upc}
@@ -274,14 +274,14 @@ class ProductPage extends Component {
                             {!cartItem.itemCode && (
                                 <Alert message="Please select an color" title=""/>
                             )}
-                            {!availableForSale && (
+                            {(!selectedProduct.availableForSale && (!selectedProduct.season || !selectedProduct.season.active)) && (
                                 <Alert type="alert-warning">
                                     <span><strong>{selectedProduct?.name}</strong> is not available for sale.</span>
                                 </Alert>
                             )}
-                            {!!dateAvailable && (
+                            {!selectedProduct.availableForSale && !selectedProduct.season && !!selectedProduct.dateAvailable && (
                                 <Alert type="alert-warning">
-                                    <strong>{dateAvailable}</strong>
+                                    <strong>{selectedProduct.dateAvailable}</strong>
                                 </Alert>
                             )}
                             {loggedIn && !hasCustomer && (
@@ -293,12 +293,11 @@ class ProductPage extends Component {
                                 <Alert type="alert-warning" message="Please log in to see prices and availability"
                                        title=""/>
                             )}
-                            {(
-                                (!!availableForSale && !!season_code && !season_available)
-                                || (!!availableForSale && !!cartItem?.additionalData?.season?.code && !cartItem?.additionalData?.season?.product_available)
+                            {(  (!selectedProduct.availableForSale && selectedProduct.season && selectedProduct.season.active && !selectedProduct.season.product_available)
+                                || (selectedProduct.availableForSale && !!cartItem && cartItem.season && !cartItem.season.product_available)
                             ) && (
                                 <Alert type="alert-info" title="Pre-Season Order:">
-                                    {season_description}
+                                    {cartItem.season?.preSeasonMessage ?? selectedProduct.season?.preSeasonMessage}
                                 </Alert>
                             )}
                             {!loading && !TaxSchedule && (

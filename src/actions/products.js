@@ -126,7 +126,7 @@ export const selectColor = (colorCode) => (dispatch, getState) => {
     if (selectedProduct.sellAs === SELL_AS_COLOR) {
         [cartItem] = selectedProduct.items
             .filter(item => item.colorCode === colorCode)
-            .map(item => ({...colorCartItem(item), quantity, season_code, season_available}));
+            .map(item => ({...colorCartItem({...item, season: selectedProduct.season}), quantity, season_code, season_available}));
     } else if (selectedProduct.sellAs === SELL_AS_MIX) {
         if (cartItem.additionalData === undefined) {
             cartItem.additionalData = {};

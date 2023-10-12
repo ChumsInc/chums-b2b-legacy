@@ -1,7 +1,7 @@
 import {PRICE_FIELDS, SELL_AS_COLOR, SELL_AS_MIX, SELL_AS_SELF} from "../constants/actions";
 import {calcPrice, priceRecord} from "./customer";
 
-export const hasVariants = (product) => product.variants !== undefined && product.variants.filter(v => !!v.status).length > 0 ;
+export const hasVariants = (product) => product.variants !== undefined && product.variants.filter(v => !!v.status).length > 0;
 export const defaultVariant = (product) => {
     const activeVariants = product.variants.filter(v => !!v.status);
     const [variant = activeVariants[0]] = activeVariants.filter(v => !!v.isDefaultVariant);
@@ -85,7 +85,8 @@ export const defaultCartItem = ({
                                     cartItemCode,
                                     season_code,
                                     season_available,
-                                    mix
+                                    mix,
+                                    season
                                 }, preferredColor) => {
     switch (sellAs) {
     case SELL_AS_SELF:
@@ -98,7 +99,8 @@ export const defaultCartItem = ({
             msrp,
             quantity: 1,
             season_code,
-            season_available
+            season_available,
+            season
         };
     case SELL_AS_MIX:
         const [colorName = ''] = mix.items.filter(item => item.color.code === defaultColor)
@@ -127,7 +129,8 @@ export const defaultCartItem = ({
             season_available,
             colorName,
             defaultColor,
-            additionalData
+            additionalData,
+            season
         };
     default:
         let cartItem = {};
@@ -144,7 +147,7 @@ export const defaultCartItem = ({
         if (!cartItem.additionalData) {
             cartItem.additionalData = {season: {}};
         }
-        return colorCartItem({...cartItem, season_code, season_available});
+        return colorCartItem({...cartItem, season_code, season_available, season});
     }
 };
 
@@ -177,7 +180,8 @@ export const colorCartItem = ({
                                   msrp,
                                   additionalData,
                                   season_code,
-                                  season_available
+                                  season_available,
+                                  season,
                               }) => {
     return {
         itemCode,
@@ -191,7 +195,8 @@ export const colorCartItem = ({
         quantity: 1,
         additionalData,
         season_code,
-        season_available
+        season_available,
+        season: additionalData.season ?? season ?? null,
     }
 };
 

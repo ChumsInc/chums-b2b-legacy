@@ -337,3 +337,13 @@ export const paymentCardShape = {
     ExpirationDateYear: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     ExpirationDateMonth: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
+
+export const productSeasonShape = {
+    active: PropTypes.bool,
+    code: PropTypes.string,
+    description: PropTypes.string,
+    product_available: PropTypes.bool,
+    product_season_id: PropTypes.number,
+    product_teaser: PropTypes.string,
+    preSeasonMessage: PropTypes.string,
+}
