@@ -6,9 +6,11 @@ import {InputAdornment} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import Box from "@mui/material/Box";
 
-const CartQuantityInput = ({quantity, onChange, min = 0, disabled, required}: {
+const CartQuantityInput = ({quantity, unitOfMeasure = 'EA', onChange, min = 0, disabled, required}: {
     quantity: number;
+    unitOfMeasure: string;
     onChange: (value: number) => void;
     min?: number;
     disabled?: boolean;
@@ -59,6 +61,7 @@ const CartQuantityInput = ({quantity, onChange, min = 0, disabled, required}: {
                                              disabled={disabled}>
                                      <AddIcon/>
                                  </IconButton>
+                                 <Box sx={{ml: 1}}>{unitOfMeasure ?? 'EA'}</Box>
                              </InputAdornment>
                          }
             />

@@ -25,12 +25,12 @@ export default function ErrorBoundary({children}: {
     const version = useSelector(selectVersion);
     const userProfile = useSelector(selectUserProfile);
 
-    const logError = (error: Error, info: ErrorInfo) => {
+    const logError = (error: Error, info: React.ErrorInfo) => {
         postErrors({
             message: error.message,
             version: version ?? 'n/a',
             userId: userProfile?.id,
-            componentStack: info.componentStack
+            componentStack: info.componentStack ?? ''
         })
             .catch(err => console.log(err.message));
     }

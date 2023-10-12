@@ -28,6 +28,7 @@ export const selectSearchTerm = (state:RootState) => state.itemLookup.search;
 export const selectSearchResults = (state:RootState) => state.itemLookup.items;
 export const selectSearchStatus = (state:RootState) => state.itemLookup.loadStatus;
 export const selectSearchLoading = (state:RootState) => state.itemLookup.loadStatus === 'pending';
+export const selectSearchFulfilled = (state:RootState) => state.itemLookup.loadStatus === 'fulfilled';
 
 export const setItemSearch = createAction<string>('itemLookup/search');
 

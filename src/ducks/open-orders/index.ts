@@ -124,7 +124,7 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
             }
         })
         .addCase(promoteCart.fulfilled, (state, action) => {
-            state.actionStatus[action.meta.arg.SalesOrderNo] = 'promoting';
+            state.actionStatus[action.meta.arg.SalesOrderNo] = 'idle';
             if (action.payload) {
                 state.list[action.payload.SalesOrderNo] = {...action.payload, actionStatus: 'idle'};
             }

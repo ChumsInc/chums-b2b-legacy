@@ -15,3 +15,21 @@ export async function fetchProductMenu():Promise<Menu|null> {
         return Promise.reject(new Error('Error in loadProductMenu()'));
     }
 }
+
+export async function fetchMenu(id:number):Promise<Menu|null> {
+    try {
+        if (!id) {
+            return null;
+        }
+
+        const response = await fetchJSON<{menus?: Menu[]}>(`/api/menus/${encodeURIComponent(id)}`);
+        return response?.menus?.[0] ?? null;
+    } catch(err) {
+        if (err instanceof Error) {
+            console.debug("loadMenu()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("loadMenu()", err);
+        return Promise.reject(new Error('Error in loadMenu()'));
+    }
+}

@@ -18,6 +18,7 @@ import {loadCustomer} from "../customer/actions";
 import {CartProduct, CustomerPriceRecord, Keyword, Product} from "b2b-types";
 import {loadProduct, setCartItemQuantity, setColorCode} from "./actions";
 import {setLoggedIn} from "../user/actions";
+import {parseImageFilename} from "../../common/image";
 
 
 export interface ProductsState {
@@ -94,30 +95,12 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         .addCase(loadProduct.rejected, (state, action) => {
             state.loading = false;
         })
-        .addCase(setColorCode, (state, action) => {
-            state.colorCode = action.payload;
-            if (isSellAsColors(state.selectedProduct)) {
-                const quantity = state.cartItem?.quantity ?? 1;
-                const uom = state.cartItem?.salesUM;
-                let cartItem = defaultCartItem(state.selectedProduct, {colorCode: action.payload});
-                if (cartItem && cartItem?.salesUM === uom) {
-                    cartItem.quantity = quantity;
-                }
-                if (state.customerKey) {
-                    cartItem = updateCartProductPricing(cartItem, state.pricing);
-                }
-                state.cartItem = cartItem;
-                if (cartItem?.image) {
-                    state.selectedProduct.image = cartItem.image;
-                }
-            } else if (!!state.cartItem && isSellAsMix(state.selectedProduct)) {
-                const [item] = state.selectedProduct.mix.items
-                    .filter(item => item.color?.code === action.payload);
-                state.cartItem.colorName = item?.color?.name ?? item?.color?.code ?? '';
-                if (item.additionalData?.image_filename) {
-                    state.cartItem.image = item.additionalData.image_filename;
-                }
-            }
+        .addCase(setColorCode.fulfilled, (state, action) => {
+            state.colorCode = action.meta.arg;
+            state.cartItem = action.payload;
+            // if (state.cartItem?.image && state.selectedProduct) {
+            //     state.selectedProduct.image = state.cartItem.image;
+            // }
         })
         .addCase(setCartItemQuantity, (state, action) => {
             if (state.cartItem) {

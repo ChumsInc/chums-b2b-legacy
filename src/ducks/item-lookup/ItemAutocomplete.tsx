@@ -1,13 +1,17 @@
 import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
-import {ItemSearchResult, loadItemLookup, selectSearchLoading, selectSearchResults} from "./index";
+import {
+    ItemSearchResult,
+    loadItemLookup,
+    selectSearchFulfilled,
+    selectSearchLoading,
+    selectSearchResults
+} from "./index";
 import {Autocomplete, InputAdornment, TextField} from "@mui/material";
 import {CONTENT_PATH_SEARCH_IMAGE} from "../../constants/paths";
 import {useDebounce} from 'usehooks-ts'
 import {useNavigate} from "react-router";
 import Stack from "@mui/material/Stack";
-import IconButton from "@mui/material/IconButton";
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import {addToCart} from "../cart/actions";
 import AddToCartButton from "../cart/components/AddToCartButton";
 import {selectSalesOrderActionStatus} from "../open-orders/selectors";
@@ -20,6 +24,7 @@ export default function ItemAutocomplete({salesOrderNo}: {
     const dispatch = useAppDispatch();
     const results = useAppSelector(selectSearchResults);
     const loading = useAppSelector(selectSearchLoading);
+    const fulfilled = useAppSelector(selectSearchFulfilled);
     const actionStatus = useAppSelector((state) => selectSalesOrderActionStatus(state, salesOrderNo));
     const navigate = useNavigate();
 
@@ -80,7 +85,7 @@ export default function ItemAutocomplete({salesOrderNo}: {
                                    ...params.InputProps,
                                    endAdornment: (
                                        <>
-                                           {loading && (<CircularProgress color="inherit" size={20} />)}
+                                           {loading && (<CircularProgress color="inherit" size={20}/>)}
                                            {params.InputProps.endAdornment}
                                        </>
                                    )
@@ -91,7 +96,7 @@ export default function ItemAutocomplete({salesOrderNo}: {
                 onInputChange={inputChangeHandler}
                 isOptionEqualToValue={(option, value) => option.ItemCode === value.ItemCode}
                 options={options}
-                noOptionsText={null}
+                noOptionsText={fulfilled ? 'Item Not Found' : null}
                 blurOnSelect
                 getOptionLabel={(option) => option.ItemCode}
                 filterOptions={(x) => x}
@@ -128,7 +133,7 @@ export default function ItemAutocomplete({salesOrderNo}: {
             />
             <AddToCartButton disabled={!quantity || !value || actionStatus !== 'idle'}
                              type="button" size="small" color="primary" fullWidth={false}
-                             onClick={addToCartHandler} />
+                             onClick={addToCartHandler}/>
             <div/>
         </Stack>
     )

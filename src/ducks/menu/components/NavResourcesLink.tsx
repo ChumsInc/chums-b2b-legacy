@@ -4,15 +4,15 @@ import {selectLoggedIn} from "../../user/selectors";
 import ListItemLink from "../../../components/ListItemLink";
 import React from "react";
 import NavItemButtonLink from "./NavItemButtonLink";
+import ResourcesMenu from "./ResourcesMenu";
 
 export default function NavResourcesLink({inDrawer}: NavItemProps) {
-    const isLoggedIn = useSelector(selectLoggedIn);
-    const to = isLoggedIn ? "/pages/chums-reps" : "/pages/customer-resources";
+    const url = '/resources';
     if (inDrawer) {
-        return (<ListItemLink to={to} primary="Resources"/>)
+        return (<ListItemLink to={url} primary="Resources"/>)
     }
     return (
-        <NavItemButtonLink to={to}>Resources</NavItemButtonLink>
+        <ResourcesMenu />
     )
 }
 

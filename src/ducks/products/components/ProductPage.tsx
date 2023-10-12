@@ -91,7 +91,7 @@ const ProductPage = ({keyword}: {
                                 <span><strong>{selectedProduct?.name}</strong> is not available for sale.</span>
                             </Alert>
                         )}
-                        {!!selectedProduct?.dateAvailable && (
+                        {!selectedProduct?.season && !!selectedProduct?.dateAvailable && (
                             <Alert type="warning">
                                 <strong>{selectedProduct.dateAvailable}</strong>
                             </Alert>
@@ -111,6 +111,7 @@ const ProductPage = ({keyword}: {
                                     && isBillToCustomer(customerAccount) && selectedProduct.availableForSale && (
                                         <AddToCartForm quantity={cartItem?.quantity ?? 1} itemCode={cartItem.itemCode}
                                                        setGlobalCart
+                                                       unitOfMeasure={cartItem.salesUM ?? 'EA'}
                                                        season_code={season_code} season_available={season_available}
                                                        disabled={!customerAccount?.TaxSchedule}
                                                        onChangeQuantity={onChangeQuantity} onDone={noop} comment=""/>

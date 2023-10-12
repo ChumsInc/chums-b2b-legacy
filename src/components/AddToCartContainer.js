@@ -64,6 +64,7 @@ const AddToCartContainer = ({itemCode, quantity, comment, onClose}) => {
             </div>
             {!taxSchedule && (<MissingTaxScheduleAlert/>)}
             <AddToCartForm itemCode={itemCode} quantity={_quantity} comment={comment}
+                           unitOfMeasure={itemAvailability?.SalesUnitOfMeasure ?? 'EA'}
                            onChangeQuantity={onChangeQuantity}
                            onDone={() => onClose()}/>
             <CartItemDetail cartItem={cartItem}/>

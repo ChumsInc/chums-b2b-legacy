@@ -33,6 +33,7 @@ import {ShipToAddress} from "b2b-types";
 const AddToCartForm = ({
                            itemCode,
                            quantity,
+                           unitOfMeasure,
                            comment,
                            setGlobalCart,
                            season_code,
@@ -44,6 +45,7 @@ const AddToCartForm = ({
                        }: {
     itemCode: string;
     quantity: number;
+    unitOfMeasure: string;
     comment?: string;
     setGlobalCart?: boolean;
     season_code?: string | null;
@@ -170,6 +172,7 @@ const AddToCartForm = ({
                 )}
                 <Stack direction="row" spacing={2} justifyContent="flex-end">
                     <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
+                                       unitOfMeasure={unitOfMeasure}
                                        disabled={disabled} required/>
                     <AddToCartButton disabled={disabled || !quantity}/>
                 </Stack>

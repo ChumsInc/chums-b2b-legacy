@@ -63,6 +63,7 @@ export default function OrderDetail({salesOrderNo}: {
                 <DialogContent>
                     <AddToCartForm itemCode={cartItem?.itemCode ?? ''}
                                    quantity={cartItem?.quantity ?? 1} onChangeQuantity={quantityChangeHandler}
+                                   unitOfMeasure={'EA'}
                                    excludeSalesOrder={salesOrderNo}
                                    onDone={() => setCartItem(null)}
                     />

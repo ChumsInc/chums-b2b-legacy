@@ -62,6 +62,7 @@ export default function SalesOrderItemLine({
                     {readOnly && (<span>{line.QuantityOrdered}</span>)}
                     {!readOnly && (
                         <CartQuantityInput quantity={+line.QuantityOrdered} min={0}
+                                           unitOfMeasure={line.UnitOfMeasure}
                                            disabled={readOnly}
                                            onChange={onChangeQuantity}/>
                     )}

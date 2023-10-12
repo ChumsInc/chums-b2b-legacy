@@ -27,7 +27,7 @@
     "@mui/x-date-pickers": "^6.0.2",
     "@reduxjs/toolkit": "^1.9.3",
     "@types/lodash.debounce": "^4.0.7",
-    "b2b-types": "github:UtahGooner/b2b-types",
+    "b2b-types": "github:ChumsInc/b2b-types",
     "bootstrap": "^5.0.2",
     "bootstrap-icons": "^1.5.0",
     "classnames": "^2.2.6",
@@ -72,22 +72,18 @@
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-transform-async-to-generator": "^7.12.1",
-    "@babel/plugin-transform-regenerator": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
     "@babel/register": "^7.12.10",
     "@types/debug": "^4.1.8",
-    "@types/google.accounts": "^0.0.8",
-    "@types/isomorphic-fetch": "^0.0.36",
+    "@types/google.accounts": "^0.0.12",
+    "@types/isomorphic-fetch": "^0.0.37",
     "@types/numeral": "^2.0.2",
     "@types/react-dom": "^18.2.7",
     "@types/react-helmet": "^6.1.6",
     "@types/serve-favicon": "^2.5.4",
     "auto-changelog": "^2.4.0",
     "babel-loader": "^9.1.0",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.8.2",
     "nodemon": "^3.0.1",
@@ -110,7 +106,11 @@
   },
   "nodemonConfig": {
     "delay": 1500,
-    "ignore": ["**/node_modules/*"],
-    "watch": ["./dist"]
+    "ignore": [
+      "**/node_modules/*"
+    ],
+    "watch": [
+      "./dist"
+    ]
   }
 }

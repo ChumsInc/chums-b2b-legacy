@@ -26,7 +26,7 @@ const ProductPageImage = () => {
     const productImage = parseImageFilename2({image: selectedProduct?.image, colorCode: colorCode || selectedProduct?.defaultColor});
 
     return (
-        <ProductImage image={productImage}
+        <ProductImage image={cartItem.image}
                       selectedItem={cartItem.itemCode || ''}
                       loading={loading}
                       altImages={product?.images}

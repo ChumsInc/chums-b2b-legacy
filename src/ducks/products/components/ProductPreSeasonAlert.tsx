@@ -6,12 +6,12 @@ import {isCartProduct} from "../utils";
 
 const ProductPreSeasonAlert = () => {
     const cartItem = useSelector(selectProductCartItem);
-    if (!isCartProduct(cartItem) || !cartItem.seasonCode || cartItem.seasonAvailable) {
-        return null
+    if (!isCartProduct(cartItem) || !cartItem.season || !cartItem.season.active || cartItem.season.product_available) {
+        return null;
     }
     return (
         <Alert type="info" title="Pre-Season Order:">
-            {cartItem.seasonDescription}
+            {cartItem.season.preSeasonMessage}
         </Alert>
     )
 }

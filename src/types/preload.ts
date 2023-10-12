@@ -29,6 +29,7 @@ export interface PreloadedState {
     menu?: {
         loaded: boolean;
         productMenu?: Menu;
+        resourcesMenu?: Menu;
     }
     messages?: {
         list?: Message[];

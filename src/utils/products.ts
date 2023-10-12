@@ -154,7 +154,8 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
             msrp: product.msrp,
             quantity: 1,
             seasonCode: product.season_code,
-            seasonAvailable: product.season_available
+            seasonAvailable: product.season_available,
+            season: product.season ?? null,
         };
     }
     if (!product) {
@@ -193,10 +194,12 @@ export const colorCartItem = (item: ProductColorItem, product?: BasicProduct): C
         image: (item.additionalData?.image_filename ?? '') || (product?.image ?? ''),
         name: product?.name ?? item.colorName,
         quantity: 1,
+        season: item.additionalData?.season ?? product?.season ?? null,
         seasonCode: item.additionalData?.season?.code,
         seasonAvailable: item.additionalData?.season?.product_available,
         seasonDescription: item.additionalData?.season?.description,
-        seasonTeaser: item.additionalData?.season?.product_teaser
+        seasonTeaser: item.additionalData?.season?.product_teaser,
+        preSeasonMessage: item.additionalData?.season?.product_available ? null : (item.additionalData?.season?.preSeasonMessage ?? product?.preSeasonMessage ?? product?.dateAvailable),
     }
 };
 

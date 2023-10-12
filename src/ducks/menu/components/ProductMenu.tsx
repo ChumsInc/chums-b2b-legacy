@@ -2,7 +2,6 @@ import React, {useId} from 'react';
 import {useSelector} from "react-redux";
 import {selectProductMenu} from "../../menu";
 import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import NavItemButton from "./NavItemButton";
 import MenuItemRouterLink from "./MenuItemRouterLink";
 import {SxProps} from "@mui/system";
@@ -12,7 +11,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 const productUrl = (url: string) => `/products${url}`;
 
-const itemStyle:SxProps<Theme> = {
+const itemStyle: SxProps<Theme> = {
     textTransform: 'uppercase',
     fontWeight: 700,
 }
@@ -57,33 +56,37 @@ export default function ProductMenu() {
                       },
 
                   }}
-                  PaperProps={{
-                      style: {
-                          maxHeight: '75vh',
-                          width: mediaLg ? 'fit-content' : '75vw',
-                          maxWidth: '100vw',
-                      },
+                  slotProps={{
+                          paper: {
+                              style: {
+                                  maxHeight: '75vh',
+                                  width: mediaLg ? 'fit-content' : '75vw',
+                                  maxWidth: '100vw',
+                              },
 
-                  }}>
-                {productMenu?.items?.map(item => (
-                    <div key={item.id}>
-                        <MenuItemRouterLink to={productUrl(item.url)} onClick={handleClose}
-                                    sx={itemStyle}
-                        >
-                            {item.title}
-                        </MenuItemRouterLink>
-                        {!!item.menu && (
-                            <Box component="ul" sx={{padding: 0}} >
-                                {item.menu?.items?.map(subItem => (
-                                    <MenuItemRouterLink key={subItem.id} to={productUrl(subItem.url)} onClick={handleClose}>
-                                        {subItem.title}
-                                    </MenuItemRouterLink>
-                                ))}
-                            </Box>
-                        )}
-                    </div>
-                ))}
-            </Menu>
-        </>
-    )
-}
+                          }
+                      }}
+                  >
+                      {productMenu?.items?.map(item => (
+                          <div key={item.id}>
+                              <MenuItemRouterLink to={productUrl(item.url)} onClick={handleClose}
+                                                  sx={itemStyle}
+                              >
+                                  {item.title}
+                              </MenuItemRouterLink>
+                              {!!item.menu && (
+                                  <Box component="ul" sx={{padding: 0}}>
+                                      {item.menu?.items?.map(subItem => (
+                                          <MenuItemRouterLink key={subItem.id} to={productUrl(subItem.url)}
+                                                              onClick={handleClose}>
+                                              {subItem.title}
+                                          </MenuItemRouterLink>
+                                      ))}
+                                  </Box>
+                              )}
+                          </div>
+                      ))}
+                      </Menu>
+                      </>
+                      )
+                  }
