@@ -24,6 +24,7 @@ const ResourcesSubNav = ({loggedIn = false}) => {
         <div className="chums-subnavbar-collapse collapse show">
             <ul className="navbar-nav navbar-orders">
                 {menu.items
+                    .filter(item => !!item.status)
                     .filter(item => loggedIn === true || !item.requireLogin)
                     .map(item => (
                         <SubNavColumn key={item.id} url={item.url} title={item.title}/>
