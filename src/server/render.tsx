@@ -54,7 +54,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
                 </HelmetProvider>
             </Provider>
         );
-        const {mtimeMs: swatchMTime} = await fs.stat("./public/css/swatches-2020.css");
+        const {mtimeMs: swatchMTime} = await fs.stat("./public/swatches/swatches-2020.css");
         const css = await loadMainCSS();
         console.log('rendering HTML')
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
