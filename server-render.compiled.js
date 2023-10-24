@@ -59,6 +59,12 @@ app.get('/chums.css.map', function (req, res) {
 app.use('/css', _express["default"]["static"]('./public/css', {
   fallthrough: false
 }));
+app.use('/swatches', _express["default"]["static"]('./public/swatches', {
+  fallthrough: false
+}));
+app.use('/b2b-swatches', _express["default"]["static"]('./public/b2b-swatches', {
+  fallthrough: false
+}));
 app.use('/js', _express["default"]["static"]('./public/js', {
   fallthrough: false
 }));
@@ -389,7 +395,7 @@ function _handleRender() {
           helmet = _reactHelmet.Helmet.renderStatic();
           preloadedState = store.getState();
           _context7.next = 78;
-          return _fs["default"].promises.stat("./public/css/swatches-2020.css");
+          return _fs["default"].promises.stat("./public/b2b-swatches/swatches.css");
         case 78:
           _yield$fs$promises$st = _context7.sent;
           swatchMTime = _yield$fs$promises$st.mtimeMs;
@@ -572,8 +578,7 @@ app.use(function (req, res) {
 app.listen(PORT, function () {
   debug('server running at localhost:' + PORT);
 });
-var _default = app; // debug(process.env);
-exports["default"] = _default;
+var _default = exports["default"] = app; // debug(process.env);
 function loadJSON(url) {
   //    debug('loadJSON()', {url});
   return new Promise(function (resolve, reject) {

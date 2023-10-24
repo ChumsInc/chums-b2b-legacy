@@ -40,6 +40,8 @@ app.get('/chums.css.map', (req, res) => {
     res.redirect('/css/chums.css.map');
 })
 app.use('/css', express.static('./public/css', {fallthrough: false}));
+app.use('/swatches', express.static('./public/swatches', {fallthrough: false}));
+app.use('/b2b-swatches', express.static('./public/b2b-swatches', {fallthrough: false}));
 app.use('/js', express.static('./public/js', {fallthrough: false}));
 app.use('/build', express.static('./public/build', {fallthrough: false}));
 app.use('/images', express.static('./public/images', {fallthrough: false}));
@@ -239,7 +241,7 @@ async function handleRender(req, res) {
 
         const preloadedState = store.getState();
 
-        const {mtimeMs: swatchMTime} = await fs.promises.stat("./public/css/swatches-2020.css");
+        const {mtimeMs: swatchMTime} = await fs.promises.stat("./public/b2b-swatches/swatches.css");
         const {mtimeMs: cssMTime} = await fs.promises.stat("./public/css/chums.css");
         const manifestFiles = await loadManifest();
         const css = await loadMainCSS();
