@@ -30,7 +30,7 @@ const clientConfig = {
     plugins: [
         // new BundleAnalyzerPlugin(),
         new CleanWebpackPlugin(),
-        new WebpackManifestPlugin(),
+        new WebpackManifestPlugin({}),
     ],
 }
 

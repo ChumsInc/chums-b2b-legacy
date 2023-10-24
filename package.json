@@ -12,7 +12,6 @@
     "start-dev-client": "webpack serve --config webpack.dev.client.js --progress",
     "start-dev-server": "webpack serve --config webpack.dev.server.js --progress",
     "build-client": "npx tsc && webpack --config webpack.prod.client.js --progress",
-    "build-server": "npx tsc",
     "start-server": "nodemon ./dist/server/index.js",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
@@ -76,8 +75,8 @@
     "@babel/preset-react": "^7.12.10",
     "@babel/register": "^7.12.10",
     "@types/debug": "^4.1.8",
-    "@types/google.accounts": "^0.0.12",
-    "@types/isomorphic-fetch": "^0.0.37",
+    "@types/google.accounts": "^0.0.13",
+    "@types/isomorphic-fetch": "^0.0.38",
     "@types/numeral": "^2.0.2",
     "@types/react-dom": "^18.2.7",
     "@types/react-helmet": "^6.1.6",
