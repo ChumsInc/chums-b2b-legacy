@@ -1,16 +1,9 @@
-# humanstxt.org/
-# The humans responsible & technology colophon
+/* TEAM */
+Steve Montgomery -- Full Stack Developer
+Site: https://b2b.chums.com
+Location: Salt Lake City, Utah -- Hurricane, Utah -- Ketchum, Idaho
 
-# TEAM
-
-    <name> -- <role> -- <twitter>
-
-# THANKS
-
-    <name>
-
-# TECHNOLOGY COLOPHON
-
-    CSS3, HTML5, JavaScript
-    React, Flux, SuperAgent
-
+/* SITE */
+Standards: HTML5 -- CSS3
+Components: React -- Redux -- Bootstrap -- MUI
+IDE: PHPStorm

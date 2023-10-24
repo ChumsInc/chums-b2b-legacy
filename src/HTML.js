@@ -63,7 +63,7 @@ class Html extends Component {
 
                     <style dangerouslySetInnerHTML={{__html: css}}/>
                     {/*<link rel="stylesheet" href={`/css/chums.css?v=${cssTimestamp}`} media="screen,print" />*/}
-                    <link rel="stylesheet" href={`/css/swatches-2020.css?v=${swatchTimestamp}`} media="screen,print" />
+                    <link rel="stylesheet" href={`/b2b-swatches/swatches.css?v=${swatchTimestamp}`} media="screen,print" />
                     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&display=swap" media="screen" />
                     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap" media="screen" />
                     <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css" />
