@@ -1,6 +1,6 @@
 import {useSelector} from "react-redux";
 import {
-    selectCustomerAccount, selectCustomerLoaded,
+    selectCustomerAccount, selectCustomerLoaded, selectCustomerLoading,
     selectCustomerLoadStatus,
     selectCustomerShipTo,
     selectCustomerShipToCode
@@ -22,10 +22,15 @@ export default function CustomerIndicator() {
     const currentShipTo = useSelector(selectCustomerShipTo);
     const params = useParams<{ customerSlug: string }>();
     const loadStatus = useSelector(selectCustomerLoadStatus);
+    const loading = useSelector(selectCustomerLoading);
     const loaded = useSelector(selectCustomerLoaded);
 
     useEffect(() => {
         const nextCustomer = billToCustomerSlug(params.customerSlug ?? '');
+        if (!nextCustomer && !loaded && !!customer && !loading) {
+            dispatch(loadCustomer(customer));
+            return;
+        }
         if (!nextCustomer) {
             return;
         }

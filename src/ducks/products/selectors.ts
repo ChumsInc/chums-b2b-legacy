@@ -15,10 +15,11 @@ export const selectProductVariantId = (state: RootState) => state.products.varia
 export const selectProductCartItem = (state: RootState) => state.products.cartItem;
 export const selectCustomerPricing = (state:RootState) => state.products.pricing;
 export const selectProductCustomerKey = (state:RootState) => state.products.customerKey;
+export const selectProductImage = (state:RootState) => state.products.image;
 
 export const selectProductSeasonActive = createSelector(
-    [selectSelectedProduct],
-    (product):boolean => isProduct(product) ? product?.season_active ?? true : true);
+    [selectProductCartItem],
+    (cartItem):boolean => cartItem?.season?.active ?? cartItem?.seasonAvailable ?? false);
 
 export const selectProductSeasonCode = createSelector(
     [selectSelectedProduct, selectProductCartItem],

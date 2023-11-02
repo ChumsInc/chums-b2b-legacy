@@ -54,7 +54,12 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
                 </HelmetProvider>
             </Provider>
         );
-        const {mtimeMs: swatchMTime} = await fs.stat("./public/swatches/swatches-2020.css");
+        let swatchMTime = 0;
+        try {
+            const stat = await fs.stat("./public/b2b-swatches/swatches.css");
+            swatchMTime = stat.mtimeMs ?? 0;
+        } catch(err:unknown) {}
+
         const css = await loadMainCSS();
         console.log('rendering HTML')
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
@@ -122,7 +127,7 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
                 </HelmetProvider>
             </Provider>
         );
-        const {mtimeMs: swatchMTime} = await fs.stat("./public/css/swatches-2020.css");
+        const {mtimeMs: swatchMTime} = await fs.stat("./public/b2b-swatches/swatches.css");
         const css = await loadMainCSS();
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles}
@@ -173,7 +178,7 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
                 </HelmetProvider>
             </Provider>
         );
-        const {mtimeMs: swatchMTime} = await fs.stat("./public/css/swatches-2020.css");
+        const {mtimeMs: swatchMTime} = await fs.stat("./public/b2b-swatches/swatches.css");
         const css = await loadMainCSS();
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles}

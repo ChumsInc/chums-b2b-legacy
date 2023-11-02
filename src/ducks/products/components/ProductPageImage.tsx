@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 import {
     selectCurrentProduct,
     selectProductCartItem,
-    selectProductColorCode,
+    selectProductColorCode, selectProductImage,
     selectProductLoading,
     selectSelectedProduct
 } from "../selectors";
@@ -16,8 +16,9 @@ const ProductPageImage = () => {
     const selectedProduct = useSelector(selectSelectedProduct);
     const colorCode = useSelector(selectProductColorCode);
     const product = useSelector(selectCurrentProduct);
+    const image = useSelector(selectProductImage)
 
-    if (!cartItem) {
+    if (!cartItem || !image) {
         return null;
     }
 
@@ -26,7 +27,7 @@ const ProductPageImage = () => {
     const productImage = parseImageFilename2({image: selectedProduct?.image, colorCode: colorCode || selectedProduct?.defaultColor});
 
     return (
-        <ProductImage image={cartItem.image}
+        <ProductImage image={image}
                       selectedItem={cartItem.itemCode || ''}
                       loading={loading}
                       altImages={product?.images}

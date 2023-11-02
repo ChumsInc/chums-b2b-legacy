@@ -42,11 +42,6 @@ export const loadProduct = createAsyncThunk<LoadProductResponse | null, string>(
         if (cartItem && customerPrice.length) {
             cartItem.price = customerPrice[0];
         }
-        if (!!variant?.product && cartItem?.image) {
-            variant.product.image = cartItem.image;
-        } else if (!!product && cartItem?.image) {
-            product.image = cartItem.image;
-        }
 
         return {
             product,
@@ -65,9 +60,9 @@ export const loadProduct = createAsyncThunk<LoadProductResponse | null, string>(
     }
 )
 
-// export const setColorCode = createAction<string>('product/setColorCode');
+
 export const setColorCode = createAsyncThunk<CartProduct|null, string>(
-    'products/setColorCode2',
+    'products/setColorCode',
     (arg, {getState}) => {
         const state = getState() as RootState;
         const existingCartItem = selectProductCartItem(state);

@@ -26,6 +26,7 @@ export interface ProductsState {
     loadingKeywords: boolean;
     product: Product | null;
     selectedProduct: Product | null;
+    image: string|null;
     colorCode: string;
     variantId: number | null;
     loading: boolean;
@@ -42,6 +43,7 @@ export const initialProductsState = (preload: PreloadedState = {}): ProductsStat
     loadingKeywords: false,
     product: null,
     selectedProduct: null,
+    image: null,
     colorCode: '',
     variantId: null,
     loading: false,
@@ -91,6 +93,7 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                 ?? action.payload?.variant?.product?.defaultColor
                 ?? action.payload?.product?.defaultColor
                 ?? '';
+            state.image = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
         })
         .addCase(loadProduct.rejected, (state, action) => {
             state.loading = false;
@@ -98,9 +101,7 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         .addCase(setColorCode.fulfilled, (state, action) => {
             state.colorCode = action.meta.arg;
             state.cartItem = action.payload;
-            // if (state.cartItem?.image && state.selectedProduct) {
-            //     state.selectedProduct.image = state.cartItem.image;
-            // }
+            state.image = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
         })
         .addCase(setCartItemQuantity, (state, action) => {
             if (state.cartItem) {

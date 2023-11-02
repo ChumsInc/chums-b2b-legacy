@@ -56,7 +56,7 @@ export default function B2BHtml({html, css, state, helmet, manifestFiles, swatch
 
             <style dangerouslySetInnerHTML={{__html: css}}/>
             {/*<link rel="stylesheet" href={`/css/chums.css?v=${cssTimestamp}`} media="screen,print" />*/}
-            <link rel="stylesheet" href={`/swatches/swatches-2020.css?v=${swatchTimestamp}`} media="screen,print"/>
+            <link rel="stylesheet" href={`/b2b-swatches/swatches.css?v=${swatchTimestamp}`} media="screen,print"/>
             <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&display=swap"
                   media="screen"/>
             <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap"
