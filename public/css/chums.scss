@@ -12,7 +12,7 @@ html {
 body {
   background-color: transparent;
   font-family: "Roboto Condensed", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background-image: url('//b2b.chums.com/images/chums/mountain-footer.webp');
+  background-image: url('/images/chums/mountain-footer.webp');
   background-position: bottom;
   background-repeat: repeat-x;
   padding-bottom: $mountain-footer-height;
@@ -413,25 +413,24 @@ input.telephone-ext {
 }
 
 a {
-  &[href $=".pdf"],
-  &.pdf {
+  &.pdf,
+  &.pdf-icon {
     background: url($cdn + "/images/icons/Adobe_PDF_file_icon_24x24.png") center right no-repeat;
     padding: 0 2rem 0 0;
     background-size: contain;
   }
 
-  &[href $=".xls"],
   &.xls,
-  &[href $=".xlsx"],
-  &[href $=".xlsm"] {
+  &.xlsx,
+  &.xlsx-icon {
     background: url($cdn + "/images/icons/Microsoft_Excel_2013_logo.svg") center right no-repeat;
     padding: 0 2rem 0 0;
     background-size: contain;
   }
 
-  &[href $=".ppt"],
   &.ppt,
-  &[href $=".pptx"],
+  &.ppt-icon,
+  &.pptx-icon
   &.pptx {
     background: url($cdn + "/images/icons/Microsoft_PowerPoint_2013_logo.svg") center right no-repeat;
     padding: 0 2rem 0 0;
