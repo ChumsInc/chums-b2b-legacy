@@ -5,7 +5,7 @@ import {
     FETCH_CATEGORY,
     FETCH_KEYWORDS,
     FETCH_PRODUCT,
-    FETCH_PRODUCTS_MENU,
+    FETCH_PRODUCTS_MENU, FETCH_SITE_MESSAGES,
     FETCH_SLIDES,
     FETCH_SUCCESS,
     FETCH_VERSION,
@@ -188,6 +188,11 @@ const messages = (state = preferences.messages, action) => {
                     {type: 'version', message: VERSION_REFRESH_MESSAGE, start: null, end: null}
                 ];
             }
+        }
+        return state;
+    case FETCH_SITE_MESSAGES:
+        if (status === FETCH_SUCCESS && action.payload) {
+            return [...action.payload].sort((a, b) => a.id - b.id);
         }
         return state;
     default:

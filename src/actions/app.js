@@ -4,7 +4,7 @@ import {
     FETCH_FAILURE,
     FETCH_INIT,
     FETCH_PAGE,
-    FETCH_SEARCH_RESULTS,
+    FETCH_SEARCH_RESULTS, FETCH_SITE_MESSAGES,
     FETCH_SLIDES,
     FETCH_SUCCESS,
     FETCH_VERSION,
@@ -148,5 +148,23 @@ export const logError = ({message, componentStack, debug}) => (dispatch, getStat
             .catch(err => console.log(err.message));
     } catch(err) {
         console.log("()", err.message);
+    }
+}
+
+export const fetchSiteMessages = () => async (dispatch, getState) => {
+    try {
+        dispatch({type: FETCH_SITE_MESSAGES, status: FETCH_INIT});
+        const url = '/api/messages/current';
+        const res = await fetchGET(url);
+        const messages = res.messages ?? [];
+        dispatch({type: FETCH_SITE_MESSAGES, status: FETCH_SUCCESS, payload: messages})
+    } catch(err) {
+        if (err instanceof Error) {
+            console.debug("()", err.message);
+            dispatch({type: FETCH_SITE_MESSAGES, status: FETCH_FAILURE});
+            dispatch(handleError(err, FETCH_SITE_MESSAGES));
+        }
+        console.debug("()", err);
+        return Promise.reject(new Error('Error in ()'));
     }
 }

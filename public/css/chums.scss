@@ -403,6 +403,10 @@ input.telephone-ext {
     padding-left: 100%;
     /* show the marquee just outside the paragraph */
     animation: marquee 25s linear infinite;
+    @media (prefers-reduced-motion) {
+      padding-left: unset;
+      animation: unset;
+    }
     &:hover {
       animation-play-state: paused;
       cursor: pointer;
