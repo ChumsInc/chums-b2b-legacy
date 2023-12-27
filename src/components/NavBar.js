@@ -130,7 +130,7 @@ class NavBar extends Component {
                             <h1>
                                 <Link to="/" className="nav-link home-link">
                                     <img className={classNames({scrolled})}
-                                         src={"/images/logos/40YearBadgeLogo_RGB_091322.png"} alt="Chums Logo"/>
+                                         src={"/images/logos/Chums-Logo-Badge-Red-RGB.png"} alt="Chums Logo"/>
                                 </Link>
                             </h1>
                         </div>
