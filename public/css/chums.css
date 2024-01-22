@@ -13472,8 +13472,8 @@ body.scrolled .site-header .global-search-padder {
 }
 .product-page .product-panel .swatch-container .swatch-set .swatch .color-swatch, .product-page .product-minicart-panel .swatch-container .swatch-set .swatch .color-swatch, .product-page .product-image-panel .swatch-container .swatch-set .swatch .color-swatch, .product-page .product-info-panel .swatch-container .swatch-set .swatch .color-swatch {
   margin: 0.15rem;
-  width: 2rem;
-  height: 2rem;
+  width: 3rem;
+  height: 3rem;
   background-size: cover;
   background-position: center;
   text-decoration: none;

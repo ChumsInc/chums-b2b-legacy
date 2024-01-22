@@ -87,7 +87,6 @@ const mapDispatchToProps = {
 class InvoiceHeader extends Component {
     static propTypes = {
         invoice: PropTypes.shape({
-            Company: PropTypes.string.isRequired,
             InvoiceNo: PropTypes.string,
             SalesOrderNo: PropTypes.string,
         }),
@@ -164,8 +163,8 @@ class InvoiceHeader extends Component {
     }
 
     onReload() {
-        const {Company, InvoiceNo} = this.props.invoice;
-        this.props.fetchInvoice({Company, InvoiceNo});
+        const {InvoiceNo} = this.props.invoice;
+        this.props.fetchInvoice({Company: 'CHI', InvoiceNo});
     }
 
     onDuplicateOrder() {
@@ -204,7 +203,7 @@ class InvoiceHeader extends Component {
             invoice,
         } = this.props;
         const {
-            SalesOrderNo, OrderDate, ShipDate, ShipVia, Tracking, UDF_CANCEL_DATE,
+            SalesOrderNo, OrderDate, ShipDate, ShipVia, Track, UDF_CANCEL_DATE,
             InvoiceDate, InvoiceDueDate, CustomerPONo, UDF_PROMO_DEAL
         } = this.props.invoice;
 
@@ -252,7 +251,7 @@ class InvoiceHeader extends Component {
                                                       allowCustomerAccount={false}
                                                       shippingAccount={shippingAccount}/>
                             </div>
-                            {(Tracking || []).map(track => (
+                            {(Track || []).map(track => (
                                 <TrackingLinkBadge key={track.PackageNo} {...track}/>)
                             )}
                         </FormGroup>
