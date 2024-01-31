@@ -196,7 +196,7 @@ class ProductPage extends Component {
     render() {
         const {
             loggedIn, product, selectedProduct, loading, colorCode, msrp, salesUM, variantId,
-            cartItem, pricing, hasCustomer, canViewAvailable, season_code, season_available, season_description,
+            cartItem, pricing, hasCustomer, canViewAvailable, season_active, season_code, season_available, season_description,
             season_teaser, TaxSchedule, season
         } = this.props;
         const {images = [], name = '', variants = []} = product ?? {};
@@ -236,7 +236,8 @@ class ProductPage extends Component {
                                         </div>
                                     )}
                                     <div className="col-auto">
-                                        <SeasonTeaser season_teaser={cartItem?.additionalData?.season?.product_teaser || season_teaser}/>
+                                        {cartItem?.season?.active && (<SeasonTeaser
+                                            season_teaser={cartItem?.season?.product_teaser || season_teaser}/>)}
                                     </div>
                                 </div>
                             </div>
