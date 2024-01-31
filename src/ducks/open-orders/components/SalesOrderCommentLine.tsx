@@ -7,6 +7,7 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import Box from "@mui/material/Box";
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from "@mui/material/IconButton";
+import {TableCell, TableRow, TextField} from "@mui/material";
 
 const SalesOrderCommentLine = ({line, readOnly, onChange, onDelete}: {
     line: SalesOrderDetailLine & Editable & Appendable;
@@ -24,21 +25,25 @@ const SalesOrderCommentLine = ({line, readOnly, onChange, onDelete}: {
     }
 
     return (
-        <tr className={classNames('order-detail line-comment', rowClassName)}>
-            {line.ItemType === '4' && (<td className="text-center"><TextSnippetIcon/></td>)}
-            <td colSpan={4}>
+        <TableRow className={classNames(rowClassName)}>
+            {line.ItemType === '4' && (<TableCell className="text-center"><TextSnippetIcon/></TableCell>)}
+            <TableCell colSpan={3}>
                 <Box sx={{display: 'flex', flexDirection: 'row'}}>
-                    <FilledInput value={line.CommentText ?? ''} fullWidth size="small"
+                    <TextField value={line.CommentText ?? ''} fullWidth size="small" variant="filled"
+                               label="Item Comment"
                                  sx={{flex: '1 1 auto'}}
                                  inputProps={{readOnly}}
                                  multiline maxRows={4} minRows={1}
                                  onChange={changeHandler}
-                                 endAdornment={<IconButton size="small" onClick={onDelete}><ClearIcon/></IconButton>}/>
+                                    InputProps={{
+                                        endAdornment: <IconButton size="small" onClick={onDelete}><ClearIcon/></IconButton>
+                                    }}
+                                 />
                 </Box>
-            </td>
-            <td colSpan={3}>&nbsp;</td>
-            {line.ItemType === '4' && (<td>&nbsp;</td>)}
-        </tr>
+            </TableCell>
+            <TableCell colSpan={4}>&nbsp;</TableCell>
+            {line.ItemType === '4' && (<TableCell>&nbsp;</TableCell>)}
+        </TableRow>
     )
 }
 export default SalesOrderCommentLine;

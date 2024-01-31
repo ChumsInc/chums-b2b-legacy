@@ -3,6 +3,9 @@ import {SortProps} from "../../types/generic";
 import {generatePath} from "react-router-dom";
 import {PATH_CUSTOMER_ACCOUNT, PATH_PROFILE_ACCOUNT} from "../../constants/paths";
 import {shortCustomerKey} from "../../utils/customer";
+import {UnknownAction} from "@reduxjs/toolkit";
+import {DeprecatedUserAction, DeprecatedUserProfileAction} from "./types";
+import {ExtendedUserProfile} from "../../types/user";
 
 export const salespersonKey = (sp: Salesperson) => `${sp.SalespersonDivisionNo}-${sp.SalespersonNo}`;
 
@@ -79,3 +82,10 @@ export const repAccessCode = (row: UserCustomerAccess): string => {
     return `${row.SalespersonDivisionNo}-${row.SalespersonNo}`;
 };
 
+export const isUserProfileAction = (action:UnknownAction|DeprecatedUserAction|DeprecatedUserProfileAction): action is DeprecatedUserProfileAction => {
+    if (!action.props) {
+        return false;
+    }
+    const props = action.props as ExtendedUserProfile;
+    return props.email !== undefined;
+}

@@ -57,36 +57,35 @@ export default function ProductMenu() {
 
                   }}
                   slotProps={{
-                          paper: {
-                              style: {
-                                  maxHeight: '75vh',
-                                  width: mediaLg ? 'fit-content' : '75vw',
-                                  maxWidth: '100vw',
-                              },
+                      paper: {
+                          style: {
+                              maxHeight: '75vh',
+                              width: mediaLg ? 'fit-content' : '75vw',
+                              maxWidth: '100vw',
+                          },
 
-                          }
-                      }}
-                  >
-                      {productMenu?.items?.map(item => (
-                          <div key={item.id}>
-                              <MenuItemRouterLink to={productUrl(item.url)} onClick={handleClose}
-                                                  sx={itemStyle}
-                              >
-                                  {item.title}
-                              </MenuItemRouterLink>
-                              {!!item.menu && (
-                                  <Box component="ul" sx={{padding: 0}}>
-                                      {item.menu?.items?.map(subItem => (
-                                          <MenuItemRouterLink key={subItem.id} to={productUrl(subItem.url)}
-                                                              onClick={handleClose}>
-                                              {subItem.title}
-                                          </MenuItemRouterLink>
-                                      ))}
-                                  </Box>
-                              )}
-                          </div>
-                      ))}
-                      </Menu>
-                      </>
-                      )
-                  }
+                      }
+                  }}>
+                {productMenu?.items?.map(item => (
+                    <div key={item.id}>
+                        <MenuItemRouterLink to={productUrl(item.url)} onClick={handleClose}
+                                            sx={itemStyle}
+                        >
+                            {item.title}
+                        </MenuItemRouterLink>
+                        {!!item.menu && (
+                            <Box component="ul" sx={{padding: 0}}>
+                                {item.menu?.items?.map(subItem => (
+                                    <MenuItemRouterLink key={subItem.id} to={productUrl(subItem.url)}
+                                                        onClick={handleClose}>
+                                        {subItem.title}
+                                    </MenuItemRouterLink>
+                                ))}
+                            </Box>
+                        )}
+                    </div>
+                ))}
+            </Menu>
+        </>
+    )
+}

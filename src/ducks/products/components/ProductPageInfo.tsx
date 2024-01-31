@@ -2,6 +2,9 @@ import React from 'react';
 import {useSelector} from "react-redux";
 import {selectProductCartItem, selectProductMSRP, selectProductSalesUM, selectSelectedProduct} from "../selectors";
 import numeral from "numeral";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 const ProductPageInfo = () => {
     const msrp = useSelector(selectProductMSRP);
@@ -11,17 +14,20 @@ const ProductPageInfo = () => {
     const itemCode = cartItem?.itemCode ?? selectedProduct?.itemCode ?? null;
 
     return (
-        <div className="details">
-            <div><label>SKU</label><span className="info">{itemCode}</span></div>
-            <div>
-                <label>MSRP</label>
-                <span className="info">
+        <Stack direction="row" justifyContent="space-between">
+            <Box>
+                <Typography variant="caption" sx={{mr: 2}} component="span">SKU</Typography>
+                <Typography variant="body1" component="span" sx={{fontWeight: '600'}}>{itemCode}</Typography>
+            </Box>
+            <Box>
+                <Typography variant="caption" sx={{mr: 2}} component="span">MSRP</Typography>
+                <Typography variant="body1" component="span" sx={{fontWeight: '600'}}>
                     $ {msrp.map(price => numeral(price).format('0.00')).join(' - ')}
                     {' '}
                     ({salesUM})
-                </span>
-            </div>
-        </div>
+                </Typography>
+            </Box>
+        </Stack>
     )
 }
 

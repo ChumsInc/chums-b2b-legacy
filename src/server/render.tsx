@@ -13,7 +13,7 @@ import {API_PORT} from "./config";
 import {loadJSON, loadKeywords} from "./utils";
 import {loadManifest} from "./manifest";
 import B2BHtml from "./B2BHTML";
-import {FilledContext, HelmetProvider} from "react-helmet-async";
+import {HelmetData, HelmetProvider} from "react-helmet-async";
 import {Route} from "react-router-dom";
 import {StaticRouter} from "react-router-dom/server";
 
@@ -43,11 +43,11 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json`);
         const initialState = prepState(preload ?? {});
         const store = createStore(rootReducer, initialState);
-        const helmetContext: Partial<FilledContext> = {};
-        console.log('rendering App', Object.keys(helmetContext));
+        const helmetData = new HelmetData({});
+        console.log('rendering App', Object.keys(helmetData));
         const app = renderToString(
             <Provider store={store}>
-                <HelmetProvider context={helmetContext}>
+                <HelmetProvider context={helmetData.context}>
                     <StaticRouter location={req.url}>
                         <App />
                     </StaticRouter>
@@ -63,7 +63,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         const css = await loadMainCSS();
         console.log('rendering HTML')
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
-                                             manifestFiles={manifestFiles} helmet={helmetContext.helmet}
+                                             manifestFiles={manifestFiles} helmet={helmetData.context.helmet}
                                              swatchTimestamp={swatchMTime.toString(36)}/>)
         res.send(html);
     } catch (err: unknown) {
@@ -117,10 +117,10 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json?${searchParams.toString()}`);
         const initialState = prepState(preload ?? {});
         const store = createStore(rootReducer, initialState);
-        const helmetContext: Partial<FilledContext> = {};
+        const helmetData = new HelmetData({});
         const app = renderToString(
             <Provider store={store}>
-                <HelmetProvider context={helmetContext}>
+                <HelmetProvider context={helmetData.context}>
                     <StaticRouter location={req.url}>
                         <App/>
                     </StaticRouter>
@@ -132,7 +132,7 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles}
                                              swatchTimestamp={swatchMTime.toString(36)}
-                                             helmet={helmetContext.helmet}/>)
+                                             helmet={helmetData.context.helmet}/>)
         res.send(html);
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -168,10 +168,10 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
         const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json?${searchParams.toString()}`);
         const initialState = prepState(preload ?? {});
         const store = createStore(rootReducer, initialState);
-        const helmetContext: Partial<FilledContext> = {};
+        const helmetData = new HelmetData({});
         const app = renderToString(
             <Provider store={store}>
-                <HelmetProvider context={helmetContext}>
+                <HelmetProvider context={helmetData.context}>
                     <StaticRouter location={req.url}>
                         <App/>
                     </StaticRouter>
@@ -183,7 +183,7 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles}
                                              swatchTimestamp={swatchMTime.toString(36)}
-                                             helmet={helmetContext.helmet}/>)
+                                             helmet={helmetData.context.helmet}/>)
         res.send(html);
     } catch (err: unknown) {
         if (err instanceof Error) {

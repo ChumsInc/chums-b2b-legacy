@@ -1,7 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link as RoutedLink} from 'react-router-dom';
 import ProductImage from "../../../components/ProductImage";
 import classNames from 'classnames';
+import CategoryGridItem from "./CategoryGridItem";
+import ResponsiveProductImage from "../../../components/ResponsiveProductImage";
+import Link from "@mui/material/Link";
 
 const CategoryLink = ({title, keyword, description, imageUrl, className = ''}:{
     title: string;
@@ -15,15 +18,16 @@ const CategoryLink = ({title, keyword, description, imageUrl, className = ''}:{
     };
 
     return (
-        <div className={classNames(className, selfClassName)}>
-            <Link className="category" to={`/products/${keyword}`}>
-                <ProductImage image={imageUrl} title={title} altText={title} size="400" className="main-image"/>
+        <CategoryGridItem className={classNames(className, selfClassName)}>
+            <Link component={RoutedLink} to={`/products/${keyword}`} underline="hover">
+                <ResponsiveProductImage filename={imageUrl} title={title} alt={title}
+                                        preferredSize={400}/>
                 <div className="product-title">{title}</div>
             </Link>
             <div className="description">
                 <div dangerouslySetInnerHTML={{__html: description}}/>
             </div>
-        </div>
+        </CategoryGridItem>
     );
 }
 

@@ -3,7 +3,7 @@ import FormGroupTextInput from "../../../common-components/FormGroupTextInput";
 import FormGroup from "../../../common-components/FormGroup";
 import DeliveryAddress from "../../../components/Address/DeliveryAddress";
 import {duplicateOrder} from "../../../actions/salesOrder";
-import {loadInvoice} from '../actions';
+import {deprecated_loadInvoice} from '../actions';
 import {useSelector} from "react-redux";
 import ShippingMethodSelect from "../../../components/ShippingMethodSelect";
 import DuplicateCartAlert from "../../../components/DuplicateCartAlert";
@@ -16,6 +16,9 @@ import {useLocation} from "react-router-dom";
 import dayjs from "dayjs";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
+import Stack from "@mui/material/Stack";
+import {TextField} from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 const InvoiceHeader = () => {
     const dispatch = useAppDispatch();
@@ -43,7 +46,7 @@ const InvoiceHeader = () => {
             return;
         }
         const {InvoiceNo, InvoiceType} = invoice;
-        dispatch(loadInvoice({InvoiceNo, InvoiceType}))
+        dispatch(deprecated_loadInvoice({InvoiceNo, InvoiceType}))
     }
 
     if (!invoice) {
@@ -58,38 +61,44 @@ const InvoiceHeader = () => {
                                 loading={cartLoading}
                                 onCancel={onCancelDuplicate}
                                 onConfirm={onDuplicateOrder}/>
-            <Grid container spacing={1}>
-                <Grid lg={6}>
-                    {!!invoice.OrderDate && !!invoice.SalesOrderNo && (
-                        <FormGroup colWidth={8} label="Order Date">
-                            {dayjs(invoice.OrderDate).toDate().toLocaleDateString()}
-                        </FormGroup>
-                    )}
-                    {!cancelHidden && (
-                        <FormGroup colWidth={8} label="Cancel Date">
-                            {dayjs(invoice.UDF_CANCEL_DATE).toDate().toLocaleDateString()}
-                        </FormGroup>
-                    )}
-                    <FormGroup colWidth={8} label="Invoiced">
-                        {dayjs(invoice.InvoiceDate).toDate().toLocaleDateString()}
-                    </FormGroup>
-                    <FormGroup colWidth={8} label="Due Date">
-                        {!!invoice.InvoiceDueDate && (
-                            <span>{dayjs(invoice.InvoiceDueDate).toDate().toLocaleDateString()}</span>
-                        )}
-                    </FormGroup>
-                    <FormGroup colWidth={8} label="Ship Date">
-                        {!!invoice.ShipDate && (
-                            <span>{dayjs(invoice.ShipDate).toDate().toLocaleDateString()}</span>
-                        )}
-                    </FormGroup>
-                    <FormGroup colWidth={8} label="Ship Method">
-                        <ShippingMethodSelect value={invoice.ShipVia || ''} onChange={noop}
-                                              readOnly={true}/>
-                        {(invoice.Tracking || []).map(track => (
-                            <TrackingLinkBadge key={track.PackageNo} {...track}/>)
-                        )}
-                    </FormGroup>
+            <Grid container spacing={2}>
+                <Grid xs={12} lg={6}>
+                    <Stack spacing={2} direction="column">
+                        <Stack spacing={2} direction={{xs: 'column', lg: 'row'}}>
+                            {!!invoice.OrderDate && !!invoice.SalesOrderNo && (
+                                <TextField label="Order Date" type="date" fullWidth variant="filled" size="small"
+                                           value={dayjs(invoice.OrderDate).format('YYYY-MM-DD')} placeholder=""
+                                           inputProps={{readOnly: true}}/>
+                            )}
+                            {!!invoice.ShipDate && (
+                                <TextField label="Req. Ship Date" type="date" fullWidth variant="filled" size="small"
+                                           value={dayjs(invoice.ShipDate).format('YYYY-MM-DD')} placeholder=""
+                                           inputProps={{readOnly: true}}/>
+                            )}
+                            {!cancelHidden && (
+                                <TextField label="Cancel Date" type="date" fullWidth variant="filled" size="small"
+                                           value={dayjs(invoice.UDF_CANCEL_DATE).format('YYYY-MM-DD')}
+                                           placeholder=""
+                                           inputProps={{readOnly: true}}/>
+                            )}
+                        </Stack>
+                        <Stack spacing={2} direction={{xs: 'column', lg: 'row'}}>
+                            <TextField label="Invoice Date" type="date" fullWidth variant="filled" size="small"
+                                       value={dayjs(invoice.OrderDate).format('YYYY-MM-DD')} placeholder=""
+                                       inputProps={{readOnly: true}}/>
+                            {!!invoice.InvoiceDueDate && (
+                                <TextField label="Invoice Due Date" type="date" fullWidth variant="filled" size="small"
+                                           value={dayjs(invoice.InvoiceDueDate).format('YYYY-MM-DD')} placeholder=""
+                                           inputProps={{readOnly: true}}/>
+                            )}
+                        </Stack>
+                        <Stack direction="row" useFlexGap flexWrap="wrap">
+                            {!invoice.Tracking.length && <Alert severity="info">Tracking is not available for this invoice.</Alert>}
+                            {(invoice.Tracking || []).map(track => (
+                                <TrackingLinkBadge key={track.PackageNo} {...track}/>)
+                            )}
+                        </Stack>
+                    </Stack>
                 </Grid>
                 <Grid xl={6}>
                     <FormGroup colWidth={8} label="Ship To Address">
@@ -154,7 +163,7 @@ export default InvoiceHeader;
 //
 // const mapDispatchToProps = {
 //     duplicateOrder,
-//     fetchInvoice: loadInvoice,
+//     fetchInvoice: deprecated_loadInvoice,
 //     promoteCart,
 //     selectCart: setCurrentCart,
 //     sendOrderEmail,

@@ -16,3 +16,7 @@ export const fetchStatusToLoadStatus = (value:'FETCH_INIT'|'FETCH_SUCCESS'|'FETC
     }
     return 'idle';
 }
+
+export function waitForIt(delay: number) {
+    return new Promise(res => setTimeout(res, delay));
+}

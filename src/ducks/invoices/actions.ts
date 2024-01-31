@@ -7,11 +7,12 @@ import {setAlert} from "../alerts";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {STORE_INVOICES_ROWS_PER_PAGE} from "../../constants/stores";
 import localStore from "../../utils/LocalStore";
-import {fetchInvoices} from "../../api/invoices";
-import {selectInvoicesList, selectInvoicesLoading} from "./selectors";
+import {fetchInvoice, fetchInvoices} from "../../api/invoices";
+import {selectCurrentInvoiceLoading, selectInvoicesList, selectInvoicesLoading} from "./selectors";
 import {AppDispatch, RootState} from "../../app/configureStore";
-import {CustomerKey, InvoiceHeader} from "b2b-types";
+import {CustomerKey, Invoice, InvoiceHeader} from "b2b-types";
 import {selectLoggedIn} from "../user/selectors";
+import {FetchInvoiceArg} from "./types";
 
 export const setInvoicesSort = createAction('invoices/setSort');
 export const setInvoicesPage = createAction('invoices/setPage');
@@ -31,10 +32,23 @@ export const setCurrentInvoice = ({InvoiceNo, InvoiceType}: { InvoiceNo: string;
             InvoiceType
         }] = list.filter(inv => inv.InvoiceNo === InvoiceNo && inv.InvoiceType === InvoiceType);
         dispatch({type: SELECT_INVOICE, invoice});
-        dispatch(loadInvoice({InvoiceNo, InvoiceType}));
+        dispatch(deprecated_loadInvoice({InvoiceNo, InvoiceType}));
     }
 
-export const loadInvoice = ({InvoiceNo, InvoiceType}: { InvoiceNo: string; InvoiceType: string }) => (dispatch: AppDispatch, getState: () => RootState) => {
+export const loadInvoice = createAsyncThunk<Invoice|null, FetchInvoiceArg>(
+    'invoices/loadInvoice',
+    async (arg) => {
+        return await fetchInvoice(arg);
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return !selectCurrentInvoiceLoading(state);
+        }
+    }
+)
+
+export const deprecated_loadInvoice = ({InvoiceNo, InvoiceType}: { InvoiceNo: string; InvoiceType: string }) => (dispatch: AppDispatch, getState: () => RootState) => {
     const Company = 'chums';
     if (!InvoiceNo) {
         return;

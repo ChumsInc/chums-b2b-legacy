@@ -27,6 +27,7 @@ import {LoadStatus, Selectable} from "../../types/generic";
 import {CustomerPermissions} from "../../types/customer";
 import {dismissContextAlert} from "../alerts";
 import {customerResponseToState} from "./utils";
+import {isDeprecatedSetLoggedInAction} from "../../types/actions";
 
 export interface CustomerPermissionsState {
     values: CustomerPermissions | null;
@@ -247,7 +248,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case SET_LOGGED_IN:
-                    if (action.loggedIn === false) {
+                    if (isDeprecatedSetLoggedInAction(action) && action.loggedIn === false) {
                         state.account = null;
                         state.contacts = [];
                         state.pricing = [];

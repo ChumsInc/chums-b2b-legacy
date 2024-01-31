@@ -1,4 +1,4 @@
-import {FETCH_CATEGORY, FETCH_KEYWORDS, FETCH_PRODUCT, FETCH_SUCCESS,} from "../../constants/actions";
+import {FETCH_KEYWORDS, FETCH_PRODUCT, FETCH_SUCCESS,} from "../../constants/actions";
 import {CUSTOMER_TABS, SUB_NAV_TYPES} from "../../constants/app";
 import localStore from "../../utils/LocalStore";
 import {STORE_USER_PREFS} from "../../constants/stores";
@@ -7,6 +7,8 @@ import {setCustomerTab, setLifestyle, setRowsPerPage, setSubNavBar, toggleXSNavB
 import {setCustomerAccount} from "../customer/actions";
 import {PreloadedState} from "../../types/preload";
 import {AppState} from "./types";
+import {isDeprecatedKeywordsAction} from "../keywords/utils";
+import {isAsyncAction} from "../../types/actions";
 
 export const initialAppState = (preload?: PreloadedState): AppState => ({
     productMenu: preload?.app?.productMenu ?? null,
@@ -46,18 +48,13 @@ const appReducer = createReducer(initialAppState, (builder) => {
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_KEYWORDS:
-                    if (action.status === FETCH_SUCCESS) {
+                    if (isDeprecatedKeywordsAction(action) && action.status === FETCH_SUCCESS) {
                         state.keywords = action.list;
                     }
                     return;
                 case FETCH_PRODUCT:
-                    if (action.status === FETCH_SUCCESS) {
+                    if (isAsyncAction(action) && action.status === FETCH_SUCCESS) {
                         state.lifestyle = '';
-                    }
-                    return;
-                case FETCH_CATEGORY:
-                    if (action.status === FETCH_SUCCESS) {
-                        state.lifestyle = action.category?.lifestyle ?? '';
                     }
                     return;
             }

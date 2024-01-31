@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from "react-router-dom";
-import Alert from "../../../common-components/Alert";
+import Alert from "@mui/material/Alert";
 import {useSelector} from "react-redux";
 import {selectCustomerLoading} from "../selectors";
 import {selectCurrentCustomer} from "../../user/selectors";
@@ -13,7 +13,7 @@ const SelectCustomerAlert = () => {
         return null;
     }
     return (
-        <Alert type="warning">
+        <Alert severity="warning">
             <Link to="/profile">Please select a customer.</Link>
         </Alert>
     )

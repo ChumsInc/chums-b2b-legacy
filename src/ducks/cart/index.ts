@@ -2,21 +2,18 @@ import {
     CLEAR_PRODUCT,
     CREATE_NEW_CART,
     DELETE_CART,
-    FETCH_CART,
     FETCH_INIT,
     FETCH_ORDERS,
     FETCH_SALES_ORDER,
     FETCH_SUCCESS,
     SAVE_CART,
     SELECT_COLOR,
-    SELECT_VARIANT,
-    SET_CART_ITEM_QUANTITY,
-    UPDATE_CART
+    SELECT_VARIANT
 } from "../../constants/actions";
 
 import localStore from "../../utils/LocalStore";
 import {STORE_CURRENT_CART, STORE_CUSTOMER_SHIPPING_ACCOUNT} from "../../constants/stores";
-import {isCartOrder, nextShipDate} from "../../utils/orders";
+import {isCartOrder, isDeprecatedFetchSalesOrderAction, nextShipDate} from "../../utils/orders";
 import {CART_PROGRESS_STATES, NEW_CART} from "../../constants/orders";
 import {createReducer} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
@@ -35,12 +32,16 @@ import {setCustomerAccount} from "../customer/actions";
 import {setLoggedIn} from "../user/actions";
 import {Editable, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {CustomerShippingAccount} from "../../types/customer";
-import {loadOpenOrders} from "../open-orders/actions";
+import {loadOpenOrders, loadSalesOrder} from "../open-orders/actions";
 import {ItemAvailability} from "../../types/product";
 import {CartProgress} from "../../types/cart";
-import {loadSalesOrder} from "../open-orders/actions";
 import {Appendable} from "../../types/generic";
 import {isEditableSalesOrder} from "../salesOrder/utils";
+import {
+    isDeprecatedCreateNewCartAction,
+    isDeprecatedDeleteCartAction,
+    isDeprecatedFetchOrdersAction, isDeprecatedSaveCartAction
+} from "../../utils/cart";
 
 
 export interface CartState {
@@ -242,8 +243,8 @@ const cartReducer = createReducer(initialCartState, builder => {
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case FETCH_ORDERS:
-                    if (action.status === FETCH_SUCCESS) {
-                        const receivedOrders = (action.orders as SalesOrderHeader[]).filter(so => isCartOrder(so));
+                    if (isDeprecatedFetchOrdersAction(action) && action.status === FETCH_SUCCESS) {
+                        const receivedOrders = action.orders.filter(so => isCartOrder(so));
                         const [existing] = receivedOrders.filter(so => so.SalesOrderNo === state.cartNo);
 
                         if (state.cartNo !== NEW_CART && !existing) {
@@ -263,57 +264,52 @@ const cartReducer = createReducer(initialCartState, builder => {
                     }
                     return;
                 case FETCH_SALES_ORDER:
-                    if (action.status === FETCH_SUCCESS) {
-                        if (action.salesOrder && action.salesOrder.SalesOrderNo === state.cartNo) {
-                            if (!isCartOrder(action.salesOrder)) {
-                                state.cartNo = NEW_CART;
-                                state.cartName = '';
-                                state.cartTotal = 0;
-                                state.cartQuantity = 0;
-                                state.cartProgress = CART_PROGRESS_STATES.cart;
-                            } else {
-                                state.cartNo = action.salesOrder.SalesOrderNo;
-                                state.cartName = action.salesOrder.CustomerPONo;
-                                state.cartTotal = new Decimal(action.salesOrder.TaxableAmt).add(action.salesOrder.NonTaxableAmt).toNumber();
-                                state.cartQuantity = ((action.salesOrder.detail ?? []) as SalesOrderDetailLine[])
-                                    .map(row => new Decimal(row.QuantityOrdered).times(row.UnitOfMeasureConvFactor).toNumber())
-                                    .reduce((row, cv) => row + cv, 0);
-                                state.cartProgress = CART_PROGRESS_STATES.cart;
+                    if (isDeprecatedFetchSalesOrderAction(action)) {
+                        if (action.status === FETCH_SUCCESS) {
+                            if (action.salesOrder && action.salesOrder.SalesOrderNo === state.cartNo) {
+                                if (!isCartOrder(action.salesOrder)) {
+                                    state.cartNo = NEW_CART;
+                                    state.cartName = '';
+                                    state.cartTotal = 0;
+                                    state.cartQuantity = 0;
+                                    state.cartProgress = CART_PROGRESS_STATES.cart;
+                                } else {
+                                    state.cartNo = action.salesOrder.SalesOrderNo;
+                                    state.cartName = action.salesOrder.CustomerPONo ?? '';
+                                    state.cartTotal = new Decimal(action.salesOrder.TaxableAmt).add(action.salesOrder.NonTaxableAmt).toNumber();
+                                    state.cartQuantity = ((action.salesOrder.detail ?? []) as SalesOrderDetailLine[])
+                                        .map(row => new Decimal(row.QuantityOrdered).times(row.UnitOfMeasureConvFactor).toNumber())
+                                        .reduce((row, cv) => row + cv, 0);
+                                    state.cartProgress = CART_PROGRESS_STATES.cart;
+                                }
                             }
                         }
+                        state.loaded = state.loaded || (action.isCart && action.status === FETCH_SUCCESS) || false;
+                        state.loading = (action.isCart ?? false) && action.status === FETCH_INIT;
                     }
-                    state.loaded = state.loaded || (action.isCart && action.status === FETCH_SUCCESS);
-                    state.loading = action.isCart && action.status === FETCH_INIT;
                     return;
                 case CREATE_NEW_CART:
-                    state.cartNo = action.cart?.SalesOrderNo ?? NEW_CART;
-                    state.cartName = action.cart?.CustomerPONo ?? '';
-                    state.cartTotal = new Decimal(action.cart?.TaxableAmt ?? 0).add(action.cart?.NonTaxableAmt ?? 0).toNumber();
+                    if (isDeprecatedCreateNewCartAction(action)) {
+                        state.cartNo = action.cart?.SalesOrderNo ?? NEW_CART;
+                        state.cartName = action.cart?.CustomerPONo ?? '';
+                        state.cartTotal = new Decimal(action.cart?.TaxableAmt ?? 0).add(action.cart?.NonTaxableAmt ?? 0).toNumber();
+                    }
                     return;
                 case DELETE_CART:
-                    state.cartNo = action.status === FETCH_SUCCESS ? NEW_CART : state.cartNo;
-                    state.cartName = action.status === FETCH_SUCCESS ? '' : state.cartName;
-                    state.cartTotal = 0;
-                    state.cartQuantity = 0;
-                    return;
-                case UPDATE_CART:
-                    state.cartName = action.props?.CustomerPONo ?? action.props?.cartName ?? state.cartName;
-                    return;
-                case FETCH_CART:
-                    if (action.status === FETCH_SUCCESS) {
-                        state.cartTotal = new Decimal(action.salesOrder?.TaxableAmt ?? 0).add(action.salesOrder?.NonTaxableAmt ?? 0).toNumber();
-                        state.cartQuantity = ((action.salesOrder.detail ?? []) as SalesOrderDetailLine[])
-                            .map(row => new Decimal(row.QuantityOrdered).times(row.UnitOfMeasureConvFactor).toNumber())
-                            .reduce((row, cv) => row + cv, 0);
-                        state.loaded = true;
+                    if (isDeprecatedDeleteCartAction(action)) {
+                        state.cartNo = action.status === FETCH_SUCCESS ? NEW_CART : state.cartNo;
+                        state.cartName = action.status === FETCH_SUCCESS ? '' : state.cartName;
+                        state.cartTotal = 0;
+                        state.cartQuantity = 0;
                     }
-                    state.loading = action.status === FETCH_INIT;
                     return;
                 case SAVE_CART:
-                    if (state.cartNo === NEW_CART && action.payload) {
-                        state.cartNo = action.payload;
+                    if (isDeprecatedSaveCartAction(action)) {
+                        if (state.cartNo === NEW_CART && action.payload) {
+                            state.cartNo = action.payload;
+                        }
+                        state.cartMessage = action.message ?? '';
                     }
-                    state.cartMessage = action.message ?? '';
                     return;
                 case SELECT_COLOR:
                     state.cartMessage = '';
@@ -322,9 +318,6 @@ const cartReducer = createReducer(initialCartState, builder => {
                     state.cartMessage = '';
                     return;
                 case CLEAR_PRODUCT:
-                    state.cartMessage = '';
-                    return;
-                case SET_CART_ITEM_QUANTITY:
                     state.cartMessage = '';
                     return;
             }

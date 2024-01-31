@@ -5,8 +5,10 @@ import AppUpdateLocalLogin from "../components/AppUpdateLocalLogin";
 import AlertList from "../ducks/alerts/AlertList";
 import {Outlet} from "react-router-dom";
 import ErrorBoundary from "../common-components/ErrorBoundary";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "./Header";
+import Footer from "./Footer";
+import Container from "@mui/material/Container";
+import Box from "@mui/material/Box";
 
 
 const MainOutlet = () => {
@@ -15,15 +17,15 @@ const MainOutlet = () => {
     return (
         <>
             <Header/>
-            <main>
-                <div className="container main-container">
+            <Box component="main" sx={{marginTop: '100px'}}>
+                <Container maxWidth="xl">
                     {loggedIn && <AppUpdateLocalLogin/>}
                     <AlertList/>
                     <ErrorBoundary>
                         <Outlet/>
                     </ErrorBoundary>
-                </div>
-            </main>
+                </Container>
+            </Box>
             <Footer/>
         </>
     )

@@ -128,20 +128,25 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
         return colorCartItem(cartItem, product);
     }
     if (isSellAsMix(product)) {
-        const [colorName = ''] = product.mix.items.filter(item => item.color?.code === product.defaultColor)
-            .map(item => item.color?.name ?? '');
-        const additionalData: ProductAdditionalData = {};
+        let [color] = product.mix.items.filter(item => item.color?.code === option?.colorCode ?? product.defaultColor)
+            .map(item => item.color);
+        if (!color) {
+            [color] = product.mix.items.filter(item => item.color?.code === product.defaultColor)
+                .map(item => item.color);
+        }
+        // const colorName = color?.name ?? '';
+        // const additionalData: ProductAdditionalData = {};
         const [image_filename] = product.mix.items
-            .filter(item => item.color?.code === product.defaultColor)
+            .filter(item => item.color?.code === color?.code)
             .map(item => {
                 if (item.additionalData && item.additionalData.image_filename) {
                     return item.additionalData.image_filename;
                 }
                 return null;
             });
-        if (image_filename) {
-            additionalData.image_filename = image_filename ?? undefined;
-        }
+        // if (image_filename) {
+        //     additionalData.image_filename = image_filename ?? undefined;
+        // }
         return {
             image: image_filename ?? '',
             name: product.name,
@@ -156,6 +161,7 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
             seasonCode: product.season_code,
             seasonAvailable: product.season_available,
             season: product.season ?? null,
+            colorCode: color?.code,
         };
     }
     if (!product) {
@@ -223,7 +229,7 @@ export const getDefaultColor = (product: Product | null, preferredColor: string 
         return product.defaultColor ?? '';
     }
     if (isSellAsMix(product)) {
-        return product.mix.items.filter(item => item.color?.code === preferredColor).length
+        return product.mix.items.filter(item => item.color?.code === preferredColor).length > 0
             ? preferredColor
             : (product.defaultColor ?? '');
     }

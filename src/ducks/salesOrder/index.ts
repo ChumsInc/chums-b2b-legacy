@@ -9,15 +9,12 @@ import {
     FETCH_SALES_ORDER,
     FETCH_SUCCESS,
     RECEIVE_ORDERS,
-    SELECT_SO,
-    UPDATE_CART,
     UPDATE_CART_ITEM
 } from "../../constants/actions";
-import {defaultDetailSorter, emptyDetailLine, isEditableSalesOrder} from "./utils";
-import {calcOrderType, isCartOrder} from "../../utils/orders";
+import {defaultDetailSorter, emptyDetailLine, isDeprecatedUpdateCartItemAction} from "./utils";
+import {calcOrderType, isCartOrder, isDeprecatedFetchSalesOrderAction} from "../../utils/orders";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
-import {isCartHeader} from "../../utils/typeguards";
 import {
     BillToCustomer,
     Editable,
@@ -29,11 +26,17 @@ import {
 import {customerSlug} from "../../utils/customer";
 import {Appendable, LoadStatus} from "../../types/generic";
 import {OrderType} from "../../types/salesorder";
-import {closeEmailResponse, sendOrderEmail, updateDetailLine} from "./actions";
-import {promoteCart, removeCart, saveCart, saveNewCart, setCurrentCart} from "../cart/actions";
+import {closeEmailResponse, sendOrderEmail} from "./actions";
+import {promoteCart, removeCart, saveCart, saveNewCart} from "../cart/actions";
 import localStore from "../../utils/LocalStore";
 import {STORE_CURRENT_CART, STORE_CUSTOMER} from "../../constants/stores";
 import {loadOpenOrders} from "../open-orders/actions";
+import {
+    isDeprecatedCreateNewCartAction,
+    isDeprecatedDeleteCartAction,
+    isDeprecatedFetchOrdersAction
+} from "../../utils/cart";
+import {isDeprecatedAppendOrderCommentAction} from "../../types/actions";
 
 export interface SalesOrderState {
     customerKey: string | null;
@@ -236,81 +239,79 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {
-                case SELECT_SO:
-                    state.salesOrderNo = action.salesOrderNo ?? '';
-                    state.header = null;
-                    state.detail = [];
-                    state.orderType = 'past';
-                    state.attempts = 0;
-                    return;
                 case FETCH_SALES_ORDER:
-                    if (action.status === FETCH_INIT) {
-                        state.processing = 'pending';
-                        state.attempts = state.attempts + 1;
-                    } else if (action.status === FETCH_FAILURE) {
-                        state.processing = 'rejected';
+                    if (isDeprecatedFetchSalesOrderAction(action)) {
+                        if (action.status === FETCH_INIT) {
+                            state.processing = 'pending';
+                            state.attempts = state.attempts + 1;
+                        } else if (action.status === FETCH_FAILURE) {
+                            state.processing = 'rejected';
 
-                    }
-                    if (action.status === FETCH_SUCCESS) {
-                        state.processing = 'idle';
-                        const {detail, ...salesOrder} = action.salesOrder;
-                        state.salesOrderNo = salesOrder?.SalesOrderNo ?? '';
-                        state.header = salesOrder ?? {};
-                        state.detail = (detail ?? []).sort(defaultDetailSorter);
-                        state.orderType = calcOrderType(action.salesOrder);
-                        state.readOnly = !isCartOrder(action.salesOrder);
-                        state.attempts = 1;
+                        }
+                        if (action.status === FETCH_SUCCESS) {
+                            state.processing = 'idle';
+                            state.salesOrderNo = '';
+                            state.header = null;
+                            state.detail = [];
+                            state.orderType = 'cart';
+                            state.readOnly = false;
+                            if (action.salesOrder) {
+                                const {detail, ...salesOrder} = action.salesOrder;
+                                state.salesOrderNo = salesOrder?.SalesOrderNo ?? '';
+                                state.header = salesOrder ?? {};
+                                state.detail = (detail ?? []).sort(defaultDetailSorter);
+                                state.orderType = calcOrderType(action.salesOrder);
+                                state.readOnly = !isCartOrder(action.salesOrder);
+                                state.attempts = 1;
+                            }
+                        }
                     }
                     return;
                 case CREATE_NEW_CART:
-                    state.salesOrderNo = '';
-                    state.header = action.cart ?? {};
-                    state.detail = [];
-                    state.orderType = 'cart';
-                    state.attempts = 0;
-                    return;
-                case DELETE_CART:
-                    if (action.status === FETCH_INIT) {
-                        state.processing === 'pending';
-                    } else if (action.status === FETCH_FAILURE) {
-                        state.processing = 'rejected';
-                    }
-                    if (action.status === FETCH_SUCCESS) {
-                        state.processing = 'idle';
+                    if (isDeprecatedCreateNewCartAction(action)) {
                         state.salesOrderNo = '';
-                        state.header = null;
+                        state.header = action.cart ?? null;
                         state.detail = [];
-                        state.orderType = 'past';
+                        state.orderType = 'cart';
                         state.attempts = 0;
                     }
                     return;
-                case UPDATE_CART:
-                    if (isCartHeader(state.header)) {
-                        state.header = {...state.header, ...action.props};
-                        if (!action.checkoutInProcess) {
-                            // @ts-ignore
-                            state.header.changed = true;
+                case DELETE_CART:
+                    if (isDeprecatedDeleteCartAction(action)) {
+                        if (action.status === FETCH_INIT) {
+                            state.processing === 'pending';
+                        } else if (action.status === FETCH_FAILURE) {
+                            state.processing = 'rejected';
+                        }
+                        if (action.status === FETCH_SUCCESS) {
+                            state.processing = 'idle';
+                            state.salesOrderNo = '';
+                            state.header = null;
+                            state.detail = [];
+                            state.orderType = 'past';
+                            state.attempts = 0;
                         }
                     }
                     return;
                 case FETCH_ORDERS:
-                    if (action.status === FETCH_SUCCESS) {
+                    if (isDeprecatedFetchOrdersAction(action) && action.status === FETCH_SUCCESS) {
                         const [salesOrder] = (action.orders as SalesOrderHeader[]).filter((so) => so.SalesOrderNo === state.salesOrderNo);
                         if (salesOrder) {
                             state.header = salesOrder;
                         }
                     }
                     return;
-                case UPDATE_CART_ITEM: {
-                    const [line] = state.detail.filter(line => line.LineKey === action.LineKey);
-                    state.detail = [
-                        ...state.detail.filter(line => line.LineKey !== action.LineKey),
-                        {...line, ...action.prop, changed: true},
-                    ].sort(defaultDetailSorter);
+                case UPDATE_CART_ITEM:
+                    if (isDeprecatedUpdateCartItemAction(action)) {
+                        const [line] = state.detail.filter(line => line.LineKey === action.LineKey);
+                        state.detail = [
+                            ...state.detail.filter(line => line.LineKey !== action.LineKey),
+                            {...line, ...action.prop, changed: true},
+                        ].sort(defaultDetailSorter);
+                    }
                     return;
-                }
                 case APPEND_ORDER_COMMENT:
-                    if (action.commentText) {
+                    if (isDeprecatedAppendOrderCommentAction(action)) {
                         const maxLineKey = state.detail
                             .map(line => Number(line.LineKey))
                             .reduce((a, b) => Math.max(a, b));

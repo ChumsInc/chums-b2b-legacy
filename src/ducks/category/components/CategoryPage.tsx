@@ -6,14 +6,10 @@ import DocumentTitle from "../../../components/DocumentTitle";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectCategory, selectCategoryLoading} from "../selectors";
 import LinearProgress from "@mui/material/LinearProgress";
-import classNames from "classnames";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Grid2 from "@mui/material/Unstable_Grid2";
 
-/**
- *
- * @param {string} keyword
- * @return {JSX.Element}
- * @constructor
- */
 const CategoryPage = ({keyword}: {
     keyword: string;
 }) => {
@@ -27,29 +23,29 @@ const CategoryPage = ({keyword}: {
 
     if (!category) {
         return (
-            <div className="category-panel">
+            <Box>
                 {loading && <LinearProgress variant="indeterminate"/>}
-            </div>
+            </Box>
         )
     }
 
     const {title, lifestyle, pageText} = category;
     const children = category.children.filter(cat => !!cat.status).sort((a, b) => a.priority - b.priority);
     return (
-        <div className="category-panel">
+        <Box>
             <DocumentTitle documentTitle={title}/>
-            <h2>{title}</h2>
+            <Typography component="h2" variant="h3">{title}</Typography>
             {loading && <LinearProgress variant="indeterminate"/>}
-            {!!pageText && <div dangerouslySetInnerHTML={{__html: pageText}}/>}
-            <div className={classNames("row g-1", {'justify-content-lg-center': children.length < 4})}>
+            {!!pageText && <Box dangerouslySetInnerHTML={{__html: pageText}}/>}
+            <Grid2 spacing="3" sx={{justifyContent: children.length < 4 ? 'center' : undefined}} container>
                 {children
                     .filter(child => !!child.status)
                     .sort((a, b) => a.priority - b.priority)
                     .map(child => (
                         <CategoryPageElement key={child.id} item={child}/>
                     ))}
-            </div>
-        </div>
+            </Grid2>
+        </Box>
     )
 }
 

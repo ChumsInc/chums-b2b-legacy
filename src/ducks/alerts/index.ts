@@ -1,8 +1,9 @@
 import {createAction, createReducer, createSelector, isRejected} from "@reduxjs/toolkit";
 import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
 import {RootState} from "../../app/configureStore";
-import {AlertsState, B2BContextAlert} from "./types";
+import {AlertsState, AlertType, B2BContextAlert} from "./types";
 import {setLoggedIn} from "../user/actions";
+import {isDeprecatedSetAlertAction, isDeprecatedSetLoggedInAction} from "../../types/actions";
 
 
 const initialAlertState = (): AlertsState => ({
@@ -61,7 +62,7 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                         ...state.list.filter(a => a.id !== alert.id),
                         {...alert, count: (alert.count ?? 0) + 1},
                     ].sort(alertSorter);
-                } else {
+                } else if (isRejected(action)) {
                     const newAlert: B2BContextAlert = {
                         type: 'warning',
                         message: action.error.message?.replace('\x8a', '') ?? '',
@@ -78,22 +79,25 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case SET_ALERT:
-                    state.index += 1;
-                    const [alert] = state.list.filter(alert => alert.context === action.props.context ?? 'N/A');
-                    if (alert) {
-                        state.list = [
-                            ...state.list.filter(a => a.id !== alert.id),
-                            {...alert, count: (alert.count ?? 0) + 1},
-                        ].sort(alertSorter);
-                    } else {
-                        state.list = [
-                            ...state.list,
-                            {type: 'warning', ...action.props, id: state.index, count: 1}
-                        ].sort(alertSorter);
+                    if (isDeprecatedSetAlertAction(action)) {
+                        state.index += 1;
+                        const [alert] = state.list.filter(alert => alert.context === action.props.context ?? 'N/A');
+                        if (alert) {
+                            state.list = [
+                                ...state.list.filter(a => a.id !== alert.id),
+                                {...alert, count: (alert.count ?? 0) + 1},
+                            ].sort(alertSorter);
+                        } else {
+                            const newAlert:B2BContextAlert = {type: 'warning' as AlertType, ...action.props, id: state.index, count: 1};
+                            state.list = [
+                                ...state.list,
+                                newAlert
+                            ].sort(alertSorter);
+                        }
                     }
                     return;
                 case SET_LOGGED_IN:
-                    if (action.loggedIn) {
+                    if (isDeprecatedSetLoggedInAction(action) && action.loggedIn) {
                         state.list = state.list.filter(alert => alert.context !== ALERT_CONTEXT_LOGIN).sort(alertSorter);
                     }
                     return;

@@ -3,22 +3,22 @@
 .swatch-container {
 
   .swatch-set {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    //display: flex;
+    //flex-direction: row;
+    //flex-wrap: wrap;
+    //justify-content: center;
 
 
     .swatch {
-      flex: 0 0 2rem;
-      text-align: center;
-      display: inline-block;
+      //flex: 0 0 2rem;
+      //text-align: center;
+      //display: inline-block;
       //border: $swatch-border;
       //margin: $swatch-margin;
       //margin-top: 3px;
-      color: $label-color;
-      cursor: pointer;
-      border: 1px solid transparent;
+      //color: $label-color;
+      //cursor: pointer;
+      //border: 1px solid transparent;
 
       .color-qty,
       .color-code {
@@ -37,9 +37,9 @@
       }
 
       .color-swatch {
-        margin: $swatch-padding;
-        width: $swatch-width;
-        height: $swatch-height;
+        //margin: $swatch-padding;
+        //width: $swatch-width;
+        //height: $swatch-height;
         background-size: cover;
         background-position: center;
         //border: 1px solid $swatch-border-hover;

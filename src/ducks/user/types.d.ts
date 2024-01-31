@@ -11,6 +11,9 @@ import {
 } from "b2b-types";
 import {EmptyObject} from "../../types/generic";
 import {ExtendedUserProfile} from "../../types/user";
+import {Action} from "redux";
+import {UnknownAction} from "@reduxjs/toolkit";
+import {DeprecatedAsyncAction} from "../../types/actions";
 
 export interface UserLoginState {
     // @TODO: migrate to Login Page internal state
@@ -84,3 +87,16 @@ export interface UserProfileResponse {
 export interface FunkyUserProfileResponse extends UserProfileResponse {
     roles?: (string|UserRole)[];
 }
+
+
+export interface DeprecatedUserAction extends DeprecatedAsyncAction {
+    loggedIn?: boolean;
+    token?: string;
+}
+
+export interface DeprecatedUserProfileAction extends DeprecatedUserAction {
+    loggedIn?: boolean;
+    token?: string;
+    props: ExtendedUserProfile;
+}
+

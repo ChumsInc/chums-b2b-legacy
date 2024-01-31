@@ -2,6 +2,7 @@
 $cdn:                   '';
 
 
+
 $chums-red:             #d0112b;
 $bc-blue:               #00a8e2;
 $active-color:          #0099CC;
@@ -36,7 +37,7 @@ $navbar-color:                darken($white-base, 20%);
 $navbar-color-hover:          $white-base;
 $navbar-logo-width:           20vw;
 $navbar-logo-max-width:       240px;
-$navbar-logo-padding:         $navbar-logo-max-width / 6;
+//$navbar-logo-padding:         $navbar-logo-max-width / 6;
 
 $button-border-color:   #666666;
 $button-border:         1px solid $button-border-color;
@@ -79,7 +80,7 @@ $swatch-text-active:    #333333;
 $swatch-scroll-width:   1rem;
 $swatch-padding:        0.15rem;
 $swatch-margin:         0 0.25rem 0.5rem;
-$swatch-width:          2rem;
+$swatch-width:          3rem;
 $swatch-height:         $swatch-width;
 
 
@@ -162,7 +163,7 @@ $animation-swift-out:   .45s cubic-bezier(0.3, 1, 0.4, 1) 0s;
  */
 $logo-width: 107px;
 $logo-height: 100px;
-$logo-padding: $logo-width / 2;
+//$logo-padding: $logo-width / 2;
 
 $carousel-control-color: black;
 

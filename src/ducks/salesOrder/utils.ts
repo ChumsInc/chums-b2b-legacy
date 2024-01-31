@@ -3,6 +3,8 @@ import {SortProps} from "../../types/generic";
 import dayjs from "dayjs";
 import {SalesOrderStatus} from "b2b-types/src/sales-order";
 import {EditableSalesOrder} from "../open-orders/types";
+import {DeprecatedUpdateCartItemAction} from "../../types/actions";
+import {UnknownAction} from "@reduxjs/toolkit";
 
 export const defaultDetailSorter = (a: SalesOrderDetailLine, b: SalesOrderDetailLine) => {
     return +a.LineKey - +b.LineKey;
@@ -134,4 +136,8 @@ export const detailSequenceSorter = (a:SalesOrderDetailLine, b:SalesOrderDetailL
     return +a.LineSeqNo === +b.LineSeqNo
         ? defaultDetailSorter(a, b)
         : +a.LineSeqNo - +b.LineSeqNo;
+}
+
+export function isDeprecatedUpdateCartItemAction(action:UnknownAction|DeprecatedUpdateCartItemAction): action is DeprecatedUpdateCartItemAction {
+    return action.type === 'UPDATE_CART_ITEM';
 }

@@ -1,5 +1,4 @@
 import {
-    CHANGE_USER,
     CHANGE_USER_PASSWORD,
     CLEAR_USER_ACCOUNT,
     FETCH_FAILURE,
@@ -15,11 +14,17 @@ import {auth} from '../../api/IntranetAuthService';
 import localStore from "../../utils/LocalStore";
 import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_USER_ACCESS} from "../../constants/stores";
 import {getFirstCustomer,} from "../../utils/customer";
-import jwtDecode, {JwtPayload} from "jwt-decode";
-import {createReducer, isRejected} from "@reduxjs/toolkit";
+import {jwtDecode, JwtPayload} from "jwt-decode";
+import {createReducer, isRejected, UnknownAction} from "@reduxjs/toolkit";
 import {loadProfile, resetPassword, setLoggedIn, setUserAccess, signInWithGoogle} from "./actions";
-import {getPrimaryAccount, isCustomerAccess, userAccountSort} from "./utils";
-import {UserLoginState, UserPasswordState, UserSignupState} from "./types";
+import {getPrimaryAccount, isCustomerAccess, isUserProfileAction, userAccountSort} from "./utils";
+import {
+    DeprecatedUserAction,
+    DeprecatedUserProfileAction,
+    UserLoginState,
+    UserPasswordState,
+    UserSignupState
+} from "./types";
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {ExtendedUserProfile} from "../../types/user";
@@ -220,40 +225,46 @@ const userReducer = createReducer(initialUserState, (builder) => {
             state.resettingPassword = false;
         })
         .addMatcher((action) => isRejected(action) && !!action.error, (state, action) => {
-            console.log(action.error);
+            if (isRejected(action)) {
+                console.log(action?.error);
+            }
         })
-        .addDefaultCase((state, action) => {
+        .addDefaultCase((state, action: UnknownAction | DeprecatedUserProfileAction) => {
             const _initialUserState = initialUserState();
             // console.log(action.type, JSON.parse(JSON.stringify(state)), action);
             switch (action.type) {
                 case SET_LOGGED_IN:
-                    state.loggedIn = action.loggedIn === true;
-                    if (!action.loggedIn) {
-                        state.token = null;
-                        state.tokenExpires = 0;
-                        state.profile = null;
-                        state.accounts = [];
-                        state.roles = [];
-                        state.access.list = [];
-                        state.access.current = null;
-                        state.currentCustomer = null;
-                        state.signUp = {..._initialUserState.signUp};
-                        state.authType = '';
-                        state.passwordChange = {..._initialUserState.passwordChange};
-                        state.login = {..._initialUserState.login};
+                    if (isUserProfileAction(action)) {
+                        state.loggedIn = action.loggedIn === true;
+                        if (!action.loggedIn) {
+                            state.token = null;
+                            state.tokenExpires = 0;
+                            state.profile = null;
+                            state.accounts = [];
+                            state.roles = [];
+                            state.access.list = [];
+                            state.access.current = null;
+                            state.currentCustomer = null;
+                            state.signUp = {..._initialUserState.signUp};
+                            state.authType = '';
+                            state.passwordChange = {..._initialUserState.passwordChange};
+                            state.login = {..._initialUserState.login};
+                        }
+                        if (action.token) {
+                            state.token = action.token;
+                            state.tokenExpires = jwtDecode<JwtPayload>(action.token)?.exp ?? 0;
+                        }
                     }
-                    if (action.token) {
-                        state.token = action.token;
-                        state.tokenExpires = jwtDecode<JwtPayload>(action.token)?.exp ?? 0;
-                    }
-                    return;
-                case CHANGE_USER:
-                    state.profile = {...state.profile, ...action.props, changed: true};
                     return;
                 case FETCH_USER_SIGNUP:
-                    state.signUp = {...state.signUp, ...(action.props ?? {}), loading: action.status === FETCH_INIT};
-                    if (action.status === FETCH_SUCCESS) {
-                        state.profile = action.props;
+                    if (isUserProfileAction(action)) {
+                        state.signUp = {
+                            ...state.signUp, ...(action.props ?? {}),
+                            loading: action.status === FETCH_INIT
+                        };
+                        if (action.status === FETCH_SUCCESS) {
+                            state.profile = action.props;
+                        }
                     }
                     return;
                 case FETCH_LOCAL_LOGIN:

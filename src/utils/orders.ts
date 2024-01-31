@@ -5,6 +5,8 @@ import timezone from 'dayjs/plugin/timezone'
 import {OrderType} from "../types/salesorder";
 import {SalesOrderHeader} from "b2b-types";
 import {isSalesOrderHeader} from "./typeguards";
+import {UnknownAction} from "@reduxjs/toolkit";
+import {DeprecatedFetchSalesOrderAction} from "../types/actions";
 
 
 export const calcOrderType = (salesOrder: SalesOrderHeader | null): OrderType | null => {
@@ -100,3 +102,8 @@ export const nextShipDate = (shipDate: Date | number | string | Dayjs = new Date
     }
     return min;
 };
+
+
+export function isDeprecatedFetchSalesOrderAction(action:UnknownAction|DeprecatedFetchSalesOrderAction): action is DeprecatedFetchSalesOrderAction {
+    return action.type === 'FETCH_SALES_ORDER';
+}

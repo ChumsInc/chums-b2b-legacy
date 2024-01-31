@@ -5,20 +5,25 @@ import {
     FETCH_PRODUCT,
     FETCH_SUCCESS,
     SELECT_COLOR,
-    SELECT_ITEM,
-    SELECT_VARIANT,
-    SET_CART_ITEM_QUANTITY
+    SELECT_VARIANT
 } from "../../constants/actions";
-import {defaultCartItem, getDefaultColor, getMSRP, getPrices, keywordSorter} from "../../utils/products";
+import {getDefaultColor, getMSRP, getPrices, keywordSorter} from "../../utils/products";
 import {customerPriceRecordSorter, customerSlug,} from "../../utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
 import {PreloadedState} from "../../types/preload";
-import {isCartProduct, isSellAsColors, isSellAsMix, updateCartProductPricing} from "./utils";
+import {
+    isCartProduct,
+    isDeprecatedProductAction,
+    isDeprecatedSelectColorAction,
+    isDeprecatedVariantAction,
+    updateCartProductPricing
+} from "./utils";
 import {loadCustomer} from "../customer/actions";
 import {CartProduct, CustomerPriceRecord, Keyword, Product} from "b2b-types";
-import {loadProduct, setCartItemQuantity, setColorCode} from "./actions";
+import {loadProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from "./actions";
 import {setLoggedIn} from "../user/actions";
 import {parseImageFilename} from "../../common/image";
+import {isDeprecatedKeywordsAction} from "../keywords/utils";
 
 
 export interface ProductsState {
@@ -26,7 +31,7 @@ export interface ProductsState {
     loadingKeywords: boolean;
     product: Product | null;
     selectedProduct: Product | null;
-    image: string|null;
+    image: string | null;
     colorCode: string;
     variantId: number | null;
     loading: boolean;
@@ -108,53 +113,68 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                 state.cartItem.quantity = action.payload;
             }
         })
+        .addCase(setCurrentVariant.fulfilled, (state, action) => {
+            state.selectedProduct = action.payload.variant?.product ?? null;
+            state.colorCode = getDefaultColor(state.selectedProduct, state.colorCode);
+            state.variantId = action.payload.variant?.id ?? null;
+            state.msrp = action.payload.msrp;
+            state.salesUM = action.payload.salesUM;
+            state.customerPrice = action.payload.customerPrice;
+            state.cartItem = action.payload.cartItem;
+            if (action.payload.cartItem?.image) {
+                state.image = action.payload.cartItem?.image;
+            }
+        })
         .addDefaultCase((state, action) => {
 
             switch (action.type) {
                 case FETCH_KEYWORDS:
-                    state.loadingKeywords = action.status === FETCH_INIT;
-                    state.keywords = [...(action.list ?? [])].sort(keywordSorter);
+                    if (isDeprecatedKeywordsAction(action)) {
+                        state.loadingKeywords = action.status === FETCH_INIT;
+                        state.keywords = [...(action.list ?? [])].sort(keywordSorter);
+                    }
                     return;
                 case FETCH_PRODUCT:
-                    state.loading = action.status === FETCH_INIT;
-                    if (action.status === FETCH_SUCCESS) {
-                        state.product = {...action.product};
-                        if (action.variant) {
-                            state.selectedProduct = {...action.variant.product};
-                            state.colorCode = getDefaultColor(action.variant.product, state.colorCode);
-                            state.variantId = action.variant.id;
-                        } else {
-                            state.selectedProduct = {...action.product};
-                            state.colorCode = getDefaultColor(action.product, state.colorCode);
-                            state.variantId = null;
+                    if (isDeprecatedProductAction(action)) {
+                        state.loading = action.status === FETCH_INIT;
+                        if (action.status === FETCH_SUCCESS) {
+                            state.product = action.product ?? null;
+                            if (action.variant && action.variant.product) {
+                                state.selectedProduct = {...action.variant.product};
+                                state.colorCode = getDefaultColor(action.variant.product, state.colorCode);
+                                state.variantId = action.variant.id;
+                            } else if (action.product) {
+                                state.selectedProduct = {...action.product};
+                                state.colorCode = getDefaultColor(action.product, state.colorCode);
+                                state.variantId = null;
+                            } else {
+                                state.product = null;
+                                state.selectedProduct = null;
+                            }
+                            state.msrp = action.msrp ?? [];
+                            state.customerPrice = action.customerPrice ?? [];
+                            state.salesUM = action.salesUM ?? null;
+                            state.cartItem = action.cartItem ?? null;
                         }
-                        state.msrp = action.msrp ?? [];
-                        state.customerPrice = action.customerPrice ?? [];
-                        state.salesUM = action.salesUM ?? null;
-                        state.cartItem = action.cartItem ?? {};
                     }
                     return;
                 case CLEAR_PRODUCT:
                     state.product = null;
                     return;
                 case SELECT_VARIANT:
-                    state.selectedProduct = {...action.variant.product};
-                    state.colorCode = getDefaultColor(action.variant.product, state.colorCode);
-                    state.variantId = action.variant.id ?? null;
-                    state.msrp = action.msrp ?? [];
-                    state.salesUM = action.salesUM ?? null;
-                    state.cartItem = action.cartItem ?? null;
+                    if (isDeprecatedVariantAction(action)) {
+                        state.selectedProduct = action.variant?.product ?? null;
+                        state.colorCode = getDefaultColor(action.variant?.product ?? null, state.colorCode);
+                        state.variantId = action.variant?.id ?? null;
+                        state.msrp = action.msrp ?? [];
+                        state.salesUM = action.salesUM ?? null;
+                        state.cartItem = action.cartItem ?? null;
+                    }
                     return;
                 case SELECT_COLOR:
-                    state.colorCode = action.colorCode;
-                    state.cartItem = action.cartItem ?? {};
-                    return;
-                case SELECT_ITEM:
-                    state.cartItem = action.cartItem ?? {};
-                    return;
-                case SET_CART_ITEM_QUANTITY:
-                    if (state.cartItem) {
-                        state.cartItem = {...state.cartItem, quantity: action.quantity};
+                    if (isDeprecatedSelectColorAction(action)) {
+                        state.colorCode = action.colorCode;
+                        state.cartItem = action.cartItem ?? null;
                     }
                     return;
             }

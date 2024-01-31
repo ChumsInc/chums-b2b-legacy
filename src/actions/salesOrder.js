@@ -5,7 +5,6 @@ import {
     FETCH_SALES_ORDER,
     FETCH_SUCCESS,
     SAVE_CART,
-    SELECT_SO,
     SEND_ORDER_EMAIL_ACK,
     SET_CART,
 } from "../constants/actions";
@@ -122,20 +121,6 @@ export const loadSalesOrder = (SalesOrderNo) => async (dispatch, getState) => {
         dispatch({type: FETCH_SALES_ORDER, status: FETCH_FAILURE, isCart});
         dispatch(handleError(err, FETCH_SALES_ORDER));
     }
-};
-
-export const selectSalesOrder = ({Company, SalesOrderNo}) => (dispatch, getState) => {
-    const state = getState();
-    const customer = selectCustomerAccount(state);
-    if (!customer) {
-        return;
-    }
-    const {ARDivisionNo, CustomerNo} = customer;
-    const {carts, openOrders} = state;
-    const [salesOrder = {SalesOrderNo}] = [...carts.list, ...openOrders.list]
-        .filter(so => so.SalespersonNo === SalesOrderNo);
-    dispatch({type: SELECT_SO, salesOrder});
-    dispatch(loadSalesOrder(SalesOrderNo));
 };
 
 

@@ -6,6 +6,7 @@ import {useAppDispatch} from "../../../app/configureStore";
 import {updateDetailLine} from "../actions";
 import SalesOrderItemLine from "./SalesOrderItemLine";
 import SalesOrderKitComponentLine from "./SalesOrderKitComponentLine";
+import {TableCell, TableRow} from "@mui/material";
 
 
 export default function OrderDetailLine({
@@ -69,12 +70,12 @@ export default function OrderDetailLine({
                                     onChangeQuantity={quantityChangeHandler} onChangeComment={commentChangeHandler}/>
             )}
             {line.ProductType === 'K' && line.ExplodedKitItem === 'Y' && (
-                <tr>
-                    <td>&nbsp;</td>
-                    <td colSpan={4}>Contains:</td>
-                    <td>&nbsp;</td>
-                    <td>&nbsp;</td>
-                </tr>
+                <TableRow sx={{verticalAlign: 'top'}}>
+                    <TableCell>&nbsp;</TableCell>
+                    <TableCell colSpan={4}>Contains:</TableCell>
+                    <TableCell>&nbsp;</TableCell>
+                    <TableCell>&nbsp;</TableCell>
+                </TableRow>
             )}
             {line.ItemType !== '4' && isKitComponent && (
                 <SalesOrderKitComponentLine line={line} readOnly={readOnly}

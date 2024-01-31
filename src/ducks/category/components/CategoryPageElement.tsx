@@ -2,9 +2,13 @@ import React, {Fragment} from 'react';
 import CategoryLink from "./CategoryLink";
 import ProductLink from "./ProductLink";
 import ProductImage from "../../../components/ProductImage";
-import {Link} from "react-router-dom";
+import {Link as RoutedLink} from "react-router-dom";
 import {ProductCategoryChild} from "b2b-types";
 import {isCategoryChildCategory, isCategoryChildLink, isCategoryChildProduct} from "../../products/utils";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import Link from "@mui/material/Link";
+import CategoryGridItem from "./CategoryGridItem";
+
 
 
 
@@ -30,8 +34,8 @@ const CategoryPageElement = ({item}: {
     }
     if (isCategoryChildLink(item) && item.urlOverride) {
         return (
-            <div className={"col-sm-3 col-6 " + (item.className || '')}>
-                <Link className="link" to={item.urlOverride}>
+            <CategoryGridItem className={item.className}>
+                <Link component={RoutedLink} to={item.urlOverride}>
                     {!!item.imageUrl && (
                         <ProductImage image={item.imageUrl} title={item.title} altText={item.title} size="400"
                                       className="main-image"/>
@@ -41,7 +45,7 @@ const CategoryPageElement = ({item}: {
                 <div className="description">
                     <div dangerouslySetInnerHTML={{__html: item.description}}/>
                 </div>
-            </div>
+            </CategoryGridItem>
         );
     }
     if (isCategoryChildLink(item)) {

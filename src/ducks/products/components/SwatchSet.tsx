@@ -8,6 +8,8 @@ import {setColorCode} from "../actions";
 import {ProductSwatchBase} from "b2b-types";
 import {ga_viewItem} from "../../../utils/google-analytics";
 import {isSellAsColors, isSellAsMix} from "../utils";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 
 
 const SwatchSet = () => {
@@ -51,13 +53,15 @@ const SwatchSet = () => {
 
     return (
         <>
-            <div>
-                {selectedProduct.sellAs === SELL_AS_MIX && (<span className="me-3">Selected Color:</span>)}
-                {selectedProduct.sellAs === SELL_AS_COLOR && (<span className="me-3">Color:</span>)}
-                <strong>{cartItem?.colorCode}</strong>
-            </div>
+            <Box>
+                <Typography variant="body1" sx={{mr: 3, display: 'inline-block'}}>
+                    {selectedProduct.sellAs === SELL_AS_MIX && (<span>Selected Color:</span>)}
+                    {selectedProduct.sellAs === SELL_AS_COLOR && (<span>Color:</span>)}
+                </Typography>
+                <Typography variant="body1" sx={{fontWeight: 700, display: 'inline-block'}}>{cartItem?.colorName}</Typography>
+            </Box>
             <div className="swatch-container">
-                <div className="swatch-set">
+                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap'}}  className="swatch-set">
                     {items
                         .map(item => (
                             <Swatch key={item.id} color={item.color ?? null}
@@ -66,7 +70,7 @@ const SwatchSet = () => {
                                     active={colorCode === item.color?.code}
                                     onClick={clickHandler}/>
                         ))}
-                </div>
+                </Box>
             </div>
         </>
     )

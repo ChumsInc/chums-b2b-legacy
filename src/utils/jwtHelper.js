@@ -1,12 +1,12 @@
-import decode from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 
 export const getLocalAuthUserId = (token) => {
-    const decoded = decode(token);
+    const decoded = jwtDecode(token);
     return decoded?.user?.id ?? 0;
 }
 
 export const getProfile = (token) => {
-    const decoded = decode(token);
+    const decoded = jwtDecode(token);
     if (!decoded || !decoded.profile) {
         return {};
     }
@@ -14,7 +14,7 @@ export const getProfile = (token) => {
 };
 
 export function getTokenExpirationDate(token) {
-    const decoded = decode(token);
+    const decoded = jwtDecode(token);
     if (!decoded.exp) {
         return null;
     }
@@ -33,7 +33,7 @@ export function isTokenExpired(token) {
 }
 
 export const getSignInProfile = (token) => {
-    const decoded = decode(token);
+    const decoded = jwtDecode(token);
     if (!decoded) {
         return {};
     }

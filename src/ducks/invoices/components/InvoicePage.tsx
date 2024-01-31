@@ -5,7 +5,7 @@
 
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {loadInvoice} from '../actions';
+import {deprecated_loadInvoice, loadInvoice} from '../actions';
 import InvoiceHeader from "./InvoiceHeader";
 import InvoiceDetail from "./InvoiceDetail";
 import DocumentTitle from "../../../components/DocumentTitle";
@@ -17,6 +17,7 @@ import {billToCustomerSlug} from "../../../utils/customer";
 import LinearProgress from "@mui/material/LinearProgress";
 import {redirect} from "react-router-dom";
 import {InvoiceType} from "b2b-types";
+import {FetchInvoiceArg} from "../types";
 
 const invoiceTypeDescription = (invoiceType: InvoiceType): string => {
     switch (invoiceType) {
@@ -48,8 +49,10 @@ const InvoicePage = () => {
             redirect('/profile');
             return;
         }
-        if (!loading && match.params.invoiceNo && match.params.invoiceType && (!invoice || match.params?.invoiceNo !== invoice.InvoiceNo)) {
-            dispatch(loadInvoice({InvoiceNo: match.params.invoiceNo, InvoiceType: match.params.invoiceType}));
+        if (!loading && match.params.invoiceNo && match.params.invoiceType
+            && (!invoice || match.params?.invoiceNo !== invoice.InvoiceNo)) {
+            const arg:FetchInvoiceArg = {InvoiceNo: match.params.invoiceNo, InvoiceType: match.params.invoiceType as InvoiceType};
+            dispatch(loadInvoice(arg));
         }
     }, [match, invoice]);
 

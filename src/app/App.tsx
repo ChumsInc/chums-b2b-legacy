@@ -26,12 +26,13 @@ import ProductRouter from "../ducks/products/components/ProductRouter";
 import BillToForm from "../ducks/customer/components/BillToForm";
 import ShipToForm from "../ducks/customer/components/ShipToForm";
 import AccountUsers from "../ducks/customer/components/AccountUsers";
-import {CssBaseline} from "@mui/material";
+import {CssBaseline, ThemeProvider} from "@mui/material";
 import ContentPage404 from "../components/ContentPage404";
 import CartsList from "../ducks/open-orders/components/CartsList";
 import OpenOrdersList from "../ducks/open-orders/components/OpenOrdersList";
 import InvoicesList from "../ducks/invoices/components/InvoicesList";
 import ShipToList from "../ducks/customer/components/ShipToList";
+import theme from "./theme";
 
 
 const App = () => {
@@ -73,50 +74,54 @@ const App = () => {
     return (
         <ErrorBoundary>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <CssBaseline>
-                    <Routes>
-                        <Route path="/" element={<MainOutlet/>}>
-                            <Route path="/products" element={<ProductRouter/>}/>
-                            <Route path="/products/:category" element={<ProductRouter/>}/>
-                            <Route path="/products/:category/:product" element={<ProductRouter/>}/>
-                            {!loggedIn && (
-                                <>
-                                    <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
-                                    <Route path="/set-password" element={<ResetPassword/>}/>
-                                    <Route path="/signup" element={<SignUp/>}/>
-                                    <Route path="*" element={<Login/>}/>
-                                </>
-                            )}
-                            {loggedIn && (
-                                <>
-                                    <Route index element={<ProfilePage/>}/>
-                                    <Route path="/home" element={<ProfilePage/>}/>
-                                    <Route path="/pages/:keyword" element={<ContentPage/>}/>
-                                    <Route path="/login" element={<Login />} />
-                                    <Route path={PATH_LOGOUT} element={<Logout/>}/>
-                                    <Route path="/profile" element={<ProfilePage/>}/>
-                                    <Route path="/profile/:id" element={<AccountListContainer/>}/>
-                                    <Route path="/account/:customerSlug" element={<AccountPage/>}>
-                                        <Route index element={<BillToForm/>}/>
-                                        <Route path="delivery" element={<ShipToList/>}/>
-                                        <Route path="delivery/:shipToCode" element={<ShipToForm/>}/>
-                                        <Route path="users" element={<AccountUsers/>}/>
-                                        <Route path="carts" element={<CartsList/>}/>
-                                        <Route path="carts/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                        <Route path="orders" element={<OpenOrdersList/>}/>
-                                        <Route path="orders/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                        <Route path="invoices" element={<InvoicesList/>}/>
-                                        <Route path="invoices/so/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                        <Route path="invoices/:type/:invoiceNo" element={<InvoicePage/>}/>
+
+                <ThemeProvider theme={theme}>
+                    <CssBaseline>
+                        <Routes>
+                            <Route path="/" element={<MainOutlet/>}>
+                                <Route path="/products" element={<ProductRouter/>}/>
+                                <Route path="/products/:category" element={<ProductRouter/>}/>
+                                <Route path="/products/:category/:product" element={<ProductRouter/>}/>
+                                <Route path="/products/:category/:product/:sku" element={<ProductRouter/>}/>
+                                {!loggedIn && (
+                                    <>
+                                        <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
+                                        <Route path="/set-password" element={<ResetPassword/>}/>
+                                        <Route path="/signup" element={<SignUp/>}/>
+                                        <Route path="*" element={<Login/>}/>
+                                    </>
+                                )}
+                                {loggedIn && (
+                                    <>
+                                        <Route index element={<ProfilePage/>}/>
+                                        <Route path="/home" element={<ProfilePage/>}/>
+                                        <Route path="/pages/:keyword" element={<ContentPage/>}/>
+                                        <Route path="/login" element={<Login/>}/>
+                                        <Route path={PATH_LOGOUT} element={<Logout/>}/>
+                                        <Route path="/profile" element={<ProfilePage/>}/>
+                                        <Route path="/profile/:id" element={<AccountListContainer/>}/>
+                                        <Route path="/account/:customerSlug" element={<AccountPage/>}>
+                                            <Route index element={<BillToForm/>}/>
+                                            <Route path="delivery" element={<ShipToList/>}/>
+                                            <Route path="delivery/:shipToCode" element={<ShipToForm/>}/>
+                                            <Route path="users" element={<AccountUsers/>}/>
+                                            <Route path="carts" element={<CartsList/>}/>
+                                            <Route path="carts/:salesOrderNo" element={<SalesOrderPage/>}/>
+                                            <Route path="orders" element={<OpenOrdersList/>}/>
+                                            <Route path="orders/:salesOrderNo" element={<SalesOrderPage/>}/>
+                                            <Route path="invoices" element={<InvoicesList/>}/>
+                                            <Route path="invoices/so/:salesOrderNo" element={<SalesOrderPage/>}/>
+                                            <Route path="invoices/:type/:invoiceNo" element={<InvoicePage/>}/>
+                                            <Route path="*" element={<ContentPage404/>}/>
+                                        </Route>
                                         <Route path="*" element={<ContentPage404/>}/>
-                                    </Route>
-                                    <Route path="*" element={<ContentPage404/>}/>
-                                </>
-                            )}
-                            <Route path="*" element={<ContentPage404/>}/>
-                        </Route>
-                    </Routes>
-                </CssBaseline>
+                                    </>
+                                )}
+                                <Route path="*" element={<ContentPage404/>}/>
+                            </Route>
+                        </Routes>
+                    </CssBaseline>
+                </ThemeProvider>
             </LocalizationProvider>
         </ErrorBoundary>
     )

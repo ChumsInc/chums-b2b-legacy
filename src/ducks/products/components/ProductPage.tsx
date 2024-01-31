@@ -5,7 +5,7 @@ import classNames from "classnames";
 import VariantSelector from "./VariantSelector";
 import SwatchSet from "./SwatchSet";
 import AddToCartForm from "../../cart/components/AddToCartForm";
-import Alert from "../../../common-components/Alert";
+import Alert from "@mui/material/Alert";
 import CartItemDetail from "./CartItemDetail";
 import {noop} from '../../../utils/general';
 import {Link, redirect} from "react-router-dom";
@@ -31,6 +31,9 @@ import {isBillToCustomer} from "../../../utils/typeguards";
 import ProductPreSeasonAlert from "./ProductPreSeasonAlert";
 import {loadProduct, setCartItemQuantity} from "../actions";
 import SelectCustomerAlert from "../../customer/components/SelectCustomerAlert";
+import Box from "@mui/material/Box";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import VariantButtons from "./VariantButtons";
 
 
 const ProductPage = ({keyword}: {
@@ -63,6 +66,10 @@ const ProductPage = ({keyword}: {
         }
     }, [location?.state?.variant]);
 
+    useEffect(() => {
+        console.log('ProductPage location', location);
+    }, [location]);
+
 
     const onChangeQuantity = (quantity: number) => {
         dispatch(setCartItemQuantity(quantity));
@@ -71,37 +78,44 @@ const ProductPage = ({keyword}: {
     const hasCustomer = !!customerAccount;
 
     return (
-        <div className={classNames('product-page', {loading})}>
+        <Box className={classNames('product-page', {loading})}>
             <div className="product-panel">
-                <div className="row">
-                    <div className="col-12 col-md-6 col-lg-7">
-                        <ProductPageImage/>
-                    </div>
-                    <div className="col-12 col-md-6 col-lg-5">
+                <Grid2 container spacing={5}>
+                    <Grid2 xs={12} sx={{display: {xs: 'block', md: 'none'}}}>
                         <ProductPageTitle/>
+                    </Grid2>
+                    <Grid2 xs={12} md={6} lg={7}>
+                        <ProductPageImage/>
+                    </Grid2>
+                    <Grid2 xs={12} md={6} lg={5}>
+                        <Box sx={{display: {xs: 'none', md: 'block'}}}>
+                            <ProductPageTitle/>
+                        </Box>
 
                         <ProductPageInfo/>
-                        <VariantSelector/>
+                        <VariantButtons />
+
                         <SwatchSet/>
-                        {!isCartProduct(cartItem) || !cartItem.itemCode && (
-                            <Alert message="Please select an color" title=""/>
+                        {(!isCartProduct(cartItem) || !cartItem.itemCode) && !loading && (
+                            <Alert severity="info">
+                                Please select a color
+                            </Alert>
                         )}
                         {selectedProduct && !selectedProduct?.availableForSale && (
-                            <Alert type="warning">
+                            <Alert severity="warning">
                                 <span><strong>{selectedProduct?.name}</strong> is not available for sale.</span>
                             </Alert>
                         )}
                         {!selectedProduct?.season && !!selectedProduct?.dateAvailable && (
-                            <Alert type="warning">
-                                <strong>{selectedProduct.dateAvailable}</strong>
-                            </Alert>
+                            <Alert severity="warning">{selectedProduct.dateAvailable}</Alert>
                         )}
                         <RequireLogin>
                             <SelectCustomerAlert />
                         </RequireLogin>
                         {!loggedIn && (
-                            <Alert type="warning" message="Please log in to see prices and availability"
-                                   title=""/>
+                            <Alert severity="warning" title="">
+                                Please log in to see prices and availability
+                            </Alert>
                         )}
                         <ProductPreSeasonAlert/>
                         <MissingTaxScheduleAlert/>
@@ -136,10 +150,10 @@ const ProductPage = ({keyword}: {
                             </div>
                         )}
 
-                    </div>
-                </div>
+                    </Grid2>
+                </Grid2>
             </div>
-        </div>
+        </Box>
     );
 }
 export default ProductPage;

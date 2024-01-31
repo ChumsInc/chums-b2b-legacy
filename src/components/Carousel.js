@@ -6,6 +6,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import {CONTENT_PATH_PRODUCT_IMAGE} from "../constants/paths";
+import Box from "@mui/material/Box";
 
 
 const SCROLL_RIGHT = -1;
@@ -54,7 +55,8 @@ const CarouselImage = ({filename, active, isNext, isPrev, direction, title}) => 
     });
     const src = CONTENT_PATH_PRODUCT_IMAGE.replace(':size', '800').replace(':image', encodeURIComponent(filename || 'missing.png'));
     return (<div className={classNames(className)}>
-        <img src={src} className="main-image" alt={src} title={title} width="800" height="800"/>
+        <Box component="img" src={src} className="main-image" alt={src} title={title} width="800" height="800"
+             sx={{maxWidth: '100%', height: 'auto'}}/>
     </div>)
 };
 
@@ -139,31 +141,31 @@ export default class Carousel extends Component {
         let direction = SCROLL_LEFT;
         let scrolling = false;
         switch (option) {
-            case 'next':
-                next = active === count - 1 ? 0 : active + 1;
-                // prev = active === 0 ? count - 1 : active - 1;
+        case 'next':
+            next = active === count - 1 ? 0 : active + 1;
+            // prev = active === 0 ? count - 1 : active - 1;
+            scrolling = true;
+            break;
+        case 'prev':
+            next = active === 0 ? count - 1 : active - 1;
+            // prev = active === count - 1 ? 0 : active + 1;
+            scrolling = true;
+            break;
+        case 'pause':
+            if (this.scrollTimer) {
+                clearTimeout(this.scrollTimer);
+                this.scrollTimer = null;
+                this.setState({next, prev, scrolling});
+                return;
+            } else {
+                this.scrollByTimer();
+            }
+            break;
+        default:
+            if (typeof option === 'number' && option < count && option >= 0) {
+                next = option;
                 scrolling = true;
-                break;
-            case 'prev':
-                next = active === 0 ? count - 1 : active - 1;
-                // prev = active === count - 1 ? 0 : active + 1;
-                scrolling = true;
-                break;
-            case 'pause':
-                if (this.scrollTimer) {
-                    clearTimeout(this.scrollTimer);
-                    this.scrollTimer = null;
-                    this.setState({next, prev, scrolling});
-                    return;
-                } else {
-                    this.scrollByTimer();
-                }
-                break;
-            default:
-                if (typeof option === 'number' && option < count && option >= 0) {
-                    next = option;
-                    scrolling = true;
-                }
+            }
         }
         if (scrolling) {
             clearTimeout(this.scrollTimer);

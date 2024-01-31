@@ -2,7 +2,13 @@ import React from 'react';
 import numeral from 'numeral';
 import {PRICE_LEVELS} from '../constants/account';
 import {CustomerPriceRecord} from "b2b-types";
+import {styled} from "@mui/material/styles";
 
+const CustomerPricingNotice = styled('span')`
+    margin-left: 5px;
+    font-size: 12px;
+    font-weight: 600;
+`
 
 const CartItemPriceDescription = ({priceCodeRecord = null, priceLevel = ''}:{
     priceCodeRecord: CustomerPriceRecord|null;
@@ -15,21 +21,21 @@ const CartItemPriceDescription = ({priceCodeRecord = null, priceLevel = ''}:{
         switch (priceCodeRecord?.PricingMethod) {
         case 'P':
             return (
-                <small className="ms-1 customer-pricing">
+                <CustomerPricingNotice>
                     (Negotiated Discount: {numeral(priceCodeRecord.DiscountMarkup1).format('$0.00')})
-                </small>
+                </CustomerPricingNotice>
             )
         case 'D':
             return (
-                <small className="ms-1 customer-pricing">
+                <CustomerPricingNotice>
                     (Negotiated Discount: {numeral(priceCodeRecord.DiscountMarkup1 / 100).format('0%')})
-                </small>
+                </CustomerPricingNotice>
             )
         case 'O':
             return (
-                <small className="ms-1 customer-pricing">
+                <CustomerPricingNotice>
                     (Negotiated Price: {numeral(priceCodeRecord.DiscountMarkup1).format('$0.00')})
-                </small>
+                </CustomerPricingNotice>
             )
         default:
             return null;
@@ -37,7 +43,7 @@ const CartItemPriceDescription = ({priceCodeRecord = null, priceLevel = ''}:{
     }
 
     if (PRICE_LEVELS[priceLevel]) {
-        return (<small className="ms-1 customer-pricing">({PRICE_LEVELS[priceLevel]} pricing)</small>);
+        return (<CustomerPricingNotice>({PRICE_LEVELS[priceLevel]} pricing)</CustomerPricingNotice>);
     }
     return null;
 }

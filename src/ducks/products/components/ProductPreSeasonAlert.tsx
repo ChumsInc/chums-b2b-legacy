@@ -1,8 +1,9 @@
 import React from 'react';
-import Alert from "../../../common-components/Alert";
 import {useSelector} from "react-redux";
 import {selectProductCartItem} from "../selectors";
 import {isCartProduct} from "../utils";
+import Alert from "@mui/material/Alert";
+import Box from "@mui/material/Box";
 
 const ProductPreSeasonAlert = () => {
     const cartItem = useSelector(selectProductCartItem);
@@ -10,8 +11,8 @@ const ProductPreSeasonAlert = () => {
         return null;
     }
     return (
-        <Alert type="info" title="Pre-Season Order:">
-            {cartItem.season.preSeasonMessage}
+        <Alert severity="info" sx={{mb: 2}}>
+            <Box component="strong" sx={{mr: 3}}>Pre-Season Order:</Box> {cartItem.season.preSeasonMessage}
         </Alert>
     )
 }

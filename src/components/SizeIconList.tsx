@@ -1,18 +1,26 @@
 import React from 'react';
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import {visuallyHidden} from '@mui/utils'
 
-const iconSource = {
+export type SizeCode = 'S'|'M'|'L';
+
+export type SizeIconList = {
+    [key in SizeCode]: string;
+};
+const iconSource:SizeIconList = {
     S: '/images/chums/icons/retainer_sm.png',
     M: '/images/chums/icons/retainer_md.png',
     L: '/images/chums/icons/retainer_lg.png',
 }
 
-const sizeName = {
+const sizeName:SizeIconList = {
     S: 'SMALL',
     M: 'MEDIUM',
     L: 'LARGE',
 }
 
-const SizeIcon = ({size}) => {
+const SizeIcon = ({size}:{size:SizeCode}) => {
     const src = iconSource[size] ?? null;
     if (!src) {
         return null;
@@ -23,33 +31,33 @@ const SizeIcon = ({size}) => {
     )
 }
 
-const SizeIconDescription = ({size}) => {
+const SizeIconDescription = ({size}:{size:SizeCode}) => {
     if (!sizeName[size]) {
         return null;
     }
     return (
-        <div className="visually-hidden">
+        <Box sx={visuallyHidden}>
             Fits size: {sizeName[size]}
-        </div>
+        </Box>
     )
 }
-const SizeIconContainer = ({size}) => {
+const SizeIconContainer = ({size}:{size: SizeCode}) => {
     return (
-        <div>
+        <Box>
             <SizeIcon size={size}/>
             <SizeIconDescription size={size}/>
-        </div>
+        </Box>
     )
 }
 
-const SizeIconList = ({size}) => {
+const SizeIconList = ({size}:{size: string}) => {
 
     const sizes = size.split(',').map(s => s.trim()).map(s => s.toLowerCase());
     if (!size || !sizes.length) {
         return null;
     }
     return (
-        <div style={{display: 'flex', flexDirection: 'row'}}>
+        <Stack direction="row" spacing={1}>
             {(sizes.includes('s') || sizes.includes('sm')) && (
                 <SizeIconContainer size="S"/>
             )}
@@ -59,7 +67,7 @@ const SizeIconList = ({size}) => {
             {(sizes.includes('l') || sizes.includes('lg')) && (
                 <SizeIconContainer size="L"/>
             )}
-        </div>
+        </Stack>
     )
 }
 

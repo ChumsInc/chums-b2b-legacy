@@ -3,7 +3,7 @@ import NavBarUI from "../ducks/menu/components/NavBarUI";
 
 const Header = () => {
     return (
-        <header className="site-header">
+        <header>
             <NavBarUI/>
         </header>
     );

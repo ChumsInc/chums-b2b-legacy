@@ -11,8 +11,7 @@ import {
     SELECT_COLOR,
     SELECT_VARIANT,
     SELL_AS_COLOR,
-    SELL_AS_MIX,
-    SET_CART_ITEM_QUANTITY
+    SELL_AS_MIX
 } from "../constants/actions";
 import {handleError} from "../ducks/app/actions";
 import {
@@ -28,6 +27,7 @@ import {
 import {API_PATH_KEYWORDS, API_PATH_PRODUCT} from "../constants/paths";
 import {priceRecord} from "../utils/customer";
 import {selectProductCartItem} from "../ducks/products/selectors";
+import {createAction} from "@reduxjs/toolkit";
 
 
 export const fetchKeywords = () => (dispatch, getState) => {
@@ -160,5 +160,4 @@ export const setColorCode = (colorCode) => (dispatch, getState) => {
 
 };
 
-export const setCartItemQuantity = (quantity) => ({type: SET_CART_ITEM_QUANTITY, quantity});
 

@@ -1,6 +1,6 @@
 import {defaultSort} from "./index";
 import Decimal from "decimal.js";
-import {InvoiceHeader} from "b2b-types";
+import {Invoice, InvoiceHeader} from "b2b-types";
 import {SortProps} from "../../types/generic";
 
 export const invoiceTotal = (invoice: InvoiceHeader): Decimal => {
@@ -36,3 +36,11 @@ export const invoicesSorter = (sort: SortProps<InvoiceHeader> = defaultSort) =>
                 return (a.InvoiceNo > b.InvoiceNo ? 1 : -1) * sortMod;
         }
     }
+
+export function isInvoiceHeader(invoice:Invoice|InvoiceHeader|null): invoice is InvoiceHeader {
+    return !!invoice && (invoice as Invoice).Detail === undefined;
+}
+
+export function isInvoice(invoice:Invoice|InvoiceHeader|null): invoice is Invoice {
+    return !!invoice && 'undefined' !== typeof(invoice as Invoice).Detail;
+}

@@ -1,9 +1,11 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {Link as RoutedLink} from 'react-router-dom';
 import ProductImage from "../../../components/ProductImage";
 import classNames from 'classnames';
 import SeasonTeaser from "../../../components/SeasonTeaser";
 import {BasicProduct} from "b2b-types";
+import CategoryGridItem from "./CategoryGridItem";
+import Link from "@mui/material/Link";
 
 const ProductLink = ({title, description, product, imageUrl, className=''}:{
     title: string;
@@ -20,8 +22,8 @@ const ProductLink = ({title, description, product, imageUrl, className=''}:{
     };
 
     return (
-        <div className={classNames(className, selfClassName)}>
-            <Link className="category" to={link}>
+        <CategoryGridItem className={classNames(className, selfClassName)}>
+            <Link component={RoutedLink} to={link} underline="hover">
                 <ProductImage image={imageUrl || product.image} colorCode={product.defaultColor} title={title} altText={title}
                               size="400" className="main-image"/>
                 <div className="product-title">{title}</div>
@@ -30,7 +32,7 @@ const ProductLink = ({title, description, product, imageUrl, className=''}:{
             <div className="description">
                 <div dangerouslySetInnerHTML={{__html: description}}/>
             </div>
-        </div>
+        </CategoryGridItem>
     )
 };
 

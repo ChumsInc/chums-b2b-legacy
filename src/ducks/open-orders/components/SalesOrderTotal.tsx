@@ -1,16 +1,15 @@
 import React from 'react';
 import numeral from "numeral";
 import {useSelector} from "react-redux";
-import {selectOrderType, selectSalesOrderHeader} from "../../salesOrder/selectors";
 import Decimal from "decimal.js";
-import {ORDER_TYPE} from "../../../constants/orders";
 import {getPaymentType, getShippingMethod} from "../../../constants/account";
 import {selectShippingAccount} from "../../cart/selectors";
 import {useAppSelector} from "../../../app/configureStore";
 import {selectSalesOrder} from "../selectors";
 import {calcOrderType} from "../../../utils/orders";
+import {TableCell, TableFooter, TableRow} from "@mui/material";
 
-export default function SalesOrderTotal({salesOrderNo}:{
+export default function SalesOrderTotal({salesOrderNo}: {
     salesOrderNo?: string;
 }) {
     const header = useAppSelector((state) => selectSalesOrder(state, salesOrderNo ?? ''));
@@ -36,46 +35,52 @@ export default function SalesOrderTotal({salesOrderNo}:{
     }
 
     return (
-        <tfoot>
-        <tr>
-            <th colSpan={5} className="text-end">Sub Total</th>
-            <th colSpan={2}> </th>
-            <th className="text-end">
-                {numeral(new Decimal(header.NonTaxableAmt).add(header.TaxableAmt)).format('0,0.00')}
-            </th>
-            <th> </th>
-        </tr>
-        <tr>
-            <th colSpan={5} className="text-end">Sales
-                Tax {!new Decimal(header.SalesTaxAmt).eq(0) ? header.TaxSchedule : ''}</th>
-            <th colSpan={2}> </th>
-            <th className="right">{numeral(header.SalesTaxAmt || 0).format('0,0.00')}</th>
-            <th> </th>
-        </tr>
-        <tr>
-            <th colSpan={5} className="text-end">Freight</th>
-            <th colSpan={2}> </th>
-            <th className="right">{isFreightTBD() ? 'TBD' : numeral(header.FreightAmt ?? 0).format('0,0.00')}</th>
-            <th> </th>
-        </tr>
-        {!new Decimal(header.DiscountAmt ?? 0).eq(0) && <tr>
-            <th colSpan={5} className="text-end">Discount</th>
-            <th colSpan={2}> </th>
-            <th className="right">{numeral(header.DiscountAmt).format('0,0.00')}</th>
-            <th> </th>
-        </tr>}
-        {!new Decimal(header.DepositAmt ?? 0).eq(0) && <tr>
-            <th colSpan={5} className="text-end">Deposit</th>
-            <th colSpan={2}> </th>
-            <th className="right">{numeral(header.DepositAmt).format('0,0.00')}</th>
-            <th> </th>
-        </tr>}
-        <tr className="order-detail total">
-            <th colSpan={5} className="text-end">Total</th>
-            <th colSpan={2}> </th>
-            <th className="right">{isFreightTBD() ? 'TBD' : numeral(total.toString()).format('0,0.00')}</th>
-            <th> </th>
-        </tr>
-        </tfoot>
+        <TableFooter>
+            <TableRow>
+                <TableCell component="th" scope="row" colSpan={5} align="right">Sub Total</TableCell>
+                <TableCell colSpan={2}> </TableCell>
+                <TableCell align="right">
+                    {numeral(new Decimal(header.NonTaxableAmt).add(header.TaxableAmt)).format('0,0.00')}
+                </TableCell>
+                <TableCell> </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell component="th" scope="row" colSpan={5} align="right">
+                    Sales Tax {!new Decimal(header.SalesTaxAmt).eq(0) ? header.TaxSchedule : ''}
+                </TableCell>
+                <TableCell colSpan={2}> </TableCell>
+                <TableCell align="right">{numeral(header.SalesTaxAmt || 0).format('0,0.00')}</TableCell>
+                <TableCell> </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell colSpan={5} align="right">Freight</TableCell>
+                <TableCell colSpan={2}> </TableCell>
+                <TableCell align="right">
+                    {isFreightTBD() ? 'TBD' : numeral(header.FreightAmt ?? 0).format('0,0.00')}
+                </TableCell>
+                <TableCell> </TableCell>
+            </TableRow>
+            {!new Decimal(header.DiscountAmt ?? 0).eq(0) && (
+                <TableRow>
+                    <TableCell colSpan={5} align="right">Discount</TableCell>
+                    <TableCell colSpan={2}> </TableCell>
+                    <TableCell align="right">{numeral(header.DiscountAmt).format('0,0.00')}</TableCell>
+                    <TableCell> </TableCell>
+                </TableRow>)}
+            {!new Decimal(header.DepositAmt ?? 0).eq(0) && (
+                <TableRow>
+                    <TableCell colSpan={5} align="right">Deposit</TableCell>
+                    <TableCell colSpan={2}> </TableCell>
+                    <TableCell align="right">{numeral(header.DepositAmt).format('0,0.00')}</TableCell>
+                    <TableCell> </TableCell>
+                </TableRow>)}
+            <TableRow>
+                <TableCell colSpan={5} align="right">Total</TableCell>
+                <TableCell colSpan={2}> </TableCell>
+                <TableCell
+                    align="right">{isFreightTBD() ? 'TBD' : numeral(total.toString()).format('0,0.00')}</TableCell>
+                <TableCell> </TableCell>
+            </TableRow>
+        </TableFooter>
     )
 }

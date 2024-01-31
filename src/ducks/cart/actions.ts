@@ -2,13 +2,11 @@ import {
     APPEND_ORDER_COMMENT,
     CREATE_NEW_CART,
     DELETE_CART,
-    FETCH_CART,
     FETCH_FAILURE,
     FETCH_INIT,
     FETCH_SUCCESS,
     SAVE_CART,
     SAVE_CART_FAILURE,
-    UPDATE_CART,
     UPDATE_CART_ITEM
 } from "../../constants/actions";
 import {isCartOrder} from "../../utils/orders";
@@ -27,7 +25,7 @@ import {
 } from "../open-orders/selectors";
 import {selectCustomerAccount, selectCustomerPermissions} from "../customer/selectors";
 import {selectCartLoading, selectCartNo, selectItemAvailabilityLoading, selectShippingAccount} from "./selectors";
-import {fetchOpenSalesOrders, fetchSalesOrder, postApplyPromoCode} from "../../api/sales-order";
+import {fetchOpenSalesOrders, postApplyPromoCode} from "../../api/sales-order";
 import {fetchItemAvailability, postCartAction} from "../../api/cart";
 import {selectCurrentCustomer, selectLoggedIn} from "../user/selectors";
 import {changedDetailLine, newCommentLine} from "../../utils/cart";
@@ -61,7 +59,6 @@ export const customerFromState = (state: RootState) => {
     return {ARDivisionNo, CustomerNo, ShipToCode};
 };
 
-export const updateCart = (props: Partial<SalesOrderHeader>, checkoutInProcess: boolean = false) => ({type: UPDATE_CART, props, checkoutInProcess});
 export const updateCartItem = ({LineKey, prop}: {
     LineKey: string;
     prop: Partial<SalesOrderDetailLine>
@@ -113,26 +110,6 @@ export const setCurrentCart = createAsyncThunk<SalesOrderHeader | SalesOrder | n
     }
 )
 
-
-export const loadCurrentCart = () => async (dispatch: AppDispatch, getState: () => RootState) => {
-    try {
-        const state = getState();
-        const customerAccount = selectCustomerAccount(state);
-        const cartNo = selectCartNo(state);
-        if (!customerAccount?.CustomerNo || !cartNo) {
-            return;
-        }
-        const {ARDivisionNo, CustomerNo} = customerAccount;
-        const salesOrder = await fetchSalesOrder({ARDivisionNo, CustomerNo, SalesOrderNo: cartNo});
-        dispatch({type: FETCH_CART, status: FETCH_SUCCESS, salesOrder});
-    } catch (err) {
-        dispatch({type: FETCH_CART, status: FETCH_FAILURE});
-        if (err instanceof Error) {
-            dispatch(handleError(err, FETCH_CART));
-            dispatch(logError({message: err.message}));
-        }
-    }
-};
 
 export const saveNewCart = createAsyncThunk<SalesOrder | null, SaveNewCartProps>(
     'cart/save-new',
@@ -387,10 +364,10 @@ export const appendCommentLine = (commentText: string) => ({type: APPEND_ORDER_C
 
 export interface AddCartCommentProps {
     salesOrderNo: string;
-    comment:string;
+    comment: string;
 }
 
-export const addCartComment = createAsyncThunk<SalesOrder|null,AddCartCommentProps >(
+export const addCartComment = createAsyncThunk<SalesOrder | null, AddCartCommentProps>(
     'cart/addComment',
     async (arg, {getState}) => {
         const state = getState() as RootState;

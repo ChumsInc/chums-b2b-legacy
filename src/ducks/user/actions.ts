@@ -1,6 +1,5 @@
 import {fetchGET, fetchPOST} from '../../utils/fetch';
 import {
-    CHANGE_USER,
     CHANGE_USER_PASSWORD,
     FETCH_FAILURE,
     FETCH_INIT,
@@ -283,7 +282,7 @@ export const loadProfile = createAsyncThunk<UserProfileResponse>(
     }
 )
 
-export const changeUser = (props: Pick<UserProfile, 'name' | 'email'>) => ({type: CHANGE_USER, props});
+// export const changeUser = (props: Pick<UserProfile, 'name' | 'email'>) => ({type: CHANGE_USER, props});
 export const changeUserPassword = (props: Partial<UserPasswordState>) => ({type: CHANGE_USER_PASSWORD, props});
 
 export const submitPasswordChange = () => (dispatch: AppDispatch, getState: () => RootState) => {

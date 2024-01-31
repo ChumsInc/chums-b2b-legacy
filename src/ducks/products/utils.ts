@@ -18,6 +18,12 @@ import {priceRecord} from "../../utils/customer";
 import {getItemPrice} from "../../utils/products";
 import {SELL_AS_COLORS, SELL_AS_MIX, SELL_AS_SELF, SELL_AS_VARIANTS} from "../../constants/product";
 import {PRICE_FIELDS} from "../../constants/actions";
+import {UnknownAction} from "@reduxjs/toolkit";
+import {
+    DeprecatedProductsAction,
+    DeprecatedSelectColorAction,
+    DeprecatedSelectVariantAction
+} from "../../types/actions";
 
 export const isCartItem = (item:CartItem|EmptyObject|null): item is CartItem => {
     if (!item) {
@@ -101,3 +107,14 @@ export function isSellAsColors(product: Product|null): product is SellAsColorsPr
     return !!product && (product as SellAsColorsProduct).sellAs === SELL_AS_COLORS;
 }
 
+export function isDeprecatedProductAction(action:UnknownAction|DeprecatedProductsAction): action is DeprecatedProductsAction {
+    return !!action && (action.type === "FETCH_PRODUCT");
+}
+
+export function isDeprecatedVariantAction(action:UnknownAction|DeprecatedSelectVariantAction): action is DeprecatedSelectVariantAction {
+    return action.type === 'SELECT_VARIANT';
+}
+
+export function isDeprecatedSelectColorAction(action:UnknownAction|DeprecatedSelectColorAction): action is DeprecatedSelectColorAction {
+    return action.type === 'SELECT_COLOR';
+}

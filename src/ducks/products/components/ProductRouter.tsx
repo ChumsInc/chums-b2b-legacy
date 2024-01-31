@@ -11,6 +11,7 @@ import ErrorBoundary from "../../../common-components/ErrorBoundary";
 import {selectProductKeywords, selectProductKeywordsLoading} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import {Keyword} from "b2b-types";
+import Box from "@mui/material/Box";
 
 const ProductRouter = () => {
     const dispatch = useAppDispatch();
@@ -51,12 +52,12 @@ const ProductRouter = () => {
 
     return (
         <ErrorBoundary>
-            <div className="product-page">
+            <Box>
                 {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
                 {!keyword?.pagetype && <Alert message={"Product not found!"}/>}
                 {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
                 {keyword?.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
-            </div>
+            </Box>
         </ErrorBoundary>
     );
 }

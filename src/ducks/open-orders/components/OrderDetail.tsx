@@ -4,7 +4,16 @@ import SalesOrderTotal from "./SalesOrderTotal";
 import {CartItem, SalesOrderDetailLine} from "b2b-types";
 import Dialog from "@mui/material/Dialog";
 import {detailToCartItem} from "../../salesOrder/utils";
-import {Button, DialogActions, DialogContent, DialogTitle} from "@mui/material";
+import {
+    Button,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Table, TableBody, TableCell,
+    TableContainer,
+    TableHead,
+    TableRow
+} from "@mui/material";
 import AddToCartForm from "../../cart/components/AddToCartForm";
 import {selectSalesOrderDetail, selectSalesOrderIsCart} from "../selectors";
 import {useAppSelector} from "../../../app/configureStore";
@@ -33,31 +42,31 @@ export default function OrderDetail({salesOrderNo}: {
         return null;
     }
     return (
-        <div className="table-responsive-sm mt-3">
-            <table className="table table-sm table-sticky">
-                <thead>
-                <tr className="order-detail">
-                    <th>Item</th>
-                    <th>Description</th>
-                    <th>U/M</th>
-                    <th className="text-end">Ordered</th>
-                    <th className="text-end">Unit Price</th>
-                    <th className="text-end">MSRP</th>
-                    <th className="text-end">Item Price</th>
-                    <th className="text-end">Ext Price</th>
-                    <th className="text-center">Action</th>
-                </tr>
-                </thead>
+        <TableContainer sx={{mt: 3}}>
+            <Table size="small">
+                <TableHead>
+                <TableRow>
+                    <TableCell>Item</TableCell>
+                    <TableCell>Description</TableCell>
+                    <TableCell>U/M</TableCell>
+                    <TableCell align="right">Ordered</TableCell>
+                    <TableCell align="right">Unit Price</TableCell>
+                    <TableCell align="right">MSRP</TableCell>
+                    <TableCell align="right">Item Price</TableCell>
+                    <TableCell align="right">Ext Price</TableCell>
+                    <TableCell align="center">Action</TableCell>
+                </TableRow>
+                </TableHead>
 
-                <tbody>
+                <TableBody>
                 {detail.map(line => (
                     <OrderDetailLine key={line.LineSeqNo} salesOrderNo={salesOrderNo} line={line}
                                      readOnly={!isCart}
                                      onAddToCart={addToCartHandler}/>
                 ))}
-                </tbody>
+                </TableBody>
                 <SalesOrderTotal salesOrderNo={salesOrderNo}/>
-            </table>
+            </Table>
             <Dialog open={open} onClose={() => setCartItem(null)}>
                 <DialogTitle>Add {cartItem?.itemCode} To Cart</DialogTitle>
                 <DialogContent>
@@ -72,6 +81,6 @@ export default function OrderDetail({salesOrderNo}: {
                     <Button autoFocus onClick={() => setCartItem(null)}>Cancel</Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </TableContainer>
     )
 }

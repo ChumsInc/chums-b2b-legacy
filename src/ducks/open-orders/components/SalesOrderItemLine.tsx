@@ -11,6 +11,7 @@ import PriceLevelNotice from "../../../components/PriceLevelNotice";
 import Decimal from "decimal.js";
 import SalesOrderLineButtons from "./SalesOrderLineButtons";
 import SalesOrderCommentLine from "./SalesOrderCommentLine";
+import {TableCell, TableRow} from "@mui/material";
 
 export default function SalesOrderItemLine({
                                                line,
@@ -41,24 +42,29 @@ export default function SalesOrderItemLine({
     const rowClassName = {
         'table-warning': line.changed,
     };
+
     return (
         <>
-            <tr className={classNames("order-detail", rowClassName)}>
-                <td rowSpan={showCommentInput ? 2 : 1}>
+            <TableRow sx={{
+                '& > *:not([rowspan="2"])': {borderBottom: showCommentInput ? 'unset' : undefined},
+                verticalAlign: 'top'
+            }}
+                      className={classNames(rowClassName)}>
+                <TableCell rowSpan={showCommentInput ? 2 : 1}>
                     <div>{line.ItemCode}</div>
                     {line.ItemType === '1' &&
                         <OrderItemImage ItemCode={line.ItemCode} ItemCodeDesc={line.ItemCodeDesc} image={line.image}/>}
-                </td>
-                <td>
+                </TableCell>
+                <TableCell>
                     <p>{line.ItemCodeDesc}</p>
                     {!!line.UDF_UPC && <p>{UPCA.format(line.UDF_UPC)}</p>}
                     {!readOnly && (
                         <AvailabilityAlert QuantityOrdered={line.QuantityOrdered}
                                            QuantityAvailable={line.QuantityAvailable}/>
                     )}
-                </td>
-                <td>{line.UnitOfMeasure}</td>
-                <td className="text-end">
+                </TableCell>
+                <TableCell>{line.UnitOfMeasure}</TableCell>
+                <TableCell className="text-end">
                     {readOnly && (<span>{line.QuantityOrdered}</span>)}
                     {!readOnly && (
                         <CartQuantityInput quantity={+line.QuantityOrdered} min={0}
@@ -66,25 +72,26 @@ export default function SalesOrderItemLine({
                                            disabled={readOnly}
                                            onChange={onChangeQuantity}/>
                     )}
-                </td>
-                <td className="text-end">
+                </TableCell>
+                <TableCell className="text-end">
                     <div>{numeral(unitPrice).format('0,0.00')}</div>
                     {!!line.LineDiscountPercent && (<div className="sale">{line.LineDiscountPercent}% Off</div>)}
                     {!!line.PriceLevel && line.PriceLevel !== customerPriceLevel && (
                         <PriceLevelNotice PriceLevel={line.PriceLevel}/>)}
-                </td>
-                <td className="text-end">{numeral(line.SuggestedRetailPrice).format('0,0.00')}</td>
-                <td className="text-end">{numeral(itemPrice).format('0,0.00')}</td>
-                <td className="text-end">{numeral(new Decimal(line.QuantityOrdered).times(itemPrice)).format('0,0.00')}</td>
-                <td rowSpan={showCommentInput ? 2 : 1}>
+                </TableCell>
+                <TableCell className="text-end">{numeral(line.SuggestedRetailPrice).format('0,0.00')}</TableCell>
+                <TableCell className="text-end">{numeral(itemPrice).format('0,0.00')}</TableCell>
+                <TableCell
+                    className="text-end">{numeral(new Decimal(line.QuantityOrdered).times(itemPrice)).format('0,0.00')}</TableCell>
+                <TableCell rowSpan={showCommentInput ? 2 : 1}>
                     <SalesOrderLineButtons onDelete={onDelete} deleteDisabled={readOnly}
                                            onAddComment={() => setShowCommentInput(true)}
                                            addCommentDisabled={readOnly || showCommentInput || !!line.CommentText}
                                            onCopyToCart={onAddToCart}
                                            copyToCartDisabled={(!line.ProductType || line.ProductType === 'D' || line.InactiveItem === 'Y' || line.ItemType !== '1')}
                     />
-                </td>
-            </tr>
+                </TableCell>
+            </TableRow>
             {showCommentInput && (
                 <SalesOrderCommentLine line={line} onChange={onChangeComment}
                                        readOnly={readOnly} onDelete={deleteCommentHandler}/>
