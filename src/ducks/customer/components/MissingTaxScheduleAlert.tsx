@@ -1,7 +1,7 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import Alert from "@mui/material/Alert";
-import {selectCustomerAccount, selectCustomerLoading, selectCustomerLoaded} from "../selectors";
+import {selectCustomerAccount, selectCustomerLoaded, selectCustomerLoading} from "../selectors";
 import {selectLoggedIn} from "../../user/selectors";
 
 const MissingTaxScheduleAlert = () => {
@@ -10,7 +10,11 @@ const MissingTaxScheduleAlert = () => {
     const loaded = useSelector(selectCustomerLoaded);
     const loggedIn = useSelector(selectLoggedIn);
 
-    if (!loggedIn || !loaded || loading || !!customer.TaxSchedule) {
+    if (!customer) {
+        return null;
+    }
+
+    if (!loggedIn || !loaded || loading || !!customer?.TaxSchedule) {
         return null;
     }
 

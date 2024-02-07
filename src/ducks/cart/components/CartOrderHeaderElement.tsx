@@ -9,7 +9,7 @@ import {RootState, useAppDispatch, useAppSelector} from "../../../app/configureS
 import {loadSalesOrder} from "../../open-orders/actions";
 import {sendOrderEmail} from "../../salesOrder/actions";
 import {Editable, SalesOrderHeader, ShipToAddress} from "b2b-types";
-import {selectShippingAccount} from "../selectors";
+import {selectCartNo, selectShippingAccount} from "../selectors";
 import CustomerShippingAccountControl from "./CustomerShippingAccountControl";
 import {
     CartProgress,
@@ -29,7 +29,7 @@ import CartCheckoutProgress from "./CartCheckoutProgress";
 import CartPaymentSelect from "./CartPaymentSelect";
 import CheckoutButton from "./CheckoutButton";
 import {selectCustomerAccount} from "../../customer/selectors";
-import {promoteCart, saveCart} from "../actions";
+import {promoteCart, saveCart, setCurrentCart} from "../actions";
 import SendEmailModal from "../../open-orders/components/SendEmailModal";
 import Alert from "@mui/material/Alert";
 import DeleteCartButton from "./DeleteCartButton";
@@ -47,6 +47,7 @@ const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
     const match = useMatch('/account/:customerSlug/:orderType/:salesOrderNo');
     const customer = useSelector(selectCustomerAccount);
+    const cartNo = useAppSelector(selectCartNo);
     const header = useAppSelector((state) => selectSalesOrder(state, match?.params.salesOrderNo ?? ''));
     const detailChanged = useAppSelector((state: RootState) => selectDetailChanged(state, header?.SalesOrderNo ?? ''));
     const loadingStatus = useAppSelector(state => selectSalesOrderActionStatus(state, match?.params.salesOrderNo ?? ''));
@@ -280,7 +281,8 @@ const CartOrderHeaderElement = () => {
                     )}
                 </Stack>
                 <Stack spacing={3} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
-                    <DeleteCartButton disabled={loadingStatus !== 'idle' || cartHeader?.changed}>
+                    <DeleteCartButton salesOrderNo={cartHeader?.SalesOrderNo}
+                                      disabled={loadingStatus !== 'idle' || cartHeader?.changed}>
                         Delete Cart
                     </DeleteCartButton>
 
@@ -299,9 +301,14 @@ const CartOrderHeaderElement = () => {
                                      disabled={cartProgress !== cartProgress_Cart || detailChanged}>
                         Send Email
                     </SendEmailButton>
-
                     <CheckoutButton cartProgress={cartProgress}
                                     onClick={submitHandler} disabled={loadingStatus !== 'idle' || detailChanged}/>
+                    {!!cartHeader?.SalesOrderNo && cartHeader.SalesOrderNo !== cartNo && (
+                        <Button type="button" variant="contained" disabled={loadingStatus !== 'idle'}
+                                onClick={() => dispatch(setCurrentCart(cartHeader?.SalesOrderNo))}>
+                            Set Current Cart
+                        </Button>
+                    )}
                 </Stack>
             </Stack>
             <AlertList context={promoteCart.typePrefix}/>

@@ -27,7 +27,7 @@ export interface DataTableField<T = any> {
     id?: number | string;
     field: keyof T,
     title: ReactNode,
-    align?: 'start' | 'center' | 'end';
+    align?: 'left' | 'center' | 'right';
     render?: (row: T) => ReactNode,
     className?: DataTableClassNames<T>,
     colSpan?: number,

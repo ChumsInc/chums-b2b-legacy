@@ -36,3 +36,7 @@ export interface EmptyObject {
 export type LoadStatus = 'pending' | 'rejected' | 'idle';
 export type OrderActionStatus = LoadStatus | 'saving' | 'promoting' | 'deleting';
 export type EmailActionStatus = LoadStatus | 'fulfilled'
+
+export interface KeyedObject<T = any> {
+    [key:string]: T
+}

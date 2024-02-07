@@ -118,24 +118,31 @@ export const setCurrentVariant = createAsyncThunk<SetVariantResponse, ProductVar
     (arg, {getState}) => {
         const state = getState() as RootState;
         const loggedIn = selectLoggedIn(state);
-        const customerPricing = selectCustomerPricing(state);
+        const customerKey =  selectProductCustomerKey(state);
+        const priceCodes = selectCustomerPricing(state);
         const customerAccount = selectCustomerAccount(state);
         const msrp = getMSRP(arg.product);
-        const customerPrice = loggedIn ? getPrices(arg.product, customerPricing) : [...msrp];
+        const customerPrice = loggedIn ? getPrices(arg.product, priceCodes) : [...msrp];
         const salesUM = getSalesUM(arg.product);
         const colorCode = selectProductColorCode(state);
-        const cartItem = defaultCartItem(arg.product ?? null, {colorCode});
-        if (cartItem && !customerPrice.length) {
-            cartItem.price = customerPrice[0];
+        let cartItem = defaultCartItem(arg.product ?? null, {colorCode});
+        if (customerKey) {
+            cartItem = updateCartProductPricing(cartItem, priceCodes);
+            if (cartItem) {
+                cartItem.priceLevel = customerAccount?.PriceLevel ?? '';
+            }
         }
-        if (cartItem && loggedIn) {
-            cartItem.priceCodeRecord = priceRecord({
-                pricing: customerPricing,
-                priceCode: cartItem.priceCode,
-                itemCode: cartItem.itemCode,
-            })
-            cartItem.priceLevel = customerAccount?.PriceLevel ?? '';
-        }
+        // if (cartItem && !customerPrice.length) {
+        //     cartItem.price = customerPrice[0];
+        // }
+        // if (cartItem && loggedIn) {
+        //     cartItem.priceCodeRecord = priceRecord({
+        //         pricing: customerPricing,
+        //         priceCode: cartItem.priceCode,
+        //         itemCode: cartItem.itemCode,
+        //     })
+        //     cartItem.priceLevel = customerAccount?.PriceLevel ?? '';
+        // }
         return {
             variant: arg,
             msrp,

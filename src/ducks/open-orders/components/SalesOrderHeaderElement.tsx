@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
 import {Button, Chip, TextField} from "@mui/material";
 import dayjs from "dayjs";
@@ -15,6 +15,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import {customerSlug} from "../../../utils/customer";
 import {useMatch, useNavigate} from "react-router";
 import {selectSalesOrder, selectSalesOrderInvoices, selectSalesOrderLoading} from "../selectors";
+import DuplicateCartAlert from "../../../components/DuplicateCartAlert";
+import {duplicateSalesOrder} from "../../cart/actions";
+import {selectCartLoading} from "../../cart/selectors";
 
 const SalesOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -22,7 +25,9 @@ const SalesOrderHeaderElement = () => {
     const customer = useSelector(selectCurrentCustomer);
     const header = useAppSelector((state) => selectSalesOrder(state, match?.params.salesOrderNo ?? ''));
     const invoices = useAppSelector((state) => selectSalesOrderInvoices(state, match?.params.salesOrderNo ?? ''));
+    const cartLoading = useAppSelector(selectCartLoading);
     const navigate = useNavigate();
+    const [showDuplicateCart, setShowDuplicateCart] = useState(false);
 
     const hasCancelDate = header?.UDF_CANCEL_DATE ? dayjs(header?.UDF_CANCEL_DATE).valueOf() > 0 : false;
     const cancelDate = hasCancelDate ? dayjs(header?.UDF_CANCEL_DATE).format('YYYY-MM-DD') : '';
@@ -45,6 +50,12 @@ const SalesOrderHeaderElement = () => {
         }
         dispatch(loadSalesOrder(header?.SalesOrderNo))
     }
+
+    const duplicateCartHandler = async (cartName: string) => {
+        await dispatch(duplicateSalesOrder({cartName, salesOrderNo: header.SalesOrderNo, shipToCode: customer?.ShipToCode}))
+        setShowDuplicateCart(false);
+    }
+
     if (!customer || !header) {
         return null;
     }
@@ -99,11 +110,15 @@ const SalesOrderHeaderElement = () => {
                         </Stack>
                         <Stack spacing={2} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
                             <Button type="button" variant="text" onClick={reloadHandler}>Reload</Button>
-                            <Button type="button" variant="outlined">Duplicate Order</Button>
+                            <Button type="button" variant="outlined" onClick={() => setShowDuplicateCart(true)}>Duplicate Order</Button>
                         </Stack>
                     </Stack>
                 </Grid>
             </Grid>
+            <DuplicateCartAlert open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo}
+                                loading={cartLoading}
+                                onConfirm={duplicateCartHandler}
+                                onCancel={() => setShowDuplicateCart(false)} />
         </div>
     )
 }

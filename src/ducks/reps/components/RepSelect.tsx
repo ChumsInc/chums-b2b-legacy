@@ -1,5 +1,5 @@
-import React, {ChangeEventHandler, useEffect} from 'react';
-import Select from '../../../common-components/Select';
+import React, {ChangeEventHandler, useEffect, useId} from 'react';
+import Select, {SelectChangeEvent} from '@mui/material/Select';
 import {longRepNo} from "../../../utils/customer";
 import {useSelector} from "react-redux";
 import {selectUserAccount} from "../../user/selectors";
@@ -7,6 +7,9 @@ import {loadRepList} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
 import {FieldValue} from "../../../types/generic";
 import {selectRepsList, selectRepsLoaded, selectRepsLoading} from "../selectors";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 
 
 const RepSelect = ({value = '', onChange}:{
@@ -19,6 +22,7 @@ const RepSelect = ({value = '', onChange}:{
     const loading = useSelector(selectRepsLoading);
     const loaded = useSelector(selectRepsLoaded);
     const allowSelectReps = /[%_]+/.test(userAccount?.SalespersonNo ?? '');
+    const labelId = useId();
 
     useEffect(() => {
         if (!loading && !loaded && allowSelectReps) {
@@ -38,14 +42,21 @@ const RepSelect = ({value = '', onChange}:{
         return null;
     }
 
-    const changeHandler = ({value}:FieldValue) => {
-        return onChange(value ?? null);
+    const changeHandler = (ev:SelectChangeEvent) => {
+        return onChange(ev.target.value ?? null);
     }
 
     return (
-        <Select value={value ?? ''} onChange={changeHandler} options={options}>
-            <option>All Available Reps</option>
-        </Select>
+        <FormControl fullWidth>
+            <InputLabel id={labelId}>Sales Rep</InputLabel>
+            <Select labelId={labelId} label="Sales Rep" variant="standard"
+                    onChange={changeHandler} value={value ?? ''}>
+                <MenuItem value="">All Available Reps</MenuItem>
+                {options.map(option => (
+                    <MenuItem key={option.value} value={option.value}>{option.text}</MenuItem>
+                ))}
+            </Select>
+        </FormControl>
     )
 };
 

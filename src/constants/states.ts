@@ -2,7 +2,12 @@
  * Created by steve on 9/6/2016.
  */
 
-export const STATES_USA = [
+export interface StateTerritory {
+    code: string;
+    name: string;
+}
+
+export const STATES_USA:StateTerritory[] = [
     {code: "AL", name: "Alabama"},
     {code: "AK", name: "Alaska"},
     {code: "AS", name: "American Samoa"},
@@ -64,7 +69,7 @@ export const STATES_USA = [
     {code: "WY", name: "Wyoming"},
 ];
 
-export const TERRITORIES_CANADA = [
+export const TERRITORIES_CANADA:StateTerritory[] = [
     {code: 'AB', name: 'Alberta'},
     {code: 'BC', name: 'British Columbia'},
     {code: 'MB', name: 'Manitoba'},

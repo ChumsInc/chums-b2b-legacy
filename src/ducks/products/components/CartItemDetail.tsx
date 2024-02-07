@@ -50,7 +50,7 @@ const CartItemDetail = ({cartItem, msrp}: {
                     && (
                         <TableRow>
                             <CartItemDetailTableTHCell component="th" scope="row" align="left">MSRP</CartItemDetailTableTHCell>
-                            <TableCell align="right">$ {numeral(cartItem.msrp ?? 0).format('0,0.00')} ({cartItem.stdUM})</TableCell>
+                            <CartItemDetailTableTDCell align="right">$ {numeral(cartItem.msrp ?? 0).format('0,0.00')} ({cartItem.stdUM})</CartItemDetailTableTDCell>
                         </TableRow>
                     )}
                 <TableRow>

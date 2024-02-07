@@ -3,7 +3,7 @@ import {styled} from "@mui/material/styles";
 
 const imageSizes: number[] = [80, 250, 400, 800, 2048];
 
-const ResponsiveImage = styled('img')`
+export const ResponsiveImage = styled('img')`
     max-width: 100%;
     width: 100%;
     height: auto;

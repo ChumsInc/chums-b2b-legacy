@@ -10,7 +10,7 @@ import {
     SalesOrderDetailLine, InvoiceHeader, Invoice
 } from "b2b-types";
 import {EmptyObject} from "./generic";
-import {AlertType} from "../ducks/alerts/types";
+import {AlertColor} from '@mui/material/Alert'
 
 
 export interface DeprecatedAsyncAction extends UnknownAction {
@@ -127,7 +127,7 @@ export function isDeprecatedSetLoggedInAction(action:UnknownAction|DeprecatedSet
 export interface DeprecatedSetAlertAction extends UnknownAction {
     type: 'SET_ALERT',
     props: {
-        type?: AlertType;
+        severity?: AlertColor;
         title: string;
         message: string;
         context: string;

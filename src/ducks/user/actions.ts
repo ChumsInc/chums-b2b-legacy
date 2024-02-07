@@ -295,7 +295,7 @@ export const submitPasswordChange = () => (dispatch: AppDispatch, getState: () =
     fetchPOST(API_PATH_CHANGE_PASSWORD, body)
         .then(({token}) => {
             auth.setToken(token);
-            dispatch(setAlert({type: 'success', title: 'Done!', message: 'Your password has been changed'}));
+            dispatch(setAlert({severity: 'success', title: 'Done!', message: 'Your password has been changed'}));
             dispatch({type: SET_LOGGED_IN, authType: AUTH_LOCAL, token});
             dispatch(loadProfile());
             dispatch(updateLocalAuth());
@@ -363,12 +363,12 @@ export const submitNewUser = ({email, name, account, accountName, telephone, add
             dispatch({type: FETCH_USER_SIGNUP, status: FETCH_SUCCESS});
             if (success) {
                 return dispatch(setAlert({
-                    type: 'success',
+                    severity: 'success',
                     title: 'Welcome!',
                     message: "We've sent you an email so you can validate your account and set your new password."
                 }));
             }
-            dispatch(setAlert({title: 'Thanks!', message, type: 'success'}));
+            dispatch(setAlert({title: 'Thanks!', message, severity: 'success'}));
         })
         .catch(err => {
             dispatch({
@@ -386,7 +386,7 @@ export const resetPassword = createAsyncThunk<void, string>(
     async (arg, {dispatch}) => {
         await postResetPassword(arg);
         dispatch(setAlert({
-            type: 'success',
+            severity: 'success',
             message: "We've sent you an email so you can validate your account and reset your password.",
             context: 'user/resetPassword',
             title: 'Thanks!'

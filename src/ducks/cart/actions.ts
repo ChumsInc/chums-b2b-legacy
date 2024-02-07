@@ -148,6 +148,7 @@ export interface AddToCartProps {
     salesOrderNo: string;
     itemCode: string;
     quantity: string | number;
+    comment?: string|null;
 }
 
 export const addToCart = createAsyncThunk<SalesOrder | null, AddToCartProps>(
@@ -163,6 +164,7 @@ export const addToCart = createAsyncThunk<SalesOrder | null, AddToCartProps>(
             ItemCode: arg.itemCode,
             QuantityOrdered: arg.quantity.toString(),
             promo_code: promo_code?.promo_code ?? '',
+            Comment: arg.comment ?? undefined,
         }
         return await postCartAction('chums', customer.ARDivisionNo, customer.CustomerNo, header!.ShipToCode, body);
     }, {

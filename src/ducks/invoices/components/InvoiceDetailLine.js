@@ -43,7 +43,7 @@ const InvoiceDetailLine = ({line, onAddToCart}) => {
                     <td className="text-end">
                         <div>{numeral(unitPrice).format('0,0.00')}</div>
                         {!!LineDiscountPercent && (<div className="sale">{LineDiscountPercent}% Off</div>)}
-                        {!!PriceLevel && (<PriceLevelNotice PriceLevel={PriceLevel}/>)}
+                        {!!PriceLevel && (<PriceLevelNotice priceLevel={PriceLevel}/>)}
                     </td>
                     <td className="text-end hidden-xs">{numeral(SuggestedRetailPrice).format('0,0.00')}</td>
                     <td className="text-end hidden-xs">{numeral(itemPrice).format('0,0.00')}</td>

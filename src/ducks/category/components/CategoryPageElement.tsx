@@ -8,6 +8,7 @@ import {isCategoryChildCategory, isCategoryChildLink, isCategoryChildProduct} fr
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Link from "@mui/material/Link";
 import CategoryGridItem from "./CategoryGridItem";
+import ResponsiveProductImage from "../../../components/ResponsiveProductImage";
 
 
 
@@ -20,6 +21,7 @@ export const ITEM_TYPES = {
     other: '',
 };
 
+const imageSizes = "(max-width: 600px) 168px, (max-width: 900px) 268px, 354px";
 const CategoryPageElement = ({item}: {
     item: ProductCategoryChild;
 }) => {
@@ -37,8 +39,9 @@ const CategoryPageElement = ({item}: {
             <CategoryGridItem className={item.className}>
                 <Link component={RoutedLink} to={item.urlOverride}>
                     {!!item.imageUrl && (
-                        <ProductImage image={item.imageUrl} title={item.title} altText={item.title} size="400"
-                                      className="main-image"/>
+                        <ResponsiveProductImage filename={item.imageUrl} alt={item.title} loading="lazy"
+                                                sizes={imageSizes}
+                                                width={400} height={400} />
                     )}
                     <div className="product-title">{item.title}</div>
                 </Link>
@@ -50,16 +53,17 @@ const CategoryPageElement = ({item}: {
     }
     if (isCategoryChildLink(item)) {
         return (
-            <div className={"col-sm-3 col-6 " + (item.className || '')}>
+            <CategoryGridItem className={item.className}>
                 {!!item.imageUrl && (
-                    <ProductImage image={item.imageUrl} title={item.title} altText={item.title} size="400"
-                                  className="main-image"/>
+                    <ResponsiveProductImage filename={item.imageUrl} alt={item.title} loading="lazy"
+                                            sizes={imageSizes}
+                                            width={400} height={400} />
                 )}
                 <div className="product-title">{item.title}</div>
                 <div className="description">
                     <div dangerouslySetInnerHTML={{__html: item.description}}/>
                 </div>
-            </div>
+            </CategoryGridItem>
         );
     }
     return (

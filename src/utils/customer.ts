@@ -74,8 +74,8 @@ export const companyPriority = (code: string): number => {
  * @param {string} [ShipToCode]
  * @return {string}
  */
-export const longCustomerNo = ({ARDivisionNo, CustomerNo, ShipToCode}: CustomerKey): string => ShipToCode
-    ? `${ARDivisionNo}-${CustomerNo}-${ShipToCode}`
+export const longCustomerNo = ({ARDivisionNo, CustomerNo, ShipToCode}: CustomerKey): string => !!ShipToCode
+    ? `${ARDivisionNo}-${CustomerNo}/${ShipToCode}`
     : `${ARDivisionNo}-${CustomerNo}`;
 
 export const longRepNo = ({SalespersonDivisionNo, SalespersonNo}: {

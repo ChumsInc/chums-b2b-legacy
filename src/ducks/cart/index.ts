@@ -18,7 +18,7 @@ import {CART_PROGRESS_STATES, NEW_CART} from "../../constants/orders";
 import {createReducer} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
 import {
-    addToCart,
+    addToCart, duplicateSalesOrder,
     getItemAvailability,
     promoteCart,
     removeCart,
@@ -123,6 +123,9 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.loading = false;
             state.loaded = true;
             let [cart] = action.payload.filter(so => so.OrderType === 'Q' && so.SalesOrderNo === state.cartNo);
+            if (!cart && action.payload.filter(so => isCartOrder(so)).length === 1) {
+                [cart] =  action.payload.filter(so => isCartOrder(so));
+            }
             if (!cart && state.cartNo === NEW_CART) {
                 [cart] = action.payload.filter(so => so.OrderType === 'Q');
             }
@@ -239,6 +242,29 @@ const cartReducer = createReducer(initialCartState, builder => {
                     .reduce((row, cv) => row + cv, 0);
             }
             state.cartProgress = CART_PROGRESS_STATES.cart;
+        })
+        .addCase(duplicateSalesOrder.pending, (state) => {
+            state.loading = true;
+        })
+        .addCase(duplicateSalesOrder.fulfilled, (state, action) => {
+            state.loading = false;
+            if (!state.cartNo || state.cartNo === NEW_CART) {
+                if (action.payload) {
+                    state.cartNo = action.payload.SalesOrderNo;
+                    state.cartName = action.payload.CustomerPONo ?? action.meta.arg.cartName;
+                    state.cartTotal = new Decimal(action.payload?.TaxableAmt).add(action.payload.NonTaxableAmt).toNumber();
+                    state.cartQuantity = 0;
+                    if (isEditableSalesOrder(action.payload)) {
+                        state.cartQuantity = Object.values(action.payload.detail)
+                            .map(row => new Decimal(row.QuantityOrdered).times(row.UnitOfMeasureConvFactor).toNumber())
+                            .reduce((row, cv) => row + cv, 0);
+                    }
+                    state.cartProgress = CART_PROGRESS_STATES.cart;
+                }
+            }
+        })
+        .addCase(duplicateSalesOrder.rejected, (state) => {
+            state.loading = false;
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {

@@ -148,20 +148,23 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
         //     additionalData.image_filename = image_filename ?? undefined;
         // }
         return {
-            image: image_filename ?? '',
-            name: product.name,
-            productId: product.id,
             itemCode: product.itemCode,
-            stdPrice: product.stdPrice,
-            salesUM: product.salesUM,
-            salesUMFactor: product.salesUMFactor,
-            quantityAvailable: product.QuantityAvailable,
-            msrp: product.msrp,
             quantity: 1,
+            productId: product.id,
+            name: product.name,
+            colorCode: color?.code,
+            colorName: color?.name,
+            image: image_filename ?? '',
+            msrp: product.msrp,
+            stdPrice: product.stdPrice,
+            priceCode: product.priceCode,
+            salesUM: product.salesUM,
+            stdUM: product.stdUM,
+            salesUMFactor: product.salesUMFactor,
             seasonCode: product.season_code,
             seasonAvailable: product.season_available,
+            quantityAvailable: product.QuantityAvailable,
             season: product.season ?? null,
-            colorCode: color?.code,
         };
     }
     if (!product) {

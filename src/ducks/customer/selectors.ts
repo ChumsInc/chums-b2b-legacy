@@ -9,7 +9,7 @@ export const selectCustomerShipToCode = (state:RootState) => state.customer.ship
 export const selectCustomerShipTo = (state:RootState) => state.customer.shipTo;
 export const selectTaxSchedule = (state:RootState) => isBillToCustomer(state.customer.account) ? (state.customer.account?.TaxSchedule ?? '') : '';
 export const selectCustomerPricing = (state:RootState) => state.customer.pricing ?? [];
-export const selectCustomerLoading = (state:RootState) => state.customer.loading ?? false;
+export const selectCustomerLoading = (state:RootState) => state.customer.loading  ?? false;
 export const selectCustomerLoadStatus = (state:RootState) => state.customer.loadStatus;
 export const selectCustomerSaving = (state:RootState) => state.customer.saving ?? false;
 export const selectCustomerLoaded = (state:RootState) => state.customer.loaded ?? false;

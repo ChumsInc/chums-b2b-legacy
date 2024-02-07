@@ -8,7 +8,7 @@ import FormGroup from "../common-components/FormGroup";
 import {PATH_HOME, PATH_LOGIN} from "../constants/paths";
 import ProgressBar from "./ProgressBar";
 import {USER_EXISTS} from "../constants/app";
-import Alert from "../common-components/Alert";
+import AppAlert from "../common-components/AppAlert";
 import FormCheck from "../common-components/FormCheck";
 import AddressFormFields from "./AddressFormFields";
 import {addressDefaults} from "../constants/myPropTypes";
@@ -114,14 +114,14 @@ class SignUpCustomer extends Component {
                     </FormGroup>
                 </form>
                 {!!error && error === USER_EXISTS && (
-                    <Alert type="alert-warning">
+                    <AppAlert type="alert-warning">
                         If you've recently signed up and have not received an email to validate your account
                         {' '} and set your password please contact CHUMS Customer Service (800-222-2486 or
                         {' '} <a href="mailto:cs@chums.com?subject=Problems%20signing%20up%20for%20CHUMS%20B2B"
                                  target="_blank">send an email</a>) or
                         {' '} go to the <Link to={PATH_LOGIN}>Login Page</Link> to send a new link to set
                         {' '} your password;
-                    </Alert>
+                    </AppAlert>
                 )}
             </Fragment>
         );

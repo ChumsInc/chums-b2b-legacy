@@ -21,6 +21,7 @@ import Alert from "@mui/material/Alert";
 import OrderFilter from "./OrderFilter";
 import LinearProgress from "@mui/material/LinearProgress";
 import NoOpenOrdersAlert from "./NoOpenOrdersAlert";
+import {Button} from "@mui/material";
 
 
 const openOrderFields: SortableTableField<SalesOrderHeader>[] = [
@@ -73,11 +74,9 @@ const OpenOrdersList = () => {
     return (
         <>
             <OrderFilter value={filter} onChange={(ev) => dispatch(setOpenOrdersFilter(ev.target.value))}>
-                <div className="col-auto">
-                    <button type="button" className="btn btn-sm btn-outline-primary" onClick={reloadHandler}>
-                        Reload
-                    </button>
-                </div>
+                <Button type="button" variant="text" onClick={reloadHandler}>
+                    Reload
+                </Button>
             </OrderFilter>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
             <OrdersList list={list} fields={openOrderFields}/>

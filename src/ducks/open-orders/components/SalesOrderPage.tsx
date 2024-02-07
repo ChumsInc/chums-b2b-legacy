@@ -103,7 +103,7 @@ const SalesOrderPage = () => {
             <div>
                 <DocumentTitle documentTitle={documentTitle}/>
                 <div className="sales-order-page">
-                    <h2>Cart #{salesOrderNo}</h2>
+                    <h2>Cart #{salesOrderHeader.SalesOrderNo}</h2>
                     <CartOrderHeaderElement/>
                     <SalesOrderLoadingProgress salesOrderNo={match?.params?.salesOrderNo}/>
                     <OrderDetail salesOrderNo={match?.params?.salesOrderNo}/>
@@ -115,7 +115,7 @@ const SalesOrderPage = () => {
         <div>
             <DocumentTitle documentTitle={documentTitle}/>
             <div className="sales-order-page">
-                <h2>Sales Order #{salesOrderNo}</h2>
+                <h2>Sales Order #{salesOrderHeader.SalesOrderNo}</h2>
                 <SalesOrderHeaderElement/>
                 <SalesOrderLoadingProgress salesOrderNo={match?.params?.salesOrderNo}/>
                 <OrderDetail salesOrderNo={match?.params?.salesOrderNo}/>

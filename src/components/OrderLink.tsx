@@ -1,9 +1,10 @@
 import React from 'react';
-import {generatePath, Link} from 'react-router-dom';
+import {generatePath, Link as RoutedLink} from 'react-router-dom';
 import {OrderType} from "../types/salesorder";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "../ducks/user/selectors";
 import {customerSlug} from "../utils/customer";
+import Link from "@mui/material/Link";
 
 const getSalesOrderPath = (orderType:OrderType|null):string => {
     switch (orderType) {
@@ -30,7 +31,7 @@ export const OrderLink = ({salesOrderNo, orderType}: {
         customerSlug: customerSlug(customer),
         salesOrderNo
     })
-    return (<Link to={path}>{salesOrderNo}</Link>)
+    return (<Link component={RoutedLink} to={path}>{salesOrderNo}</Link>)
 };
 
 export default OrderLink;

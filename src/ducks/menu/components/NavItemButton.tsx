@@ -1,16 +1,21 @@
 import Button, {ButtonProps} from "@mui/material/Button";
 import React from "react";
+import {SxProps} from "@mui/system";
+import {styled} from "@mui/material/styles";
 
 export const navItemButtonStyle = {
     color: '#000',
     mx: 3,
 }
 
+export const StyledNavButton = styled(Button)(({theme}) => ({
+    color: theme.palette.grey["900"],
+}))
 const NavItemButton = ({children, sx, ...props}: ButtonProps) => {
     return (
-        <Button size="large" sx={{...navItemButtonStyle, ...sx}} {...props}>
+        <StyledNavButton size="large" sx={sx} {...props}>
             {children}
-        </Button>
+        </StyledNavButton>
     )
 }
 export default NavItemButton;

@@ -1,7 +1,8 @@
 import React from "react";
-import {generatePath, Link} from "react-router-dom";
+import {generatePath, Link as RoutedLink} from "react-router-dom";
 import {InvoiceHeader} from "b2b-types";
 import {billToCustomerSlug} from "../../../utils/customer";
+import Link from "@mui/material/Link";
 
 export const PATH_INVOICE = '/account/:customerSlug/invoices/:InvoiceType/:InvoiceNo';
 
@@ -12,5 +13,5 @@ export const InvoiceLink = ({invoice}: { invoice: InvoiceHeader | null }) => {
     const {InvoiceNo, InvoiceType} = invoice;
     const customerSlug = billToCustomerSlug(invoice)!;
     const path = generatePath(PATH_INVOICE, {customerSlug, InvoiceType, InvoiceNo});
-    return (<Link to={path}>{InvoiceNo}-{InvoiceType}</Link>)
+    return (<Link component={RoutedLink} to={path}>{InvoiceNo}-{InvoiceType}</Link>)
 }

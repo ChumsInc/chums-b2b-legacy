@@ -1,50 +1,28 @@
-import React, {ChangeEvent, HTMLAttributes, InputHTMLAttributes} from 'react';
-import FormGroup from "../common-components/FormGroup";
-import {FieldValue} from "../types/generic";
+import React, {ChangeEvent, InputHTMLAttributes} from 'react';
+import TextField from "@mui/material/TextField";
+import {InputAdornment} from "@mui/material";
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 
 const FormGroupEmailAddress = ({
-                                   field,
                                    value,
                                    onChange,
                                    label = '',
-                                   labelProps,
-                                   colWidth = 8,
-                                   allowAdd = false,
-                                   onAdd,
                                    inputProps
                                }: {
-    colWidth: number;
     label: string;
-    labelProps?: HTMLAttributes<HTMLLabelElement>;
-    field?: string;
     value: string;
-    allowAdd?: boolean;
-    onChange: (arg: FieldValue) => void;
-    onAdd?: () => void;
+    onChange: (arg: ChangeEvent<HTMLInputElement>) => void;
     inputProps?: Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>;
 
 }) => {
-    const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => onChange({field: field ?? '', value: ev.target.value});
-
     return (
-        <FormGroup colWidth={colWidth} label={label} labelProps={labelProps} sx={{my: 1}}>
-            <div className="input-group input-group-sm">
-                <div className="input-group-text">@</div>
-                <input type="email" className="form-control form-control-sm" value={value}
-                       onChange={changeHandler} {...inputProps}/>
-                {allowAdd && (inputProps?.maxLength ?? 255) > 6 && (
-                    <button type="button" className="btn btn-sm btn-outline-secondary" onClick={onAdd}>
-                        <span className="bi-person-add"/>
-                    </button>
-                )}
-                {value.length > 0 && (
-                    <button type="button" className="btn btn-sm btn-outline-secondary"
-                            onClick={() => onChange({field: field ?? '', value: ''})}>
-                        <span className="bi-x"/>
-                    </button>
-                )}
-            </div>
-        </FormGroup>
+        <>
+            <TextField label={label} variant="filled" fullWidth size="small" type="email"
+                       InputProps={{
+                           startAdornment: <InputAdornment position="start"><AlternateEmailIcon/></InputAdornment>,
+                       }}
+                       value={value} onChange={onChange} inputProps={inputProps}/>
+        </>
     )
 };
 

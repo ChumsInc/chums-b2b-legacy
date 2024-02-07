@@ -12,8 +12,6 @@ const DuplicateCartAlert = ({open, SalesOrderNo, loading = false, onConfirm, onC
     onConfirm: (cartName:string) => void;
     onCancel: () => void;
 }) => {
-    const dispatch = useAppDispatch();
-
     const [cartName, setCartName] = useState('');
     return (
         <Dialog open={open} onClose={onCancel} title="Confirm">
@@ -22,10 +20,10 @@ const DuplicateCartAlert = ({open, SalesOrderNo, loading = false, onConfirm, onC
                 <DialogContentText>Are you sure you want to duplicate order #{SalesOrderNo}?</DialogContentText>
                 <DialogContentText>
                     <Alert severity="info">
-                        <p>Any discontinued items will no longer be available. Please check your new order for
-                            accuracy.</p>
-                        <p>Comments will not copy to the new order - you may need to add those manually, or copy them
-                            from this order.</p>
+                        <div>Any discontinued items will no longer be available. Please check your new order for
+                            accuracy.</div>
+                        <div>Comments will not copy to the new order - you may need to add those manually, or copy them
+                            from this order.</div>
                     </Alert>
                     {loading && <LinearProgress variant="indeterminate"/>}
                 </DialogContentText>

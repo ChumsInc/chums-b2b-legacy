@@ -1,20 +1,23 @@
-export function toAlpha3(code = '') {
+export interface CountryCode {
+    cca3: string;
+    cca2: string;
+    name: string;
+}
+
+export function toAlpha3(code:string|null):string {
     if (code === null || code === '') {
         return 'USA';
     }
     if (code.length === 3) {
         return code;
     }
-    let alpha3 = '';
-    COUNTRIES
+    const alpha3 = COUNTRIES
         .filter(c => c.cca2 === code)
-        .map(c => {
-            alpha3 = c.cca3;
-        });
-    return alpha3;
+        .reduce((pv:string, cv:CountryCode) => cv.cca3, '');
+    return alpha3 ?? '';
 }
 
-export const COUNTRIES = [
+export const COUNTRIES:CountryCode[] = [
     {
         "cca3": "ABW",
         "cca2": "AW",

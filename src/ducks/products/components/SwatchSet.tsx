@@ -10,7 +10,15 @@ import {ga_viewItem} from "../../../utils/google-analytics";
 import {isSellAsColors, isSellAsMix} from "../utils";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import {styled} from "@mui/material/styles";
 
+const SwatchContainer = styled(Box)`
+    display: flex; 
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: flex-start;
+`
 
 const SwatchSet = () => {
     const dispatch = useAppDispatch();
@@ -60,18 +68,17 @@ const SwatchSet = () => {
                 </Typography>
                 <Typography variant="body1" sx={{fontWeight: 700, display: 'inline-block'}}>{cartItem?.colorName}</Typography>
             </Box>
-            <div className="swatch-container">
-                <Box sx={{display: 'flex', flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap'}}  className="swatch-set">
-                    {items
-                        .map(item => (
-                            <Swatch key={item.id} color={item.color ?? null}
-                                    itemQuantity={item.itemQuantity}
-                                    swatchFormat={item?.additionalData?.swatch_code || swatchFormat}
-                                    active={colorCode === item.color?.code}
-                                    onClick={clickHandler}/>
-                        ))}
-                </Box>
-            </div>
+            <SwatchContainer>
+                {items
+                    .map(item => (
+                        <Swatch key={item.id} color={item.color ?? null}
+                                itemQuantity={item.itemQuantity}
+                                swatchFormat={item?.additionalData?.swatch_code || swatchFormat}
+                                active={colorCode === item.color?.code}
+                                newColor={item.additionalData?.season?.active}
+                                onClick={clickHandler}/>
+                    ))}
+            </SwatchContainer>
         </>
     )
 

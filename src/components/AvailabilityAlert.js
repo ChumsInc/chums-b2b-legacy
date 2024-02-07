@@ -1,12 +1,12 @@
 import React from 'react';
-import Alert from "../common-components/Alert";
+import AppAlert from "../common-components/AppAlert";
 
 const AvailabilityAlert = ({QuantityOrdered, QuantityAvailable}) => {
     if (QuantityAvailable <= 0) {
-        return (<Alert title={"Note:"}>Not available for immediate delivery.</Alert>)
+        return (<AppAlert title={"Note:"}>Not available for immediate delivery.</AppAlert>)
     }
     const message = `Only ${QuantityAvailable} ${QuantityAvailable === 1 ? 'is' : 'are'} available for immediate delivery`;
-    return QuantityAvailable < QuantityOrdered ? (<Alert message={message} title="Note:"/>) : null;
+    return QuantityAvailable < QuantityOrdered ? (<AppAlert message={message} title="Note:"/>) : null;
 };
 
 

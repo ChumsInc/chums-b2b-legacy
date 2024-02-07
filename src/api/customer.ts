@@ -25,8 +25,36 @@ export async function fetchCustomerAccount({ARDivisionNo, CustomerNo}: CustomerK
     }
 }
 
+export async function postAddCustomerUserLocation(arg:CustomerUser, customer:CustomerKey): Promise<CustomerUser[]> {
+    try {
+        if (!arg.shipToCode?.[0]) {
+            return Promise.reject(new Error('Invalid Ship-To code'));
+        }
+        const url = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo/:id/:ShipToCode'
+            .replace(':Company', 'chums')
+            .replace(':ARDivisionNo', encodeURIComponent(customer.ARDivisionNo))
+            .replace(':CustomerNo', encodeURIComponent(customer.CustomerNo))
+            .replace(':id', !!arg.id ? encodeURIComponent(arg.id) : '')
+            .replace(':ShipToCode', encodeURIComponent(arg.shipToCode[0]));
+        const method = 'POST';
+        const body = JSON.stringify(arg);
+        const response = await fetchJSON<{ users: CustomerUser[] }>(url, {method, body});
+        return response.users ?? [];
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("postAddCustomerUserLocation()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("postAddCustomerUserLocation()", err);
+        return Promise.reject(new Error('Error in postAddCustomerUserLocation()'));
+    }
+}
+
 export async function postCustomerUser(arg: CustomerUser, customer: CustomerKey): Promise<CustomerUser[]> {
     try {
+        if (!!arg.id && arg.shipToCode?.length === 1) {
+            return await postAddCustomerUserLocation(arg, customer);
+        }
         const url = '/api/user/b2b/users/:Company/:ARDivisionNo-:CustomerNo/:id'
             .replace(':Company', 'chums')
             .replace(':ARDivisionNo', encodeURIComponent(customer.ARDivisionNo))

@@ -20,6 +20,7 @@ import {loadOpenOrders, setCartsFilter} from "../actions";
 import OrderFilter from "./OrderFilter";
 import LinearProgress from "@mui/material/LinearProgress";
 import NoCartsAlert from "./NoCartsAlert";
+import {Button} from "@mui/material";
 
 const cartFields: SortableTableField<SalesOrderHeader>[] = [
     {field: 'SalesOrderNo', title: 'Cart', render: (so) => <CartButton salesOrderNo={so.SalesOrderNo}/>},
@@ -35,7 +36,7 @@ const cartFields: SortableTableField<SalesOrderHeader>[] = [
         field: 'NonTaxableAmt',
         title: 'Total',
         render: (so) => numeral(new Decimal(so.NonTaxableAmt).add(so.TaxableAmt)).format('0,0.00'),
-        className: 'text-end',
+        align: 'right',
         sortable: true,
     }
 ];
@@ -72,11 +73,9 @@ const CartsList = () => {
     return (
         <div>
             <OrderFilter value={filter} onChange={(ev) => dispatch(setCartsFilter(ev.target.value))}>
-                <div className="col-auto">
-                    <button type="button" className="btn btn-sm btn-outline-primary" onClick={reloadHandler}>
-                        Reload
-                    </button>
-                </div>
+                <Button variant="text" onClick={reloadHandler}>
+                    Reload
+                </Button>
             </OrderFilter>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
             <OrdersList list={list} fields={cartFields}/>

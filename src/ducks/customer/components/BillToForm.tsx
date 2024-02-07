@@ -1,7 +1,7 @@
 /**
  * Created by steve on 9/6/2016.
  */
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import AddressFormFields from '../../../components/AddressFormFields';
 import {filteredTermsCode} from '../../../constants/account';
 import {useSelector} from "react-redux";
@@ -9,7 +9,6 @@ import {longCustomerNo} from "../../../utils/customer";
 import {saveBillingAddress} from '../actions';
 import Alert from "@mui/material/Alert";
 import FormGroup from "../../../common-components/FormGroup";
-import ContactFormFields from "./ContactFormFields";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 import {selectCustomerAccount, selectCustomerLoading, selectCustomerPermissions} from "../selectors";
 import {selectCanEdit} from "../../user/selectors";
@@ -20,8 +19,13 @@ import Address from "../../../components/Address/Address";
 import {useAppDispatch} from "../../../app/configureStore";
 import {BillToCustomer} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
-import {FieldValue} from "../../../types/generic";
 import ReloadCustomerButton from "./ReloadCustomerButton";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import {Button, TextField} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import TelephoneFormFields from "./TelephoneFormFields";
+import EmailAddressEditor from "../../../components/EmailAddressEditor";
 
 const BillToForm = () => {
     const dispatch = useAppDispatch();
@@ -39,9 +43,18 @@ const BillToForm = () => {
         }
     }, [current])
 
-    const changeHandler = ({field, value}: FieldValue<BillToCustomer>) => {
-        if (customer && field) {
-            setCustomer({...customer, [field]: value, changed: true});
+    const changeHandler = (arg: Partial<BillToCustomer>) => {
+        if (customer) {
+            setCustomer({...customer, ...arg, changed: true});
+        }
+    }
+
+    const fieldChangeHandler = (field: keyof BillToCustomer) => (ev: ChangeEvent<HTMLInputElement>) => {
+        switch (field) {
+            case 'Reseller':
+                return changeHandler({[field]: ev.target.checked ? 'Y' : 'N'})
+            default:
+                changeHandler(({[field]: ev.target.value}));
         }
     }
 
@@ -70,64 +83,53 @@ const BillToForm = () => {
         <ErrorBoundary>
             <div>
                 {loading && <LinearProgress variant="indeterminate"/>}
-                <div className="row">
-                    <div className="col-md-6">
-                        <FormGroup colWidth={8} label="Account Number">
-                            <input type="text" className="form-control-plaintext"
-                                   value={longCustomerNo(customer) || ''}
-                                   readOnly={true}/>
-                        </FormGroup>
-                    </div>
-                    <div className="col-md-6">
-                        <FormGroup colWidth={8} label="Terms">
-                            <input type="text" className="form-control-plaintext"
-                                   value={filteredTermsCode(customer.TermsCode)?.description || ''}
-                                   readOnly={true}/>
-                        </FormGroup>
-                    </div>
-                </div>
+                <Grid2 container spacing={2}>
+                    <Grid2 xs={12} sm={6}>
+                        <TextField variant="filled" label="Account Number" fullWidth size="small"
+                                   type="text" value={longCustomerNo(customer) || ''}
+                                   inputProps={{readOnly: true}}/>
+                    </Grid2>
+                    <Grid2 xs={12} sm={6}>
+                        <TextField variant="filled" label="Payment Terms" fullWidth size="small"
+                                   type="text" value={filteredTermsCode(customer.TermsCode)?.description ?? ''}
+                                   inputProps={{readOnly: true}}/>
+                    </Grid2>
+                </Grid2>
 
                 {!customer.TaxSchedule && (<MissingTaxScheduleAlert/>)}
                 <hr/>
-                <h4>Billing Contact &amp; Address</h4>
+                <Typography variant="h2" component="h2">Billing Contact &amp; Address</Typography>
+
                 <form onSubmit={submitHandler}>
-                    <div className="row g-3">
-                        <div className="col-sm-6">
+                    <Grid2 container spacing={2}>
+                        <Grid2 xs={12} sm={6}>
                             <AddressFormFields address={customer} colWidth={8}
                                                readOnly={!canEdit}
                                                onChange={changeHandler}/>
-                            <FormGroup label="Store Map" colWidth={8}>
-                                <StoreMapToggle id="bill-to-store-map" value={customer.Reseller} field="Reseller"
-                                                onChange={changeHandler}
+                        </Grid2>
+                        <Grid2 xs={12} sm={6}>
+                            <Stack direction="column" spacing={1}>
+                                <StoreMapToggle checked={customer.Reseller === 'Y'}
+                                                onChange={fieldChangeHandler('Reseller')}
                                                 readOnly={!canEdit}/>
-                            </FormGroup>
-                        </div>
-                        <div className="col-sm-6">
-                            <ContactFormFields account={customer}
-                                               allowMultipleEmailAddresses={true}
-                                               readOnly={!canEdit} onChange={changeHandler}/>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6"/>
-                        <div className="col-md-6">
-                            <div className="row g-3">
-                                <div className="col-4"/>
-                                <div className="col-auto">
-                                    <button type="submit" className="btn btn-sm btn-primary me-1"
-                                            disabled={!canEdit || loading}>
-                                        Save
-                                    </button>
-                                </div>
-                                <div className="col-auto">
+                                <EmailAddressEditor label="Email Address"
+                                                    required={true} readOnly={!canEdit}
+                                                    value={customer.EmailAddress}
+                                                    onChange={changeHandler}
+                                                    allowMultiple/>
+                                <TelephoneFormFields account={customer} onChange={changeHandler} readOnly={!canEdit}/>
+                                {customer.changed &&
+                                    <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>
+                                }
+                                <Stack direction="row" spacing={2} sx={{my:3}}>
+                                    <Button type="submit" variant="contained"
+                                            disabled={!canEdit || loading}>Save</Button>
                                     <ReloadCustomerButton/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                                </Stack>
 
-                    {customer.changed &&
-                        <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>}
+                            </Stack>
+                        </Grid2>
+                    </Grid2>
                 </form>
             </div>
         </ErrorBoundary>

@@ -67,7 +67,7 @@ const ProductImageList = ({images}: ProductImageListProps) => {
                 {images
                     .sort((a, b) => a.priority - b.priority)
                     .map(img => (
-                        <Paper elevation={image.image === img.image ? 1 : 0}>
+                        <Paper key={img.id} elevation={image.image === img.image ? 1 : 0}>
                             <Box sx={{width: '80px'}} onClick={() => onSelectImage(img)}>
                                 <ResponsiveProductImage filename={img.image} preferredSize={80}
                                                         alt={img.altText}

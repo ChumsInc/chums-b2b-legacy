@@ -12,6 +12,8 @@ import {shipToAddressFromBillingAddress} from "../../../utils/customer";
 export interface ShipToSelectProps extends Omit<FormControlProps, 'value' | 'onChange'> {
     value: string | null;
     defaultName?: string;
+    label?: string;
+    disabledShipToLocations?: string[];
     onChange: (shipToCode: string, address: ShipToAddress | null) => void;
     readOnly?: boolean;
     required?: boolean;
@@ -22,6 +24,8 @@ export interface ShipToSelectProps extends Omit<FormControlProps, 'value' | 'onC
 export default function ShipToSelect({
                                          value,
                                          defaultName,
+                                         label,
+                                         disabledShipToLocations,
                                          onChange,
                                          readOnly,
                                          required,
@@ -70,7 +74,7 @@ export default function ShipToSelect({
         return null;
     }
 
-    const renderValueHandler = (value:string) => {
+    const renderValueHandler = (value: string) => {
         if (value === '' && permissions?.billTo) {
             return 'Billing Address';
         }
@@ -80,7 +84,7 @@ export default function ShipToSelect({
 
     return (
         <FormControl fullWidth variant="filled" size="small" {...formControlProps}>
-            <InputLabel id={id} shrink>Ship-To Location</InputLabel>
+            <InputLabel id={id} shrink>{label ?? 'Ship-To Location'}</InputLabel>
             <Select onChange={changeHandler}
                     value={value ?? ''} displayEmpty renderValue={renderValueHandler}
                     readOnly={readOnly} required={required}>
@@ -88,7 +92,8 @@ export default function ShipToSelect({
                 {shipToAddresses
                     .filter(shipTo => shipTo.ShipToCode !== '' || permissions?.billTo)
                     .map(shipTo => (
-                        <MenuItem key={shipTo.ShipToCode} value={shipTo.ShipToCode}>
+                        <MenuItem key={shipTo.ShipToCode} value={shipTo.ShipToCode}
+                                  disabled={disabledShipToLocations?.includes(shipTo.ShipToCode)}>
                             [{shipTo.ShipToCode || 'Billing'}] {shipTo.ShipToName}, {shipTo.ShipToCity} {shipTo.ShipToState}
                         </MenuItem>
                     ))}

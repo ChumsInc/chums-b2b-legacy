@@ -4,16 +4,20 @@ import {selectSalesOrderHeader} from "../../salesOrder/selectors";
 import {ButtonProps} from "@mui/material/Button";
 import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
-import {useAppDispatch} from "../../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {removeCart} from "../actions";
 import {useNavigate} from "react-router";
 import {generatePath} from "react-router-dom";
 import {customerSlug} from "../../../utils/customer";
 import LinearProgress from "@mui/material/LinearProgress";
+import {selectSalesOrder} from "../../open-orders/selectors";
 
-export default function DeleteCartButton({disabled, children, ...rest}: ButtonProps) {
+export interface DeleteCartButtonProps extends ButtonProps {
+    salesOrderNo?: string|null;
+}
+export default function DeleteCartButton({salesOrderNo, disabled, children, ...rest}: DeleteCartButtonProps) {
     const dispatch = useAppDispatch();
-    const header = useSelector(selectSalesOrderHeader);
+    const header = useAppSelector((state) => selectSalesOrder(state, salesOrderNo ?? ''));
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
     const [busy, setBusy] = useState(false);

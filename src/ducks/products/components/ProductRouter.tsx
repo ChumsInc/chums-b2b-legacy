@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import {useNavigate, useParams} from 'react-router';
 import {fetchKeywords} from '../../../actions/products';
 import ProgressBar from "../../../components/ProgressBar";
-import Alert from "../../../common-components/Alert";
+import AppAlert from "../../../common-components/AppAlert";
 import CategoryPage2 from "../../category/components/CategoryPage";
 import ProductPage from "./ProductPage";
 import {PATH_PRODUCT} from "../../../constants/paths";
@@ -54,7 +54,7 @@ const ProductRouter = () => {
         <ErrorBoundary>
             <Box>
                 {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
-                {!keyword?.pagetype && <Alert message={"Product not found!"}/>}
+                {!keyword?.pagetype && <AppAlert message={"Product not found!"}/>}
                 {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
                 {keyword?.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
             </Box>

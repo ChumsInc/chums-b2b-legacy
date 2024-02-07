@@ -17,7 +17,7 @@ const MainOutlet = () => {
     return (
         <>
             <Header/>
-            <Box component="main" sx={{marginTop: '100px'}}>
+            <Box component="main" sx={{marginTop: '100px', marginBottom: '3rem'}}>
                 <Container maxWidth="xl">
                     {loggedIn && <AppUpdateLocalLogin/>}
                     <AlertList/>

@@ -4,19 +4,14 @@
 
 export default class UPCA {
     static CHUMS = '000298';
-    static raw (upc) {
+    static raw (upc:string) {
         let re = /[0-9]/;
         return upc.split('')
             .filter(c => re.test(c))
             .join('');
     }
 
-    static format(upc) {
-        if (typeof upc !== "string") {
-            return upc;
-        }
-
-
+    static format(upc:string) {
         upc = UPCA.raw(upc);
 
         if (upc.length === 5) {
@@ -30,11 +25,7 @@ export default class UPCA {
         return [p1, p2, p3, UPCA.checkdigit(upc)].join(' ');
     }
 
-    static checkdigit(upc) {
-        if (typeof upc !== "string") {
-            console.log('UPCA.checkdigit() UPC must be a string', upc);
-            return upc;
-        }
+    static checkdigit(upc:string) {
         upc = UPCA.raw(upc.trim()).slice(0, 11);
 
         if (upc.length === 5) {

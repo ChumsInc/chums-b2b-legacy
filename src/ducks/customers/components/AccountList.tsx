@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, ReactNode, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {loadCustomerList} from '../actions';
 import SortableTable from "../../../common-components/SortableTable";
@@ -30,6 +30,27 @@ import {
 } from "../selectors";
 import {setCustomersFilter, setCustomersRepFilter, setCustomersSort} from "../actions";
 import TelephoneLink from "../../../components/TelephoneLink";
+import {
+    Button,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    TextField
+} from "@mui/material";
+import {TableComponents, TableVirtuoso} from "react-virtuoso";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import {SxProps} from "@mui/system";
+import {visuallyHidden} from "@mui/utils";
+import Typography from "@mui/material/Typography";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import SearchIcon from '@mui/icons-material/Search';
+
+const hiddenXS:SxProps = {display: {xs: 'none', sm: 'table-cell'}};
 
 const ACCOUNT_LIST_FIELDS: SortableTableField<Customer>[] = [
     {field: 'CustomerNo', title: 'Account', render: (row) => <CustomerLink customer={row}/>, sortable: true},
@@ -40,6 +61,76 @@ const ACCOUNT_LIST_FIELDS: SortableTableField<Customer>[] = [
     {field: 'ZipCode', title: 'ZIP', sortable: true},
     {field: 'TelephoneNo', title: 'Phone', sortable: true, render: (row) => <TelephoneLink telephoneNo={row.TelephoneNo}  />},
 ];
+
+interface ColumnData extends SortableTableField<Customer> {
+    width: number;
+    sx?:SxProps;
+}
+
+const columns: ColumnData[] = [
+    {field: 'CustomerNo', title: 'Account', width: 50, render: (row) => <CustomerLink customer={row}/>, sortable: true},
+    {field: 'CustomerName', title: "Name", width: 80, sortable: true},
+    {field: 'AddressLine1', title: 'Address', width: 80, sortable: true, sx: hiddenXS},
+    {field: 'City', title: 'City', width: 80, sortable: true},
+    {field: 'State', title: 'State', width: 40, sortable: true, render: (row) => stateCountry(row)},
+    {field: 'ZipCode', title: 'ZIP', width: 40, sortable: true, sx: hiddenXS},
+    {field: 'TelephoneNo', title: 'Phone', width: 40, sortable: true, sx: hiddenXS, render: (row) => <TelephoneLink telephoneNo={row.TelephoneNo}  />},
+]
+
+const VirtuosoTableComponents:TableComponents<Customer> = {
+    Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+        <TableContainer component={Paper} {...props} ref={ref}/>
+    )),
+    Table: (props) => (
+        <Table {...props} sx={{borderCollapse: 'separate', tableLayout: 'fixed'}} />
+    ),
+    TableHead,
+    TableRow: ({item: _item, ...props}) => <TableRow {...props} />,
+    TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+        <TableBody {...props} ref={ref}/>
+    ))
+}
+
+function fixedHeaderContent() {
+    const dispatch = useAppDispatch();
+    const sort = useSelector(selectCustomerSort);
+    const sortDirection = sort.ascending ? 'asc' : 'desc';
+    const sortHandler = (field: keyof Customer) => () => {
+        if (field === sort.field) {
+            dispatch(setCustomersSort({field, ascending: !sort.ascending}))
+            return;
+        }
+        dispatch(setCustomersSort({field, ascending: true}));
+    }
+
+    return (
+        <TableRow>
+            {columns.map(col => (
+                <TableCell key={col.id ?? col.field} variant="head"
+                           sortDirection={col.field === sort.field ? sortDirection : false}
+                           align={col.align} style={{width: col.width}} sx={{backgroundColor: 'background.paper', ...col.sx}}>
+                    <TableSortLabel active={sort.field === col.field}
+                                    direction={sort.field === col.field ? sortDirection : 'asc'}
+                                    onClick={sortHandler(col.field)}>
+                        {col.title}
+                    </TableSortLabel>
+                </TableCell>
+            ))}
+        </TableRow>
+    )
+}
+
+function rowContent(_index: number, row: Customer) {
+    return (
+        <>
+            {columns.map(column => (
+                <TableCell key={column.id ?? column.field} align={column.align} sx={column.sx}>
+                    {column.render ? column.render(row) : row[column.field]}
+                </TableCell>
+            ))}
+        </>
+    )
+}
 
 const AccountList = () => {
     const dispatch = useAppDispatch();
@@ -55,6 +146,7 @@ const AccountList = () => {
     const filter = useSelector(selectCustomersFilter);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
+    const allowSelectReps = /[%_]+/.test(userAccount?.SalespersonNo ?? '');
 
 
     useEffect(() => {
@@ -111,41 +203,34 @@ const AccountList = () => {
         <ErrorBoundary>
             <DocumentTitle documentTitle={documentTitle}/>
             <Breadcrumb paths={paths}/>
-            <h2>Account List</h2>
-            <h3>{userAccount?.SalespersonName ?? ''} <small className="ms-3">({longAccountNumber(userAccount)})</small>
-            </h3>
+            <Typography variant="h1" component="h1">Account List</Typography>
+            <Typography variant="h2" component="h2">
+                {userAccount?.SalespersonName ?? ''} <small className="ms-3">({longAccountNumber(userAccount)})</small>
+            </Typography>
 
-            <div className="row g-3 mb-1 align-items-baseline">
-                <div className="col-auto">
-                    Filter Accounts
-                </div>
-                <div className="col">
-                    <div className="input-group input-group-sm">
-                        <div className="input-group-text">
-                            <span className="bi-search"/>
-                        </div>
-                        <input type="search" className="form-control form-control-sm" value={filter}
-                               onChange={filterChangeHandler}/>
-                    </div>
-                </div>
-                <div className="col-auto">
-                    <RepSelect value={repFilter} onChange={repChangeHandler}/>
-                </div>
-                <div className="col-auto">
-                    <button className="btn btn-sm btn-outline-primary" onClick={reloadHandler}>
-                        Refresh List
-                    </button>
-                </div>
-            </div>
+            <Grid2 container spacing={2} alignContent="center" sx={{mt: 5}} justifyContent="space-between">
+                <Grid2 xs={allowSelectReps ? 6 : 9}>
+                    <Box sx={{display: 'flex', alignItems: 'flex-end'}}>
+                        <SearchIcon sx={{color: 'action.active', mr: 1, my: 0.5}} />
+                        <TextField variant="standard"
+                                   value={filter} onChange={filterChangeHandler} label="Filter Customers" fullWidth/>
+                    </Box>
+                </Grid2>
+                {allowSelectReps && (
+                    <Grid2 xs>
+                        <RepSelect value={repFilter} onChange={repChangeHandler}/>
+                    </Grid2>
+                )}
+                <Grid2 xs >
+                    <Button variant="contained" onClick={reloadHandler}>Refresh List</Button>
+                </Grid2>
+            </Grid2>
+
             {loading && <LinearProgress variant="indeterminate" sx={{my: 1}}/>}
-            <SortableTable data={customers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           fields={ACCOUNT_LIST_FIELDS}
-                           currentSort={sort} onChangeSort={sortChangeHandler}
-                           keyField={longAccountNumber}
-                           rowClassName={row => ({'table-active': !!currentCustomer && compareCustomerAccountNumber(row, currentCustomer) === 0})}/>
-            <TablePagination component="div" count={customers.length} page={page} rowsPerPage={rowsPerPage}
-                             onPageChange={(ev, page) => setPage(page)} showFirstButton showLastButton
-                             onRowsPerPageChange={(ev) => setRowsPerPage(+ev.target.value)}/>
+
+            <Box sx={{height: 600, maxHeight: '75vh', width: '100%', mb: 3}}>
+                <TableVirtuoso data={customers} components={VirtuosoTableComponents} fixedHeaderContent={fixedHeaderContent} itemContent={rowContent} />
+            </Box>
         </ErrorBoundary>
     );
 }

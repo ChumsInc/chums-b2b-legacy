@@ -2,6 +2,7 @@ import React from "react";
 import SortableTH from "../SortableTH/SortableTH";
 import classNames from "classnames";
 import {SortableTableHeadProps} from "./SortableTableHead.types";
+import {TableCell, TableHead, TableRow, TableSortLabel} from "@mui/material";
 
 
 const SortableTableHead = ({
@@ -10,20 +11,34 @@ const SortableTableHead = ({
                                onChangeSort,
                            }: SortableTableHeadProps) => {
     const {field, ascending} = currentSort;
+    const sortClickHandler = (sortField:any) => () => {
+        if (sortField === field) {
+            onChangeSort({...currentSort, ascending: !ascending});
+            return;
+        }
+        onChangeSort({field: sortField, ascending: !ascending});
+    }
+
     return (
-        <thead>
-        <tr>
+        <TableHead>
+        <TableRow>
             {fields.map((tableField, index) => (
-                <SortableTH key={index} field={tableField}
-                            sorted={field === tableField.field} ascending={ascending}
+                <TableCell key={index} align={tableField.align}
                             className={classNames(
                                 typeof tableField.className === 'function'
                                     ? {[`text-${tableField.align}`]: !!tableField.align}
                                     : tableField.className
-                            )} onClick={onChangeSort}/>
+                            )}>
+                    <TableSortLabel
+                        active={currentSort.field === tableField.field}
+                                    direction={(currentSort.ascending ? 'asc' : 'desc') ?? 'asc'}
+                                    onClick={sortClickHandler(tableField.field)}>
+                        {tableField.title}
+                    </TableSortLabel>
+                </TableCell>
             ))}
-        </tr>
-        </thead>
+        </TableRow>
+        </TableHead>
     )
 }
 export default SortableTableHead;

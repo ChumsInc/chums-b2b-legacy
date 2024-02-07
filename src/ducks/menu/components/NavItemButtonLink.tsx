@@ -1,7 +1,7 @@
 import Button, {ButtonProps} from "@mui/material/Button";
 import {Link as RouterLink} from "react-router-dom";
 import React from "react";
-import {navItemButtonStyle} from "./NavItemButton";
+import {navItemButtonStyle, StyledNavButton} from "./NavItemButton";
 
 
 export interface NavItemButtonLinkProps extends ButtonProps {

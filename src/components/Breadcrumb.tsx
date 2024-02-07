@@ -18,7 +18,7 @@ const Breadcrumb = ({paths}: {
 }) => {
     const location = useLocation();
     return (
-        <Breadcrumbs>
+        <Breadcrumbs sx={{mb: 2}}>
             {paths.map((path, index) => (
                 <BreadcrumbItem key={index} {...path} active={path.pathname === location.pathname}/>
             ))}

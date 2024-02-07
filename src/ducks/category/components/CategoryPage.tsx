@@ -34,10 +34,10 @@ const CategoryPage = ({keyword}: {
     return (
         <Box>
             <DocumentTitle documentTitle={title}/>
-            <Typography component="h2" variant="h3">{title}</Typography>
+            <Typography component="h2" variant="h3" sx={{textAlign: 'center'}}>{title}</Typography>
             {loading && <LinearProgress variant="indeterminate"/>}
             {!!pageText && <Box dangerouslySetInnerHTML={{__html: pageText}}/>}
-            <Grid2 spacing="3" sx={{justifyContent: children.length < 4 ? 'center' : undefined}} container>
+            <Grid2 container spacing={3} justifyContent={children.length < 4 ? 'center' : 'start'} sx={{mt: 3}} >
                 {children
                     .filter(child => !!child.status)
                     .sort((a, b) => a.priority - b.priority)

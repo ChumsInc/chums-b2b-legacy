@@ -1,5 +1,5 @@
 import React from 'react';
-import Alert from "../../common-components/Alert";
+import AppAlert from "../../common-components/AppAlert";
 import {useDispatch, useSelector} from 'react-redux';
 import {dismissAlert, dismissContextAlert, selectAlerts, selectContextAlerts} from "./index";
 import {useAppSelector} from "../../app/configureStore";
@@ -16,15 +16,15 @@ const AlertList = ({context}:{context?:string}) => {
     }
     return (
         <>
-            {alerts.map((alert) => <Alert key={alert.id}
-                                          id={alert.id}
-                                          count={alert.count}
-                                          type={alert.type}
-                                          context={alert.context}
-                                          title={alert.title}
-                                          message={alert.message}
-                                          onDismiss={dismissHandler}
-                                          onContextDismiss={contextDismissHandler}
+            {alerts.map((alert) => <AppAlert key={alert.alertId}
+                                             alertId={alert.alertId}
+                                             severity={alert.severity}
+                                             count={alert.count}
+                                             context={alert.context}
+                                             title={alert.title}
+                                             message={alert.message}
+                                             onDismiss={dismissHandler}
+                                             onDismissContext={contextDismissHandler}
             />)}
         </>
     )

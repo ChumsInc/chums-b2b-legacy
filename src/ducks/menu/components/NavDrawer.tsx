@@ -29,7 +29,7 @@ const NavDrawer = ({children}:NavDrawerProps) => {
                         keepMounted: true,
                     }}
                     sx={{
-                        display: {xs: 'block', sm: 'none'},
+                        display: {xs: 'block', md: 'none'},
                         '& .MuiDrawer-paper': {boxSizing: 'border-box', width: drawerWidth, maxWidth: '75vw'},
                     }}>
                 {children}

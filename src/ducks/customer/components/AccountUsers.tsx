@@ -1,76 +1,36 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {useSelector} from 'react-redux';
-import {removeUser, saveUser} from '../actions';
 import AccountUserTable from "./AccountUserTable";
-import {selectCustomerLoading, selectCustomerUsers} from "../selectors";
+import {selectCustomerLoading} from "../selectors";
 import EditAccountUserForm from "./EditAccountUserForm";
-import {selectIsEmployee, selectIsRep} from "../../user/selectors";
-import {useAppDispatch} from "../../../app/configureStore";
-import {CustomerUser, Editable} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
-import Box from "@mui/material/Box";
 import ReloadCustomerButton from "./ReloadCustomerButton";
-
-const newUser: CustomerUser = {id: 0, name: '', email: '', accountType: 4};
-
+import Grid2 from "@mui/material/Unstable_Grid2";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+import AccountUserPermissions from "./AccountUserPermissions";
 
 const AccountUsers = () => {
-    const dispatch = useAppDispatch();
-    const users = useSelector(selectCustomerUsers);
     const loading = useSelector(selectCustomerLoading);
-    const isEmployee = useSelector(selectIsEmployee);
-    const isRep = useSelector(selectIsRep);
-    const [user, setUser] = useState<(CustomerUser & Editable) | null>(null);
-
-
-    const selectUserHandler = (arg: CustomerUser) => {
-        setUser({...arg})
-    }
-
-    const changeUserHandler = (props: Partial<CustomerUser>) => {
-        if (!user) {
-            return;
-        }
-        setUser({...user, ...props, changed: true});
-    }
-    const saveHandler = () => {
-        if (!user) {
-            return;
-        }
-        dispatch(saveUser(user));
-        setUser(null);
-    }
-
-    const deleteHandler = () => {
-        if (!user) {
-            return;
-        }
-        if (window.confirm(`Are you sure you want to remove ${user?.email}?`)) {
-            dispatch(removeUser(user));
-            setUser(null);
-        }
-    }
-
     return (
-        <Box sx={{mt: '2'}}>
-            <div className="row">
-                <div className="col-sm-6">
-                    <div>
-                        <ReloadCustomerButton/>
-                    </div>
-                    {loading && <LinearProgress variant={"indeterminate"} sx={{my: 1}}/>}
-                    <AccountUserTable users={users} onSelectUser={selectUserHandler} currentUser={user?.id}/>
-                </div>
-                <div className="col-sm-6">
-                    <EditAccountUserForm user={user} onChangeUser={changeUserHandler}
-                                         canEdit={isEmployee || isRep}
-                                         onSave={saveHandler}
-                                         onCancel={() => setUser(null)}
-                                         onNewUser={() => setUser({...newUser})}
-                                         onDeleteUser={deleteHandler}/>
-                </div>
-            </div>
-        </Box>
+        <Grid2 container spacing={2} sx={{mt: '2'}}>
+            <Grid2 xs={12} sm={6}>
+                <Stack direction="row" spacing={2} justifyContent="space-between">
+                    <Typography variant="h2" component="h2">
+                        User List
+                    </Typography>
+                    <ReloadCustomerButton/>
+                </Stack>
+                {loading && <LinearProgress variant={"indeterminate"} sx={{my: 1}}/>}
+                <AccountUserTable/>
+            </Grid2>
+            <Grid2 xs={12} sm={6}>
+                <EditAccountUserForm/>
+                <Divider sx={{my: 3}}/>
+                <AccountUserPermissions/>
+            </Grid2>
+        </Grid2>
     )
 }
 

@@ -4,16 +4,17 @@ import {selectProductCartItem} from "../selectors";
 import {isCartProduct} from "../utils";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
+import {Collapse} from "@mui/material";
 
 const ProductPreSeasonAlert = () => {
     const cartItem = useSelector(selectProductCartItem);
-    if (!isCartProduct(cartItem) || !cartItem.season || !cartItem.season.active || cartItem.season.product_available) {
-        return null;
-    }
+    const show = isCartProduct(cartItem) && cartItem.season?.active && !cartItem.season?.product_available;
     return (
-        <Alert severity="info" sx={{mb: 2}}>
-            <Box component="strong" sx={{mr: 3}}>Pre-Season Order:</Box> {cartItem.season.preSeasonMessage}
-        </Alert>
+        <Collapse in={show}>
+            <Alert severity="info" sx={{mb: 2}}>
+                <Box component="strong" sx={{mr: 2}}>Pre-Season Order:</Box> {cartItem?.season?.preSeasonMessage}
+            </Alert>
+        </Collapse>
     )
 }
 

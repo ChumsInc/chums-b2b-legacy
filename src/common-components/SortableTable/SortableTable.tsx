@@ -3,6 +3,7 @@ import classNames from "classnames";
 import SortableTableHead from "../SortableTableHead";
 import DataTableTBody from "../DataTableTBody";
 import {SortableTableProps} from "./SortableTable.types";
+import {Table} from "@mui/material";
 
 
 const SortableTable = ({
@@ -22,12 +23,8 @@ const SortableTable = ({
                            ...rest
                        }: SortableTableProps) => {
 
-    const tableClassName = classNames('table', className, {
-        [`table-${size}`]: !!size,
-    })
-
     return (
-        <table className={tableClassName} {...rest}>
+        <Table className={className} {...rest}>
             <SortableTableHead currentSort={currentSort} fields={fields} onChangeSort={onChangeSort}/>
             {!!data.length && (
                 <DataTableTBody fields={fields} data={data} keyField={keyField} rowClassName={rowClassName}
@@ -36,7 +33,7 @@ const SortableTable = ({
             )}
             {children}
             {tfoot}
-        </table>
+        </Table>
     )
 }
 

@@ -26,6 +26,7 @@
 }
 
 :root {
+  --chums-red: #d0112b;
   --mountain-footer-height: 130px;
   --footer-links-height: 40px;
   --footer-contacts-padding: 1.5rem;

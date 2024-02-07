@@ -14,7 +14,15 @@ import {
 import {setCustomerAccount} from "../customer/actions";
 import {customerSlug} from "../../utils/customer";
 import {setLoggedIn, setUserAccess} from "../user/actions";
-import {addCartComment, addToCart, promoteCart, removeCart, saveCart, saveNewCart} from "../cart/actions";
+import {
+    addCartComment,
+    addToCart,
+    duplicateSalesOrder,
+    promoteCart,
+    removeCart,
+    saveCart,
+    saveNewCart
+} from "../cart/actions";
 import {LoadStatus, SortProps} from "../../types/generic";
 import {ActionStatusList, OpenOrderDetailList, OpenOrderList} from "./types";
 
@@ -120,7 +128,11 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         .addCase(promoteCart.pending, (state, action) => {
             state.actionStatus[action.meta.arg.SalesOrderNo] = 'promoting';
             if (state.list[action.meta.arg.SalesOrderNo]) {
-                state.list[action.meta.arg.SalesOrderNo].actionStatus = 'promoting';
+                state.list[action.meta.arg.SalesOrderNo] = {
+                    ...state.list[action.meta.arg.SalesOrderNo],
+                    ...action.meta.arg,
+                    actionStatus: 'promoting'
+                }
             }
         })
         .addCase(promoteCart.fulfilled, (state, action) => {
@@ -255,6 +267,22 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
             state.sendEmail.status = 'idle';
             state.sendEmail.response = null;
             state.sendEmail.error = null;
+        })
+        .addCase(duplicateSalesOrder.pending, (state, action) => {
+            state.actionStatus[action.meta.arg.salesOrderNo] = 'pending';
+        })
+        .addCase(duplicateSalesOrder.fulfilled, (state, action) => {
+            state.actionStatus[action.meta.arg.salesOrderNo] = 'idle';
+            if (action.payload) {
+                const detail: OpenOrderDetailList = {};
+                action.payload.detail.forEach(line => {
+                    detail[line.LineKey] = line;
+                })
+                state.list[action.payload.SalesOrderNo] = {...action.payload, detail};
+            }
+        })
+        .addCase(duplicateSalesOrder.rejected, (state, action) => {
+            state.actionStatus[action.meta.arg.salesOrderNo] = 'idle';
         })
 })
 export default openOrdersReducer;

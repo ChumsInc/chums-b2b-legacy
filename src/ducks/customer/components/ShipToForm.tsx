@@ -1,14 +1,11 @@
 /**
  * Created by steve on 9/6/2016.
  */
-import React, {FormEvent, useEffect, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
 import {saveShipToAddress, setDefaultShipTo} from '../actions';
-import FormGroupTextInput from "../../../common-components/FormGroupTextInput";
-import FormGroup from "../../../common-components/FormGroup";
 import Alert from "@mui/material/Alert";
 import ShipToAddressFormFields from "../../../components/ShipToAddressFormFields";
-import ContactFormFields from "./ContactFormFields";
 import {selectCanEdit} from "../../user/selectors";
 import {
     selectCustomerLoading,
@@ -19,11 +16,18 @@ import {
 import StoreMapToggle from "../../../components/StoreMapToggle";
 import {Editable, ShipToCustomer} from "b2b-types";
 import {useAppDispatch} from "../../../app/configureStore";
-import {FieldValue} from "../../../types/generic";
 import {useParams} from "react-router";
 import DeliveryAddress from "../../../components/Address/DeliveryAddress";
 import LinearProgress from "@mui/material/LinearProgress";
 import ReloadCustomerButton from "./ReloadCustomerButton";
+import Grid2 from "@mui/material/Unstable_Grid2";
+import {Button, TextField} from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
+import EmailAddressEditor from "../../../components/EmailAddressEditor";
+import TelephoneFormFields from "./TelephoneFormFields";
+import Box from "@mui/material/Box";
+import PrimaryShipToIcon from "./PrimaryShipToIcon";
 
 const ShipToForm = () => {
     const dispatch = useAppDispatch();
@@ -54,12 +58,18 @@ const ShipToForm = () => {
         dispatch(saveShipToAddress(shipTo));
     }
 
-    const changeHandler = ({
-                               field,
-                               value
-                           }: FieldValue<ShipToCustomer>) => {
-        if (shipTo && field) {
-            setShipTo({...shipTo, [field]: value, changed: true});
+    const changeHandler = (arg: Partial<ShipToCustomer>) => {
+        if (shipTo) {
+            setShipTo({...shipTo, ...arg, changed: true});
+        }
+    }
+
+    const fieldChangeHandler = (field: keyof ShipToCustomer) => (ev: ChangeEvent<HTMLInputElement>) => {
+        switch (field) {
+            case 'Reseller':
+                return changeHandler({[field]: ev.target.checked ? 'Y' : 'N'})
+            default:
+                changeHandler({[field]: ev.target.value});
         }
     }
 
@@ -73,7 +83,7 @@ const ShipToForm = () => {
         return (
             <div>
                 <h4>Delivery Address</h4>
-                <LinearProgress variant="indeterminate" hidden={!loading}/>
+                {loading && <LinearProgress variant="indeterminate"/>}
                 {shipTo && <DeliveryAddress address={shipTo}/>}
             </div>
         )
@@ -81,68 +91,62 @@ const ShipToForm = () => {
 
     return (
         <div>
-            <LinearProgress variant="indeterminate" hidden={!loading}/>
+            {loading && <LinearProgress variant="indeterminate"/>}
             {shipTo && (
                 <form onSubmit={submitHandler}>
-                    <div className="row g-3">
-                        <div className="col-md-6">
-                            <FormGroupTextInput colWidth={8} label="Location Name"
-                                                value={shipTo.ShipToName || ''} field="ShipToName"
-                                                maxLength={30}
-                                                onChange={changeHandler} required readOnly={readOnly}/>
-                        </div>
-                        <div className="col-md-6">
-                            <FormGroup label="" colWidth={8}>
-                                {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
-                                    <button type="button" className="btn btn-sm btn-outline-secondary me-1"
-                                            disabled={shipTo.changed || readOnly || shipTo.ShipToCode === primaryShipTo?.ShipToCode}
-                                            onClick={onSetDefaultShipTo}>
-                                        Set as default delivery location
-                                    </button>
-                                )}
-                                {primaryShipTo?.ShipToCode === shipTo.ShipToCode && (
-                                    <input type="text" className="form-control-plaintext"
-                                           value="Default delivery location"
-                                           readOnly={true}/>
-                                )}
-                            </FormGroup>
+                    <Grid2 container spacing={2}>
+                        <Grid2 xs={12} md={6}>
+                            <TextField variant="filled" label="Location Name" fullWidth size="small"
+                                       type="text" value={shipTo.ShipToName ?? ''}
+                                       onChange={fieldChangeHandler('ShipToName')}
+                                       inputProps={{readOnly: readOnly}}/>
+                        </Grid2>
+                        <Grid2 xs={12} md={6} alignItems="center">
+                            {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
+                                <Button type="button" variant="outlined"
+                                        disabled={shipTo.changed || readOnly || shipTo.ShipToCode === primaryShipTo?.ShipToCode}
+                                        onClick={onSetDefaultShipTo}>
+                                    Set as default delivery location
+                                </Button>
+                            )}
+                            {primaryShipTo?.ShipToCode === shipTo.ShipToCode && (
+                                <Stack direction="row" spacing={2} alignItems="center">
+                                    <PrimaryShipToIcon shipToCode={shipTo.ShipToCode} />
+                                    <Typography variant="body1">Default delivery location</Typography>
+                                </Stack>
 
-                        </div>
-                    </div>
-                    <div className="row g-3">
-                        <div className="col-md-6">
+                            )}
+                        </Grid2>
+                    </Grid2>
+                    <hr/>
+                    <Grid2 container spacing={2}>
+                        <Grid2 xs={12} md={6}>
                             <ShipToAddressFormFields address={shipTo} readOnly={readOnly} onChange={changeHandler}
                                                      colWidth={8}/>
-                        </div>
-                        <div className="col-md-6">
-                            <FormGroup colWidth={8} label="Store Map">
-                                <StoreMapToggle value={shipTo.Reseller} field="Reseller" onChange={changeHandler}
-                                                id="ship-to-store-map-toggle"
+                        </Grid2>
+                        <Grid2 xs={12} md={6}>
+                            <Stack direction="column" spacing={2}>
+                                <StoreMapToggle checked={shipTo.Reseller === 'Y'}
+                                                onChange={fieldChangeHandler('Reseller')}
                                                 readOnly={readOnly}/>
-                            </FormGroup>
-                            <ContactFormFields onChange={changeHandler} account={shipTo} readOnly={readOnly}/>
-                        </div>
-                    </div>
-                    <div className="row g-3">
-                        <div className="col-md-6"/>
-                        <div className="col-md-6">
-                            <div className="row g-3">
-                                <div className="col-4"/>
-                                <div className="col-auto">
-                                    <button type="submit" className="btn btn-sm btn-primary me-1"
-                                            disabled={readOnly || loading}>
-                                        Save
-                                    </button>
-                                </div>
-                                <div className="col-auto">
-                                    <ReloadCustomerButton/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {shipTo.changed &&
-                        <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>}
+                                <EmailAddressEditor label="Email Address"
+                                                    required={true} readOnly={!canEdit}
+                                                    value={shipTo.EmailAddress}
+                                                    onChange={changeHandler}/>
+                                <TelephoneFormFields account={shipTo} onChange={changeHandler} readOnly={!canEdit}/>
+                                {shipTo.changed && (
+                                    <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>
+                                )}
+                            </Stack>
+                            <Stack direction="row" spacing={2} sx={{my: 3}}>
+                                <Button type="submit" variant="contained"
+                                        disabled={readOnly || loading}>
+                                    Save
+                                </Button>
+                                <ReloadCustomerButton/>
+                            </Stack>
+                        </Grid2>
+                    </Grid2>
                 </form>
             )}
         </div>
@@ -150,3 +154,4 @@ const ShipToForm = () => {
 }
 
 export default ShipToForm;
+

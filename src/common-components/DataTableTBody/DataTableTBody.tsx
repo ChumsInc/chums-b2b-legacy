@@ -2,6 +2,7 @@ import React from 'react';
 import DataTableRow from "../DataTableRow/DataTableRow";
 import {DataTableTBodyProps} from "./DataTableTBody.types";
 import {noop} from "../../utils/general";
+import {TableBody} from "@mui/material";
 
 
 const DataTableTBody = ({
@@ -17,7 +18,7 @@ const DataTableTBody = ({
                         }: DataTableTBodyProps) => {
 
     return (
-        <tbody {...rest}>
+        <TableBody {...rest}>
         {data.map(row => {
             const keyValue = typeof keyField === "function" ? keyField(row) : row[keyField];
             const isSelected = typeof selected === 'function' ? selected(row) : keyValue === (selected ?? false);
@@ -32,7 +33,7 @@ const DataTableTBody = ({
             )
         })}
         {children}
-        </tbody>
+        </TableBody>
     )
 }
 

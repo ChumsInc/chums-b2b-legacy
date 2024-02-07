@@ -19,6 +19,7 @@ import TablePagination from "@mui/material/TablePagination";
 import {invoicesSorter} from "../utils";
 import localStore from "../../../utils/LocalStore";
 import {STORE_INVOICES_ROWS_PER_PAGE} from "../../../constants/stores";
+import {Button} from "@mui/material";
 
 
 const invoiceFields: SortableTableField<InvoiceHeader>[] = [
@@ -47,14 +48,14 @@ const invoiceFields: SortableTableField<InvoiceHeader>[] = [
         field: 'NonTaxableSalesAmt',
         title: 'Total',
         render: (so) => numeral(new Decimal(so.NonTaxableSalesAmt ?? 0).add(so.TaxableSalesAmt ?? 0).sub(so.DiscountAmt ?? 0)).format('($0,0.00)'),
-        className: 'right',
+        align: 'right',
         sortable: true
     },
     {
         field: 'Balance', title: 'Due', className: 'right',
         render: row => numeral(row.Balance).format('($0,0.00)'),
         sortable: true,
-
+        align: 'right',
     },
     {
         field: 'InvoiceDueDate', title: 'Due Date', render: (so) => <DateString
@@ -117,11 +118,9 @@ const InvoicesList = () => {
         <div>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
             <OrderFilter value={search} onChange={(ev) => setSearch(ev.target.value)} placeholder="Invoice or PO#">
-                <div className="col-auto">
-                    <button type="button" className="btn btn-sm btn-outline-primary" onClick={reloadHandler}>
-                        Reload
-                    </button>
-                </div>
+                <Button type="button" variant="text" onClick={reloadHandler}>
+                    Reload
+                </Button>
             </OrderFilter>
             <SortableTable keyField="InvoiceNo"
                            data={data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}

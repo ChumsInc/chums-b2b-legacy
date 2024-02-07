@@ -1,10 +1,7 @@
-import {BootstrapBGColor} from "../../types/colors";
+import {AlertProps} from '@mui/material/Alert'
 
-export type AlertType = BootstrapBGColor;
-
-export interface B2BContextAlert {
-    id: number;
-    type?: AlertType;
+export interface B2BContextAlert extends AlertProps{
+    alertId: number;
     title?: string;
     message: string;
     context?: string;
@@ -14,11 +11,4 @@ export interface B2BContextAlert {
 export interface AlertsState {
     index: number;
     list: B2BContextAlert[];
-}
-
-export interface AlertProps {
-    type?: AlertType;
-    title?: string;
-    message: string;
-    context?: string;
 }

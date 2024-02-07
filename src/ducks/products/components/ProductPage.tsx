@@ -101,7 +101,7 @@ const ProductPage = ({keyword}: {
                                 Please select a color
                             </Alert>
                         )}
-                        {selectedProduct && !selectedProduct?.availableForSale && (
+                        {!!selectedProduct && !selectedProduct?.availableForSale && (
                             <Alert severity="warning">
                                 <span><strong>{selectedProduct?.name}</strong> is not available for sale.</span>
                             </Alert>

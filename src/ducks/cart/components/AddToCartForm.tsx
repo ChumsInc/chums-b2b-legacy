@@ -140,7 +140,8 @@ const AddToCartForm = ({
             await dispatch(addToCart({
                 salesOrderNo: localCartNo,
                 itemCode,
-                quantity
+                quantity,
+                comment,
             }));
             onDone();
             return;

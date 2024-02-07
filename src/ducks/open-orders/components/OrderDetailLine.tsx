@@ -24,6 +24,7 @@ export default function OrderDetailLine({
 }) {
     const dispatch = useAppDispatch();
     const [addComment, setAddComment] = useState(false);
+    const commentRef = React.createRef<HTMLInputElement>();
     const {LineKey} = line;
 
     const deleteHandler = () => {
@@ -84,7 +85,9 @@ export default function OrderDetailLine({
 
 
             {(line.ItemType === '4' && line.ItemCode === '/C') && (
-                <SalesOrderCommentLine line={line} onChange={commentChangeHandler} onDelete={deleteCommentHandler}/>
+                <SalesOrderCommentLine line={line}
+                                       ref={commentRef}
+                                       onChange={commentChangeHandler} onDelete={deleteCommentHandler}/>
             )}
         </>
     )

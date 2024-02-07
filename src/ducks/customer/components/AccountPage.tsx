@@ -15,6 +15,7 @@ import {useAppDispatch} from "../../../app/configureStore";
 import {Outlet, redirect} from "react-router-dom";
 import {billToCustomerSlug, customerSlug, parseCustomerSlug} from "../../../utils/customer";
 import {PATH_PROFILE} from "../../../constants/paths";
+import Typography from "@mui/material/Typography";
 
 const AccountPage = () => {
     const dispatch = useAppDispatch();
@@ -46,7 +47,7 @@ const AccountPage = () => {
         <div>
             <DocumentTitle documentTitle={customer?.CustomerName ?? ''}/>
             <AccountBreadcrumbs/>
-            <h2>{customer?.CustomerName}</h2>
+            <Typography variant="h1" component="h1" >{customer?.CustomerName}</Typography>
             <AccountTabs/>
             <Outlet/>
         </div>

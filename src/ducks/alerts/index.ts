@@ -1,17 +1,31 @@
 import {createAction, createReducer, createSelector, isRejected} from "@reduxjs/toolkit";
 import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
 import {RootState} from "../../app/configureStore";
-import {AlertsState, AlertType, B2BContextAlert} from "./types";
 import {setLoggedIn} from "../user/actions";
 import {isDeprecatedSetAlertAction, isDeprecatedSetLoggedInAction} from "../../types/actions";
+import {AlertColor} from "@mui/material/Alert";
 
+
+export interface B2BContextAlert {
+    alertId: number;
+    title?: string;
+    message: string;
+    context?: string;
+    count: number;
+    severity?: AlertColor
+}
+
+export interface AlertsState {
+    index: number;
+    list: B2BContextAlert[];
+}
 
 const initialAlertState = (): AlertsState => ({
     index: 0,
     list: [],
 })
 
-export const setAlert = createAction<Omit<B2BContextAlert, 'id'>>('alerts/setAlert');
+export const setAlert = createAction<Omit<B2BContextAlert, 'alertId'|'count'>>('alerts/setAlert');
 export const dismissAlert = createAction<number>('alerts/dismissAlert');
 export const dismissContextAlert = createAction<string>('alerts/dismissByContext');
 
@@ -23,7 +37,7 @@ export const selectContextAlerts = createSelector(
     }
 )// (state: RootState, context?: string) => state.alerts.list.filter(alert => !context || alert.context === context).sort(alertSorter);
 
-const alertSorter = (a: B2BContextAlert, b: B2BContextAlert): number => a.id - b.id;
+const alertSorter = (a: B2BContextAlert, b: B2BContextAlert): number => a.alertId - b.alertId;
 
 const alertsReducer = createReducer(initialAlertState, (builder) => {
     builder
@@ -31,20 +45,22 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
             state.index += 1;
             const [alert] = state.list.filter(alert => alert.context === action.payload.context ?? 'N/A');
             if (alert) {
+                alert.count = (alert.count ?? 0) + 1;
                 state.list = [
-                    ...state.list.filter(a => a.id !== alert.id),
-                    {...alert, count: (alert.count ?? 0) + 1},
+                    ...state.list.filter(a => a.alertId !== alert.alertId),
+                    alert,
                 ].sort(alertSorter);
             } else {
+                const alert:B2BContextAlert = {...action.payload, severity: action.payload.severity ?? 'warning', alertId: state.index, count: 1};
                 state.list = [
                     ...state.list,
-                    {...action.payload, type: action.payload.type ?? 'warning', id: state.index, count: 1}
+                    alert
                 ].sort(alertSorter);
             }
         })
         .addCase(dismissAlert, (state, action) => {
             state.list = state.list
-                .filter(alert => alert.id !== action.payload)
+                .filter(alert => alert.alertId !== action.payload)
                 .sort(alertSorter);
         })
         .addCase(dismissContextAlert, (state, action) => {
@@ -59,15 +75,15 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                 const [alert] = state.list.filter(alert => alert.context === context ?? 'N/A');
                 if (alert) {
                     state.list = [
-                        ...state.list.filter(a => a.id !== alert.id),
+                        ...state.list.filter(a => a.alertId !== alert.alertId),
                         {...alert, count: (alert.count ?? 0) + 1},
                     ].sort(alertSorter);
                 } else if (isRejected(action)) {
                     const newAlert: B2BContextAlert = {
-                        type: 'warning',
+                        severity: 'warning',
                         message: action.error.message?.replace('\x8a', '') ?? '',
                         context,
-                        id: state.index,
+                        alertId: state.index,
                         count: 1
                     };
                     state.list = [
@@ -84,11 +100,11 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                         const [alert] = state.list.filter(alert => alert.context === action.props.context ?? 'N/A');
                         if (alert) {
                             state.list = [
-                                ...state.list.filter(a => a.id !== alert.id),
+                                ...state.list.filter(a => a.alertId !== alert.alertId),
                                 {...alert, count: (alert.count ?? 0) + 1},
                             ].sort(alertSorter);
                         } else {
-                            const newAlert:B2BContextAlert = {type: 'warning' as AlertType, ...action.props, id: state.index, count: 1};
+                            const newAlert:B2BContextAlert = {severity: 'warning', ...action.props, alertId: state.index, count: 1};
                             state.list = [
                                 ...state.list,
                                 newAlert

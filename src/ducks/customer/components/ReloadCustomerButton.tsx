@@ -1,13 +1,11 @@
-import React, {ButtonHTMLAttributes} from 'react';
+import React from 'react';
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectCurrentCustomer} from "../../user/selectors";
 import {useSelector} from "react-redux";
 import {loadCustomer} from "../actions";
+import Button, {ButtonProps} from "@mui/material/Button";
 
-export interface ReloadCustomerButton extends ButtonHTMLAttributes<HTMLButtonElement> {
-}
-
-const ReloadCustomerButton = ({type, className, onClick, disabled, ...rest}:ButtonHTMLAttributes<HTMLButtonElement>) => {
+const ReloadCustomerButton = ({type, className, onClick, disabled, ...rest}: ButtonProps) => {
     const dispatch = useAppDispatch();
     const currentCustomer = useSelector(selectCurrentCustomer);
 
@@ -16,11 +14,11 @@ const ReloadCustomerButton = ({type, className, onClick, disabled, ...rest}:Butt
     }
 
     return (
-        <button type={type ?? "button"} className={className ?? "btn btn-sm btn-outline-secondary"}
+        <Button type={type ?? "button"} variant="text"
                 onClick={onClick ?? clickHandler} disabled={disabled ?? !currentCustomer}
                 {...rest}>
             Reload
-        </button>
+        </Button>
     )
 }
 

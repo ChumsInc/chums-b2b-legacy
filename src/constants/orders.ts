@@ -1,5 +1,6 @@
 import {CartProgress} from "../types/cart";
 import {OrderType} from "../types/salesorder";
+import {KeyedObject} from "../types/generic";
 
 export const cartProcess = ['cart', 'delivery', 'payment', 'confirm'];
 
@@ -65,7 +66,7 @@ export const ORDER_TYPE_NAMES = {
 
 export const NEW_CART = 'new';
 
-export const PRICE_LEVELS = {
+export const PRICE_LEVELS:KeyedObject<string> = {
     1: 'Wholesale 100 Pc',
     2: 'Wholesale 200 Pc',
     5: 'Wholesale 500 Pc',

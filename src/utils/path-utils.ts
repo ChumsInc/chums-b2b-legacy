@@ -27,3 +27,5 @@ export const genInvoicePath = (customer: BasicCustomer, invoiceNo: string, invoi
         invoiceNo: invoiceNo,
     })
 };
+
+export const customerUserPath = '/account/:customerSlug/users/:id?';

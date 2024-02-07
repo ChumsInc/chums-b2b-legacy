@@ -27,6 +27,7 @@ export interface CartQuoteBase {
     action: CartAction;
     SalesOrderNo: string;
     promo_code?: string;
+    Comment?: string;
 }
 
 export interface CartAppendBody extends CartQuoteBase {
