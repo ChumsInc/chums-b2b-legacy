@@ -49,8 +49,21 @@ import {visuallyHidden} from "@mui/utils";
 import Typography from "@mui/material/Typography";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import SearchIcon from '@mui/icons-material/Search';
+import Stack from "@mui/material/Stack";
 
 const hiddenXS:SxProps = {display: {xs: 'none', sm: 'table-cell'}};
+
+const CustomerNameField = ({customer}:{customer: Customer}) => {
+    if (!customer.ShipToCode) {
+        return customer.CustomerName;
+    }
+    return (
+        <Stack direction="column">
+            <div>{customer.BillToName}</div>
+            <div>{customer.CustomerName}</div>
+        </Stack>
+    )
+}
 
 const ACCOUNT_LIST_FIELDS: SortableTableField<Customer>[] = [
     {field: 'CustomerNo', title: 'Account', render: (row) => <CustomerLink customer={row}/>, sortable: true},
@@ -69,7 +82,7 @@ interface ColumnData extends SortableTableField<Customer> {
 
 const columns: ColumnData[] = [
     {field: 'CustomerNo', title: 'Account', width: 50, render: (row) => <CustomerLink customer={row}/>, sortable: true},
-    {field: 'CustomerName', title: "Name", width: 80, sortable: true},
+    {field: 'CustomerName', title: "Name", width: 80, sortable: true, render: (row) => <CustomerNameField customer={row} />} ,
     {field: 'AddressLine1', title: 'Address', width: 80, sortable: true, sx: hiddenXS},
     {field: 'City', title: 'City', width: 80, sortable: true},
     {field: 'State', title: 'State', width: 40, sortable: true, render: (row) => stateCountry(row)},
@@ -79,7 +92,7 @@ const columns: ColumnData[] = [
 
 const VirtuosoTableComponents:TableComponents<Customer> = {
     Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
-        <TableContainer component={Paper} {...props} ref={ref}/>
+        <TableContainer component={Paper} {...props} ref={ref} elevation={0}/>
     )),
     Table: (props) => (
         <Table {...props} sx={{borderCollapse: 'separate', tableLayout: 'fixed'}} />
@@ -208,8 +221,8 @@ const AccountList = () => {
                 {userAccount?.SalespersonName ?? ''} <small className="ms-3">({longAccountNumber(userAccount)})</small>
             </Typography>
 
-            <Grid2 container spacing={2} alignContent="center" sx={{mt: 5}} justifyContent="space-between">
-                <Grid2 xs={allowSelectReps ? 6 : 9}>
+            <Grid2 container spacing={2} alignContent="center" sx={{mt: 5, mb: 1}} justifyContent="space-between">
+                <Grid2 sx={{flex: '1 1 auto'}}>
                     <Box sx={{display: 'flex', alignItems: 'flex-end'}}>
                         <SearchIcon sx={{color: 'action.active', mr: 1, my: 0.5}} />
                         <TextField variant="standard"
@@ -217,11 +230,11 @@ const AccountList = () => {
                     </Box>
                 </Grid2>
                 {allowSelectReps && (
-                    <Grid2 xs>
+                    <Grid2 sx={{flex: '1 1 auto'}}>
                         <RepSelect value={repFilter} onChange={repChangeHandler}/>
                     </Grid2>
                 )}
-                <Grid2 xs >
+                <Grid2 xs="auto" >
                     <Button variant="contained" onClick={reloadHandler}>Refresh List</Button>
                 </Grid2>
             </Grid2>
@@ -229,7 +242,8 @@ const AccountList = () => {
             {loading && <LinearProgress variant="indeterminate" sx={{my: 1}}/>}
 
             <Box sx={{height: 600, maxHeight: '75vh', width: '100%', mb: 3}}>
-                <TableVirtuoso data={customers} components={VirtuosoTableComponents} fixedHeaderContent={fixedHeaderContent} itemContent={rowContent} />
+                <TableVirtuoso data={customers} components={VirtuosoTableComponents}
+                               fixedHeaderContent={fixedHeaderContent} itemContent={rowContent} />
             </Box>
         </ErrorBoundary>
     );

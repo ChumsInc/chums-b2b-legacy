@@ -15,6 +15,7 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import Container from "@mui/material/Container";
 import {selectLoading} from "../../menu";
 import LinearProgress from "@mui/material/LinearProgress";
+import Avatar from "@mui/material/Avatar";
 
 const defaultProfilePic = '/images/chums/Chums_Logo_Booby.png';
 
@@ -63,11 +64,8 @@ const UserProfile = () => {
 
     return (
         <Grid2 container spacing={3}>
-            <Grid2 xs={3} sm={2}>
-                <Paper elevation={1} sx={{padding: '1rem'}}>
-                    <ResponsiveImage src={imageUrl ?? defaultProfilePic}
-                                     alt="Profile Picture"/>
-                </Paper>
+            <Grid2 xs={3} sm={2} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <Avatar alt={user?.name} src={imageUrl ?? defaultProfilePic} sx={{width: 80, height: 80}} variant="rounded" />
             </Grid2>
             <Grid2 xs={9} sm={10}>
                 <form onSubmit={submitHandler}>
@@ -85,7 +83,7 @@ const UserProfile = () => {
                         {authType === AUTH_LOCAL && (<Button type="button" variant="text" onClick={() => setShowModal(!showModal)}>
                             Change Password
                         </Button>)}
-                        <Button type="button" variant="outlined" onClick={logoutHandler} color="error">Logout</Button>
+                        <Button type="button" variant="text" onClick={logoutHandler} color="error">Logout</Button>
                     </Stack>
                 </form>
             </Grid2>

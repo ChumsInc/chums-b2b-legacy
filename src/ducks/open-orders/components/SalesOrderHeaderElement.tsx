@@ -51,8 +51,8 @@ const SalesOrderHeaderElement = () => {
         dispatch(loadSalesOrder(header?.SalesOrderNo))
     }
 
-    const duplicateCartHandler = async (cartName: string) => {
-        await dispatch(duplicateSalesOrder({cartName, salesOrderNo: header.SalesOrderNo, shipToCode: customer?.ShipToCode}))
+    const duplicateCartHandler = async (cartName: string, shipTo: string) => {
+        await dispatch(duplicateSalesOrder({cartName, salesOrderNo: header.SalesOrderNo, shipToCode: shipTo}))
         setShowDuplicateCart(false);
     }
 
@@ -115,7 +115,7 @@ const SalesOrderHeaderElement = () => {
                     </Stack>
                 </Grid>
             </Grid>
-            <DuplicateCartAlert open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo}
+            <DuplicateCartAlert open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo} shipToCode={header.ShipToCode}
                                 loading={cartLoading}
                                 onConfirm={duplicateCartHandler}
                                 onCancel={() => setShowDuplicateCart(false)} />

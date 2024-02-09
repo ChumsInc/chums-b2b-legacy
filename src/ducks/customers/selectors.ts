@@ -22,6 +22,7 @@ export const selectFilteredCustomerList = createSelector(
                     || filterRegex.test(`${customer.ARDivisionNo}-${customer.CustomerNo}`)
                     || filterRegex.test(customer.CustomerNo)
                     || filterRegex.test(customer.CustomerName)
+                    || filterRegex.test(customer.BillToName ?? '')
                     || filterRegex.test(customer.AddressLine1 ?? '')
                     || filterRegex.test(customer.City ?? '')
                     || filterRegex.test(customer.State ?? '')

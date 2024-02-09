@@ -33,6 +33,7 @@ import OpenOrdersList from "../ducks/open-orders/components/OpenOrdersList";
 import InvoicesList from "../ducks/invoices/components/InvoicesList";
 import ShipToList from "../ducks/customer/components/ShipToList";
 import theme from "./theme";
+import Home from "../components/Home";
 
 
 const App = () => {
@@ -93,7 +94,7 @@ const App = () => {
                                 )}
                                 {loggedIn && (
                                     <>
-                                        <Route index element={<ProfilePage/>}/>
+                                        <Route index element={<Home/>}/>
                                         <Route path="/home" element={<ProfilePage/>}/>
                                         <Route path="/pages/:keyword" element={<ContentPage/>}/>
                                         <Route path="/login" element={<Login/>}/>

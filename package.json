@@ -6,9 +6,9 @@
   "scripts": {
     "start": "webpack serve --config webpack.dev.client.js --progress",
     "build": "npm run build-all",
-    "build-ssr": "babel server-render.js --out-file server-render.compiled.js",
+    "build-ssr": "npx tsc && webpack --config webpack.prod.server.js --progress",
     "start-ssr": "npm run build-ssr && nodemon server-render.compiled.js",
-    "build-all": "npm run build && npm run build-ssr",
+    "build-all": "npx tsc && webpack --config webpack.prod.client.js --progress && webpack --config webpack.prod.server.js --progress",
     "start-dev-client": "webpack serve --config webpack.dev.client.js --progress",
     "start-dev-server": "webpack serve --config webpack.dev.server.js --progress",
     "build-client": "npx tsc && webpack --config webpack.prod.client.js --progress",

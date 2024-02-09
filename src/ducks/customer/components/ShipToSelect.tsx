@@ -79,7 +79,7 @@ export default function ShipToSelect({
             return 'Billing Address';
         }
         const [shipTo] = shipToAddresses.filter(st => st.ShipToCode === value);
-        return `[${shipTo.ShipToCode}]  ${shipTo.ShipToName}, ${shipTo.ShipToCity} ${shipTo.ShipToState}`;
+        return `[${shipTo?.ShipToCode}]  ${shipTo?.ShipToName}, ${shipTo?.ShipToCity} ${shipTo?.ShipToState}`;
     }
 
     return (

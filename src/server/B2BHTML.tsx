@@ -55,13 +55,11 @@ export default function B2BHtml({html, css, state, helmet, manifestFiles, swatch
             <link rel="apple-touch-icon" sizes="180x180" href="/images/icons/apple-touch-icon-180x180.png"/>
 
             <style dangerouslySetInnerHTML={{__html: css}}/>
-            {/*<link rel="stylesheet" href={`/css/chums.css?v=${cssTimestamp}`} media="screen,print" />*/}
-            <link rel="stylesheet" href={`/b2b-swatches/swatches.css?v=${swatchTimestamp}`} media="screen,print"/>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700&display=swap"
-                  media="screen"/>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap"
-                  media="screen"/>
-            <link rel="stylesheet" href="/node_modules/bootstrap-icons/font/bootstrap-icons.css"/>
+            <link rel="stylesheet" href="https://b2b.chums.com/b2b-swatches/swatches.css"/>
+            <link
+                href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:wght@100;300;400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+                rel="stylesheet"/>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
             <script src="https://accounts.google.com/gsi/client" async defer/>
             <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMH9RBEF98"/>
             <script dangerouslySetInnerHTML={{__html: InlineJSHeadContent(manifestFiles.version ?? '')}}/>
