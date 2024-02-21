@@ -209,6 +209,7 @@ export const colorCartItem = (item: ProductColorItem, product?: BasicProduct): C
         seasonDescription: item.additionalData?.season?.description,
         seasonTeaser: item.additionalData?.season?.product_teaser,
         preSeasonMessage: item.additionalData?.season?.product_available ? null : (item.additionalData?.season?.preSeasonMessage ?? product?.preSeasonMessage ?? product?.dateAvailable),
+        message: item.additionalData?.message,
     }
 };
 

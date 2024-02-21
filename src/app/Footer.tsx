@@ -5,7 +5,7 @@ import {styled} from "@mui/material/styles";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import {visuallyHidden} from '@mui/utils'
-import XIcon from '@mui/icons-material/X';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import Stack from "@mui/material/Stack";
@@ -90,9 +90,9 @@ const Footer = () => {
                     </div>
                 </AddressBox>
                 <SocialIconStack sx={{mr: 1}} direction="row" spacing={1}>
-                    <BottomLink href="https://www.twitter.com/ChumsUSA" target="_blank" rel="noreferrer">
-                        <XIcon />
-                        <Box component="span" sx={visuallyHidden}>Follow @ChumsUSA on Twitter</Box>
+                    <BottomLink href="https://www.linkedin.com/company/chums-inc-" target="_blank" rel="noreferrer">
+                        <LinkedInIcon />
+                        <Box component="span" sx={visuallyHidden}>Follow Chums on LinkedIn</Box>
                     </BottomLink>
                     <BottomLink href="https://www.facebook.com/Chumsusa" target="_blank" rel="noreferrer">
                         <FacebookIcon />
@@ -106,7 +106,7 @@ const Footer = () => {
             </ContactsContainer>
             <BottomLinksContainer>
                 <Box sx={{ml: {xs: '1rem'}}}><AppVersion /></Box>
-                <BottomLinks direction="row" useFlexGap flexWrap="wrap">
+                <BottomLinks direction="row" useFlexGap flexWrap="wrap" sx={{display: 'none'}}>
                     <BottomLink underline="hover" href="//chums.com/page/jobs" target="_blank" rel="noreferrer">CAREERS</BottomLink>
                     <BottomLink underline="hover" href="//chums.com/page/customization" target="_blank" rel="noreferrer">CUSTOMIZE</BottomLink>
                     <BottomLink underline="hover" href="//chums.com/page/contact-us" target="_blank" rel="noreferrer">CONTACT</BottomLink>
@@ -115,7 +115,6 @@ const Footer = () => {
                     <BottomLink underline="hover" href="//chums.com/page/social-compliance-policy" target="_blank" rel="noreferrer">Social Compliance Policy</BottomLink>
                     <BottomLink underline="hover" href="//chums.com/page/privacy-policy" target="_blank" rel="noreferrer">Privacy Policy</BottomLink>
                     <BottomLink underline="hover" href="https://chums.com" target="_blank" rel="noreferrer">CHUMS.COM</BottomLink>
-                    <BottomLink underline="hover" href="https://chums.com/pages/chums-safety-products" target="_blank" rel="noreferrer">CHUMS SAFETY</BottomLink>
                 </BottomLinks>
                 <Box sx={{mr: 1}}>
                     © {date.getFullYear()} Chums. All rights reserved

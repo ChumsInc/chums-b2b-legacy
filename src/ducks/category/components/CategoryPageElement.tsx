@@ -4,11 +4,17 @@ import ProductLink from "./ProductLink";
 import ProductImage from "../../../components/ProductImage";
 import {Link as RoutedLink} from "react-router-dom";
 import {ProductCategoryChild} from "b2b-types";
-import {isCategoryChildCategory, isCategoryChildLink, isCategoryChildProduct} from "../../products/utils";
+import {
+    isCategoryChildCategory,
+    isCategoryChildLink,
+    isCategoryChildProduct,
+    isCategoryChildSection
+} from "../../products/utils";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Link from "@mui/material/Link";
 import CategoryGridItem from "./CategoryGridItem";
 import ResponsiveProductImage from "../../../components/ResponsiveProductImage";
+import Typography from "@mui/material/Typography";
 
 
 
@@ -66,12 +72,15 @@ const CategoryPageElement = ({item}: {
             </CategoryGridItem>
         );
     }
-    return (
-        <Fragment>
-            <h2>{item.title}</h2>
-            <div>{item.description}</div>
-        </Fragment>
-    )
+    if (isCategoryChildSection(item)) {
+        return (
+            <Grid2 xs={12}>
+                <Typography variant="h3" component="h3" sx={{textAlign: 'center'}}>{item.sectionTitle}</Typography>
+                <Typography variant="subtitle1" sx={{textAlign: 'center'}}>{item.sectionDescription}</Typography>
+            </Grid2>
+        )
+    }
+    return null;
 };
 
 export default CategoryPageElement;

@@ -4110,6 +4110,7 @@
 }
 :root {
   --chums-red: #d0112b;
+  --chums-grey: #8a8a8d;
   --mountain-footer-height: 130px;
   --footer-links-height: 40px;
   --footer-contacts-padding: 1.5rem;
@@ -4164,6 +4165,23 @@ a.external {
 .map-policy-container h2,
 .map-policy-container h3 {
   font-size: 1rem;
+}
+
+.icon-set {
+  float: right;
+  display: flex;
+  margin-left: 1rem;
+  flex-direction: column;
+}
+.icon-set .icon {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.ba-icon,
+.fr-icon {
+  float: right;
+  margin-left: 1rem;
 }
 
 /*# sourceMappingURL=chums.css.map */

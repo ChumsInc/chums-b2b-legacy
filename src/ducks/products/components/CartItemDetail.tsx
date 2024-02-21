@@ -7,8 +7,10 @@ import {useSelector} from "react-redux";
 import {selectCanViewAvailable} from "../../user/selectors";
 import Decimal from "decimal.js";
 import {CartProduct} from "b2b-types";
-import {Table, TableBody, TableCell, TableRow} from "@mui/material";
+import {Collapse, Grow, Table, TableBody, TableCell, TableRow} from "@mui/material";
 import {styled, useTheme} from '@mui/material/styles'
+import Box from "@mui/material/Box";
+import Slide from "@mui/material/Slide";
 
 
 const CartItemDetailTableTHCell = styled(TableCell)`
@@ -42,8 +44,11 @@ const CartItemDetail = ({cartItem, msrp}: {
     const availableToday = new Decimal(cartItem.quantityAvailable ?? 0).div(cartItem.salesUMFactor ?? 1);
 
     return (
-        <>
-            <Table size="small" sx={{mt: 3}}>
+        <Box sx={{mt: 3}}>
+            <Collapse in={!!cartItem.message}>
+                <Alert severity="info">{cartItem.message}</Alert>
+            </Collapse>
+            <Table size="small">
                 <TableBody>
                 {((!msrp || msrp.length > 1) || (cartItem.salesUMFactor ?? 1) > 1)
                     && new Decimal(cartItem.msrp ?? 0).gt(0)
@@ -84,7 +89,7 @@ const CartItemDetail = ({cartItem, msrp}: {
             {new Decimal(cartItem.quantity ?? 1).gt(availableToday) && (
                 <Alert severity="warning">Product is not available for immediate delivery.</Alert>
             )}
-        </>
+        </Box>
     )
 }
 

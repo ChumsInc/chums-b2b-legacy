@@ -16,10 +16,12 @@ declare module '@mui/material/styles' {
 
     interface Palette {
         chumsRed: Palette['primary'];
+        chumsGrey: Palette['primary'];
     }
 
     interface PaletteOptions {
         chumsRed?: PaletteOptions['primary'];
+        chumsGrey?: PaletteOptions['primary'];
     }
 }
 
@@ -36,6 +38,23 @@ declare module '@mui/material/Typography' {
 }
 
 let theme = createTheme({});
+
+theme = createTheme({
+    palette: {
+        chumsRed: theme.palette.augmentColor({
+            color: {
+                main: '#d0112b'
+            },
+            name: 'chumsRed'
+        }),
+        chumsGrey: theme.palette.augmentColor({
+            color: {
+                main: '#8a8a8d',
+            },
+            name: 'chumsGrey',
+        })
+    },
+});
 
 theme = createTheme({
     components: {
@@ -82,15 +101,32 @@ theme = createTheme({
                     }
                 }
             }
-        }
-    },
-    palette: {
-        chumsRed: theme.palette.augmentColor({
-            color: {
-                main: '#d0112b'
+        },
+        MuiLink: {
+            styleOverrides: {
+                root: {
+                    color: theme.palette.chumsGrey.main,
+                }
+            }
+        },
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    a: {
+                        color: theme.palette.common.black,
+                    }
+                }
             },
-            name: 'chumsRed'
-        })
+        },
+        MuiMenuList: {
+            styleOverrides: {
+                root: {
+                    a: {
+                        color: theme.palette.common.black,
+                    }
+                }
+            }
+        }
     },
     typography: {
         fontFamily: [
@@ -142,5 +178,6 @@ theme = createTheme({
     }
 })
 
+window.theme = theme;
 
 export default theme;
