@@ -24,6 +24,7 @@ import {
     DeprecatedSelectColorAction,
     DeprecatedSelectVariantAction
 } from "../../types/actions";
+import {ProductsState} from "./index";
 
 export const isCartItem = (item:CartItem|EmptyObject|null): item is CartItem => {
     if (!item) {
@@ -117,4 +118,16 @@ export function isDeprecatedVariantAction(action:UnknownAction|DeprecatedSelectV
 
 export function isDeprecatedSelectColorAction(action:UnknownAction|DeprecatedSelectColorAction): action is DeprecatedSelectColorAction {
     return action.type === 'SELECT_COLOR';
+}
+
+export function getImageItemCode(state:ProductsState):string|null {
+    if (isSellAsSelf(state.selectedProduct)) {
+        return state.selectedProduct.itemCode;
+    }
+    if (isSellAsMix(state.selectedProduct)) {
+        const [imageItemCode] = state.selectedProduct.mix.items.filter(item => item.color?.code === state.colorCode);
+        return imageItemCode?.itemCode ?? null;
+    }
+    return state.cartItem?.itemCode ?? null;
+
 }

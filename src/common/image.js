@@ -18,5 +18,5 @@ export function parseImageFilename(productImage, colorCode) {
         productImage = productImage.replace(/\*/, code);
     });
     productImage = productImage.replace(/\*/g, '');
-    return productImage;
+    return productImage.replace(/\s/g, '%20');
 }

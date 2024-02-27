@@ -2,7 +2,7 @@ import React from 'react';
 import ProductImage from "../../../components/ProductImage";
 import {useSelector} from "react-redux";
 import {
-    selectCurrentProduct,
+    selectCurrentProduct, selectProductAltImages,
     selectProductCartItem,
     selectProductColorCode, selectProductImage,
     selectProductLoading,
@@ -13,24 +13,19 @@ import {parseImageFilename2} from "../../../common/image";
 const ProductPageImage = () => {
     const cartItem = useSelector(selectProductCartItem);
     const loading = useSelector(selectProductLoading);
-    const selectedProduct = useSelector(selectSelectedProduct);
-    const colorCode = useSelector(selectProductColorCode);
     const product = useSelector(selectCurrentProduct);
     const image = useSelector(selectProductImage)
+    const altImages = useSelector(selectProductAltImages);
 
-    if (!cartItem || !image) {
+    if (!cartItem || !image || !image.filename) {
         return null;
     }
 
-    // const productImage = cartItem?.additionalData?.image_filename
-    //     ?? parseImageFilename2({image, colorCode: colorCode || defaultColor});
-    const productImage = parseImageFilename2({image: selectedProduct?.image, colorCode: colorCode || selectedProduct?.defaultColor});
-
     return (
-        <ProductImage image={image}
-                      selectedItem={cartItem.itemCode || ''}
+        <ProductImage image={image.filename}
+                      selectedItem={image.itemCode ?? ''}
                       loading={loading}
-                      altImages={product?.images}
+                      altImages={altImages}
                       altText={product?.name}/>
     )
 }

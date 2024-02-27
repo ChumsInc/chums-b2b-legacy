@@ -10,6 +10,9 @@ import {ProductVariant} from "b2b-types";
 import {isSellAsVariants} from "../utils";
 import VariantButton from "./VariantButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
+import {styled} from "@mui/material/styles";
+
+
 
 const VariantButtons = () => {
     const dispatch = useAppDispatch();
@@ -59,14 +62,16 @@ const VariantButtons = () => {
             <Grid2 container>
                 <Grid2 xs={12}>
                     <VariantButton key={variant.id} onClick={selectHandler} variant={variant}
+                                   spacing={2}
                                    direction="row" selected/>
                 </Grid2>
             </Grid2>
         )
     }
     return (
-        <Grid2 container spacing={1} direction={{xs: activeVariants.length > 2 ? 'row' : 'column', sm: 'row'}}
-               sx={{maxHeight: '200px', overflow: 'auto', mb: 3}}>
+        <Grid2 container spacing={1} className="variant-buttons-container"
+               direction={{xs: activeVariants.length > 2 ? 'row' : 'column', sm: 'row'}}
+               justifyContent={activeVariants.length === 2 ? 'center' : 'flex-start'}>
             {activeVariants
                 .map(variant => (
                     <Grid2 key={variant.id} xs={activeVariants.length > 2 ? 4 : 12} sm={3} md={4} >

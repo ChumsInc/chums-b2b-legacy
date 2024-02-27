@@ -14,6 +14,7 @@ import {
 import Decimal from "decimal.js";
 import {CartItemColorProps} from "../types/product";
 import {isSellAsColors, isSellAsMix, isSellAsSelf, isSellAsVariants} from "../ducks/products/utils";
+import {parseImageFilename2} from "../common/image";
 
 export const hasVariants = (product: Product | null): boolean => isSellAsVariants(product) && product.variants.filter(v => v.status).length > 0;
 
@@ -154,7 +155,7 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
             name: product.name,
             colorCode: color?.code,
             colorName: color?.name,
-            image: image_filename ?? '',
+            image: image_filename ?? parseImageFilename2({image: product.image, colorCode: color?.code}),
             msrp: product.msrp,
             stdPrice: product.stdPrice,
             priceCode: product.priceCode,
@@ -162,7 +163,7 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
             stdUM: product.stdUM,
             salesUMFactor: product.salesUMFactor,
             seasonCode: product.season_code,
-            seasonAvailable: product.season_available,
+            seasonAvailable: product.additionalData?.seasonAvailable || product.season_available,
             quantityAvailable: product.QuantityAvailable,
             season: product.season ?? null,
         };
@@ -200,15 +201,17 @@ export const colorCartItem = (item: ProductColorItem, product?: BasicProduct): C
         price: item.msrp?.toString(),
         productId: item.productId,
         stdUM: item.stdUM,
-        image: (item.additionalData?.image_filename ?? '') || (product?.image ?? ''),
+        image: (item.additionalData?.image_filename ?? '') || parseImageFilename2({image: product?.image ?? '', colorCode: item.color.code ?? item.colorCode ?? ''}),
         name: product?.name ?? item.colorName,
         quantity: 1,
         season: item.additionalData?.season ?? product?.season ?? null,
         seasonCode: item.additionalData?.season?.code,
-        seasonAvailable: item.additionalData?.season?.product_available,
+        seasonAvailable: (product?.additionalData?.seasonAvailable || item.additionalData?.season?.product_available || item.additionalData?.seasonAvailable),
         seasonDescription: item.additionalData?.season?.description,
         seasonTeaser: item.additionalData?.season?.product_teaser,
-        preSeasonMessage: item.additionalData?.season?.product_available ? null : (item.additionalData?.season?.preSeasonMessage ?? product?.preSeasonMessage ?? product?.dateAvailable),
+        preSeasonMessage: (item.additionalData?.season?.product_available || item.additionalData?.seasonAvailable)
+            ? null
+            : (item.additionalData?.season?.preSeasonMessage ?? product?.preSeasonMessage ?? product?.dateAvailable),
         message: item.additionalData?.message,
     }
 };

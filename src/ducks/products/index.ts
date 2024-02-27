@@ -12,10 +12,11 @@ import {customerPriceRecordSorter, customerSlug,} from "../../utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
 import {PreloadedState} from "../../types/preload";
 import {
+    getImageItemCode,
     isCartProduct,
     isDeprecatedProductAction,
     isDeprecatedSelectColorAction,
-    isDeprecatedVariantAction,
+    isDeprecatedVariantAction, isSellAsColors, isSellAsMix, isSellAsSelf,
     updateCartProductPricing
 } from "./utils";
 import {loadCustomer} from "../customer/actions";
@@ -24,6 +25,7 @@ import {loadProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from 
 import {setLoggedIn} from "../user/actions";
 import {parseImageFilename} from "../../common/image";
 import {isDeprecatedKeywordsAction} from "../keywords/utils";
+import {ProductImage} from "../../types/product";
 
 
 export interface ProductsState {
@@ -31,7 +33,8 @@ export interface ProductsState {
     loadingKeywords: boolean;
     product: Product | null;
     selectedProduct: Product | null;
-    image: string | null;
+    selectedItemCode: string|null;
+    image: ProductImage;
     colorCode: string;
     variantId: number | null;
     loading: boolean;
@@ -48,7 +51,11 @@ export const initialProductsState = (preload: PreloadedState = {}): ProductsStat
     loadingKeywords: false,
     product: null,
     selectedProduct: null,
-    image: null,
+    selectedItemCode: null,
+    image: {
+        filename: null,
+        itemCode: null,
+    },
     colorCode: '',
     variantId: null,
     loading: false,
@@ -88,7 +95,6 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
             state.loading = false;
             state.product = action.payload?.product ?? null;
             state.selectedProduct = action.payload?.variant?.product ?? action.payload?.product ?? null;
-            state.colorCode = getDefaultColor(state.selectedProduct, state.colorCode);
             state.variantId = action.payload?.variant?.id ?? null;
             state.msrp = action.payload?.msrp ?? [];
             state.salesUM = action.payload?.salesUM ?? null;
@@ -98,7 +104,8 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                 ?? action.payload?.variant?.product?.defaultColor
                 ?? action.payload?.product?.defaultColor
                 ?? '';
-            state.image = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
+            state.image.filename = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
+            state.image.itemCode = getImageItemCode(state);
         })
         .addCase(loadProduct.rejected, (state, action) => {
             state.loading = false;
@@ -106,7 +113,8 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         .addCase(setColorCode.fulfilled, (state, action) => {
             state.colorCode = action.meta.arg;
             state.cartItem = action.payload;
-            state.image = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
+            state.image.filename = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
+            state.image.itemCode = getImageItemCode(state);
         })
         .addCase(setCartItemQuantity, (state, action) => {
             if (state.cartItem) {
@@ -115,15 +123,16 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         })
         .addCase(setCurrentVariant.fulfilled, (state, action) => {
             state.selectedProduct = action.payload.variant?.product ?? null;
-            state.colorCode = getDefaultColor(state.selectedProduct, state.colorCode);
+            state.colorCode = action.payload?.cartItem?.colorCode
+                ?? action.payload?.variant?.product?.defaultColor
+                ?? '';
             state.variantId = action.payload.variant?.id ?? null;
             state.msrp = action.payload.msrp;
             state.salesUM = action.payload.salesUM;
             state.customerPrice = action.payload.customerPrice;
             state.cartItem = action.payload.cartItem;
-            if (action.payload.cartItem?.image) {
-                state.image = action.payload.cartItem?.image;
-            }
+            state.image.filename = action.payload.cartItem?.image ?? null;
+            state.image.itemCode = getImageItemCode(state);
         })
         .addDefaultCase((state, action) => {
 

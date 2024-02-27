@@ -66,10 +66,6 @@ const ProductPage = ({keyword}: {
         }
     }, [location?.state?.variant]);
 
-    useEffect(() => {
-        console.log('ProductPage location', location);
-    }, [location]);
-
 
     const onChangeQuantity = (quantity: number) => {
         dispatch(setCartItemQuantity(quantity));

@@ -42,7 +42,7 @@ export default function ProductImage({
     const carouselImages = altImages
         .filter(img => !!img.status)
         .filter(img => {
-            return !filter.test(img.altText) || (img.altText === selectedItemHash);
+            return !filter.test(img.altText) || img.altText.includes(selectedItemHash);
         });
 
     const mainImage: ProductAlternateImage = {

@@ -46,7 +46,7 @@ const ProductImageList = ({images}: ProductImageListProps) => {
 
     if (images.length === 1) {
         return (
-            <ResponsiveProductImage filename={image.image} alt={image.altText} loading="eager"
+            <ResponsiveProductImage filename={image.image.replace(/\s/g, '%20')} alt={image.altText} loading="eager"
                                     sizes={sizes}
                                     width={800} height={800} />
         )
@@ -57,7 +57,7 @@ const ProductImageList = ({images}: ProductImageListProps) => {
             <Box>
                 <Fade in={show}>
                     <Box>
-                        <ResponsiveProductImage filename={image.image} alt={image.altText} loading="eager"
+                        <ResponsiveProductImage filename={image.image.replace(/\s/g, '%20')} alt={image.altText} loading="eager"
                                                 sizes={sizes}
                                                 width={800} height={800} />
                     </Box>

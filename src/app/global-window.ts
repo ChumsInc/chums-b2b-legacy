@@ -10,8 +10,8 @@ declare global {
 }
 
 if (typeof global.window !== 'undefined') {
-    console.log('initiating global window');
     if (!global.window?.__PRELOADED_STATE__) {
+        console.log('initiating global window preloaded state');
         global.window.__PRELOADED_STATE__ = {};
     }
 }

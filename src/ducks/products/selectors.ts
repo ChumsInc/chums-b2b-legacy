@@ -17,6 +17,14 @@ export const selectCustomerPricing = (state:RootState) => state.products.pricing
 export const selectProductCustomerKey = (state:RootState) => state.products.customerKey;
 export const selectProductImage = (state:RootState) => state.products.image;
 
+export const selectProductAltImages = createSelector(
+    [selectCurrentProduct],
+    (product) => {
+        return [...(product?.images ?? [])].sort((a, b) => a.id - b.id)
+    }
+)
+
+
 export const selectProductSeasonActive = createSelector(
     [selectProductCartItem],
     (cartItem):boolean => cartItem?.season?.active ?? cartItem?.seasonAvailable ?? false);

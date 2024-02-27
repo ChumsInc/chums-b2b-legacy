@@ -50,14 +50,14 @@ const SizeIconContainer = ({size}:{size: SizeCode}) => {
     )
 }
 
-const SizeIconList = ({size}:{size: string}) => {
+const SizeIconList = ({size, spacing}:{size: string, spacing?: number}) => {
 
     const sizes = size.split(',').map(s => s.trim()).map(s => s.toLowerCase());
     if (!size || !sizes.length) {
         return null;
     }
     return (
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={spacing ?? 1}>
             {(sizes.includes('s') || sizes.includes('sm')) && (
                 <SizeIconContainer size="S"/>
             )}

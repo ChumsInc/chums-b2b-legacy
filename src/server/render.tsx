@@ -16,6 +16,7 @@ import B2BHtml from "./B2BHTML";
 import {HelmetData, HelmetProvider} from "react-helmet-async";
 import {Route} from "react-router-dom";
 import {StaticRouter} from "react-router-dom/server";
+import {configureStore} from "@reduxjs/toolkit";
 
 const debug = Debug('chums:index');
 
@@ -32,6 +33,22 @@ async function loadMainCSS(): Promise<string> {
     }
 }
 
+async function loadVersionNo():Promise<string|null> {
+    try {
+        const file = await fs.readFile('./package.json');
+        const packageJSON = Buffer.from(file).toString();
+        const json = JSON.parse(packageJSON);
+        return json?.version ?? null;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("loadVersionNo()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("loadVersionNo()", err);
+        return Promise.reject(new Error('Error in loadVersionNo()'));
+    }
+}
+
 export async function renderApp(req: Request, res: Response, next: NextFunction) {
     try {
         if (!/^\/($|home|login|logout|signup|pages|profile|account|orders|invoices|set-password)/.test(req.path)) {
@@ -41,8 +58,12 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         }
         const manifestFiles = await loadManifest();
         const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json`);
+        if (!preload.version) {
+            const versionNo = await loadVersionNo();
+            preload.version = {versionNo}
+        }
         const initialState = prepState(preload ?? {});
-        const store = createStore(rootReducer, initialState);
+        const store = configureStore({reducer: rootReducer, preloadedState: initialState});
         const helmetData = new HelmetData({});
         console.log('rendering App', Object.keys(helmetData));
         const app = renderToString(
@@ -115,8 +136,13 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
             searchParams.set('category', found.keyword);
         }
         const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json?${searchParams.toString()}`);
+        if (!preload.version) {
+            const versionNo = await loadVersionNo();
+            preload.version = {versionNo}
+        }
+
         const initialState = prepState(preload ?? {});
-        const store = createStore(rootReducer, initialState);
+        const store = configureStore({reducer: rootReducer, preloadedState: initialState});
         const helmetData = new HelmetData({});
         const app = renderToString(
             <Provider store={store}>
@@ -167,7 +193,7 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
         }
         const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json?${searchParams.toString()}`);
         const initialState = prepState(preload ?? {});
-        const store = createStore(rootReducer, initialState);
+        const store = configureStore({reducer: rootReducer, preloadedState: initialState});
         const helmetData = new HelmetData({});
         const app = renderToString(
             <Provider store={store}>

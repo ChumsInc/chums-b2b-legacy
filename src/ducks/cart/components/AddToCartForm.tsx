@@ -88,7 +88,6 @@ const AddToCartForm = ({
 
 
     useEffect(() => {
-        console.log('useEffect()[customer,permissions]', customer, permissions)
         if (permissions?.billTo) {
             setShipToCode(customer?.PrimaryShipToCode ?? '');
         } else {

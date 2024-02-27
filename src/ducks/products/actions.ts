@@ -94,6 +94,7 @@ export const setColorCode = createAsyncThunk<CartProduct|null, string>(
             const cartItem = {...existingCartItem};
             cartItem.priceLevel = account?.PriceLevel ?? '';
             cartItem.colorName = item?.color?.name ?? item?.color?.code ?? '';
+            cartItem.colorCode = item?.color?.code ?? item.color_code ?? '';
             cartItem.image = parseImageFilename(item.additionalData?.image_filename ?? selectedProduct.image, cartItem?.colorCode ?? selectedProduct.defaultColor);
             // if (item.additionalData?.image_filename) {
             //     cartItem.image = item.additionalData.image_filename;

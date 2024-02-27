@@ -1,4 +1,4 @@
-import {createTheme, responsiveFontSizes, alpha, getContrastRatio} from '@mui/material/styles'
+import {alpha, createTheme} from '@mui/material/styles'
 
 declare module '@mui/material/styles' {
     interface TypographyVariants {
@@ -178,6 +178,9 @@ theme = createTheme({
     }
 })
 
-window.theme = theme;
+if (!!global.window) {
+    window.theme = theme;
+}
+
 
 export default theme;
