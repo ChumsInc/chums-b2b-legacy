@@ -8,17 +8,18 @@ import {
     selectCustomerLoaded,
     selectCustomerLoadStatus
 } from "../selectors";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import DocumentTitle from "../../../components/DocumentTitle";
 import AccountTabs from "./AccountTabs";
 import {useAppDispatch} from "../../../app/configureStore";
-import {Outlet, redirect} from "react-router-dom";
+import {generatePath, Outlet, redirect} from "react-router-dom";
 import {billToCustomerSlug, customerSlug, parseCustomerSlug} from "../../../utils/customer";
 import {PATH_PROFILE} from "../../../constants/paths";
 import Typography from "@mui/material/Typography";
 
 const AccountPage = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const customer = useSelector(selectCustomerAccount);
     const params = useParams<{ customerSlug: string }>();
     const loadStatus = useSelector(selectCustomerLoadStatus);
@@ -26,16 +27,28 @@ const AccountPage = () => {
     const loading = useSelector(selectCustomerLoading);
 
     useEffect(() => {
-        const nextCustomer = billToCustomerSlug(params.customerSlug ?? '');
+        const nextCustomer = parseCustomerSlug(params.customerSlug ?? '');
+        console.log('customerSlug', params, nextCustomer);
         if (!nextCustomer) {
-            redirect(PATH_PROFILE);
+            if (customer && !!params.customerSlug) {
+                const slug = customerSlug(customer)!;
+                navigate(generatePath('/account/:customerSlug/*', {customerSlug: slug, "*": params.customerSlug}));
+                return;
+            }
+            if (customer) {
+                navigate(generatePath('/account/:customerSlug', {customerSlug: customerSlug(customer)!}));
+                return
+            }
+            navigate('/profile');
             return;
         }
-        if (!customer || customerSlug(customer) !== nextCustomer) {
+        const slug = customerSlug(customer);
+        const nextSlug = customerSlug(nextCustomer);
+        if (!customer || slug !== nextSlug) {
             if (loadStatus !== 'idle') {
                 return;
             }
-            dispatch(loadCustomer(parseCustomerSlug(nextCustomer)));
+            dispatch(loadCustomer(nextCustomer));
             return;
         }
         if (loadStatus === 'idle' && !loaded) {

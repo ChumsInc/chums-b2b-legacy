@@ -23,11 +23,13 @@ import pageReducer from "../ducks/page";
 import customersReducer from "../ducks/customers";
 import repsReducer from "../ducks/reps";
 import itemLookupReducer from "../ducks/item-lookup";
+import bannersReducer from "../ducks/banners";
 
 
 export const rootReducer = combineReducers({
     alerts: alertsReducer,
     app: appReducer,
+    banners: bannersReducer,
     cart: cartReducer,
     category: categoryReducer,
     customer: customerReducer,

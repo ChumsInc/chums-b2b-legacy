@@ -77,6 +77,6 @@ export default function ProductAttributeChip({feature, label, sx, ...rest}:Produ
         label = attributeText(feature);
     }
     return (
-        <StyledChip label={label} {...rest} size="small" sx={{...colors}} />
+        <StyledChip label={label} {...rest} size="small" sx={{...colors, ...sx}} />
     )
 }

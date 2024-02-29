@@ -1,4 +1,5 @@
 import {
+    Banner,
     ContentPage,
     Keyword,
     Menu,
@@ -17,6 +18,9 @@ export interface PreloadedState {
         messages?: Message[];
         productMenu?: Menu;
         slides?: Slide[],
+    }
+    banners?: {
+        list: Banner[]
     }
     category?: {
         keywords?: Keyword[];

@@ -17,10 +17,12 @@ import {initialSalesOrderState} from "../ducks/salesOrder";
 import {initialSearchState} from "../ducks/search";
 import {initialVersionState} from "../ducks/version";
 import {PreloadedState} from "../types/preload";
+import {initialBannersState} from "../ducks/banners";
 
 export default function prepState(preload: PreloadedState = typeof window === 'undefined' ? {} : window.__PRELOADED_STATE__ ?? {}) {
     return {
         app: initialAppState(preload),
+        banners: initialBannersState(preload),
         cart: initialCartState(),
         category: initialCategoryState(preload),
         customer: initialCustomerState(),

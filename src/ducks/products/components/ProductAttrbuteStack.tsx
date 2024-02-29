@@ -20,7 +20,9 @@ export default function ProductAttributeStack({
                                                   ...rest
                                               }: ProductAttributeStackProps) {
     return (
-        <Stack spacing={spacing ?? 1} direction={direction ?? "row"} flexWrap={flexWrap ?? "wrap"}
+        <Stack spacing={spacing ?? 1} useFlexGap
+               direction={direction ?? "row"}
+               flexWrap={flexWrap ?? "wrap"}
                justifyContent={justifyContent ?? "center"} alignItems={alignItems ?? "center"} {...rest}>
             {!!product.additionalData?.size && (<SizeIconList size={product.additionalData.size} spacing={0}/>)}
             {isNew && <ProductAttributeChip feature="new"/>}

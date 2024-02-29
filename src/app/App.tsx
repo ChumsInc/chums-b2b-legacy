@@ -86,6 +86,7 @@ const App = () => {
                                 <Route path="/products/:category/:product/:sku" element={<ProductRouter/>}/>
                                 {!loggedIn && (
                                     <>
+                                        <Route index element={<Home/>}/>
                                         <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
                                         <Route path="/set-password" element={<ResetPassword/>}/>
                                         <Route path="/signup" element={<SignUp/>}/>
