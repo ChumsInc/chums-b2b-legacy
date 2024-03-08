@@ -32,18 +32,12 @@ const clientConfig = {
             }
         ],
         hot: true,
-        proxy: {
-            '/api': {...localProxy},
-            '/images/': {...localProxy},
-            '/pdf/': {...localProxy},
-            '/files/': {...localProxy},
-            '/node_modules/': {...localProxy},
-            '/node-chums/': {...localProxy},
-            '/node-dev/': {...localProxy},
-            '/node-sage/': {...localProxy},
-            '/sage/': {...localProxy},
-            '/version': {...localProxy},
-        },
+        proxy: [
+            {
+                context: ['/api', '/images', '/pdf', '/files', '/node_modules', '/node-sage', '/sage', '/version'],
+                ...localProxy
+            }
+        ],
         watchFiles: 'src/**/*',
     },
     plugins: [

@@ -15,10 +15,10 @@ export default function BannerLinkWrapper({banner, children, ...rest}:BannerLink
 
     if (isOutsideLink.test(banner.url)) {
         return (
-            <Link href={banner.url} target="_blank" {...rest}>{children}</Link>
+            <Link href={banner.url} underline="none" target="_blank" {...rest}>{children}</Link>
         );
     }
     return (
-        <Link component={NavLink} to={banner.url} {...rest}>{children}</Link>
+        <Link component={NavLink} to={banner.url} underline="none" {...rest}>{children}</Link>
     )
 }

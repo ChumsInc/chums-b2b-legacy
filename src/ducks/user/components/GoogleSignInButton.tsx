@@ -23,7 +23,13 @@ const GoogleSignInButton = () => {
             })
             window.google.accounts.id.renderButton(
                 googleButtonRef.current,
-                {text: 'signin_with', theme: 'filled_blue', shape: 'rectangular', size: 'large', type: 'standard'}
+                {
+                    text: 'signin_with',
+                    theme: 'outline',
+                    shape: 'rectangular',
+                    size: 'large',
+                    type: 'standard',
+                }
             );
             window.google.accounts.id.prompt()
         }

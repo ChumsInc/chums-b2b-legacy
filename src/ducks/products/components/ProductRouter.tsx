@@ -54,7 +54,7 @@ const ProductRouter = () => {
         <ErrorBoundary>
             <Box>
                 {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
-                {!keyword?.pagetype && <AppAlert message={"Product not found!"}/>}
+                {!keyword?.pagetype && <CategoryPage2 keyword="all" />}
                 {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
                 {keyword?.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
             </Box>

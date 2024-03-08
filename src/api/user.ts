@@ -4,11 +4,11 @@ import {
     API_PATH_LOGIN_LOCAL,
     API_PATH_PASSWORD_RESET,
     API_PATH_PROFILE,
-    API_PATH_REP_LIST
+    API_PATH_REP_LIST, API_PATH_USER_SIGN_UP
 } from "../constants/paths";
 import {FunkyUserProfileResponse, UserProfileResponse} from "../ducks/user/types";
 import {fetchJSON} from "./fetch";
-import {LocalAuth, StoredProfile} from "../types/user";
+import {LocalAuth, SignUpUser, StoredProfile} from "../types/user";
 import {auth} from './IntranetAuthService';
 import {getSignInProfile, isTokenExpired} from "../utils/jwtHelper";
 import localStore from "../utils/LocalStore";
@@ -116,5 +116,23 @@ export async function postResetPassword(arg: string):Promise<boolean> {
         }
         console.debug("postResetPassword()", err);
         return Promise.reject(new Error('Error in postResetPassword()'));
+    }
+}
+
+export async function postSignUpUser(arg:SignUpUser):Promise<unknown> {
+    try {
+        const email = arg.email;
+        const url = '/api/user/b2b/signup/:email'
+            .replace(':email', encodeURIComponent(email));
+        const body = JSON.stringify(arg);
+        const res = await fetchJSON<unknown>(url, {method: 'POST', body});
+        return res;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("postSignUpUser()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("postSignUpUser()", err);
+        return Promise.reject(new Error('Error in postSignUpUser()'));
     }
 }

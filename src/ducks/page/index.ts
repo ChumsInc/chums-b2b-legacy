@@ -2,7 +2,6 @@ import {createReducer} from "@reduxjs/toolkit";
 import {FETCH_INIT, FETCH_KEYWORDS, FETCH_PAGE, FETCH_SUCCESS} from "../../constants/actions";
 import {ContentPage, Keyword} from "b2b-types";
 import {isDeprecatedKeywordsAction, keywordsSorter, pageKeywordsFilter} from "../keywords/utils";
-import {RootState} from "../../app/configureStore";
 import {loadPage} from "./actions";
 import {isDeprecatedPageAction} from "./utils";
 
@@ -22,12 +21,6 @@ export const initialPageState = (preload = typeof window === 'undefined' ? {} : 
     content: preload?.page?.content ?? null,
 })
 
-export const selectPageKeywords = (state: RootState) => state.page.list;
-export const selectPageKeyword = (state:RootState) => state.page.keyword;
-export const selectPageLoading = (state: RootState) => state.page.loading;
-export const selectPageLoaded = (state: RootState) => state.page.loaded;
-export const selectPageContent = (state: RootState) => state.page.content;
-
 const pageReducer = createReducer(initialPageState, (builder) => {
     builder
         .addCase(loadPage.pending, (state, action) => {
@@ -40,7 +33,7 @@ const pageReducer = createReducer(initialPageState, (builder) => {
             state.loaded = true;
             state.content = action.payload;
         })
-        .addCase(loadPage.rejected, (state) => {
+        .addCase(loadPage.rejected, (state, action) => {
             state.loading = false;
             state.loaded = false;
         })

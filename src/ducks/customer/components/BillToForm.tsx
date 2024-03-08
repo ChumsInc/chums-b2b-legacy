@@ -103,7 +103,7 @@ const BillToForm = () => {
                 <form onSubmit={submitHandler}>
                     <Grid2 container spacing={2}>
                         <Grid2 xs={12} sm={6}>
-                            <AddressFormFields address={customer} colWidth={8}
+                            <AddressFormFields address={customer}
                                                readOnly={!canEdit}
                                                onChange={changeHandler}/>
                         </Grid2>

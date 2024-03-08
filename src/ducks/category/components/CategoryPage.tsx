@@ -34,7 +34,8 @@ const CategoryPage = ({keyword}: {
     return (
         <Box>
             <DocumentTitle documentTitle={title}/>
-            <Typography component="h2" variant="h3" sx={{textAlign: 'center'}}>{title}</Typography>
+            {!!lifestyle && <Box component="img" src={lifestyle} sx={{width: '100%'}} />}
+            <Typography component="h1" variant="h1" sx={{textAlign: 'center', mb: 3}}>{title}</Typography>
             {loading && <LinearProgress variant="indeterminate"/>}
             {!!pageText && <Box dangerouslySetInnerHTML={{__html: pageText}}/>}
             <Grid2 container spacing={3} justifyContent={children.length < 4 ? 'center' : 'start'} sx={{mt: 3}} >

@@ -1,10 +1,11 @@
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import {ContentPage} from "b2b-types";
 import {fetchPage} from "../../api/page";
 import {RootState} from "../../app/configureStore";
-import {selectPageLoading} from "./index";
+import {selectPageLoading} from "./selectors";
+import {ContentPage} from "b2b-types";
 
-export const loadPage = createAsyncThunk<ContentPage|null, string>(
+
+export const loadPage = createAsyncThunk<ContentPage | null, string>(
     'page/load',
     async (arg) => {
         return await fetchPage(arg);

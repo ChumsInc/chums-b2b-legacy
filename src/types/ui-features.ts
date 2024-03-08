@@ -1,4 +1,5 @@
 import {SxProps} from "@mui/system";
+import {ContentPage} from "b2b-types";
 
 export interface NavItemProps {
     inDrawer?: boolean;
@@ -35,4 +36,8 @@ export interface Banner {
     }
     src?: string|null;
     sxProps?: SxProps|null;
+}
+
+export interface CachedContentPage extends ContentPage {
+    lastUsed?: number;
 }

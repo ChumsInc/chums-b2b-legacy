@@ -1,16 +1,39 @@
 import React from 'react';
+import Grid2 from "@mui/material/Unstable_Grid2";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Link from '@mui/material/Link'
+import {Link as NavLink} from 'react-router-dom'
+import {styled} from "@mui/material/styles";
+import Container from "@mui/material/Container";
 
-const ContentPage404 = ({}) => {
+
+const Content404Component = ({children}:{children: React.ReactNode}) => (
+    <Grid2 xs={12} sm={6} sx={{display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+        {children}
+    </Grid2>
+);
+const ContentPage404 = () => {
+
     return (
-        <div className="row">
-            <div className="col-sm-6">
-                <p>It looks like the page you were looking for can't be found.</p>
-                <p>If you're looking for a product, browse our products listing.</p>
-            </div>
-            <div className="col-sm-6">
-                <img src="/images/chums/404-Booby.gif" style={{maxWidth:"100%", height: "auto", maxHeight: '50vh'}} alt="Page not found"/>
-            </div>
-        </div>
+        <Container maxWidth="md">
+            <Grid2 container>
+                <Content404Component>
+                    <Typography variant="body1" sx={{fontSize: '2rem', textAlign: 'center', mb: 2}}>
+                        It looks like the page you were looking for can't be found.
+                    </Typography>
+                    <Typography variant="body2">
+                        If you're looking for a product, browse our <Link component={NavLink} to="/products/all">products listing</Link>.
+                    </Typography>
+                </Content404Component>
+                <Content404Component>
+                    <Box component="img"
+                         src="/images/chums/404-Booby.gif"
+                         sx={{maxWidth:"100%", height: "auto", maxHeight: '50vh'}}
+                         alt="Page not found"/>
+                </Content404Component>
+            </Grid2>
+        </Container>
     )
 }
 

@@ -1,4 +1,4 @@
-import {UserCustomerAccess, UserProfile} from "b2b-types";
+import {CustomerAddress, UserCustomerAccess, UserProfile} from "b2b-types";
 
 export interface LocalAuth {
     email: string;
@@ -28,4 +28,15 @@ export interface StoredProfile extends GoogleProfile {
     chums?: {
         user?: ExtendedUserProfile
     },
+}
+
+export interface SignUpUser {
+    email: string;
+    name: string;
+    hasAccount: boolean;
+    account: string;
+    accountName: string;
+    telephone: string;
+    address: CustomerAddress|null;
+    agreeToPolicy: boolean;
 }

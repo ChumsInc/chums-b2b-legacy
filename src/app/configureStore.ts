@@ -24,6 +24,7 @@ import customersReducer from "../ducks/customers";
 import repsReducer from "../ducks/reps";
 import itemLookupReducer from "../ducks/item-lookup";
 import bannersReducer from "../ducks/banners";
+import signUpReducer from "../ducks/sign-up";
 
 
 export const rootReducer = combineReducers({
@@ -46,6 +47,7 @@ export const rootReducer = combineReducers({
     reps: repsReducer,
     salesOrder: salesOrderReducer,
     search: searchReducer,
+    signUp: signUpReducer,
     slides: slidesReducer,
     user: userReducer,
     version: versionReducer

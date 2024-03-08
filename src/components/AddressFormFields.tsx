@@ -9,10 +9,9 @@ import {isCanada, isUSA} from "../utils/customer";
 import Stack from "@mui/material/Stack";
 import {TextField} from "@mui/material";
 
-const AddressFormFields = ({address, onChange, colWidth = 8, readOnly}: {
+const AddressFormFields = ({address, onChange, readOnly}: {
     address: CustomerAddress;
     onChange: (arg: Partial<CustomerAddress>) => void;
-    colWidth?: number;
     readOnly?: boolean;
 }) => {
     const requiresStateCode = isUSA(address.CountryCode ?? '') || isCanada(address.CountryCode ?? '');

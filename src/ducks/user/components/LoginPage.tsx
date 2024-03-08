@@ -1,51 +1,45 @@
 import React, {useEffect} from 'react';
-import {redirect} from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import LoginLocal from "./LoginLocal";
-import {DOCUMENT_TITLES, PATH_HOME} from "../../../constants/paths";
+import {DOCUMENT_TITLES, PATH_PROFILE} from "../../../constants/paths";
 import Alert from '@mui/material/Alert';
 import GoogleSignInButton from "./GoogleSignInButton";
 import DocumentTitle from "../../../components/DocumentTitle";
 import {selectLoggedIn} from "../selectors";
 import Typography from "@mui/material/Typography";
-import {useNavigate} from "react-router";
+import {useLocation, useNavigate} from "react-router";
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 
 const LoginPage = () => {
     const loggedIn = useSelector(selectLoggedIn);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        if (loggedIn) {
-            navigate(PATH_HOME, {replace: true});
+        if (loggedIn && location.pathname === '/login') {
+            navigate(PATH_PROFILE, {replace: true});
         }
-    }, [loggedIn])
+    }, [loggedIn]);
 
     return (
-        <div>
+        <Container maxWidth="sm">
             <DocumentTitle documentTitle={DOCUMENT_TITLES.login}/>
-            <div className="jumbotron">
-                <h1>Chums B2B Portal</h1>
-                <h3>Hey there friend! This site is for authorized Chums dealers only. Please login / sign up
-                    here.
-                </h3>
-                <hr/>
-                <h4>Not an authorized dealer? Feel as though you've lost your way? {' '}
-                    <a href="https://www.chums.com">Click here to shop chums.com</a>
-                </h4>
-            </div>
-            <div>
-                <div className="row">
-                    <div className="col-sm-6">
-                        <h3>Login with Google</h3>
-                        <div><small>Login with a trusted provider.</small></div>
-                        <GoogleSignInButton/>
-                    </div>
-                    <div className="col-sm-6">
-                        <LoginLocal/>
-                    </div>
-                </div>
-            </div>
-            <Alert severity="error" title="WARNING:" sx={{my: 3, p:5}}>
+            <Typography variant="h1" component="h1" sx={{my: 3}}>Chums B2B Portal</Typography>
+            <Typography variant="body1">Hey there friend! This site is for authorized Chums dealers only.</Typography>
+
+            <Stack direction="column" sx={{mt: 5}} spacing={3}>
+                <Typography component="h2" variant="h3">Login</Typography>
+                <Box>
+                    <Typography component="h3">Login with Google</Typography>
+                    <GoogleSignInButton/>
+                </Box>
+                <Divider/>
+                <LoginLocal/>
+            </Stack>
+            <Alert severity="error" title="WARNING:" sx={{my: 3, p: 5}}>
                 <Typography sx={{fontWeight: 'bold', marginRight: 1}}>WARNING:</Typography>
                 <Typography>
                     Unauthorized access to this system is forbidden and will be prosecuted
@@ -53,7 +47,7 @@ const LoginPage = () => {
                     usage is suspected.
                 </Typography>
             </Alert>
-        </div>
+        </Container>
     )
 }
 

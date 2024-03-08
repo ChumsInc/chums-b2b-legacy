@@ -43,7 +43,7 @@ import {SetLoggedInProps, UserLoginState, UserPasswordState, UserProfileResponse
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
 import {isCustomerAccess} from "./utils";
-import {StoredProfile} from "../../types/user";
+import {SignUpUser, StoredProfile} from "../../types/user";
 import {loadCustomerList} from "../customers/actions";
 
 let reauthTimer: number = 0;
@@ -346,14 +346,7 @@ export const fetchSignUpUser = ({authKey, authHash}: {
         });
 };
 
-export const submitNewUser = ({email, name, account, accountName, telephone, address}: {
-    email: string;
-    name: string;
-    account: string;
-    accountName?: string;
-    telephone?: string;
-    address?: string;
-}) => (dispatch: AppDispatch) => {
+export const submitNewUser = ({email, name, account, accountName, telephone, address}: SignUpUser) => (dispatch: AppDispatch) => {
     dispatch({type: FETCH_USER_SIGNUP, status: FETCH_INIT});
     const url = API_PATH_USER_SIGN_UP.replace(':email', encodeURIComponent(email));
     const body = {email, name, account, accountName, telephone, address};

@@ -80,13 +80,14 @@ const App = () => {
                     <CssBaseline>
                         <Routes>
                             <Route path="/" element={<MainOutlet/>}>
+                                <Route index element={<Home/>}/>
+                                <Route path="/home" element={<Home/>}/>
                                 <Route path="/products" element={<ProductRouter/>}/>
                                 <Route path="/products/:category" element={<ProductRouter/>}/>
                                 <Route path="/products/:category/:product" element={<ProductRouter/>}/>
                                 <Route path="/products/:category/:product/:sku" element={<ProductRouter/>}/>
                                 {!loggedIn && (
                                     <>
-                                        <Route index element={<Home/>}/>
                                         <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
                                         <Route path="/set-password" element={<ResetPassword/>}/>
                                         <Route path="/signup" element={<SignUp/>}/>
@@ -95,7 +96,6 @@ const App = () => {
                                 )}
                                 {loggedIn && (
                                     <>
-                                        <Route index element={<Home/>}/>
                                         <Route path="/home" element={<ProfilePage/>}/>
                                         <Route path="/pages/:keyword" element={<ContentPage/>}/>
                                         <Route path="/login" element={<Login/>}/>

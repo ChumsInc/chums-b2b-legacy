@@ -1,15 +1,22 @@
 import React, {FormEvent, useState} from 'react';
-import FormGroupTextInput from '../../../common-components/FormGroupTextInput';
 import Alert from "@mui/material/Alert";
 import {useSelector} from 'react-redux';
 import {loginUser, resetPassword} from "../actions";
 import PasswordInput from "../../../common-components/PasswordInput";
-import FormGroup from "../../../common-components/FormGroup";
+import FormGroup from "@mui/material/FormGroup";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectUserLoading} from "../selectors";
 import LinearProgress from "@mui/material/LinearProgress";
 import {FieldValue} from "../../../types/generic";
-
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import {Button, Checkbox, FormControlLabel, InputAdornment} from "@mui/material";
+import {AccountCircle} from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import KeyIcon from '@mui/icons-material/Key';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
 
 const LoginLocal = () => {
     const dispatch = useAppDispatch();
@@ -17,6 +24,7 @@ const LoginLocal = () => {
     const [forgotPassword, setForgotPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const submitHandler = (ev: FormEvent) => {
         ev.preventDefault();
@@ -32,47 +40,61 @@ const LoginLocal = () => {
             {loading && <LinearProgress variant="indeterminate" title="Processing Login Request"/>}
             {!forgotPassword && (
                 <>
-                    <h3>Login with your credentials</h3>
-                    <div><small>Login with an email and password you've provided.</small></div>
-                    <FormGroupTextInput type="email"
-                                        onChange={({value}: FieldValue) => setEmail(value)} value={email}
-                                        autoComplete="username"
-                                        label="E-Mail Address" placeholder="Your email address" required/>
-                    <FormGroup label="Password">
-                        <PasswordInput value={password} field="password"
-                                       onChange={({value}: FieldValue) => setPassword(value)}
-                                       required
-                                       autoComplete="current-password"
-                                       placeholder="Your password"/>
+                    <Typography component="h3">Login with your credentials</Typography>
+                    <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
+                        <AccountCircle sx={{color: 'action.active', mr: 1}}/>
+                        <TextField type="email" fullWidth
+                                   variant="filled" label="Email"
+                                   onChange={ev => setEmail(ev.target.value)} value={email}
+                                   autoComplete="username"
+                                   InputLabelProps={{shrink: true}}
+                                   required/>
+                    </Box>
+                    <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
+                        <KeyIcon sx={{color: 'action.active', mr: 1}} />
+                        <TextField type={showPassword ? "text" : "password"} fullWidth
+                                   variant="filled" label="Password"
+                                   onChange={ev => setPassword(ev.target.value)} value={password}
+                                   autoComplete="current-password"
+                                   InputLabelProps={{shrink: true}}
+                                   required/>
+                        <IconButton aria-label="show passwords" color={showPassword ? "secondary" : "default" }
+                                    role="switch" aria-checked={showPassword}
+                                    onClick={() => setShowPassword(!showPassword)}>
+                            <VisibilityIcon sx={{ms: 1}}  />
+                        </IconButton>
+                    </Box>
+                    <Stack direction="row" spacing={2} useFlexGap justifyContent="flex-end">
+                        <Button type="submit" variant="contained">Sign In</Button>
+                        <Button type="button" variant="text"
+                                onClick={() => setForgotPassword(true)}>
+                            Forgot Password
+                        </Button>
+                    </Stack>
 
-                    </FormGroup>
-                    <button type="submit" className="btn btn-sm btn-primary me-3">Sign In</button>
-                    <button type="button" className="btn btn-sm btn-outline-secondary"
-                            onClick={() => setForgotPassword(true)}>
-                        Forgot Password
-                    </button>
                 </>
             )}
             {forgotPassword && (
-                <>
-                    <h3>Reset Your Password</h3>
-                    <FormGroupTextInput type="email"
-                                        onChange={({value}: FieldValue) => setEmail(value)} value={email}
-                                        autoComplete="username"
-                                        label="E-Mail Address" placeholder="Your email address" required/>
-                    <div className="row g-3">
-                        <div className="col-4" />
-                        <div className="col-auto">
-                            <button type="submit" className="btn btn-sm btn-primary me-3">Reset Password</button>
-                        </div>
-                        <div className="col-auto">
-                            <button type="button" className="btn btn-sm btn-outline-secondary"
-                                    onClick={() => setForgotPassword(false)}>Cancel
-                            </button>
-                        </div>
-                    </div>
+                <Stack direction="column" spacing={1}>
+                    <Typography component="h3">Reset Your Password</Typography>
+                    <Box sx={{display: 'flex', alignItems: 'center'}}>
+                        <AccountCircle sx={{color: 'action.active', mr: 1}}/>
+                        <TextField type="email" fullWidth
+                                   variant="filled" label="Email"
+                                   onChange={ev => setEmail(ev.target.value)} value={email}
+                                   autoComplete="username"
+                                   InputLabelProps={{shrink: true}}
+                                   required/>
+                    </Box>
                     <Alert severity="info">An email will be sent to you so you can reset your password.</Alert>
-                </>
+                    <Stack direction="row" spacing={2} useFlexGap justifyContent="flex-end">
+                        <Button type="submit" variant="contained">Reset Password</Button>
+                        <Button type="button" variant="text"
+                                onClick={() => setForgotPassword(false)}>
+                            Cancel
+                        </Button>
+                    </Stack>
+                </Stack>
             )}
         </form>
     );
