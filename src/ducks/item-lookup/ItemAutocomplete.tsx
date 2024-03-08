@@ -9,7 +9,7 @@ import {
 } from "./index";
 import {Autocomplete, InputAdornment, TextField} from "@mui/material";
 import {CONTENT_PATH_SEARCH_IMAGE} from "../../constants/paths";
-import {useDebounce} from 'usehooks-ts'
+import {useDebounceValue} from 'usehooks-ts'
 import {useNavigate} from "react-router";
 import Stack from "@mui/material/Stack";
 import {addToCart} from "../cart/actions";
@@ -31,7 +31,7 @@ export default function ItemAutocomplete({salesOrderNo}: {
     const [quantity, setQuantity] = useState(1);
     const [value, setValue] = useState<ItemSearchResult | null>(null);
     const [inputValue, setInputValue] = useState('');
-    const searchTerm = useDebounce<string>(inputValue, 500);
+    const [searchTerm, setSearchTerm] = useDebounceValue<string>(inputValue, 500);
 
     const [options, setOptions] = useState(results ?? []);
 
@@ -40,18 +40,16 @@ export default function ItemAutocomplete({salesOrderNo}: {
     }, [results]);
 
     useEffect(() => {
+        setSearchTerm(inputValue);
+    }, [inputValue]);
+
+    useEffect(() => {
         dispatch(loadItemLookup(searchTerm));
     }, [searchTerm]);
 
     const changeHandler = (ev: React.SyntheticEvent, newValue: ItemSearchResult | null) => {
         console.log('changeHandler', newValue);
         setValue(newValue);
-        // setValue(null);
-        // setInputValue('');
-        // if (newValue) {
-        //     const path = itemLink(newValue);
-        //     navigate(path);
-        // }
     }
 
     const inputChangeHandler = (ev: SyntheticEvent, value: string) => {

@@ -27,7 +27,7 @@ const convertToAddress = (address: BillToAddress): CustomerAddress => {
 }
 
 
-const BillToAddress = ({address, className}: {
+const BillingAddress = ({address, className}: {
     address: BillToAddress;
     className: classNames.Argument,
 }) => {
@@ -35,4 +35,4 @@ const BillToAddress = ({address, className}: {
     return <Address address={convertToAddress(address)} className={className}/>
 };
 
-export default BillToAddress;
+export default BillingAddress;

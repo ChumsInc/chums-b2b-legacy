@@ -11,7 +11,7 @@ import {
 } from "../../../constants/paths";
 import {generatePath, Link} from 'react-router-dom';
 import {SearchResult} from "b2b-types";
-import {useDebounce} from 'usehooks-ts'
+import {useDebounceValue} from 'usehooks-ts'
 import {useNavigate} from "react-router";
 
 
@@ -38,7 +38,11 @@ export default function SearchBar() {
 
     const [value, setValue] = useState(null);
     const [inputValue, setInputValue] = useState('');
-    const searchTerm = useDebounce<string>(inputValue, 500);
+    const [searchTerm, setSearchTerm] = useDebounceValue<string>(inputValue, 500);
+
+    useEffect(() => {
+        setSearchTerm(inputValue);
+    }, [inputValue]);
 
     const [options, setOptions] = useState(results ?? []);
 
