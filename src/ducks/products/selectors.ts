@@ -2,8 +2,6 @@ import {createSelector} from "@reduxjs/toolkit";
 import {RootState} from "../../app/configureStore";
 import {isCartProduct, isProduct} from "./utils";
 
-export const selectProductKeywords = (state: RootState) => state.products.keywords ?? [];
-export const selectProductKeywordsLoading = (state: RootState) => state.products.loadingKeywords ?? false;
 export const selectCurrentProduct = (state: RootState) => state.products.product;
 export const selectProductLoading = (state: RootState) => state.products.loading;
 export const selectSelectedProduct = (state: RootState) => state.products.selectedProduct;

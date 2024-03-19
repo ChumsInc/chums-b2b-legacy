@@ -8,16 +8,13 @@ import {isDeprecatedKeywordsAction} from "./utils";
 export interface KeywordsState {
     list: Keyword[],
     loading: boolean;
+    loaded: boolean;
 }
 
-/**
- *
- * @param {any} preload
- * @return {KeywordsState}
- */
 export const initialKeywordsState = (preload:PreloadedState = {}):KeywordsState => ({
     list: preload?.keywords?.list ?? [],
     loading: false,
+    loaded: !!preload.keywords?.list,
 })
 
 const keywordsReducer = createReducer(initialKeywordsState, (builder) => {

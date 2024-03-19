@@ -29,8 +29,6 @@ import {ProductImage} from "../../types/product";
 
 
 export interface ProductsState {
-    keywords: Keyword[],
-    loadingKeywords: boolean;
     product: Product | null;
     selectedProduct: Product | null;
     selectedItemCode: string|null;
@@ -47,8 +45,6 @@ export interface ProductsState {
 }
 
 export const initialProductsState = (preload: PreloadedState = {}): ProductsState => ({
-    keywords: preload?.keywords?.list ?? [],
-    loadingKeywords: false,
     product: null,
     selectedProduct: null,
     selectedItemCode: null,
@@ -137,12 +133,6 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         .addDefaultCase((state, action) => {
 
             switch (action.type) {
-                case FETCH_KEYWORDS:
-                    if (isDeprecatedKeywordsAction(action)) {
-                        state.loadingKeywords = action.status === FETCH_INIT;
-                        state.keywords = [...(action.list ?? [])].sort(keywordSorter);
-                    }
-                    return;
                 case FETCH_PRODUCT:
                     if (isDeprecatedProductAction(action)) {
                         state.loading = action.status === FETCH_INIT;
