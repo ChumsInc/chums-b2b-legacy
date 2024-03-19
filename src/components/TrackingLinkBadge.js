@@ -1,6 +1,9 @@
 import React from 'react';
 import Badge from "../common-components/Badge";
 import {SHIPPING_METHODS} from "../constants/account";
+import Chip from "@mui/material/Chip";
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import Link from "@mui/material/Link";
 
 const trackingURL = ({TrackingID, StarshipShipVia}) => {
     let {carrier} = SHIPPING_METHODS[StarshipShipVia] || {};
@@ -27,13 +30,9 @@ const trackingURL = ({TrackingID, StarshipShipVia}) => {
 }
 const TrackingLinkBadge = ({TrackingID, StarshipShipVia, Weight}) => {
     const url = trackingURL({TrackingID, StarshipShipVia});
+    const label = `${TrackingID}; ${Weight} lb${Weight === 1 ? '' : 's'}`
     return (
-        <Badge type="info" className="me-1" url={url}>
-            {TrackingID}
-            {!!Weight && (
-                <span className="ms-1">({Weight} lb{Weight === 1 ? '' : 's'})</span>
-            )}
-        </Badge>
+        <Chip component={Link} target="_blank" href={url} icon={<LocalShippingIcon />} label={label} clickable />
     )
 }
 

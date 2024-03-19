@@ -55,6 +55,10 @@ export const rootReducer = combineReducers({
 
 const store = configureStore({
     reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+        serializableCheck: false,
+        immutableCheck: false,
+    }),
     preloadedState: prepState(typeof window === 'undefined' ? {} : window?.__PRELOADED_STATE__ ?? {}),
 });
 

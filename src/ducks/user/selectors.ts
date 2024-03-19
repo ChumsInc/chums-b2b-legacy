@@ -41,3 +41,10 @@ export const selectCanEdit = createSelector(
 export const selectLoginExpiry = (state:RootState) => state.user.tokenExpires ?? 0;
 
 export const selectCanViewAvailable = (state:RootState) => isUserProfile(state.user.profile) && state.user.profile?.accountType === 1;
+
+export const selectCanFilterReps = createSelector(
+    [selectUserAccount],
+    (account) => {
+        return /[%_]+/.test(account?.SalespersonNo ?? '');
+    }
+)

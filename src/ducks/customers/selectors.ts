@@ -13,13 +13,17 @@ export const selectRecentCustomers = (state:RootState) => state.customers.recent
 export const selectFilteredCustomerList = createSelector(
     [selectCustomerList, selectCustomersFilter, selectCustomersRepFilter, selectCustomerSort],
     (list, filter, repFilter, sort) => {
-        const filterRegex = new RegExp(`\\b${filter ?? ''}`, 'i');
+        let filterRegex = /^/;
+        try {
+            filterRegex = new RegExp(`\\b${filter ?? ''}`, 'i');
+        } catch(err:unknown) {}
         return list
             .filter(customer => !repFilter || customer.SalespersonNo === repFilter)
             .filter(customer => {
                 return !filter
                     || filterRegex.test(shortCustomerKey(customer))
                     || filterRegex.test(`${customer.ARDivisionNo}-${customer.CustomerNo}`)
+                    || filterRegex.test(`${customer.ARDivisionNo}${customer.CustomerNo}`)
                     || filterRegex.test(customer.CustomerNo)
                     || filterRegex.test(customer.CustomerName)
                     || filterRegex.test(customer.BillToName ?? '')

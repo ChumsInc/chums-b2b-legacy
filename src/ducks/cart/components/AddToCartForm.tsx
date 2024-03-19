@@ -121,9 +121,9 @@ const AddToCartForm = ({
         onChangeQuantity(quantity);
     }
 
-    const shipToCodeChangeHandler = (code: string, address: ShipToAddress | null) => {
+    const shipToCodeChangeHandler = (code: string|null, address: ShipToAddress | null) => {
         console.log('shipToCodeChangeHandler', code, address);
-        setShipToCode(code)
+        setShipToCode(code ?? '')
     }
 
     const submitHandler = async (ev: FormEvent) => {

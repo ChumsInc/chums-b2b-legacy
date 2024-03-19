@@ -76,11 +76,11 @@ const EditAccountUserForm = () => {
         }
     }
 
-    const onSetShipToLocation = (shipToCode: string) => {
+    const onSetShipToLocation = (shipToCode: string|null) => {
         if (!user) {
             return;
         }
-        setUser({...user, shipToCode: [shipToCode], changed: true});
+        setUser({...user, shipToCode: [shipToCode ?? ''], changed: true});
     }
 
     const submitHandler = async (ev: FormEvent) => {

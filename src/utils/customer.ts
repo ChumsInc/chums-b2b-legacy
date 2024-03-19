@@ -132,11 +132,6 @@ export const isValidCustomer = ({ARDivisionNo, CustomerNo}: {
 };
 
 
-export const isSameCustomer = (customer1: CustomerKey, customer2: CustomerKey) => {
-    return longCustomerNo(customer1).toLowerCase() === longCustomerNo(customer2).toLowerCase();
-};
-
-
 export const calcPrice = ({stdPrice, PricingMethod = null, DiscountMarkup1 = 0}: {
     stdPrice: string | number | null;
     PricingMethod: string | null;
@@ -248,6 +243,11 @@ export const customerListSorter = ({field, ascending}: SortProps<Customer>) => (
     const sortMod = ascending ? 1 : -1;
     switch (field) {
         case 'CustomerName':
+            return (
+                ((a[field] ?? a.BillToName ?? '').toLowerCase() === (b[field] ?? b.BillToName ?? '').toLowerCase())
+                    ? (longCustomerNo(a) > longCustomerNo(b) ? 1 : -1)
+                    : ((a[field] ?? a.BillToName ?? '').toLowerCase() > (b[field] ?? b.BillToName ?? '').toLowerCase() ? 1 : -1)
+            ) * sortMod;
         case 'AddressLine1':
         case 'City':
         case 'State':
@@ -255,9 +255,11 @@ export const customerListSorter = ({field, ascending}: SortProps<Customer>) => (
         case 'TelephoneNo':
         case 'EmailAddress':
         case 'CountryCode':
-            return (((a[field] ?? '').toLowerCase() === (b[field] ?? '').toLowerCase())
+            return (
+                ((a[field] ?? '').toLowerCase() === (b[field] ?? '').toLowerCase())
                 ? (longCustomerNo(a) > longCustomerNo(b) ? 1 : -1)
-                : ((a[field] ?? '').toLowerCase() > (b[field] ?? '').toLowerCase() ? 1 : -1)) * sortMod;
+                : ((a[field] ?? '').toLowerCase() > (b[field] ?? '').toLowerCase() ? 1 : -1)
+            ) * sortMod;
         default:
             return (longCustomerNo(a) > longCustomerNo(b) ? 1 : -1) * sortMod
     }
@@ -319,6 +321,13 @@ export const customerSlug = (customer: CustomerKey | null): string | null => {
     return !!customer.ShipToCode
         ? shipToCustomerSlug(customer)
         : billToCustomerSlug(customer);
+}
+
+export const isSameCustomer = (a:CustomerKey|null, b:CustomerKey|null):boolean => {
+    if (!a || !b) {
+        return false;
+    }
+    return a.ARDivisionNo === b.ARDivisionNo && a.CustomerNo === b.CustomerNo;
 }
 
 export const billToCustomerSlug = (customer: CustomerKey | string | null | undefined): string | null => {

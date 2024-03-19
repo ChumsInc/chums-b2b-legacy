@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {setCurrentVariant} from '../../../actions/products';
+import {setCurrentVariant} from '../actions';
 import classNames from "classnames";
 import VariantSelector from "./VariantSelector";
 import SwatchSet from "./SwatchSet";

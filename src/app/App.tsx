@@ -96,10 +96,9 @@ const App = () => {
                                 )}
                                 {loggedIn && (
                                     <>
-                                        <Route path="/home" element={<ProfilePage/>}/>
                                         <Route path="/pages/:keyword" element={<ContentPage/>}/>
                                         <Route path="/login" element={<Login/>}/>
-                                        <Route path={PATH_LOGOUT} element={<Logout/>}/>
+                                        <Route path="/logout" element={<Logout/>}/>
                                         <Route path="/profile" element={<ProfilePage/>}/>
                                         <Route path="/profile/:id" element={<AccountListContainer/>}/>
                                         <Route path="/account/:customerSlug" element={<AccountPage/>}>

@@ -1,28 +1,27 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {useNavigate, useParams} from 'react-router';
-import {fetchKeywords} from '../../../actions/products';
 import ProgressBar from "../../../components/ProgressBar";
-import AppAlert from "../../../common-components/AppAlert";
 import CategoryPage2 from "../../category/components/CategoryPage";
 import ProductPage from "./ProductPage";
 import {PATH_PRODUCT} from "../../../constants/paths";
 import ErrorBoundary from "../../../common-components/ErrorBoundary";
-import {selectProductKeywords, selectProductKeywordsLoading} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import {Keyword} from "b2b-types";
 import Box from "@mui/material/Box";
+import {loadKeywords} from "../../keywords/actions";
+import {selectKeywordsList, selectKeywordsLoading} from "../../keywords/selectors";
 
 const ProductRouter = () => {
     const dispatch = useAppDispatch();
-    const keywords = useSelector(selectProductKeywords);
-    const keywordsLoading = useSelector(selectProductKeywordsLoading);
+    const keywords = useSelector(selectKeywordsList);
+    const keywordsLoading = useSelector(selectKeywordsLoading);
     const {category, product} = useParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!keywords.length && !keywordsLoading) {
-            dispatch(fetchKeywords());
+            dispatch(loadKeywords());
         }
     }, []);
 
@@ -54,7 +53,7 @@ const ProductRouter = () => {
         <ErrorBoundary>
             <Box>
                 {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
-                {!keyword?.pagetype && <CategoryPage2 keyword="all" />}
+                {!keyword?.pagetype && <CategoryPage2 keyword="all"/>}
                 {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
                 {keyword?.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
             </Box>

@@ -57,7 +57,7 @@ export interface CustomerState {
 export const initialCustomerState = (): CustomerState => ({
     company: 'chums',
     key: null,
-    account: localStore.getItem<BillToCustomer | null>(STORE_CUSTOMER, null) ?? null,
+    account: null,
     shipToCode: null,
     shipTo: null,
     contacts: [],

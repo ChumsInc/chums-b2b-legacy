@@ -15,7 +15,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import {customerSlug} from "../../../utils/customer";
 import {useMatch, useNavigate} from "react-router";
 import {selectSalesOrder, selectSalesOrderInvoices, selectSalesOrderLoading} from "../selectors";
-import DuplicateCartAlert from "../../../components/DuplicateCartAlert";
+import DuplicateCartDialog from "../../cart/components/DuplicateCartDialog";
 import {duplicateSalesOrder} from "../../cart/actions";
 import {selectCartLoading} from "../../cart/selectors";
 
@@ -115,10 +115,10 @@ const SalesOrderHeaderElement = () => {
                     </Stack>
                 </Grid>
             </Grid>
-            <DuplicateCartAlert open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo} shipToCode={header.ShipToCode}
-                                loading={cartLoading}
-                                onConfirm={duplicateCartHandler}
-                                onCancel={() => setShowDuplicateCart(false)} />
+            <DuplicateCartDialog open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo} shipToCode={header.ShipToCode}
+                                 loading={cartLoading}
+                                 onConfirm={duplicateCartHandler}
+                                 onCancel={() => setShowDuplicateCart(false)} />
         </div>
     )
 }

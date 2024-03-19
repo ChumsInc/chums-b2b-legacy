@@ -14,18 +14,21 @@ export interface ShipToSelectProps extends Omit<FormControlProps, 'value' | 'onC
     defaultName?: string;
     label?: string;
     disabledShipToLocations?: string[];
-    onChange: (shipToCode: string, address: ShipToAddress | null) => void;
+    allowAllLocations?: boolean;
+    onChange: (shipToCode: string | null, address: ShipToAddress | null) => void;
     readOnly?: boolean;
     required?: boolean;
     inputProps?: InputBaseComponentProps;
 }
 
+const allLocationsValue = '__ALL';
 
 export default function ShipToSelect({
                                          value,
                                          defaultName,
                                          label,
                                          disabledShipToLocations,
+                                         allowAllLocations,
                                          onChange,
                                          readOnly,
                                          required,
@@ -44,10 +47,16 @@ export default function ShipToSelect({
             return onChange(ev.target.value, null);
         }
         const value = ev.target.value ?? customer?.PrimaryShipToCode ?? '';
+        if (allowAllLocations && value === allLocationsValue) {
+            return onChange(null, null);
+        }
+
         const [address] = shipToAddresses.filter(st => st.ShipToCode === value);
-        if (!address) {
+
+        if (!address && permissions?.billTo) {
             return onChange(value, shipToAddressFromBillingAddress(customer));
         }
+
         const {
             ShipToName,
             ShipToAddress1,
@@ -78,16 +87,24 @@ export default function ShipToSelect({
         if (value === '' && permissions?.billTo) {
             return 'Billing Address';
         }
+        if (value === allLocationsValue) {
+            return 'All Locations';
+        }
         const [shipTo] = shipToAddresses.filter(st => st.ShipToCode === value);
-        return `[${shipTo?.ShipToCode}]  ${shipTo?.ShipToName}, ${shipTo?.ShipToCity} ${shipTo?.ShipToState}`;
+        if (shipTo) {
+            return `[${shipTo?.ShipToCode}]  ${shipTo?.ShipToName}, ${shipTo?.ShipToCity} ${shipTo?.ShipToState}`;
+        }
+        return '';
     }
 
     return (
         <FormControl fullWidth variant="filled" size="small" {...formControlProps}>
             <InputLabel id={id} shrink>{label ?? 'Ship-To Location'}</InputLabel>
             <Select onChange={changeHandler}
-                    value={value ?? ''} displayEmpty renderValue={renderValueHandler}
+                    value={value ?? (allowAllLocations ? allLocationsValue : '')} displayEmpty
+                    renderValue={renderValueHandler}
                     readOnly={readOnly} required={required}>
+                {allowAllLocations && (<MenuItem value={allLocationsValue}>All Addresses</MenuItem>)}
                 {permissions?.billTo && <MenuItem value="">Billing Address</MenuItem>}
                 {shipToAddresses
                     .filter(shipTo => shipTo.ShipToCode !== '' || permissions?.billTo)

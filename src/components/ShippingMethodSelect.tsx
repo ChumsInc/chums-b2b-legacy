@@ -1,10 +1,10 @@
 import React, {useId} from 'react';
 import Select, {SelectChangeEvent} from "@mui/material/Select";
-import {SHIPPING_METHODS} from "../constants/account";
 import {InputBaseComponentProps} from "@mui/material/InputBase";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl, {FormControlProps} from '@mui/material/FormControl'
+import {ShippingMethods} from "../utils/general";
 
 export interface ShippingMethodSelectProps extends Omit<FormControlProps, 'onChange'> {
     value: string;
@@ -38,11 +38,12 @@ export default React.forwardRef(function ShippingMethodSelect({
                     readOnly={readOnly} required={required}>
                 {!readOnly && (<MenuItem value="">Select Shipping Method</MenuItem>)}
                 {readOnly && (<MenuItem value=""/>)}
-                {Object.keys(SHIPPING_METHODS)
+                {Object.keys(ShippingMethods)
+                    .filter(key => ShippingMethods[key].enabled)
                     .map(key => {
                         return (
                             <MenuItem key={key}
-                                      value={SHIPPING_METHODS[key].code}>{SHIPPING_METHODS[key].description}</MenuItem>
+                                      value={ShippingMethods[key].code}>{ShippingMethods[key].description}</MenuItem>
                         )
                     })}
             </Select>

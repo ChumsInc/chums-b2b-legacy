@@ -13,7 +13,7 @@ import DocumentTitle from "../../../components/DocumentTitle";
 import AccountTabs from "./AccountTabs";
 import {useAppDispatch} from "../../../app/configureStore";
 import {generatePath, Outlet, redirect} from "react-router-dom";
-import {billToCustomerSlug, customerSlug, parseCustomerSlug} from "../../../utils/customer";
+import {billToCustomerSlug, customerSlug, isSameCustomer, parseCustomerSlug} from "../../../utils/customer";
 import {PATH_PROFILE} from "../../../constants/paths";
 import Typography from "@mui/material/Typography";
 
@@ -28,7 +28,9 @@ const AccountPage = () => {
 
     useEffect(() => {
         const nextCustomer = parseCustomerSlug(params.customerSlug ?? '');
-        console.log('customerSlug', params, nextCustomer);
+        if (isSameCustomer(customer, nextCustomer) && loaded) {
+            return;
+        }
         if (!nextCustomer) {
             if (customer && !!params.customerSlug) {
                 const slug = customerSlug(customer)!;
@@ -44,7 +46,7 @@ const AccountPage = () => {
         }
         const slug = customerSlug(customer);
         const nextSlug = customerSlug(nextCustomer);
-        if (!customer || slug !== nextSlug) {
+        if (!customer || !isSameCustomer(customer, nextCustomer)) {
             if (loadStatus !== 'idle') {
                 return;
             }

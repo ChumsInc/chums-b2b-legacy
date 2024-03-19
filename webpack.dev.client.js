@@ -20,6 +20,19 @@ const clientConfig = {
     },
     devtool: 'eval-cheap-module-source-map',
     devServer: {
+        compress: true,
+        client: {
+            logging: 'log',
+            overlay: {
+                runtimeErrors: (error) => {
+                    console.log(error);
+                    if (error instanceof DOMException && error.name === 'ResizeObserver') {
+                        return true;
+                    }
+                    return false;
+                }
+            }
+        },
         historyApiFallback: true,
         static: [
             {

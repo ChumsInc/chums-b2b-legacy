@@ -30,7 +30,7 @@ import {selectProductCartItem} from "../ducks/products/selectors";
 import {createAction} from "@reduxjs/toolkit";
 
 
-export const fetchKeywords = () => (dispatch, getState) => {
+export const _fetchKeywords = () => (dispatch, getState) => {
     dispatch({type: FETCH_KEYWORDS, status: FETCH_INIT});
     fetchGET(API_PATH_KEYWORDS)
         .then(res => {

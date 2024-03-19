@@ -65,7 +65,7 @@ export const initialUserState = (): UserState => {
     const profile = isLoggedIn ? (auth.getProfile() ?? null) : null
     const accounts = profile?.chums?.user?.accounts ?? [];
     const customer = isLoggedIn
-        ? localStore.getItem<BasicCustomer | null>(STORE_CUSTOMER, getFirstCustomer(accounts) ?? null)
+        ? getFirstCustomer(accounts) ?? null
         : null;
     const currentAccess: UserCustomerAccess | null = isLoggedIn
         ? localStore.getItem<UserCustomerAccess | null>(STORE_USER_ACCESS, null)

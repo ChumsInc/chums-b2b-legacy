@@ -30,6 +30,7 @@ export interface ShippingMethod {
     description: string;
     allowCustomerAccount:boolean;
     carrier: string;
+    enabled?: boolean;
 }
 
 export interface ShippingMethodList {
