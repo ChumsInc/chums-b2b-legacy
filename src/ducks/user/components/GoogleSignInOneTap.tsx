@@ -37,6 +37,7 @@ const GoogleSignInOneTap = ({onSignIn}: {
             google.accounts?.id?.initialize({
                 client_id: GOOGLE_CLIENT_ID,
                 callback: handleGoogleResponse,
+                use_fedcm_for_prompt: true,
             });
         }
         if (!isLoggedIn && window.google) {
@@ -85,7 +86,7 @@ const GoogleSignInOneTap = ({onSignIn}: {
     }
 
     return (
-        <span ref={oneTapRef}/>
+        <span />
     )
 }
 
