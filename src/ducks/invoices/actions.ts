@@ -13,8 +13,9 @@ import {AppDispatch, RootState} from "../../app/configureStore";
 import {CustomerKey, Invoice, InvoiceHeader} from "b2b-types";
 import {selectLoggedIn} from "../user/selectors";
 import {FetchInvoiceArg} from "./types";
+import {SortProps} from "../../types/generic";
 
-export const setInvoicesSort = createAction('invoices/setSort');
+
 export const setInvoicesPage = createAction('invoices/setPage');
 export const setInvoicesRowsPerPage = createAction('invoices/setRowsPerPage', (rowsPerPage) => {
     localStore.setItem(STORE_INVOICES_ROWS_PER_PAGE, rowsPerPage);
@@ -92,3 +93,8 @@ export const loadInvoices = createAsyncThunk<InvoiceHeader[], CustomerKey | null
         }
     }
 )
+
+export const setShowPaidInvoices = createAction<boolean|undefined>('invoices/filter/setShowPaidInvoices');
+export const setInvoicesFilterShipToCode = createAction<string|null>('invoices/filter/setShipToCode');
+export const setInvoicesFilterSearch = createAction<string>('invoices/filter/setSearch');
+export const setInvoicesSort = createAction<SortProps<InvoiceHeader>>('invoices/setSort');

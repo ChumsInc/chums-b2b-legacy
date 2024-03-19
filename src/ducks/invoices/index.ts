@@ -1,9 +1,15 @@
 import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "../../constants/actions";
 import {createReducer} from "@reduxjs/toolkit";
 import {invoicesSorter, isInvoice, isInvoiceHeader} from "./utils";
-import {loadInvoice, loadInvoices} from "./actions";
+import {
+    loadInvoice,
+    loadInvoices,
+    setInvoicesFilterSearch,
+    setInvoicesFilterShipToCode, setInvoicesSort,
+    setShowPaidInvoices
+} from "./actions";
 import {customerSlug} from "../../utils/customer";
-import {setCustomerAccount} from "../customer/actions";
+import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {InvoicesState} from "./types";
 import {SortProps} from "../../types/generic";
@@ -22,6 +28,12 @@ export const initialInvoicesState = (): InvoicesState => ({
     loading: false,
     loaded: false,
     invoiceLoading: false,
+    filters: {
+        showPaidInvoices: true,
+        shipToCode: null,
+        search: '',
+    },
+    sort: {...defaultSort},
 })
 
 const invoicesReducer = createReducer(initialInvoicesState, builder => {
@@ -81,6 +93,17 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
             state.list = [];
             state.loaded = false;
             state.invoice = null;
+            state.filters.shipToCode = null;
+            state.filters.search = '';
+        })
+        .addCase(loadCustomer.pending, (state, action) => {
+            if (state.customerKey !== customerSlug(action.meta.arg)) {
+                state.list = [];
+                state.loaded = false;
+                state.invoice = null;
+                state.filters.shipToCode = null;
+                state.filters.search = '';
+            }
         })
         .addCase(setLoggedIn, (state, action) => {
             if (!action.payload.loggedIn) {
@@ -94,7 +117,21 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
                 state.loaded = false;
                 state.invoice = null;
                 state.customerKey = customerSlug(action?.meta?.arg);
+                state.filters.shipToCode = null;
+                state.filters.search = '';
             }
+        })
+        .addCase(setShowPaidInvoices, (state, action) => {
+            state.filters.showPaidInvoices = action.payload ?? !state.filters.showPaidInvoices;
+        })
+        .addCase(setInvoicesFilterShipToCode, (state, action) => {
+            state.filters.shipToCode = action.payload;
+        })
+        .addCase(setInvoicesFilterSearch, (state, action) => {
+            state.filters.search = action.payload;
+        })
+        .addCase(setInvoicesSort, (state, action) => {
+            state.sort = action.payload;
         })
         .addDefaultCase((state, action) => {
             switch (action.type) {

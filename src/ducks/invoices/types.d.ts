@@ -8,9 +8,14 @@ export interface InvoicesState {
     loading: boolean;
     loaded: boolean;
     invoiceLoading: boolean;
+    filters: {
+        showPaidInvoices: boolean;
+        shipToCode: string|null;
+        search: string;
+    }
+    sort: SortProps<InvoiceHeader>
 }
 
 
 export type FetchInvoiceArg = Pick<InvoiceHeader, 'InvoiceNo'|'InvoiceType'>;
 export type FetchInvoicesArg = CustomerKey;
-export type InvoiceSortProps = SortProps<InvoiceHeader>;

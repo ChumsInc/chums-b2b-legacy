@@ -7,7 +7,7 @@ import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {deprecated_loadInvoice, loadInvoice} from '../actions';
 import InvoiceHeader from "./InvoiceHeader";
-import InvoiceDetail from "./InvoiceDetail";
+import InvoicePageDetail from "./InvoicePageDetail";
 import DocumentTitle from "../../../components/DocumentTitle";
 import {useAppDispatch} from "../../../app/configureStore";
 import {useMatch, useParams} from "react-router";
@@ -18,6 +18,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import {redirect} from "react-router-dom";
 import {InvoiceType} from "b2b-types";
 import {FetchInvoiceArg} from "../types";
+import Typography from "@mui/material/Typography";
 
 const invoiceTypeDescription = (invoiceType: InvoiceType): string => {
     switch (invoiceType) {
@@ -45,11 +46,13 @@ const InvoicePage = () => {
     const customer = useSelector(selectCurrentCustomer);
 
     useEffect(() => {
-        if (billToCustomerSlug(customer) !== match?.params?.customerSlug) {
+        console.log(match, invoice, loading);
+        if (!!customer && billToCustomerSlug(customer) !== match?.params?.customerSlug) {
             redirect('/profile');
             return;
         }
-        if (!loading && match.params.invoiceNo && match.params.invoiceType
+        if (!loading
+            && !!match?.params.invoiceNo && !!match.params.invoiceType
             && (!invoice || match.params?.invoiceNo !== invoice.InvoiceNo)) {
             const arg:FetchInvoiceArg = {InvoiceNo: match.params.invoiceNo, InvoiceType: match.params.invoiceType as InvoiceType};
             dispatch(loadInvoice(arg));
@@ -61,13 +64,11 @@ const InvoicePage = () => {
     return (
         <div className="sales-order-page">
             <DocumentTitle documentTitle={documentTitle}/>
-            <h2>{documentTitle}</h2>
-            {!!invoice && invoice.InvoiceType !== 'IN' && (<h3>{invoiceTypeDescription(invoice.InvoiceType)}</h3>)}
-            {!!invoice?.SalesOrderNo && (<h4>Sales Order: {invoice.SalesOrderNo}</h4>)}
-            {!!invoice && !invoice.SalesOrderNo && (<h4><small>Direct Invoice</small></h4>)}
+            <Typography component="h2" variant="h2">{documentTitle}</Typography>
+            {!!invoice && invoice.InvoiceType !== 'IN' && (<Typography component="h3" variant="h3">{invoiceTypeDescription(invoice.InvoiceType)}</Typography>)}
             {loading && <LinearProgress variant="indeterminate"/>}
             <InvoiceHeader/>
-            <InvoiceDetail/>
+            <InvoicePageDetail/>
         </div>
 
     )
