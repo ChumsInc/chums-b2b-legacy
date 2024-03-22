@@ -63,7 +63,8 @@ const AddToCartContainer = ({itemCode, quantity, comment, onClose}) => {
                               ItemCodeDesc={itemAvailability?.ItemCodeDesc ?? ''}/>
             </div>
             {!taxSchedule && (<MissingTaxScheduleAlert/>)}
-            <AddToCartForm itemCode={itemCode} quantity={_quantity} comment={comment}
+            <AddToCartForm itemCode={itemCode} quantity={_quantity} unitPrice={customerPrice}
+                           comment={comment}
                            unitOfMeasure={itemAvailability?.SalesUnitOfMeasure ?? 'EA'}
                            onChangeQuantity={onChangeQuantity}
                            onDone={() => onClose()}/>

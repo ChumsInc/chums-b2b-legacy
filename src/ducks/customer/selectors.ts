@@ -17,6 +17,8 @@ export const selectCustomerUsers = (state:RootState) => state.customer.users ?? 
 export const selectCustomerShipToAddresses = (state:RootState) => state.customer.shipToAddresses ?? [];
 export const selectCustomerPaymentCards = (state:RootState) => state.customer.paymentCards;
 
+export const selectCustomerReturnToPath = (state:RootState) => state.customer.returnToPath;
+
 export const selectCustomerPermissions = (state:RootState) => state.customer.permissions.values;
 export const selectCustomerPermissionsLoading = (state:RootState) => state.customer.permissions.loading ?? false;
 export const selectCustomerPermissionsLoaded = (state:RootState) => state.customer.permissions.loaded ?? false;

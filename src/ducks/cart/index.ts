@@ -109,11 +109,17 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.cartQuantity = 0;
         })
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload.loggedIn) {
+            if (!action.payload?.loggedIn) {
                 state.cartNo = NEW_CART;
                 state.cartName = '';
                 state.cartTotal = 0;
                 state.cartQuantity = 0;
+                state.header = null;
+                state.detail = [];
+                state.itemAvailability = null;
+                state.cartProgress = CART_PROGRESS_STATES.cart;
+                state.shippingAccount.enabled = false;
+                state.shippingAccount.value = '';
             }
         })
         .addCase(loadOpenOrders.pending, (state) => {
@@ -126,9 +132,9 @@ const cartReducer = createReducer(initialCartState, builder => {
             if (!cart && action.payload.filter(so => isCartOrder(so)).length === 1) {
                 [cart] =  action.payload.filter(so => isCartOrder(so));
             }
-            if (!cart && state.cartNo === NEW_CART) {
-                [cart] = action.payload.filter(so => so.OrderType === 'Q');
-            }
+            // if (!cart && state.cartNo === NEW_CART) {
+            //     [cart] = action.payload.filter(so => so.OrderType === 'Q');
+            // }
             if (!cart) {
                 state.cartNo = NEW_CART;
                 state.cartName = '';

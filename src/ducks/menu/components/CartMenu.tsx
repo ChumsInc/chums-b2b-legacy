@@ -38,6 +38,15 @@ const CartMenu = () => {
         )
     }
 
+    if (!currentCart || currentCart === 'new') {
+        return (
+            <NavItemButtonLink to={customerCartURL(currentCustomer)}>
+                <CustomerIndicator/>
+                <CartIcon/>
+            </NavItemButtonLink>
+        )
+    }
+
     return (
         <NavItemButtonLink to={customerCartURL(currentCustomer, currentCart)}>
             <CustomerIndicator/>

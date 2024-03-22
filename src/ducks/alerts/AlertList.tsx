@@ -1,8 +1,9 @@
 import React from 'react';
 import AppAlert from "../../common-components/AppAlert";
 import {useDispatch, useSelector} from 'react-redux';
-import {dismissAlert, dismissContextAlert, selectAlerts, selectContextAlerts} from "./index";
+import {dismissAlert, dismissContextAlert} from "./actions";
 import {useAppSelector} from "../../app/configureStore";
+import {selectContextAlerts} from "./selectors";
 
 const AlertList = ({context}:{context?:string}) => {
     const dispatch = useDispatch();

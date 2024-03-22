@@ -3,6 +3,7 @@ import {SignUpUser} from "../../types/user";
 import {RootState} from "../../app/configureStore";
 import isEmail from 'validator/lib/isEmail';
 import {postSignUpUser} from "../../api/user";
+import {setLoggedIn} from "../user/actions";
 
 export interface SignUpState {
     email: string;
@@ -48,6 +49,11 @@ const signUpReducer = createReducer(initialState(), builder => {
         .addCase(signUpUser.rejected, (state, action) => {
             state.status = 'rejected';
             state.error = action.error.message ?? null;
+        })
+        .addCase(setLoggedIn, (state) => {
+            state.email = '';
+            state.authKey = '';
+            state.authHash = '';
         })
 });
 

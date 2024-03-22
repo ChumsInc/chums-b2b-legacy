@@ -12,6 +12,7 @@ export const selectUserRepAccounts = (state:RootState) => state.user.accounts.fi
 export const selectUserAccountsCount = (state:RootState) => (state.user.accounts ?? []).length;
 
 export const selectLoggedIn = (state:RootState) => state.user.loggedIn ?? false;
+export const selectLoggingIn = (state:RootState) => state.user.actionStatus === 'logging-in';
 
 export const selectAuthType = (state:RootState) => state.user.authType;
 
@@ -19,8 +20,8 @@ export const selectUserAccount = (state:RootState) => state.user.access.current 
 
 export const selectCurrentCustomer = (state:RootState) => state.user.currentCustomer ?? null;
 
-export const selectUserLoading = (state:RootState) => state.user.loading ?? false;
-export const selectResettingPassword = (state:RootState) => state.user.resettingPassword;
+export const selectUserLoading = (state:RootState) => state.user.actionStatus !== 'idle';
+export const selectResettingPassword = (state:RootState) => state.user.actionStatus === 'resetting-password';
 
 export const selectAccessList = (state: RootState) => state.user.access.list;
 export const selectAccessListLoading = (state:RootState) => state.user.access.loading;
@@ -40,8 +41,12 @@ export const selectCanEdit = createSelector(
 
 export const selectLoginExpiry = (state:RootState) => state.user.tokenExpires ?? 0;
 
-export const selectCanViewAvailable = (state:RootState) => isUserProfile(state.user.profile) && state.user.profile?.accountType === 1;
-
+export const selectCanViewAvailable = createSelector(
+    [selectUserProfile],
+    (profile) => {
+        return isUserProfile(profile) && profile.accountType === 1;
+    }
+)
 export const selectCanFilterReps = createSelector(
     [selectUserAccount],
     (account) => {

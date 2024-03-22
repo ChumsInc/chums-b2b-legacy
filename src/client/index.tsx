@@ -11,7 +11,7 @@ const container = document.getElementById('app')!;
 const root = createRoot(container);
 
 root.render(
-    <React.StrictMode>
+    <React.Fragment>
         <Provider store={store}>
             <HelmetProvider>
                 <BrowserRouter>
@@ -19,5 +19,5 @@ root.render(
                 </BrowserRouter>
             </HelmetProvider>
         </Provider>
-    </React.StrictMode>
+    </React.Fragment>
 )

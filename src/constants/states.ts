@@ -8,8 +8,11 @@ export interface StateTerritory {
 }
 
 export const STATES_USA:StateTerritory[] = [
+    {code: 'AA', name: 'Armed Forces Americas'},
+    {code: 'AE', name: 'Armed Forces Europe, the Middle East, and Canada'},
     {code: "AL", name: "Alabama"},
     {code: "AK", name: "Alaska"},
+    {code: 'AP', name: 'Armed Forces Pacific'},
     {code: "AS", name: "American Samoa"},
     {code: "AZ", name: "Arizona"},
     {code: "AR", name: "Arkansas"},
@@ -36,6 +39,7 @@ export const STATES_USA:StateTerritory[] = [
     {code: "MA", name: "Massachusetts"},
     {code: "MI", name: "Michigan"},
     {code: "MN", name: "Minnesota"},
+    {code: "MP", name: "Northern Mariana Islands"},
     {code: "MS", name: "Mississippi"},
     {code: "MO", name: "Missouri"},
     {code: "MT", name: "Montana"},
@@ -47,7 +51,6 @@ export const STATES_USA:StateTerritory[] = [
     {code: "NY", name: "New York"},
     {code: "NC", name: "North Carolina"},
     {code: "ND", name: "North Dakota"},
-    {code: "MP", name: "Northern Mariana Islands"},
     {code: "OH", name: "Ohio"},
     {code: "OK", name: "Oklahoma"},
     {code: "OR", name: "Oregon"},

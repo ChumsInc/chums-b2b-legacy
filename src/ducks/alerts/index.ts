@@ -1,9 +1,18 @@
-import {createAction, createReducer, createSelector, isRejected} from "@reduxjs/toolkit";
+import {
+    AsyncThunkAction,
+    createReducer,
+    isAsyncThunkAction,
+    isFulfilled,
+    isRejected, PayloadAction,
+    ThunkAction
+} from "@reduxjs/toolkit";
 import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
-import {RootState} from "../../app/configureStore";
-import {setLoggedIn} from "../user/actions";
 import {isDeprecatedSetAlertAction, isDeprecatedSetLoggedInAction} from "../../types/actions";
 import {AlertColor} from "@mui/material/Alert";
+import {setLoggedIn} from '../user/actions'
+import {alertSorter} from "./utils";
+import {dismissAlert, dismissContextAlert, setAlert} from "./actions";
+import {Action} from "redux";
 
 
 export interface B2BContextAlert {
@@ -25,20 +34,6 @@ const initialAlertState = (): AlertsState => ({
     list: [],
 })
 
-export const setAlert = createAction<Omit<B2BContextAlert, 'alertId'|'count'>>('alerts/setAlert');
-export const dismissAlert = createAction<number>('alerts/dismissAlert');
-export const dismissContextAlert = createAction<string>('alerts/dismissByContext');
-
-export const selectAlerts = (state: RootState) => state.alerts.list ?? [];
-export const selectContextAlerts = createSelector(
-    [selectAlerts, (state:RootState, context?:string) => context],
-    (list, context) => {
-        return list.filter(alert => !context || alert.context === context).sort(alertSorter);
-    }
-)// (state: RootState, context?: string) => state.alerts.list.filter(alert => !context || alert.context === context).sort(alertSorter);
-
-const alertSorter = (a: B2BContextAlert, b: B2BContextAlert): number => a.alertId - b.alertId;
-
 const alertsReducer = createReducer(initialAlertState, (builder) => {
     builder
         .addCase(setAlert, (state, action) => {
@@ -51,7 +46,12 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                     alert,
                 ].sort(alertSorter);
             } else {
-                const alert:B2BContextAlert = {...action.payload, severity: action.payload.severity ?? 'warning', alertId: state.index, count: 1};
+                const alert: B2BContextAlert = {
+                    ...action.payload,
+                    severity: action.payload.severity ?? 'warning',
+                    alertId: state.index,
+                    count: 1
+                };
                 state.list = [
                     ...state.list,
                     alert
@@ -67,6 +67,11 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
             state.list = state.list
                 .filter(alert => alert.context !== action.payload)
                 .sort(alertSorter);
+        })
+        .addCase(setLoggedIn, (state, action) => {
+            if (!action.payload?.loggedIn) {
+                state.list = [];
+            }
         })
         .addMatcher((action) => isRejected(action) && !!action.error,
             (state, action) => {
@@ -92,6 +97,11 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                     ].sort(alertSorter);
                 }
             })
+        .addMatcher((action) => isFulfilled(action as PayloadAction),
+            (state, action) => {
+            const context = action.type.replace('/fulfilled', '');
+            state.list = state.list.filter(alert => alert.context !== context).sort(alertSorter);
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case SET_ALERT:
@@ -104,7 +114,11 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                                 {...alert, count: (alert.count ?? 0) + 1},
                             ].sort(alertSorter);
                         } else {
-                            const newAlert:B2BContextAlert = {severity: 'warning', ...action.props, alertId: state.index, count: 1};
+                            const newAlert: B2BContextAlert = {
+                                severity: 'warning', ...action.props,
+                                alertId: state.index,
+                                count: 1
+                            };
                             state.list = [
                                 ...state.list,
                                 newAlert

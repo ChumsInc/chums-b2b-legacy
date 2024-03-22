@@ -8,9 +8,10 @@ import {setUserAccess} from '../../user/actions';
 import {PATH_PROFILE} from "../../../constants/paths";
 import {selectAccessList, selectAccessListLoading, selectCurrentAccess} from "../../user/selectors";
 import {useAppDispatch} from "../../../app/configureStore";
-import {useParams} from "react-router";
+import {useLocation, useParams} from "react-router";
 import AccountList from "./AccountList";
 import {redirect} from "react-router-dom";
+import {setReturnToPath} from "../../customer/actions";
 
 const AccountListContainer = () => {
     const dispatch = useAppDispatch();
@@ -18,6 +19,13 @@ const AccountListContainer = () => {
     const access = useSelector(selectCurrentAccess);
     const accessList = useSelector(selectAccessList);
     const accessListLoading = useSelector(selectAccessListLoading);
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.returnTo) {
+            dispatch(setReturnToPath(location.state.returnTo));
+        }
+    }, []);
 
     useEffect(() => {
         if (accessListLoading) {

@@ -28,10 +28,12 @@ import {useAppDispatch} from "../../../app/configureStore";
 import ProgressBar from "../../../components/ProgressBar";
 import CartSelect from "../../open-orders/components/CartSelect";
 import CartQuantityInput from "../../../components/CartQuantityInput";
-import {ShipToAddress} from "b2b-types";
+import {CartItem, ShipToAddress} from "b2b-types";
+import Decimal from "decimal.js";
+import {CartProduct} from "b2b-types";
 
 const AddToCartForm = ({
-                           itemCode,
+                            cartItem,
                            quantity,
                            unitOfMeasure,
                            comment,
@@ -43,7 +45,7 @@ const AddToCartForm = ({
                            onChangeQuantity,
                            excludeSalesOrder,
                        }: {
-    itemCode: string;
+    cartItem: CartProduct;
     quantity: number;
     unitOfMeasure: string;
     comment?: string;
@@ -121,7 +123,7 @@ const AddToCartForm = ({
         onChangeQuantity(quantity);
     }
 
-    const shipToCodeChangeHandler = (code: string|null, address: ShipToAddress | null) => {
+    const shipToCodeChangeHandler = (code: string | null, address: ShipToAddress | null) => {
         console.log('shipToCodeChangeHandler', code, address);
         setShipToCode(code ?? '')
     }
@@ -135,10 +137,19 @@ const AddToCartForm = ({
         if (!!season_code && !season_available) {
             comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
+        if (global?.window?.gtag) {
+            const price = !!cartItem.price ? new Decimal(cartItem.price).toNumber() : undefined;
+            const value = !!cartItem.price ? new Decimal(cartItem.price).times(quantity).toNumber() : undefined;
+            global.window.gtag('event', 'add_to_cart', {
+                currency: 'USD',
+                value: value,
+                items: [{item_id: cartItem.itemCode, item_name: cartItem.name, price: price, quantity}]
+            })
+        }
         if (!!localCartNo && localCartNo !== NEW_CART) {
             await dispatch(addToCart({
                 salesOrderNo: localCartNo,
-                itemCode,
+                itemCode: cartItem.itemCode,
                 quantity,
                 comment,
             }));
@@ -147,7 +158,7 @@ const AddToCartForm = ({
         }
         await dispatch(saveNewCart({
             cartName: localCartName,
-            itemCode,
+            itemCode: cartItem.itemCode,
             quantity,
             comment,
             shipToCode,

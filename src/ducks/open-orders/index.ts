@@ -88,10 +88,11 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
             state.loading = false;
         })
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload.loggedIn) {
+            if (!action.payload?.loggedIn) {
                 state.list = {};
                 state.loaded = false;
                 state.customerKey = null;
+                state.actionStatus = {};
             }
         })
         .addCase(setUserAccess.pending, (state, action) => {

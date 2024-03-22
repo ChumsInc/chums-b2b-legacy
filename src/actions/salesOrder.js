@@ -12,7 +12,7 @@ import {fetchGET, fetchPOST} from "../utils/fetch";
 import {API_PATH_OPEN_ORDERS, CART_ACTIONS} from "../constants/paths";
 import {customerSlug, isValidCustomer, sageCompanyCode} from "../utils/customer";
 import {handleError} from "../ducks/app/actions";
-import {setAlert} from "../ducks/alerts";
+import {setAlert} from "../ducks/alerts/actions";
 import {isCartOrder} from "../utils/orders";
 import localStore from "../utils/LocalStore";
 import {STORE_CURRENT_CART} from "../constants/stores";

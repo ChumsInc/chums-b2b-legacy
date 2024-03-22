@@ -1,13 +1,10 @@
 import {
     CHANGE_USER_PASSWORD,
     CLEAR_USER_ACCOUNT,
-    FETCH_FAILURE,
     FETCH_INIT,
-    FETCH_LOCAL_LOGIN,
     FETCH_SUCCESS,
     FETCH_USER_SIGNUP,
     SET_LOGGED_IN,
-    UPDATE_LOGIN,
     UPDATE_SIGNUP
 } from "../../constants/actions";
 import {auth} from '../../api/IntranetAuthService';
@@ -16,18 +13,21 @@ import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_USER_ACCESS} from "../../constants
 import {getFirstCustomer,} from "../../utils/customer";
 import {jwtDecode, JwtPayload} from "jwt-decode";
 import {createReducer, isRejected, UnknownAction} from "@reduxjs/toolkit";
-import {loadProfile, resetPassword, setLoggedIn, setUserAccess, signInWithGoogle} from "./actions";
-import {getPrimaryAccount, isCustomerAccess, isUserProfileAction, userAccountSort} from "./utils";
 import {
-    DeprecatedUserAction,
-    DeprecatedUserProfileAction,
-    UserLoginState,
-    UserPasswordState,
-    UserSignupState
-} from "./types";
+    loadProfile,
+    loginUser,
+    resetPassword,
+    saveUserProfile,
+    setLoggedIn,
+    setUserAccess,
+    signInWithGoogle
+} from "./actions";
+import {getPrimaryAccount, isCustomerAccess, isUserAction, isUserProfileAction, userAccountSort} from "./utils";
+import {DeprecatedUserProfileAction, UserPasswordState, UserSignupState} from "./types";
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {ExtendedUserProfile} from "../../types/user";
+import {LoadStatus} from "../../types/generic";
 
 
 export interface UserState {
@@ -49,9 +49,7 @@ export interface UserState {
     signUp: UserSignupState;
     authType: string;
     passwordChange: UserPasswordState;
-    login: UserLoginState;
-    loading: boolean;
-    resettingPassword: boolean;
+    actionStatus: LoadStatus | 'saving-profile' | 'resetting-password' | 'logging-in';
 }
 
 export const initialUserState = (): UserState => {
@@ -65,7 +63,7 @@ export const initialUserState = (): UserState => {
     const profile = isLoggedIn ? (auth.getProfile() ?? null) : null
     const accounts = profile?.chums?.user?.accounts ?? [];
     const customer = isLoggedIn
-        ? getFirstCustomer(accounts) ?? null
+        ? localStore.getItem<BasicCustomer | null>(STORE_CUSTOMER, getFirstCustomer(accounts) ?? null)
         : null;
     const currentAccess: UserCustomerAccess | null = isLoggedIn
         ? localStore.getItem<UserCustomerAccess | null>(STORE_USER_ACCESS, null)
@@ -102,21 +100,23 @@ export const initialUserState = (): UserState => {
             newPassword2: '',
             visible: false,
         },
-        login: {
-            email: '',
-            password: '',
-            forgotPassword: false,
-            loading: false,
-        },
-        loading: false,
-        resettingPassword: false,
+        actionStatus: 'idle',
     }
 }
 
 const userReducer = createReducer(initialUserState, (builder) => {
     builder
+        .addCase(loginUser.pending, (state) => {
+            state.actionStatus = 'logging-in';
+        })
+        .addCase(loginUser.fulfilled, (state, action) => {
+            state.actionStatus = 'idle';
+        })
+        .addCase(loginUser.rejected, (state, action) => {
+            state.actionStatus = 'idle';
+        })
         .addCase(setLoggedIn, (state, action) => {
-            if (!state.loggedIn && action.payload.loggedIn) {
+            if (!state.loggedIn && action.payload?.loggedIn) {
                 const _initialUserState = initialUserState();
                 state.tokenExpires = _initialUserState.tokenExpires;
                 state.user = _initialUserState.user;
@@ -129,7 +129,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             }
             state.loggedIn = action.payload.loggedIn;
             state.token = action.payload.token ?? null;
-            if (!action.payload.loggedIn) {
+            if (!action.payload?.loggedIn) {
                 const _initialUserState = initialUserState();
                 state.token = null;
                 state.tokenExpires = 0;
@@ -143,14 +143,13 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 state.signUp = {..._initialUserState.signUp};
                 state.authType = '';
                 state.passwordChange = {..._initialUserState.passwordChange};
-                state.login = {..._initialUserState.login};
             }
         })
         .addCase(loadProfile.pending, (state, action) => {
-            state.loading = true;
+            state.actionStatus = 'pending';
         })
         .addCase(loadProfile.fulfilled, (state, action) => {
-            state.loading = false;
+            state.actionStatus = 'idle';
             state.user = action.payload.user ?? null;
             if (action.payload.user) {
                 state.profile = {
@@ -174,7 +173,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             }
         })
         .addCase(loadProfile.rejected, (state, action) => {
-            state.loading = false;
+            state.actionStatus = 'idle';
         })
         .addCase(setCustomerAccount.fulfilled, (state, action) => {
             state.currentCustomer = action.payload.customer;
@@ -201,10 +200,10 @@ const userReducer = createReducer(initialUserState, (builder) => {
 
         })
         .addCase(signInWithGoogle.pending, (state, action) => {
-            state.loading = true;
+            state.actionStatus = 'pending';
         })
         .addCase(signInWithGoogle.fulfilled, (state, action) => {
-            state.loading = false;
+            state.actionStatus = 'idle';
             state.token = action.meta.arg;
             state.profile = action.payload.user ?? null;
             state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
@@ -213,22 +212,53 @@ const userReducer = createReducer(initialUserState, (builder) => {
             state.picture = action.payload.picture ?? null;
         })
         .addCase(signInWithGoogle.rejected, (state) => {
-            state.loading = false;
+            state.actionStatus = 'idle';
         })
         .addCase(resetPassword.pending, (state) => {
-            state.resettingPassword = true;
+            state.actionStatus = 'resetting-password';
         })
         .addCase(resetPassword.fulfilled, (state) => {
-            state.resettingPassword = false;
+            state.actionStatus = 'idle';
         })
         .addCase(resetPassword.rejected, (state) => {
-            state.resettingPassword = false;
+            state.actionStatus = 'idle';
         })
-        .addMatcher((action) => isRejected(action) && !!action.error, (state, action) => {
-            if (isRejected(action)) {
-                console.log(action?.error);
+        .addCase(saveUserProfile.pending, (state) => {
+            state.actionStatus = 'saving-profile';
+        })
+        .addCase(saveUserProfile.fulfilled, (state, action) => {
+            state.actionStatus = 'idle';
+            state.user = action.payload.user ?? null;
+            if (action.payload.user) {
+                state.profile = {
+                    ...action.payload.user,
+                    accounts: action.payload.accounts ?? [],
+                    roles: (action.payload.roles ?? []).sort(),
+                }
+            } else {
+                state.profile = null;
+            }
+            state.roles = (action.payload.roles ?? []).sort();
+            state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
+            state.access.list = (action.payload.accounts ?? []).sort(userAccountSort);
+            state.access.loaded = true;
+            if (isCustomerAccess(state.access.current) && !!state.access.current.id) {
+                const [acct] = state.accounts.filter(acct => isCustomerAccess(state.access.current) && acct.id === state.access.current.id);
+                state.access.current = acct ?? null;
+            }
+            if (!isCustomerAccess(state.access.current) || !state.access.current?.id && state.accounts.length > 0) {
+                state.access.current = getPrimaryAccount(state.accounts) ?? null;
             }
         })
+        .addCase(saveUserProfile.rejected, (state) => {
+            state.actionStatus = 'idle';
+        })
+        .addMatcher((action) => isUserAction(action) && isRejected(action) && !!action.error,
+            (state, action) => {
+                if (isRejected(action)) {
+                    console.log('userReducer', action?.error);
+                }
+            })
         .addDefaultCase((state, action: UnknownAction | DeprecatedUserProfileAction) => {
             const _initialUserState = initialUserState();
             // console.log(action.type, JSON.parse(JSON.stringify(state)), action);
@@ -248,7 +278,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
                             state.signUp = {..._initialUserState.signUp};
                             state.authType = '';
                             state.passwordChange = {..._initialUserState.passwordChange};
-                            state.login = {..._initialUserState.login};
                         }
                         if (action.token) {
                             state.token = action.token;
@@ -267,25 +296,12 @@ const userReducer = createReducer(initialUserState, (builder) => {
                         }
                     }
                     return;
-                case FETCH_LOCAL_LOGIN:
-                    state.login.loading = action.status === FETCH_INIT;
-                    state.loading = action.status === FETCH_INIT;
-                    if (action.status === FETCH_FAILURE) {
-                        state.loggedIn = false;
-                        state.authType = '';
-                    } else if (action.status === FETCH_SUCCESS) {
-                        state.login = {...initialUserState().login};
-                    }
-                    return;
                 case CLEAR_USER_ACCOUNT:
                     localStore.removeItem(STORE_USER_ACCESS);
                     state.access.current = null;
                     return;
                 case UPDATE_SIGNUP:
                     state.signUp = {...state.signUp, ...(action.props ?? {})};
-                    return;
-                case UPDATE_LOGIN:
-                    state.login = {...state.login, ...(action.props ?? {})};
                     return;
                 case CHANGE_USER_PASSWORD:
                     state.passwordChange = {...state.passwordChange, ...(action.props ?? {})};

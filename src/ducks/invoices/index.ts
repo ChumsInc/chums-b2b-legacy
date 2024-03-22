@@ -1,11 +1,11 @@
-import {FETCH_INIT, FETCH_INVOICE, FETCH_SUCCESS, SELECT_INVOICE} from "../../constants/actions";
 import {createReducer} from "@reduxjs/toolkit";
-import {invoicesSorter, isInvoice, isInvoiceHeader} from "./utils";
+import {invoicesSorter, isInvoice} from "./utils";
 import {
     loadInvoice,
     loadInvoices,
     setInvoicesFilterSearch,
-    setInvoicesFilterShipToCode, setInvoicesSort,
+    setInvoicesFilterShipToCode,
+    setInvoicesSort,
     setShowPaidInvoices
 } from "./actions";
 import {customerSlug} from "../../utils/customer";
@@ -13,10 +13,9 @@ import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {InvoicesState} from "./types";
 import {SortProps} from "../../types/generic";
-import {InvoiceHeader} from "b2b-types";
-import {isDeprecatedFetchInvoiceAction, isDeprecatedSelectInvoiceAction} from "../../types/actions";
+import {InvoiceHistoryHeader} from "b2b-types";
 
-export const defaultSort: SortProps<InvoiceHeader> = {
+export const defaultSort: SortProps<InvoiceHistoryHeader> = {
     field: 'InvoiceNo',
     ascending: false,
 }
@@ -65,7 +64,7 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
                 .filter(inv => inv.InvoiceNo === action.meta.arg.InvoiceNo && inv.InvoiceType === action.meta.arg.InvoiceType);
             if (invoice) {
                 if (!isInvoice(invoice)) {
-                    state.invoice = {...invoice, Detail: [], Tracking: [], Payments: []}
+                    state.invoice = {...invoice, Detail: [], Track: [], Payments: []}
                 } else {
                     state.invoice = invoice;
                 }
@@ -106,9 +105,12 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
             }
         })
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload.loggedIn) {
+            if (!action.payload?.loggedIn) {
                 state.list = [];
                 state.invoice = null;
+                state.filters.search = '';
+                state.filters.shipToCode = null;
+                state.customerKey = null;
             }
         })
         .addCase(setUserAccess.pending, (state, action) => {
@@ -132,32 +134,6 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
         })
         .addCase(setInvoicesSort, (state, action) => {
             state.sort = action.payload;
-        })
-        .addDefaultCase((state, action) => {
-            switch (action.type) {
-                case FETCH_INVOICE:
-                    if (isDeprecatedFetchInvoiceAction(action)) {
-                        state.invoiceLoading = action.status === FETCH_INIT;
-                        if (action.status === FETCH_SUCCESS) {
-                            state.list = [
-                                ...state.list.filter(inv => inv.InvoiceNo !== action.invoice?.InvoiceNo),
-                                action.invoice
-                            ].sort(invoicesSorter(defaultSort));
-                            state.invoice = action.invoice ?? null;
-                        }
-                    }
-                    return;
-                case SELECT_INVOICE:
-                    if (isDeprecatedSelectInvoiceAction(action)) {
-                        if (isInvoiceHeader(action.invoice)) {
-                            state.invoice = {...action.invoice, Detail: [], Payments: [], Tracking: []};
-                        } else {
-                            state.invoice = action.invoice ?? null;
-                        }
-                    }
-                    return;
-
-            }
         })
 })
 

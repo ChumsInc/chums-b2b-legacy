@@ -1,14 +1,14 @@
 import React, {useEffect} from 'react';
 import {useSelector} from "react-redux";
-import {loadCustomer} from '../actions';
+import {loadCustomer, setReturnToPath} from '../actions';
 import AccountBreadcrumbs from "./AccountBreadcrumbs";
 import {
     selectCustomerAccount,
     selectCustomerLoading,
     selectCustomerLoaded,
-    selectCustomerLoadStatus
+    selectCustomerLoadStatus, selectCustomerReturnToPath
 } from "../selectors";
-import {useNavigate, useParams} from "react-router";
+import {useLocation, useNavigate, useParams} from "react-router";
 import DocumentTitle from "../../../components/DocumentTitle";
 import AccountTabs from "./AccountTabs";
 import {useAppDispatch} from "../../../app/configureStore";
@@ -16,6 +16,7 @@ import {generatePath, Outlet, redirect} from "react-router-dom";
 import {billToCustomerSlug, customerSlug, isSameCustomer, parseCustomerSlug} from "../../../utils/customer";
 import {PATH_PROFILE} from "../../../constants/paths";
 import Typography from "@mui/material/Typography";
+import ReturnToAlert from "./ReturnToAlert";
 
 const AccountPage = () => {
     const dispatch = useAppDispatch();
@@ -25,6 +26,12 @@ const AccountPage = () => {
     const loadStatus = useSelector(selectCustomerLoadStatus);
     const loaded = useSelector(selectCustomerLoaded);
     const loading = useSelector(selectCustomerLoading);
+
+    useEffect(() => {
+        return () => {
+            dispatch(setReturnToPath(null));
+        }
+    }, []);
 
     useEffect(() => {
         const nextCustomer = parseCustomerSlug(params.customerSlug ?? '');
@@ -62,6 +69,7 @@ const AccountPage = () => {
         <div>
             <DocumentTitle documentTitle={customer?.CustomerName ?? ''}/>
             <AccountBreadcrumbs/>
+            <ReturnToAlert />
             <Typography variant="h1" component="h1" >{customer?.CustomerName}</Typography>
             <AccountTabs/>
             <Outlet/>

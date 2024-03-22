@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import AccountButtons from "./AccountButtons";
 import UserProfile from "./UserProfile";
 import {DOCUMENT_TITLES} from '../../../constants/paths';
 import DocumentTitle from "../../../components/DocumentTitle";
-import {useAppSelector} from "../../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {
     selectAccessListLoading,
     selectCurrentAccess,
@@ -12,12 +12,22 @@ import {
 } from "../selectors";
 import LinearProgress from "@mui/material/LinearProgress";
 import Container from "@mui/material/Container";
+import {useLocation} from "react-router";
+import {setReturnToPath} from "../../customer/actions";
 
 const ProfilePage = () => {
+    const dispatch = useAppDispatch();
     const loading = useAppSelector(selectAccessListLoading);
     const customerAccounts = useAppSelector(selectCustomerAccessList);
     const repAccounts = useAppSelector(selectRepAccessList);
     const currentAccess = useAppSelector(selectCurrentAccess);
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.state?.returnTo) {
+            dispatch(setReturnToPath(location.state.returnTo));
+        }
+    }, []);
 
     return (
         <Container maxWidth="lg">

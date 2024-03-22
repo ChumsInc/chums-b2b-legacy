@@ -37,11 +37,17 @@ import {useMatch, useNavigate} from "react-router";
 import {generatePath} from "react-router-dom";
 import {customerSlug} from "../../../utils/customer";
 import AlertList from "../../alerts/AlertList";
-import {selectDetailChanged, selectSalesOrder, selectSalesOrderActionStatus} from "../../open-orders/selectors";
+import {
+    selectDetailChanged,
+    selectSalesOrder,
+    selectSalesOrderActionStatus,
+    selectSalesOrderDetail
+} from "../../open-orders/selectors";
 import SendEmailButton from "../../open-orders/components/SendEmailButton";
 import ItemAutocomplete from "../../item-lookup/ItemAutocomplete";
 import CartCommentInput from "./CartCommentInput";
 import Divider from "@mui/material/Divider";
+import Decimal from "decimal.js";
 
 const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -49,6 +55,7 @@ const CartOrderHeaderElement = () => {
     const customer = useSelector(selectCustomerAccount);
     const cartNo = useAppSelector(selectCartNo);
     const header = useAppSelector((state) => selectSalesOrder(state, match?.params.salesOrderNo ?? ''));
+    const detail = useAppSelector((state) => selectSalesOrderDetail(state, match?.params.salesOrderNo ?? ''));
     const detailChanged = useAppSelector((state: RootState) => selectDetailChanged(state, header?.SalesOrderNo ?? ''));
     const loadingStatus = useAppSelector(state => selectSalesOrderActionStatus(state, match?.params.salesOrderNo ?? ''));
     const shippingAccount = useSelector(selectShippingAccount);
@@ -194,8 +201,45 @@ const CartOrderHeaderElement = () => {
         }
         if (cartProgress < cartProgress_Confirm) {
             const next = validateForm(cartProgress);
+            if (global.window.gtag) {
+                switch (next) {
+                    case cartProgress_Delivery:
+                        global.window.gtag('event', 'begin_checkout', {
+                            currency: "USD",
+                            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt)
+                        })
+                        break;
+                    case cartProgress_Payment:
+                        global.window.gtag('event', 'add_shipping_info', {
+                            currency: "USD",
+                            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt),
+                            shipping_tier: cartHeader.ShipVia,
+                        })
+                        break;
+                    case cartProgress_Confirm:
+                        global.window.gtag('event', 'add_payment_info', {
+                            currency: "USD",
+                            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt),
+                            payment_type: cartHeader.PaymentType,
+                        })
+                        break;
+                }
+
+            }
             setCartProgress(next);
             return;
+        }
+        if (global.window.gtag) {
+            global.window.gtag('event', 'purchase', {
+                currency: "USD",
+                value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt),
+                items: detail.filter(item => item.ItemType !== '4').map(item => ({
+                    item_id: item.ItemCode,
+                    item_name: item.ItemCodeDesc,
+                    price: item.UnitPrice,
+                    quantity: item.QuantityOrdered,
+                }))
+            })
         }
         await dispatch(promoteCart(cartHeader));
         navigate(generatePath('/account/:customerSlug/orders/:salesOrderNo', {

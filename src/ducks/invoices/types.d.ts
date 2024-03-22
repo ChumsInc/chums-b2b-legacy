@@ -1,21 +1,21 @@
-import {Invoice, InvoiceHeader, CustomerKey} from "b2b-types";
+import {CustomerKey, ExtendedInvoice, InvoiceHistoryHeader} from "b2b-types";
 import {SortProps} from "../../types/generic";
 
 export interface InvoicesState {
-    customerKey: string|null;
-    list: InvoiceHeader[];
-    invoice: Invoice | null;
+    customerKey: string | null;
+    list: InvoiceHistoryHeader[];
+    invoice: ExtendedInvoice | null;
     loading: boolean;
     loaded: boolean;
     invoiceLoading: boolean;
     filters: {
         showPaidInvoices: boolean;
-        shipToCode: string|null;
+        shipToCode: string | null;
         search: string;
     }
-    sort: SortProps<InvoiceHeader>
+    sort: SortProps<InvoiceHistoryHeader>
 }
 
 
-export type FetchInvoiceArg = Pick<InvoiceHeader, 'InvoiceNo'|'InvoiceType'>;
+export type FetchInvoiceArg = Pick<InvoiceHistoryHeader, 'InvoiceNo' | 'InvoiceType'>;
 export type FetchInvoicesArg = CustomerKey;

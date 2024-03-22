@@ -43,7 +43,7 @@ export const initialUserState = (preload: PreloadedState = {}): CustomersState =
 export const customersReducer = createReducer(initialUserState, builder => {
     builder
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload) {
+            if (!action.payload?.loggedIn) {
                 state.list = [];
                 state.recent = [];
             }
@@ -57,7 +57,8 @@ export const customersReducer = createReducer(initialUserState, builder => {
             state.list = action.payload.sort(customerListSorter({field: 'CustomerNo', ascending: true}))
         })
         .addCase(loadCustomerList.rejected, (state, action) => {
-            state.list = []
+            state.list = [];
+            state.loading = false;
         })
         .addCase(setUserAccess.pending, (state, action) => {
             if (state.key !== action.meta.arg?.id) {

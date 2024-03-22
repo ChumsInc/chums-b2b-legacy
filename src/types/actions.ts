@@ -7,7 +7,7 @@ import {
     CartProduct,
     SalesOrderHeader,
     SalesOrder,
-    SalesOrderDetailLine, InvoiceHeader, Invoice
+    SalesOrderDetailLine, InvoiceHeader, Invoice, ExtendedInvoice, InvoiceHistoryHeader
 } from "b2b-types";
 import {EmptyObject} from "./generic";
 import {AlertColor} from '@mui/material/Alert'
@@ -88,23 +88,8 @@ export interface DeprecatedUpdateCartItemAction extends UnknownAction {
     prop: Partial<SalesOrderDetailLine>;
 }
 
-export interface DeprecatedFetchInvoiceAction extends DeprecatedAsyncAction {
-    type: 'FETCH_INVOICE',
-    invoice: Invoice;
-}
 
-export function isDeprecatedFetchInvoiceAction(action:UnknownAction|DeprecatedFetchInvoiceAction): action is DeprecatedFetchInvoiceAction {
-    return action.type === "FETCH_INVOICE";
-}
 
-export interface DeprecatedSelectInvoiceAction extends UnknownAction {
-    type: 'SELECT_INVOICE';
-    invoice: Invoice|InvoiceHeader;
-}
-
-export function isDeprecatedSelectInvoiceAction(action:UnknownAction|DeprecatedSelectInvoiceAction): action is DeprecatedSelectInvoiceAction {
-    return action.type === 'SELECT_INVOICE';
-}
 
 export interface DeprecatedAppendOrderCommentAction extends UnknownAction {
     type: 'APPEND_ORDER_COMMENT';

@@ -3,6 +3,7 @@ import {PreloadedState} from "../../types/preload";
 import {PromoCode} from "b2b-types";
 import {loadPromoCode, loadPromoCodes} from "./actions";
 import {promoCodeSorter} from "./utils";
+import {setLoggedIn} from "../user/actions";
 
 
 export interface PromoCodeState {
@@ -43,6 +44,12 @@ const promoCodeReducer = createReducer(initialPromoCodeState, (builder) => {
                 list.push(action.payload);
             }
             state.list = list.sort(promoCodeSorter);
+        })
+        .addCase(setLoggedIn, (state, action) => {
+            if (!action.payload?.loggedIn) {
+                state.list = [];
+                state.current = null;
+            }
         });
 });
 

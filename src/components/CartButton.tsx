@@ -6,6 +6,7 @@ import {useAppDispatch} from "../app/configureStore";
 import {setCurrentCart} from "../ducks/cart/actions";
 import IconButton from "@mui/material/IconButton";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 export const CartButton = ({salesOrderNo}: {
     salesOrderNo: string;
@@ -25,7 +26,8 @@ export const CartButton = ({salesOrderNo}: {
         <IconButton color={currentCart === salesOrderNo ? 'primary' : 'default'}
                 title={currentCart === salesOrderNo ? 'Current Cart' : 'Make this the current cart'}
                 onClick={clickHandler}>
-            <ShoppingCartIcon />
+            {currentCart !== salesOrderNo && (<ShoppingCartOutlinedIcon/>)}
+            {currentCart === salesOrderNo && (<ShoppingCartIcon/>)}
         </IconButton>);
 };
 

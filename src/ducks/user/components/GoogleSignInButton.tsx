@@ -31,7 +31,7 @@ const GoogleSignInButton = () => {
                     type: 'standard',
                 }
             );
-            window.google.accounts.id.prompt()
+            // window.google.accounts.id.prompt()
         }
     }, [])
 

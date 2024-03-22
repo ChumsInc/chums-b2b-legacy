@@ -1,7 +1,7 @@
-import {Salesperson} from 'b2b-types'
+import {Salesperson, UserProfile} from 'b2b-types'
 import {
     API_PATH_LOGIN_GOOGLE,
-    API_PATH_LOGIN_LOCAL,
+    API_PATH_LOGIN_LOCAL, API_PATH_LOGIN_LOCAL_REAUTH,
     API_PATH_PASSWORD_RESET,
     API_PATH_PROFILE,
     API_PATH_REP_LIST, API_PATH_USER_SIGN_UP
@@ -32,6 +32,20 @@ export async function postLocalLogin(arg: LocalAuth): Promise<string> {
     }
 }
 
+export async function postLocalReauth():Promise<string> {
+    try {
+        const res = await fetchJSON<{token: string}>(API_PATH_LOGIN_LOCAL_REAUTH, {method: 'POST'});
+        return res.token;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("postLocalReauth()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("postLocalReauth()", err);
+        return Promise.reject(new Error('Error in postLocalReauth()'));
+    }
+}
+
 export async function fetchUserProfile(): Promise<UserProfileResponse> {
     try {
         const response = await fetchJSON<FunkyUserProfileResponse>(API_PATH_PROFILE);
@@ -48,6 +62,26 @@ export async function fetchUserProfile(): Promise<UserProfileResponse> {
         }
         console.debug("fetchUserProfile()", err);
         return Promise.reject(new Error('Error in fetchUserProfile()'));
+    }
+}
+
+export async function postUserProfile(arg:Pick<UserProfile, 'name'>):Promise<UserProfileResponse> {
+    try {
+        const body = JSON.stringify(arg);
+        const response = await fetchJSON<FunkyUserProfileResponse>(API_PATH_PROFILE, {method: 'PUT', body});
+        response.reps = [];
+        response.roles = response.roles?.map(role => isUserRole(role) ? role.role : role);
+        if (response.user?.accountType === 1) {
+            response.reps = await fetchRepList();
+        }
+        return response as UserProfileResponse;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("postUserProfile()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("postUserProfile()", err);
+        return Promise.reject(new Error('Error in postUserProfile()'));
     }
 }
 

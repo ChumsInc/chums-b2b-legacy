@@ -66,9 +66,10 @@ export const initialProductsState = (preload: PreloadedState = {}): ProductsStat
 const productsReducer = createReducer(initialProductsState, (builder) => {
     builder
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload) {
+            if (!action.payload?.loggedIn) {
                 state.customerKey = null;
                 state.pricing = [];
+                state.customerPrice = [];
             }
         })
         .addCase(loadCustomer.pending, (state) => {

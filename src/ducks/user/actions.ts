@@ -3,15 +3,13 @@ import {
     CHANGE_USER_PASSWORD,
     FETCH_FAILURE,
     FETCH_INIT,
-    FETCH_LOCAL_LOGIN,
     FETCH_SUCCESS,
     FETCH_USER_SIGNUP,
     SET_LOGGED_IN,
-    UPDATE_LOGIN,
 } from "../../constants/actions";
 
 import {handleError} from '../app/actions';
-import {setAlert} from '../alerts';
+import {setAlert} from '../alerts/actions';
 
 import localStore from '../../utils/LocalStore';
 import {
@@ -25,21 +23,33 @@ import {
 } from '../../constants/stores';
 
 import {auth} from '../../api/IntranetAuthService';
-import {getProfile, getSignInProfile, getTokenExpirationDate} from "../../utils/jwtHelper";
+import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {
     API_PATH_CHANGE_PASSWORD,
-    API_PATH_LOGIN_LOCAL_REAUTH,
     API_PATH_LOGOUT,
-    API_PATH_PASSWORD_RESET,
     API_PATH_USER_SET_PASSWORD,
     API_PATH_USER_SIGN_UP
 } from "../../constants/paths";
 import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../../constants/app";
-import {selectLoggedIn, selectResettingPassword, selectUserAccount, selectUserLoading} from "./selectors";
-import {fetchGoogleLogin, fetchUserProfile, postLocalLogin, postResetPassword} from "../../api/user";
+import {
+    selectAuthType,
+    selectLoggedIn,
+    selectLoggingIn,
+    selectResettingPassword,
+    selectUserAccount,
+    selectUserLoading
+} from "./selectors";
+import {
+    fetchGoogleLogin,
+    fetchUserProfile,
+    postLocalLogin,
+    postLocalReauth,
+    postResetPassword,
+    postUserProfile
+} from "../../api/user";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {SetLoggedInProps, UserLoginState, UserPasswordState, UserProfileResponse} from "./types";
+import {SetLoggedInProps, UserPasswordState, UserProfileResponse} from "./types";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
 import {isCustomerAccess} from "./utils";
@@ -50,99 +60,52 @@ let reauthTimer: number = 0;
 
 export const setLoggedIn = createAction<SetLoggedInProps>('user/setLoggedIn');
 
-// export const setLoggedIn = ({loggedIn, authType, token}) => ({type: SET_LOGGED_IN, loggedIn, authType, token});
 
-export const updateLogin = (props: Partial<UserLoginState>) => ({type: UPDATE_LOGIN, props});
-
-
-export const loginUser = ({email, password}: {
+export interface LoginUserProps {
     email: string;
-    password: string
-}) => async (dispatch: AppDispatch) => {
-    try {
-        dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_INIT});
-        const token = await postLocalLogin({email, password});
-        localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
+    password: string;
+}
+
+export const loginUser = createAsyncThunk<void, LoginUserProps>(
+    'user/login',
+    async (arg, {dispatch}) => {
+        const token = await postLocalLogin(arg);
         auth.setToken(token);
+        localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
         auth.setProfile(getProfile(token));
         dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
         dispatch(loadProfile());
-    } catch (err: unknown) {
-        if (err instanceof Error) {
-            console.debug("loginUser()", err.message);
-            dispatch(setAlert({message: err.message, context: FETCH_LOCAL_LOGIN}));
-            dispatch(handleError(err ?? new Error(err), FETCH_LOCAL_LOGIN));
-            dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_FAILURE});
-            localStore.removeItem(STORE_TOKEN);
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return !!arg.email && !!arg.password && !selectLoggingIn(state);
         }
     }
-};
+)
 
-export const updateLocalAuth = (forceReAuth = false) => (dispatch: AppDispatch, getState: () => RootState) => {
-    clearTimeout(reauthTimer);
-    const {user} = getState();
-    const {loggedIn, authType} = user;
-    const token = auth.getToken();
-    if (!loggedIn || authType !== AUTH_LOCAL || !token) {
-        return;
-    }
-
-
-    const expirationDate = getTokenExpirationDate(token)?.valueOf() ?? 0;
-    const now = new Date().valueOf();
-    if (expirationDate <= now) {
-        return;
-    }
-    const expiresIn = expirationDate - now;
-
-    const retry = 60 * 1000; // 60 seconds
-
-    if (!forceReAuth) {
-        console.log('updateLocalAuth():!forceAuth');
-        // sleep until 5 minutes out.
-        if (expiresIn > 5 * 60 * 1000) {
-            reauthTimer = window.setTimeout(() => {
-                dispatch(updateLocalAuth())
-            }, retry);
-            return;
-        }
-    }
-
-    dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_INIT});
-    fetchPOST(API_PATH_LOGIN_LOCAL_REAUTH)
-        .then(({token, error}) => {
-            dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_SUCCESS});
-            if (error) {
-                dispatch(setAlert({message: error, context: FETCH_LOCAL_LOGIN}));
-                return;
-            }
+export const updateLocalAuth = createAsyncThunk<void, void>(
+    'user/updateLocalAuth',
+    async (_, {dispatch}) => {
+        try {
+            const token = await postLocalReauth();
             auth.setToken(token);
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-            dispatch(loadProfile());
-
-            // trigger an updateLocalAuth so that we start a new reauthTimer
-            dispatch(updateLocalAuth());
-        })
-        .catch(err => {
-            dispatch({type: FETCH_LOCAL_LOGIN, status: FETCH_FAILURE});
+        } catch (err: unknown) {
             dispatch(setLoggedIn({loggedIn: false}));
-            dispatch(handleError(err, FETCH_LOCAL_LOGIN));
             localStore.removeItem(STORE_TOKEN);
-        });
-};
-
-// export const selectUserAccountIfNeeded = (user: UserProfileResponse) => (dispatch: AppDispatch, getState: () => RootState) => {
-//     const currentState = getState();
-//     const currentUserAccountID = isCustomerAccess(currentState.user.access.current) ? currentState.user.access.current.id : null;
-//     if (user.accounts?.filter(acct => acct.id === currentUserAccountID).length === 0) {
-//         const firstCustomer = getFirstCustomer(user.accounts);
-//         const firstUserAccount = getFirstUserAccount(user.accounts);
-//         if (!firstCustomer && !firstUserAccount) {
-//             return;
-//         }
-//         dispatch(setUserAccess(firstUserAccount ?? firstCustomer));
-//     }
-// };
+            return;
+        }
+        dispatch(loadProfile());
+    }, {
+        condition: (_, {getState}) => {
+            const state = getState() as RootState;
+            const loggedIn = selectLoggedIn(state);
+            const authType = selectAuthType(state);
+            return loggedIn && authType === AUTH_LOCAL;
+        }
+    }
+)
 
 export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
     'user/signInWithGoogle',
@@ -175,46 +138,6 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
         }
     }
 )
-
-
-// export const _signInWithGoogle = (token: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-//     try {
-//         const state = getState();
-//         dispatch({type: FETCH_USER_PROFILE, status: FETCH_INIT});
-//         const res = await fetchPOST(API_PATH_LOGIN_GOOGLE, {token});
-//         const {user = {}, roles = [], accounts = []} = res;
-//         user.roles = roles;
-//         user.accounts = accounts;
-//         auth.setToken(token);
-//
-//         const profile = getSignInProfile(token);
-//         auth.setProfile({...profile, chums: {user}});
-//         localStore.setItem(STORE_AUTHTYPE, AUTH_GOOGLE);
-//         clearTimeout(reauthTimer);
-//
-//
-//         dispatch(setLoggedIn({loggedIn: user.id > 0, authType: AUTH_GOOGLE, token}));
-//         dispatch({type: FETCH_USER_PROFILE, status: FETCH_SUCCESS, user});
-//         dispatch(loadRepList());
-//         dispatch(selectUserAccountIfNeeded(user));
-//         const currentCustomer = selectCurrentCustomer(state);
-//         if (!currentCustomer) {
-//             return;
-//         }
-//         if (isCustomer(currentCustomer) && !!currentCustomer.CustomerNo && !isCustomer(selectCustomerAccount(state))) {
-//             dispatch(setCustomerAccount(currentCustomer));
-//             dispatch(loadCustomerAccount({fetchOrders: true}));
-//         }
-//     } catch (err: unknown) {
-//         if (err instanceof Error) {
-//             console.trace(err);
-//             auth.logout();
-//             dispatch(setLoggedIn({loggedIn: false}));
-//             dispatch({type: FETCH_USER_PROFILE, status: FETCH_FAILURE, message: err.message});
-//             dispatch(handleError(err, FETCH_USER_PROFILE));
-//         }
-//     }
-// }
 
 
 export const logout = () => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -346,7 +269,14 @@ export const fetchSignUpUser = ({authKey, authHash}: {
         });
 };
 
-export const submitNewUser = ({email, name, account, accountName, telephone, address}: SignUpUser) => (dispatch: AppDispatch) => {
+export const submitNewUser = ({
+                                  email,
+                                  name,
+                                  account,
+                                  accountName,
+                                  telephone,
+                                  address
+                              }: SignUpUser) => (dispatch: AppDispatch) => {
     dispatch({type: FETCH_USER_SIGNUP, status: FETCH_INIT});
     const url = API_PATH_USER_SIGN_UP.replace(':email', encodeURIComponent(email));
     const body = {email, name, account, accountName, telephone, address};
@@ -391,6 +321,20 @@ export const resetPassword = createAsyncThunk<void, string>(
             return !!arg.trim()
                 && !selectLoggedIn(state)
                 && !selectResettingPassword(state);
+        }
+    }
+)
+
+export const saveUserProfile = createAsyncThunk<UserProfileResponse, Pick<UserProfile, 'name'>>(
+    'user/saveProfile',
+    async (arg) => {
+        return await postUserProfile(arg);
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return !!arg.name.trim()
+                && selectLoggedIn(state);
         }
     }
 )

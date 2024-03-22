@@ -20,12 +20,12 @@ import {
     saveShipToAddress,
     saveUser,
     setCustomerAccount,
-    setDefaultShipTo
+    setDefaultShipTo, setReturnToPath
 } from "./actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {LoadStatus, Selectable} from "../../types/generic";
 import {CustomerPermissions} from "../../types/customer";
-import {dismissContextAlert} from "../alerts";
+import {dismissContextAlert} from "../alerts/actions";
 import {customerResponseToState} from "./utils";
 import {isDeprecatedSetLoggedInAction} from "../../types/actions";
 
@@ -52,6 +52,7 @@ export interface CustomerState {
     saving: boolean;
     loaded: boolean;
     users: (CustomerUser & Selectable & Editable)[];
+    returnToPath: string|null;
 }
 
 export const initialCustomerState = (): CustomerState => ({
@@ -74,6 +75,7 @@ export const initialCustomerState = (): CustomerState => ({
     loaded: false,
     saving: false,
     users: [],
+    returnToPath: null,
 });
 
 const customerReducer = createReducer(initialCustomerState, builder => {
@@ -114,13 +116,16 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.account = {...emptyCustomer, ...action.payload.customer};
         })
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload.loggedIn) {
-                state.account = null;
-                state.contacts = [];
-                state.pricing = [];
-                state.shipToAddresses = [];
-                state.paymentCards = [];
-                state.users = [];
+            if (!action.payload?.loggedIn) {
+                const initialState = initialCustomerState();
+                state.key = initialState.key;
+                state.account = initialState.account;
+                state.contacts = initialState.contacts;
+                state.pricing = initialState.pricing;
+                state.shipToAddresses = initialState.shipToAddresses;
+                state.paymentCards = initialState.paymentCards;
+                state.permissions = initialState.permissions;
+                state.users = initialState.users;
                 state.loaded = false;
             }
         })
@@ -244,7 +249,9 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(loadCustomerPermissions.rejected, (state) => {
             state.permissions.loading = false;
         })
-
+        .addCase(setReturnToPath, (state, action) => {
+            state.returnToPath = action.payload;
+        })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case SET_LOGGED_IN:

@@ -22,7 +22,7 @@ export const initialRepState = (preload:PreloadedState = {}):RepsState => {
 export const repsReducer = createReducer(initialRepState, builder => {
     builder
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload) {
+            if (!action.payload?.loggedIn) {
                 state.list = [];
                 state.loaded = false;
             }

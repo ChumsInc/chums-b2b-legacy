@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import OrderDetailLine from "./OrderDetailLine";
 import SalesOrderTotal from "./SalesOrderTotal";
-import {CartItem, SalesOrderDetailLine} from "b2b-types";
+import {CartItem, CartProduct, SalesOrderDetailLine} from "b2b-types";
 import Dialog from "@mui/material/Dialog";
 import {detailToCartItem} from "../../salesOrder/utils";
 import {
@@ -24,10 +24,17 @@ export default function OrderDetail({salesOrderNo}: {
 }) {
     const detail = useAppSelector((state) => selectSalesOrderDetail(state, salesOrderNo ?? ''));
     const isCart = useAppSelector((state) => selectSalesOrderIsCart(state, salesOrderNo ?? ''));
-    const [cartItem, setCartItem] = useState<CartItem | null>(null)
+    const [cartItem, setCartItem] = useState<CartProduct | null>(null)
+    const [unitOfMeasure, setUnitOfMeasure] = useState<string>('EA');
 
     const addToCartHandler = (line: SalesOrderDetailLine) => {
-        setCartItem(detailToCartItem(line));
+        setUnitOfMeasure(line.UnitOfMeasure);
+        const item = detailToCartItem(line);
+        if (!item) {
+            setCartItem(null);
+            return;
+        }
+        setCartItem({...item, name: line.ItemCodeDesc, productId: 0, image: ''});
     }
 
     const quantityChangeHandler = (quantity: number) => {
@@ -70,12 +77,14 @@ export default function OrderDetail({salesOrderNo}: {
             <Dialog open={open} onClose={() => setCartItem(null)}>
                 <DialogTitle>Add {cartItem?.itemCode} To Cart</DialogTitle>
                 <DialogContent>
-                    <AddToCartForm itemCode={cartItem?.itemCode ?? ''}
-                                   quantity={cartItem?.quantity ?? 1} onChangeQuantity={quantityChangeHandler}
-                                   unitOfMeasure={'EA'}
-                                   excludeSalesOrder={salesOrderNo}
-                                   onDone={() => setCartItem(null)}
-                    />
+                    {!!cartItem && (
+                        <AddToCartForm cartItem={cartItem}
+                                       unitOfMeasure={unitOfMeasure}
+                                       quantity={cartItem?.quantity ?? 1} onChangeQuantity={quantityChangeHandler}
+                                       excludeSalesOrder={salesOrderNo}
+                                       onDone={() => setCartItem(null)}
+                        />
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={() => setCartItem(null)}>Cancel</Button>

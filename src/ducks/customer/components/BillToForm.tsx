@@ -17,7 +17,7 @@ import ErrorBoundary from "../../../common-components/ErrorBoundary";
 import {isBillToCustomer} from "../../../utils/typeguards";
 import Address from "../../../components/Address/Address";
 import {useAppDispatch} from "../../../app/configureStore";
-import {BillToCustomer} from "b2b-types";
+import {BillToCustomer, Editable} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
 import ReloadCustomerButton from "./ReloadCustomerButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
@@ -33,7 +33,7 @@ const BillToForm = () => {
     const loading = useSelector(selectCustomerLoading);
     const canEdit = useSelector(selectCanEdit);
     const permissions = useSelector(selectCustomerPermissions);
-    const [customer, setCustomer] = useState<BillToCustomer | null>(current ?? null);
+    const [customer, setCustomer] = useState<(BillToCustomer & Editable) | null>(current ?? null);
 
     useEffect(() => {
         if (isBillToCustomer(current)) {

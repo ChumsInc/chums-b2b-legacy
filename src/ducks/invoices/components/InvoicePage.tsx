@@ -5,12 +5,12 @@
 
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
-import {deprecated_loadInvoice, loadInvoice} from '../actions';
+import {loadInvoice} from '../actions';
 import InvoiceHeader from "./InvoiceHeader";
 import InvoicePageDetail from "./InvoicePageDetail";
 import DocumentTitle from "../../../components/DocumentTitle";
 import {useAppDispatch} from "../../../app/configureStore";
-import {useMatch, useParams} from "react-router";
+import {useMatch} from "react-router";
 import {selectCurrentInvoice, selectCurrentInvoiceLoading} from "../selectors";
 import {selectCurrentCustomer} from "../../user/selectors";
 import {billToCustomerSlug} from "../../../utils/customer";
@@ -54,7 +54,10 @@ const InvoicePage = () => {
         if (!loading
             && !!match?.params.invoiceNo && !!match.params.invoiceType
             && (!invoice || match.params?.invoiceNo !== invoice.InvoiceNo)) {
-            const arg:FetchInvoiceArg = {InvoiceNo: match.params.invoiceNo, InvoiceType: match.params.invoiceType as InvoiceType};
+            const arg: FetchInvoiceArg = {
+                InvoiceNo: match.params.invoiceNo,
+                InvoiceType: match.params.invoiceType as InvoiceType
+            };
             dispatch(loadInvoice(arg));
         }
     }, [match, invoice]);
@@ -65,7 +68,8 @@ const InvoicePage = () => {
         <div className="sales-order-page">
             <DocumentTitle documentTitle={documentTitle}/>
             <Typography component="h2" variant="h2">{documentTitle}</Typography>
-            {!!invoice && invoice.InvoiceType !== 'IN' && (<Typography component="h3" variant="h3">{invoiceTypeDescription(invoice.InvoiceType)}</Typography>)}
+            {!!invoice && invoice.InvoiceType !== 'IN' && (
+                <Typography component="h3" variant="h3">{invoiceTypeDescription(invoice.InvoiceType)}</Typography>)}
             {loading && <LinearProgress variant="indeterminate"/>}
             <InvoiceHeader/>
             <InvoicePageDetail/>

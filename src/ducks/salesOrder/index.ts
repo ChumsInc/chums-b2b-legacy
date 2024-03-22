@@ -95,7 +95,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             }
         })
         .addCase(setLoggedIn, (state, action) => {
-            if (!action.payload.loggedIn) {
+            if (!action.payload?.loggedIn) {
                 state.salesOrderNo = '';
                 state.header = null;
                 state.detail = [];

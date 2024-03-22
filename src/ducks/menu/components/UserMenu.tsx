@@ -25,6 +25,7 @@ const UserMenu = () => {
     const menuId = useId();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [expired, setExpired] = useState(isExpired(expires));
+    const open = Boolean(anchorEl);
 
     useEffect(() => {
         if (typeof window === 'undefined') {
@@ -44,7 +45,12 @@ const UserMenu = () => {
         }
     }, [expires]);
 
-    const open = Boolean(anchorEl);
+    useEffect(() => {
+        if (open && !isLoggedIn) {
+            setAnchorEl(null);
+        }
+    }, [isLoggedIn]);
+
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -59,13 +65,13 @@ const UserMenu = () => {
             <Menu id={menuId} open={open} onClose={handleClose} anchorEl={anchorEl}
                   MenuListProps={{'aria-labelledby': buttonId}}>
                 {!isLoggedIn && (<MenuItemRouterLink to="/login">Login</MenuItemRouterLink>)}
-                <MenuItemRouterLink to="/profile">Profile</MenuItemRouterLink>
-                {currentAccess && (
+                {isLoggedIn && (<MenuItemRouterLink to="/profile">Profile</MenuItemRouterLink>)}
+                {isLoggedIn && currentAccess && (
                     <MenuItemRouterLink to={generatePath('/profile/:id', {id: `${currentAccess.id}`})}>
                         Accounts
                     </MenuItemRouterLink>
                 )}
-                <MenuItemRouterLink to="/logout">Logout</MenuItemRouterLink>
+                {isLoggedIn && (<MenuItemRouterLink to="/logout">Logout</MenuItemRouterLink>)}
             </Menu>
             {(!isLoggedIn || expired) && typeof window !== 'undefined' && <GoogleSignInOneTap onSignIn={() => setAnchorEl(null)}/>}
         </>

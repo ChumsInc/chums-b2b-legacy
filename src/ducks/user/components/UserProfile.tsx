@@ -1,21 +1,18 @@
-import React, {ChangeEvent, FormEvent, Fragment, useEffect, useId, useState} from 'react';
+import React, {ChangeEvent, FormEvent, useEffect, useId, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {changeUserPassword, loadProfile, logout} from "../actions";
+import {loadProfile, logout, saveUserProfile} from "../actions";
 import {AUTH_LOCAL} from "../../../constants/app";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectAuthType, selectProfilePicture, selectUserLoading, selectUserProfile} from "../selectors";
 import {Editable} from "b2b-types";
 import {ExtendedUserProfile} from "../../../types/user";
 import Stack from "@mui/material/Stack";
-import {ResponsiveImage} from "../../../components/ResponsiveProductImage";
-import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import {Button, TextField} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import Container from "@mui/material/Container";
-import {selectLoading} from "../../menu";
 import LinearProgress from "@mui/material/LinearProgress";
 import Avatar from "@mui/material/Avatar";
+import Alert from "@mui/material/Alert";
 
 const defaultProfilePic = '/images/chums/Chums_Logo_Booby.png';
 
@@ -46,6 +43,10 @@ const UserProfile = () => {
 
     const submitHandler = (ev: FormEvent) => {
         ev.preventDefault();
+        if (!user) {
+            return;
+        }
+        dispatch(saveUserProfile(user));
     }
 
     const changeHandler = (field: keyof EditableUserProfile) => (ev: ChangeEvent<HTMLInputElement>) => {
@@ -65,24 +66,28 @@ const UserProfile = () => {
     return (
         <Grid2 container spacing={3}>
             <Grid2 xs={3} sm={2} sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                <Avatar alt={user?.name} src={imageUrl ?? defaultProfilePic} sx={{width: 80, height: 80}} variant="rounded" />
+                <Avatar alt={user?.name} src={imageUrl ?? defaultProfilePic} sx={{width: 80, height: 80}}
+                        variant="rounded"/>
             </Grid2>
             <Grid2 xs={9} sm={10}>
                 <form onSubmit={submitHandler}>
                     <Typography variant="h3" component="h3" sx={{mb: 5}}>Login Profile</Typography>
-                    {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}} />}
+                    {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
                     <Stack spacing={2} direction="column">
                         <TextField label="Name" type="text" fullWidth variant="filled" size="small"
-                                   value={user?.name ?? ''} onChange={changeHandler('name')} />
+                                   value={user?.name ?? ''} onChange={changeHandler('name')}/>
                         <TextField label="Email Address" type="email" fullWidth variant="filled" size="small"
-                                   value={user?.email ?? ''} onChange={changeHandler('email')} />
+                                   inputProps={{readOnly: true}}
+                                   value={user?.email ?? ''} onChange={changeHandler('email')}/>
+                        {user?.changed && (<Alert severity="warning">Don't forget to save your changes.</Alert>)}
                     </Stack>
                     <Stack direction="row" spacing={2} sx={{mt: 5}} useFlexGap>
                         <Button type="submit" variant="outlined">Save Changes</Button>
                         <Button type="button" variant="text" onClick={refreshHandler}>Refresh</Button>
-                        {authType === AUTH_LOCAL && (<Button type="button" variant="text" onClick={() => setShowModal(!showModal)}>
-                            Change Password
-                        </Button>)}
+                        {authType === AUTH_LOCAL && (
+                            <Button type="button" variant="text" onClick={() => setShowModal(!showModal)}>
+                                Change Password
+                            </Button>)}
                         <Button type="button" variant="text" onClick={logoutHandler} color="error">Logout</Button>
                     </Stack>
                 </form>

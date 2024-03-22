@@ -19,11 +19,13 @@ import {
 } from "../../api/customer";
 import {BasicCustomer, BillToCustomer, CustomerKey, CustomerUser, RecentCustomer, ShipToCustomer} from "b2b-types";
 import {AppDispatch, RootState} from "../../app/configureStore";
-import {createAsyncThunk} from "@reduxjs/toolkit";
+import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {FetchCustomerResponse} from "./types";
 import {loadOpenOrders} from "../open-orders/actions";
 import {CustomerPermissions} from "../../types/customer";
 import {selectRecentCustomers} from "../customers/selectors";
+
+export const setReturnToPath = createAction<string|null>('customer/setReturnTo');
 
 export const saveUser = createAsyncThunk<CustomerUser[], CustomerUser>(
     'customer/saveUser',
@@ -129,11 +131,10 @@ export const saveShipToAddress = createAsyncThunk<FetchCustomerResponse | null, 
 
 export const setDefaultShipTo = createAsyncThunk<void, string>(
     'customer/setDefaultShipTo',
-    async (arg, {dispatch, getState}) => {
+    async (arg, {getState}) => {
         const state = getState() as RootState;
         const customer = selectCustomerAccount(state) as CustomerKey;
         await postDefaultShipToCode(arg, customer);
-        (dispatch as AppDispatch)(loadCustomer(customer));
     },
     {
         condition: (arg, {getState}) => {

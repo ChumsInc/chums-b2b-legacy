@@ -29,18 +29,16 @@ const GoogleSignInOneTap = ({onSignIn}: {
     }
 
     useEffect(() => {
-        if (typeof window === 'undefined') {
+        if (typeof global.window === 'undefined') {
             return;
         }
 
-        if (window?.google && google.accounts?.id) {
+        if (!isLoggedIn && !!window?.google && google.accounts?.id) {
             google.accounts?.id?.initialize({
                 client_id: GOOGLE_CLIENT_ID,
                 callback: handleGoogleResponse,
                 use_fedcm_for_prompt: true,
             });
-        }
-        if (!isLoggedIn && window.google) {
             google.accounts.id.prompt()
         }
         return () => window.clearInterval(timerHandle.current);

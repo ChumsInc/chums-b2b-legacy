@@ -65,6 +65,11 @@ export default function ItemAutocomplete({salesOrderNo}: {
         if (!value) {
             return;
         }
+        if (global?.window?.gtag) {
+            global.window.gtag('event', 'add_to_cart', {
+                items: [{item_id: value.ItemCode, item_name: value.ItemCodeDesc ?? value.ItemCode, quantity: quantity}]
+            })
+        }
         await dispatch(addToCart({
             salesOrderNo: salesOrderNo,
             itemCode: value.ItemCode,
@@ -125,7 +130,9 @@ export default function ItemAutocomplete({salesOrderNo}: {
                        onChange={quantityChangeHandler}
                        InputProps={{
                            endAdornment: (
-                               <InputAdornment position="end">{value?.SalesUnitOfMeasure ?? 'EA'}</InputAdornment>
+                               <InputAdornment position="end">
+                                   {value?.SalesUnitOfMeasure ?? 'EA'}
+                               </InputAdornment>
                            )
                        }}
             />

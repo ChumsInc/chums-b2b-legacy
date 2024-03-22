@@ -1,22 +1,14 @@
-/**
- * Created by steve on 9/6/2016.
- */
 import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
-import {saveShipToAddress, setDefaultShipTo} from '../actions';
+import {loadCustomer, saveShipToAddress, setDefaultShipTo} from '../actions';
 import Alert from "@mui/material/Alert";
-import ShipToAddressFormFields from "../../../components/ShipToAddressFormFields";
+import ShipToAddressFormFields from "./ShipToAddressFormFields";
 import {selectCanEdit} from "../../user/selectors";
-import {
-    selectCustomerLoading,
-    selectCustomerPermissions,
-    selectPermittedShipToAddresses,
-    selectPrimaryShipTo
-} from "../selectors";
+import {selectCustomerLoading, selectPermittedShipToAddresses, selectPrimaryShipTo} from "../selectors";
 import StoreMapToggle from "../../../components/StoreMapToggle";
 import {Editable, ShipToCustomer} from "b2b-types";
 import {useAppDispatch} from "../../../app/configureStore";
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import DeliveryAddress from "../../../components/Address/DeliveryAddress";
 import LinearProgress from "@mui/material/LinearProgress";
 import ReloadCustomerButton from "./ReloadCustomerButton";
@@ -26,8 +18,10 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import EmailAddressEditor from "../../../components/EmailAddressEditor";
 import TelephoneFormFields from "./TelephoneFormFields";
-import Box from "@mui/material/Box";
 import PrimaryShipToIcon from "./PrimaryShipToIcon";
+import {generatePath} from "react-router-dom";
+import {customerSlug} from "../../../utils/customer";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 
 const ShipToForm = () => {
     const dispatch = useAppDispatch();
@@ -35,16 +29,18 @@ const ShipToForm = () => {
     const primaryShipTo = useSelector(selectPrimaryShipTo);
     const loading = useSelector(selectCustomerLoading);
     const canEdit = useSelector(selectCanEdit);
-    const permissions = useSelector(selectCustomerPermissions);
     const params = useParams<'shipToCode'>();
     const [shipTo, setShipTo] = useState<ShipToCustomer & Editable | null>(null);
+    const navigate = useNavigate();
 
     const readOnly = !canEdit;
 
     useEffect(() => {
-        const [shipTo] = shipToAddresses.filter(row => row.ShipToCode === params.shipToCode);
-        setShipTo(shipTo ?? null);
-    }, [shipToAddresses, params])
+        if (!loading) {
+            const [shipTo] = shipToAddresses.filter(row => row.ShipToCode === params.shipToCode);
+            setShipTo(shipTo ?? null);
+        }
+    }, [shipToAddresses, params, loading])
 
 
     const onNewShipToCustomer = () => {
@@ -73,10 +69,15 @@ const ShipToForm = () => {
         }
     }
 
-    const onSetDefaultShipTo = () => {
+    const onSetDefaultShipTo = async () => {
         if (shipTo && shipTo.ShipToCode !== primaryShipTo?.ShipToCode) {
-            dispatch(setDefaultShipTo(shipTo.ShipToCode))
+            await dispatch(setDefaultShipTo(shipTo.ShipToCode))
+            dispatch(loadCustomer(shipTo));
         }
+    }
+
+    const cancelHandler = () => {
+        navigate(generatePath('/account/:customerSlug/delivery', {customerSlug: customerSlug(shipTo)}));
     }
 
     if (!canEdit) {
@@ -94,7 +95,7 @@ const ShipToForm = () => {
             {loading && <LinearProgress variant="indeterminate"/>}
             {shipTo && (
                 <form onSubmit={submitHandler}>
-                    <Grid2 container spacing={2}>
+                    <Grid2 container spacing={2} alignItems="center">
                         <Grid2 xs={12} md={6}>
                             <TextField variant="filled" label="Location Name" fullWidth size="small"
                                        type="text" value={shipTo.ShipToName ?? ''}
@@ -104,6 +105,7 @@ const ShipToForm = () => {
                         <Grid2 xs={12} md={6} alignItems="center">
                             {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
                                 <Button type="button" variant="outlined"
+                                        startIcon={<LocalShippingIcon/>}
                                         disabled={shipTo.changed || readOnly || shipTo.ShipToCode === primaryShipTo?.ShipToCode}
                                         onClick={onSetDefaultShipTo}>
                                     Set as default delivery location
@@ -111,7 +113,7 @@ const ShipToForm = () => {
                             )}
                             {primaryShipTo?.ShipToCode === shipTo.ShipToCode && (
                                 <Stack direction="row" spacing={2} alignItems="center">
-                                    <PrimaryShipToIcon shipToCode={shipTo.ShipToCode} />
+                                    <PrimaryShipToIcon shipToCode={shipTo.ShipToCode}/>
                                     <Typography variant="body1">Default delivery location</Typography>
                                 </Stack>
 
@@ -121,8 +123,7 @@ const ShipToForm = () => {
                     <hr/>
                     <Grid2 container spacing={2}>
                         <Grid2 xs={12} md={6}>
-                            <ShipToAddressFormFields address={shipTo} readOnly={readOnly} onChange={changeHandler}
-                                                     colWidth={8}/>
+                            <ShipToAddressFormFields address={shipTo} readOnly={readOnly} onChange={changeHandler}/>
                         </Grid2>
                         <Grid2 xs={12} md={6}>
                             <Stack direction="column" spacing={2}>
@@ -130,7 +131,7 @@ const ShipToForm = () => {
                                                 onChange={fieldChangeHandler('Reseller')}
                                                 readOnly={readOnly}/>
                                 <EmailAddressEditor label="Email Address"
-                                                    required={true} readOnly={!canEdit}
+                                                    readOnly={!canEdit}
                                                     value={shipTo.EmailAddress}
                                                     onChange={changeHandler}/>
                                 <TelephoneFormFields account={shipTo} onChange={changeHandler} readOnly={!canEdit}/>
@@ -138,12 +139,13 @@ const ShipToForm = () => {
                                     <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>
                                 )}
                             </Stack>
-                            <Stack direction="row" spacing={2} sx={{my: 3}}>
+                            <Stack direction="row" spacing={2} sx={{my: 3}} justifyContent="flex-end">
+                                <Button type="button" onClick={cancelHandler}>Cancel</Button>
+                                <ReloadCustomerButton/>
                                 <Button type="submit" variant="contained"
                                         disabled={readOnly || loading}>
                                     Save
                                 </Button>
-                                <ReloadCustomerButton/>
                             </Stack>
                         </Grid2>
                     </Grid2>

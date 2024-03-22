@@ -119,9 +119,8 @@ const ProductPage = ({keyword}: {
                             <>
                                 {isProduct(selectedProduct) && isCartProduct(cartItem)
                                     && isBillToCustomer(customerAccount) && selectedProduct.availableForSale && (
-                                        <AddToCartForm quantity={cartItem?.quantity ?? 1} itemCode={cartItem.itemCode}
-                                                       setGlobalCart
-                                                       unitOfMeasure={cartItem.salesUM ?? 'EA'}
+                                        <AddToCartForm quantity={cartItem?.quantity ?? 1} cartItem={cartItem}
+                                                       setGlobalCart unitOfMeasure={cartItem.salesUM ?? 'EA'}
                                                        season_code={season_code} season_available={season_available}
                                                        disabled={!customerAccount?.TaxSchedule}
                                                        onChangeQuantity={onChangeQuantity} onDone={noop} comment=""/>

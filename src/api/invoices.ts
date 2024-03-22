@@ -1,17 +1,14 @@
 import {fetchGET} from "../utils/fetch";
 import {FetchInvoiceArg, FetchInvoicesArg} from "../ducks/invoices/types";
-import {Invoice, InvoiceHeader} from "b2b-types";
+import {ExtendedInvoice, Invoice, InvoiceHeader, InvoiceHistoryHeader} from "b2b-types";
 import {fetchJSON} from "./fetch";
 import {InvoiceTracking} from "b2b-types/src/invoice";
 
-export interface InvoiceResponse extends Invoice {
-    Track?: InvoiceTracking[];
-}
 export interface FetchInvoiceResponse {
-    invoice: InvoiceResponse|null;
+    invoice: ExtendedInvoice|null;
 }
 
-export async function fetchInvoice(arg:FetchInvoiceArg):Promise<Invoice|null> {
+export async function fetchInvoice(arg:FetchInvoiceArg):Promise<ExtendedInvoice|null> {
     try {
         const url = '/api/sales/invoice/chums/:InvoiceType/:InvoiceNo'
             .replace(':InvoiceType', encodeURIComponent(arg.InvoiceType ?? 'IN'))
@@ -20,9 +17,7 @@ export async function fetchInvoice(arg:FetchInvoiceArg):Promise<Invoice|null> {
         if (!response?.invoice || !response?.invoice?.InvoiceNo) {
             return Promise.reject(new Error(`Invoice '${arg.InvoiceNo}-${arg.InvoiceType}' was not found`));
         }
-        if (response.invoice.Track) {
-            response.invoice.Tracking = response.invoice.Track;
-        }
+
         return response.invoice;
     } catch(err) {
         if (err instanceof Error) {
@@ -35,7 +30,7 @@ export async function fetchInvoice(arg:FetchInvoiceArg):Promise<Invoice|null> {
 }
 
 
-export async function fetchInvoices(arg:FetchInvoicesArg):Promise<InvoiceHeader[]> {
+export async function fetchInvoices(arg:FetchInvoicesArg):Promise<InvoiceHistoryHeader[]> {
     try {
         const url = '/api/sales/b2b/invoices/chums/:ARDivisionNo-:CustomerNo'
             .replace(':ARDivisionNo', encodeURIComponent(arg.ARDivisionNo))

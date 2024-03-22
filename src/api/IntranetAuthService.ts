@@ -21,7 +21,11 @@ export class AuthService extends EventEmitter {
         return LocalStore.getItem<StoredProfile|null>(STORE_PROFILE, null);
     }
 
-    setProfile(profile: StoredProfile) {
+    setProfile(profile: StoredProfile|null) {
+        if (!profile) {
+            LocalStore.removeItem(STORE_PROFILE);
+            return;
+        }
         // Saves profile data to localStorage
         LocalStore.setItem(STORE_PROFILE, profile);
         // Triggers profile_updated event to update the UI

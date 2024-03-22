@@ -1,15 +1,15 @@
 import {defaultSort} from "./index";
 import Decimal from "decimal.js";
-import {Invoice, InvoiceHeader} from "b2b-types";
+import {ExtendedInvoice, Invoice, InvoiceHeader, InvoiceHistoryHeader} from "b2b-types";
 import {SortProps} from "../../types/generic";
 
-export const invoiceTotal = (invoice: InvoiceHeader): Decimal => {
+export const invoiceTotal = (invoice: InvoiceHistoryHeader): Decimal => {
     return new Decimal(invoice.TaxableSalesAmt ?? 0).add(invoice.NonTaxableSalesAmt ?? 0).sub(invoice.DiscountAmt ?? 0);
 }
 
 
-export const invoicesSorter = (sort: SortProps<InvoiceHeader> = defaultSort) =>
-    (a: InvoiceHeader, b: InvoiceHeader) => {
+export const invoicesSorter = (sort: SortProps<InvoiceHistoryHeader> = defaultSort) =>
+    (a: InvoiceHistoryHeader, b: InvoiceHistoryHeader) => {
         const sortMod = sort.ascending ? 1 : -1;
         switch (sort.field) {
             case 'InvoiceDate':
@@ -37,10 +37,10 @@ export const invoicesSorter = (sort: SortProps<InvoiceHeader> = defaultSort) =>
         }
     }
 
-export function isInvoiceHeader(invoice:Invoice|InvoiceHeader|null): invoice is InvoiceHeader {
-    return !!invoice && (invoice as Invoice).Detail === undefined;
+export function isInvoiceHeader(invoice: ExtendedInvoice | InvoiceHistoryHeader | null): invoice is InvoiceHistoryHeader {
+    return !!invoice && (invoice as ExtendedInvoice).Detail === undefined;
 }
 
-export function isInvoice(invoice:Invoice|InvoiceHeader|null): invoice is Invoice {
-    return !!invoice && 'undefined' !== typeof(invoice as Invoice).Detail;
+export function isInvoice(invoice: ExtendedInvoice | InvoiceHistoryHeader | null): invoice is ExtendedInvoice {
+    return !!invoice && 'undefined' !== typeof (invoice as ExtendedInvoice).Detail;
 }
