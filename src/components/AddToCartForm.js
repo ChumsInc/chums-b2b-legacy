@@ -166,10 +166,10 @@ class AddToCartForm extends Component {
                 )}
                 <FormGroup colWidth={8} label="Quantity">
                     <CartQuantityInput quantity={quantity} onChange={this.onChangeQuantity}
-                                       disabled={this.props.disabled}
+                                       disabled={this.props.disabled || loading}
                                        onAddToCart={this.onAddToCart}/>
                 </FormGroup>
-                {loading && <ProgressBar striped height={5}/>}
+                {loading && <ProgressBar striped height={10}/>}
                 {!!cartMessage && <Alert type="alert-success">{cartMessage}</Alert>}
             </form>
         );
