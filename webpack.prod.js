@@ -17,7 +17,9 @@ module.exports = merge(common, {
                     parse: {ecma: 8},
                     compress: {ecma: 5, warnings: false, inline: 2},
                     mangle: {safari10: true},
-                    output: {ecma: 5, comments: false, ascii_only: true}
+                    output: {ecma: 5, comments: false, ascii_only: true},
+                    keep_fnames: true,
+                    keep_classnames: true,
                 },
                 parallel: true,
                 extractComments: false,
