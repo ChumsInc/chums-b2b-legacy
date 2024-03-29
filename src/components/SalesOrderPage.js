@@ -26,7 +26,7 @@ import {
     selectSalesOrderNo,
     selectSendingEmailStatus
 } from "../selectors/salesOrder";
-import {selectCartNo} from "../selectors/cart";
+import {selectCartLoading, selectCartNo} from "../selectors/cart";
 
 const SalesOrderPage = () => {
     const dispatch = useDispatch();
@@ -41,13 +41,14 @@ const SalesOrderPage = () => {
     const sendEmailStatus = useSelector(selectSendingEmailStatus);
     const attempts = useSelector(selectAttempts);
     const cartNo = useSelector(selectCartNo);
+    const cartLoading = useSelector(selectCartLoading);
 
-    const processing = customerLoading || salesOrderProcessing;
+    const processing = customerLoading || cartLoading || salesOrderProcessing;
     const {OrderStatus, OrderType} = salesOrderHeader ?? {};
     const isCurrentCart = cartNo === salesOrderNo;
 
     useEffect(() => {
-        console.debug(customer, SalesOrderNo);
+        // console.debug(customer, SalesOrderNo);
         if (customer && !!customer.CustomerNo) {
             if (SalesOrderNo === NEW_CART && salesOrderNo !== NEW_CART) {
                 dispatch(newCart());
@@ -87,8 +88,8 @@ const SalesOrderPage = () => {
                         This order has been cancelled. Please contact Customer Service if you have any questions.
                     </Alert>
                 )}
-                {processing && <ProgressBar striped={true} label="Loading" className="mb-3"/>}
                 <OrderHeader history={history}/>
+                {processing && <ProgressBar striped={true} label="Loading" className="mb-3"/>}
                 {isCart && <CheckoutProgress/>}
                 {SalesOrderNo === salesOrderNo && <OrderDetail/>}
                 {(sendEmailStatus.sending || sendEmailStatus.messageId) && <SendEmailModal/>}
