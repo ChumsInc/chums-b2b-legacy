@@ -1,7 +1,6 @@
-import {CartItem, CustomerAddress, SalesOrder, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
+import {CartItem, CustomerAddress, SalesOrderDetailLine, SalesOrderHeader} from "b2b-types";
 import {SortProps} from "../../types/generic";
 import dayjs from "dayjs";
-import {SalesOrderStatus} from "b2b-types/src/sales-order";
 import {EditableSalesOrder} from "../open-orders/types";
 import {DeprecatedUpdateCartItemAction} from "../../types/actions";
 import {UnknownAction} from "@reduxjs/toolkit";
@@ -10,7 +9,7 @@ export const defaultDetailSorter = (a: SalesOrderDetailLine, b: SalesOrderDetail
     return +a.LineKey - +b.LineKey;
 }
 
-export const defaultSalesOrderSort:SortProps<SalesOrderHeader> = {field: 'SalesOrderNo', ascending: true};
+export const defaultSalesOrderSort: SortProps<SalesOrderHeader> = {field: 'SalesOrderNo', ascending: true};
 
 export const salesOrderSorter = (sort: SortProps<SalesOrderHeader>) =>
     (a: SalesOrderHeader, b: SalesOrderHeader) => {
@@ -89,7 +88,7 @@ export const emptyDetailLine: SalesOrderDetailLine = {
     LineKey: ''
 }
 
-const multiLineAddress = (address:CustomerAddress):string[] => {
+const multiLineAddress = (address: CustomerAddress): string[] => {
     const finalLine = [address.City, address.State, address.CountryCode, address.ZipCode]
         .filter(val => !!val).join(' ');
     return [
@@ -101,7 +100,7 @@ const multiLineAddress = (address:CustomerAddress):string[] => {
 }
 
 
-export const detailToCartItem = (line:SalesOrderDetailLine):CartItem|null => {
+export const detailToCartItem = (line: SalesOrderDetailLine): CartItem | null => {
     if (line.InactiveItem !== 'N' || line.ProductType === 'D') {
         return null;
     }
@@ -112,32 +111,37 @@ export const detailToCartItem = (line:SalesOrderDetailLine):CartItem|null => {
     }
 }
 
-export const isOpenSalesOrder = (so:SalesOrderHeader|null) => {
+export const isCancelledSalesOrder = (so:SalesOrderHeader|null) => {
     if (!so) {
         return false;
     }
-    switch (so.OrderStatus) {
-        case 'C':
-        case 'X':
-        case 'Z':
-            return false;
-        default:
-            return true;
+    return ['X', 'Z'].includes(so.OrderStatus);
+}
+
+export const isOpenSalesOrder = (so: SalesOrderHeader | null) => {
+    if (!so) {
+        return false;
     }
+    return !isCancelledSalesOrder(so) && !isClosedSalesOrder(so);
 }
 
-export const isEditableSalesOrder = (so:SalesOrderHeader|EditableSalesOrder|null):so is EditableSalesOrder => {
-    return !!so
-        // && so.OrderType === 'Q'
-        && (so as EditableSalesOrder).detail !== undefined;
+export const isClosedSalesOrder = (so: SalesOrderHeader | null): so is SalesOrderHeader => {
+    if (!so) {
+        return false;
+    }
+    return so.OrderStatus === 'C';
 }
 
-export const detailSequenceSorter = (a:SalesOrderDetailLine, b:SalesOrderDetailLine): number => {
+export const isEditableSalesOrder = (so: SalesOrderHeader | EditableSalesOrder | null): so is EditableSalesOrder => {
+    return !!so && (so as EditableSalesOrder).detail !== undefined;
+}
+
+export const detailSequenceSorter = (a: SalesOrderDetailLine, b: SalesOrderDetailLine): number => {
     return +a.LineSeqNo === +b.LineSeqNo
         ? defaultDetailSorter(a, b)
         : +a.LineSeqNo - +b.LineSeqNo;
 }
 
-export function isDeprecatedUpdateCartItemAction(action:UnknownAction|DeprecatedUpdateCartItemAction): action is DeprecatedUpdateCartItemAction {
+export function isDeprecatedUpdateCartItemAction(action: UnknownAction | DeprecatedUpdateCartItemAction): action is DeprecatedUpdateCartItemAction {
     return action.type === 'UPDATE_CART_ITEM';
 }

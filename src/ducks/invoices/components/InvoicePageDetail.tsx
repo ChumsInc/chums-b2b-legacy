@@ -1,17 +1,16 @@
 import React, {useState} from 'react';
 import AddToCartModal from "../../../components/AddToCartModal";
-import OrderFooter from "../../../components/OrderFooter";
 import {useSelector} from "react-redux";
-import {ORDER_TYPE} from "../../../constants/orders";
 import {selectCurrentInvoice} from "../selectors";
 import InvoiceDetailLine from "./InvoiceDetailLine";
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import TableFooter from "@mui/material/TableFooter";
 import {InvoiceDetail} from "b2b-types";
+import InvoiceFooter from "./InvoiceFooter";
 
 const InvoicePageDetail = () => {
     const invoice = useSelector(selectCurrentInvoice);
-    const [addToCart, setAddToCart] = useState<InvoiceDetail|null>(null);
+    const [addToCart, setAddToCart] = useState<InvoiceDetail | null>(null);
 
     if (!invoice) {
         return null
@@ -45,14 +44,7 @@ const InvoicePageDetail = () => {
                         }
                     </TableBody>
                     <TableFooter>
-                        <OrderFooter renderForDetail={true}
-                                     DiscountAmt={invoice.DiscountAmt ?? 0}
-                                     FreightAmt={invoice.FreightAmt ?? 0} ShipVia={invoice.ShipVia ?? ''}
-                                     NonTaxableAmt={invoice.NonTaxableSalesAmt ?? 0}
-                                     TaxableAmt={invoice.TaxableSalesAmt ?? 0}
-                                     SalesTaxAmt={invoice.SalesTaxAmt ?? 0} TaxSchedule={invoice.TaxSchedule ?? ''}
-                                     orderType="IN"
-                        />
+                        <InvoiceFooter/>
                     </TableFooter>
                 </Table>
             </TableContainer>

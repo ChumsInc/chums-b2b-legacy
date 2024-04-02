@@ -12,9 +12,9 @@ const getSalesOrderPath = (orderType:OrderType|null):string => {
             return '/account/:customerSlug/carts/:salesOrderNo';
         case 'past':
         case 'invoice':
-            return '/account/:customerSlug/invoices/so/:salesOrderNo';
+            return `/account/:customerSlug/closed/:salesOrderNo`;
         default:
-            return '/account/:customerSlug/orders/:salesOrderNo';
+            return `/account/:customerSlug/orders/:salesOrderNo`;
     }
 }
 

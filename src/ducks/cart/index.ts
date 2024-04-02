@@ -36,7 +36,7 @@ import {loadOpenOrders, loadSalesOrder} from "../open-orders/actions";
 import {ItemAvailability} from "../../types/product";
 import {CartProgress} from "../../types/cart";
 import {Appendable} from "../../types/generic";
-import {isEditableSalesOrder} from "../salesOrder/utils";
+import {isEditableSalesOrder} from "../sales-order/utils";
 import {
     isDeprecatedCreateNewCartAction,
     isDeprecatedDeleteCartAction,
@@ -228,6 +228,7 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.promoCode = null;
         })
         .addCase(removeCart.fulfilled, (state) => {
+            state.loading = false;
             state.cartNo = NEW_CART;
             state.cartTotal = 0;
             state.cartQuantity = 0;

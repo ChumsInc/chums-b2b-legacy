@@ -18,6 +18,7 @@ import {selectSalesOrder, selectSalesOrderInvoices, selectSalesOrderLoading} fro
 import DuplicateCartDialog from "../../cart/components/DuplicateCartDialog";
 import {duplicateSalesOrder} from "../../cart/actions";
 import {selectCartLoading} from "../../cart/selectors";
+import {isClosedSalesOrder} from "../../sales-order/utils";
 
 const SalesOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -35,14 +36,15 @@ const SalesOrderHeaderElement = () => {
     const shipDate = header?.ShipExpireDate ? dayjs(header.ShipExpireDate).format('YYYY-MM-DD') : '';
 
     useEffect(() => {
-        if (!!header && header?.OrderType !== 'Q' && !!header.SalesOrderNo) {
-            navigate(generatePath('/account/:customerSlug/orders/:salesOrderNo', {
+        console.log('useEffect', [header, match])
+        if (header?.OrderType === 'Q' && match?.params?.orderType !== 'carts') {
+            navigate(generatePath('/account/:customerSlug/carts/:salesOrderNo', {
                 customerSlug: customerSlug(customer),
                 salesOrderNo: header.SalesOrderNo,
             }), {replace: true});
             return;
         }
-    }, [header]);
+    }, [header, match]);
 
     const reloadHandler = () => {
         if (!customer || !header) {
@@ -78,6 +80,18 @@ const SalesOrderHeaderElement = () => {
                         <TextField label="Requested Ship Date" type="date" size="small" variant="filled" fullWidth
                                    value={shipDate}
                                    inputProps={{readOnly: true}}/>
+                        {isClosedSalesOrder(header) && header.LastInvoiceNo && (
+                            <Stack spacing={2} direction="row">
+                                <TextField label="Invoice No" type="text" fullWidth
+                                           value={header.LastInvoiceNo}
+                                           variant="filled" size="small" inputProps={{readOnly: true}}/>
+                                {dayjs(header.LastInvoiceDate).isValid() && (
+                                    <TextField label="Invoice Date" type="date" fullWidth
+                                            value={dayjs(header.LastInvoiceDate).format('YYYY-MM-DD')}
+                                            variant="filled" size="small" inputProps={{readOnly: true}}/>
+                                )}
+                            </Stack>
+                        )}
                         {header?.UDF_PROMO_DEAL && (
                             <TextField label="Promo Code" type="text" fullWidth
                                        value={header?.UDF_PROMO_DEAL ?? ''}

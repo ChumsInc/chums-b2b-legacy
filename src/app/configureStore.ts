@@ -10,7 +10,7 @@ import cartReducer from "../ducks/cart";
 import openOrdersReducer from "../ducks/open-orders";
 import promoCodeReducer from "../ducks/promo-code";
 import invoicesReducer from "../ducks/invoices";
-import salesOrderReducer from "../ducks/salesOrder";
+import salesOrderReducer from "../ducks/sales-order";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import prepState from "./preloaded-state";
 import versionReducer from "../ducks/version";

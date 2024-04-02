@@ -21,6 +21,7 @@ export const CUSTOMER_TABS: LinkTabProps[] = [
     {value: 'invoices', label: 'Invoices', to: 'invoices'},
 ];
 
+
 function LinkTab({value, label, to}: LinkTabProps) {
     return (
         <Tab component={NavLink} to={to} label={label} value={value}/>
@@ -31,7 +32,12 @@ const AccountTabs = () => {
     const [value, setValue] = useState('billing')
     const tabMatch = useMatch('/account/:customerSlug/:tab/*');
     useEffect(() => {
-        setValue(tabMatch?.params.tab ?? 'billing');
+        switch (tabMatch?.params.tab) {
+            case 'closed':
+                return setValue('invoices');
+            default:
+                setValue(tabMatch?.params.tab ?? 'billing');
+        }
     }, [tabMatch?.params]);
 
     const tabChangeHandler = (event: React.SyntheticEvent, newValue: string) => {

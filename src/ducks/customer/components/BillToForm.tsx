@@ -121,10 +121,11 @@ const BillToForm = () => {
                                 {customer.changed &&
                                     <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>
                                 }
-                                <Stack direction="row" spacing={2} sx={{my:3}}>
-                                    <Button type="submit" variant="contained"
-                                            disabled={!canEdit || loading}>Save</Button>
+                                <Stack direction="row" spacing={2} sx={{my:3}} justifyContent="flex-end">
                                     <ReloadCustomerButton/>
+                                    <Button type="submit" variant="contained" disabled={!canEdit || loading}>
+                                        Save
+                                    </Button>
                                 </Stack>
 
                             </Stack>

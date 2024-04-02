@@ -73,7 +73,7 @@ const UserMenu = () => {
                 )}
                 {isLoggedIn && (<MenuItemRouterLink to="/logout">Logout</MenuItemRouterLink>)}
             </Menu>
-            {(!isLoggedIn || expired) && typeof window !== 'undefined' && <GoogleSignInOneTap onSignIn={() => setAnchorEl(null)}/>}
+            {/*{(!isLoggedIn || expired) && typeof window !== 'undefined' && <GoogleSignInOneTap onSignIn={() => setAnchorEl(null)}/>}*/}
         </>
     )
 }

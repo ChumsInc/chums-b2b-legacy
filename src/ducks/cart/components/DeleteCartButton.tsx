@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {useSelector} from "react-redux";
-import {selectSalesOrderHeader} from "../../salesOrder/selectors";
+import {selectSalesOrderHeader} from "../../sales-order/selectors";
 import {ButtonProps} from "@mui/material/Button";
 import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import Dialog from "@mui/material/Dialog";

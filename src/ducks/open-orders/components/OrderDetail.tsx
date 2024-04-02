@@ -3,7 +3,7 @@ import OrderDetailLine from "./OrderDetailLine";
 import SalesOrderTotal from "./SalesOrderTotal";
 import {CartItem, CartProduct, SalesOrderDetailLine} from "b2b-types";
 import Dialog from "@mui/material/Dialog";
-import {detailToCartItem} from "../../salesOrder/utils";
+import {detailToCartItem} from "../../sales-order/utils";
 import {
     Button,
     DialogActions,

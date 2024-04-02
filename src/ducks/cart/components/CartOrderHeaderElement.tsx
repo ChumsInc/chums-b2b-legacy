@@ -1,13 +1,13 @@
 import React, {ChangeEvent, FormEvent, useEffect, useRef, useState} from 'react';
 import {useSelector} from "react-redux";
-import {selectSendEmailStatus} from "../../salesOrder/selectors";
+import {selectSendEmailStatus} from "../../sales-order/selectors";
 import {Button, Collapse, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import {addressFromShipToAddress, multiLineAddress} from "../../customer/utils";
 import {RootState, useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {loadSalesOrder} from "../../open-orders/actions";
-import {sendOrderEmail} from "../../salesOrder/actions";
+import {sendOrderEmail} from "../../sales-order/actions";
 import {Editable, SalesOrderHeader, ShipToAddress} from "b2b-types";
 import {selectCartNo, selectShippingAccount} from "../selectors";
 import CustomerShippingAccountControl from "./CustomerShippingAccountControl";
@@ -317,7 +317,8 @@ const CartOrderHeaderElement = () => {
                     </Collapse>
                 </Grid>
             </Grid>
-            <CartCheckoutProgress current={cartProgress} onChange={setCartProgress}/>
+            <CartCheckoutProgress current={cartProgress} disabled={loadingStatus !== 'idle'}
+                                  onChange={setCartProgress}/>
             <Stack spacing={2} direction={{sm: 'column', md: 'row'}} justifyContent="space-between">
                 <Stack sx={{flex: '1 1 auto'}}>
                     {(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart && (

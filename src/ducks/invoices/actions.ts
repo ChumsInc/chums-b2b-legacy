@@ -1,6 +1,6 @@
 import {isValidCustomer} from "../../utils/customer";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {STORE_INVOICES_ROWS_PER_PAGE} from "../../constants/stores";
+import {STORE_INVOICES_ROWS_PER_PAGE, STORE_INVOICES_SORT} from "../../constants/stores";
 import localStore from "../../utils/LocalStore";
 import {fetchInvoice, fetchInvoices} from "../../api/invoices";
 import {selectCurrentInvoiceLoading, selectInvoicesLoading} from "./selectors";
@@ -48,4 +48,9 @@ export const loadInvoices = createAsyncThunk<InvoiceHistoryHeader[], CustomerKey
 export const setShowPaidInvoices = createAction<boolean | undefined>('invoices/filter/setShowPaidInvoices');
 export const setInvoicesFilterShipToCode = createAction<string | null>('invoices/filter/setShipToCode');
 export const setInvoicesFilterSearch = createAction<string>('invoices/filter/setSearch');
-export const setInvoicesSort = createAction<SortProps<InvoiceHistoryHeader>>('invoices/setSort');
+export const setInvoicesSort = createAction('invoices/setSort', (arg:SortProps<InvoiceHistoryHeader>) => {
+   localStore.setItem<SortProps<InvoiceHistoryHeader>>(STORE_INVOICES_SORT, arg);
+   return {
+       payload: arg
+   };
+});

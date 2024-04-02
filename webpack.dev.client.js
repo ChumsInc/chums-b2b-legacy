@@ -26,10 +26,8 @@ const clientConfig = {
             overlay: {
                 runtimeErrors: (error) => {
                     console.log(error);
-                    if (error instanceof DOMException && error.name === 'ResizeObserver') {
-                        return true;
-                    }
-                    return false;
+                    return error instanceof DOMException && error.name === 'ResizeObserver';
+
                 }
             }
         },

@@ -1,5 +1,5 @@
 import {createReducer} from "@reduxjs/toolkit";
-import {isEditableSalesOrder, isOpenSalesOrder} from "../salesOrder/utils";
+import {isCancelledSalesOrder, isEditableSalesOrder, isOpenSalesOrder} from "../sales-order/utils";
 import {EmailResponse, SalesOrderHeader} from "b2b-types";
 import {
     closeEmailResponse,
@@ -155,6 +155,7 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         .addCase(removeCart.fulfilled, (state, action) => {
             delete state.actionStatus[action.meta.arg.SalesOrderNo];
             state.loaded = true;
+            state.loading = false;
             state.list = {};
             action.payload.forEach(so => {
                 state.actionStatus[so.SalesOrderNo] = 'idle';
@@ -176,7 +177,7 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         })
         .addCase(loadSalesOrder.fulfilled, (state, action) => {
             state.actionStatus[action.meta.arg] = 'idle';
-            if (action.payload && isOpenSalesOrder(action.payload)) {
+            if (action.payload && !isCancelledSalesOrder(action.payload)) {
                 const key = action.payload.SalesOrderNo;
                 const detail: OpenOrderDetailList = {};
                 action.payload.detail.forEach(line => {

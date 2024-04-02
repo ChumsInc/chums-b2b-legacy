@@ -11,7 +11,7 @@ import {
     RECEIVE_ORDERS,
     UPDATE_CART_ITEM
 } from "../../constants/actions";
-import {defaultDetailSorter, emptyDetailLine, isDeprecatedUpdateCartItemAction} from "./utils";
+import {defaultDetailSorter, emptyDetailLine, isClosedSalesOrder, isDeprecatedUpdateCartItemAction} from "./utils";
 import {calcOrderType, isCartOrder, isDeprecatedFetchSalesOrderAction} from "../../utils/orders";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
@@ -30,7 +30,7 @@ import {closeEmailResponse, sendOrderEmail} from "./actions";
 import {promoteCart, removeCart, saveCart, saveNewCart} from "../cart/actions";
 import localStore from "../../utils/LocalStore";
 import {STORE_CURRENT_CART, STORE_CUSTOMER} from "../../constants/stores";
-import {loadOpenOrders} from "../open-orders/actions";
+import {loadOpenOrders, loadSalesOrder} from "../open-orders/actions";
 import {
     isDeprecatedCreateNewCartAction,
     isDeprecatedDeleteCartAction,
@@ -235,6 +235,31 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
             state.payment = [];
         })
         .addCase(removeCart.rejected, (state) => {
+            state.processing = 'idle';
+        })
+        .addCase(loadSalesOrder.pending, (state) => {
+            state.processing = 'pending';
+        })
+        .addCase(loadSalesOrder.fulfilled, (state, action) => {
+            state.processing = 'idle';
+            if (action.payload && isClosedSalesOrder(action.payload)) {
+                const {invoices, detail, payment, b2bUsers, ...rest} = action.payload;
+                state.header = rest;
+                state.detail = [...detail].sort(defaultDetailSorter);
+                state.invoices = invoices ?? [];
+                state.payment = payment ?? [];
+                state.orderType = calcOrderType(action.payload);
+                state.readOnly = true;
+            } else {
+                state.header = null;
+                state.orderType = null;
+                state.readOnly = true;
+                state.detail = [];
+                state.invoices = [];
+                state.payment = [];
+            }
+        })
+        .addCase(loadSalesOrder.rejected, (state) => {
             state.processing = 'idle';
         })
         .addDefaultCase((state, action) => {

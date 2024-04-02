@@ -21,7 +21,7 @@ import {NEW_CART} from "../constants/orders";
 import {selectCustomerAccount} from "../ducks/customer/selectors";
 import {fetchSalesOrder} from "../api/sales-order";
 import {selectCartNo} from "../ducks/cart/selectors";
-import {selectSalesOrderProcessing} from "../ducks/salesOrder/selectors";
+import {selectSalesOrderProcessing} from "../ducks/sales-order/selectors";
 import {generatePath, redirect} from "react-router-dom";
 
 

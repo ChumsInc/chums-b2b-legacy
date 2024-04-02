@@ -34,6 +34,9 @@ import InvoicesList from "../ducks/invoices/components/InvoicesList";
 import ShipToList from "../ducks/customer/components/ShipToList";
 import theme from "./theme";
 import Home from "../components/Home";
+import ClosedSalesOrderPage from "../ducks/open-orders/components/ClosedSalesOrderPage";
+import {GoogleOAuthProvider} from "@react-oauth/google";
+import {GOOGLE_CLIENT_ID} from "../constants/app";
 
 
 const App = () => {
@@ -75,53 +78,55 @@ const App = () => {
     return (
         <ErrorBoundary>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-
                 <ThemeProvider theme={theme}>
                     <CssBaseline>
-                        <Routes>
-                            <Route path="/" element={<MainOutlet/>}>
-                                <Route index element={<Home/>}/>
-                                <Route path="/home" element={<Home/>}/>
-                                <Route path="/products" element={<ProductRouter/>}/>
-                                <Route path="/products/:category" element={<ProductRouter/>}/>
-                                <Route path="/products/:category/:product" element={<ProductRouter/>}/>
-                                <Route path="/products/:category/:product/:sku" element={<ProductRouter/>}/>
-                                {!loggedIn && (
-                                    <>
-                                        <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
-                                        <Route path="/set-password" element={<ResetPassword/>}/>
-                                        <Route path="/signup" element={<SignUp/>}/>
-                                        <Route path="*" element={<Login/>}/>
-                                    </>
-                                )}
-                                {loggedIn && (
-                                    <>
-                                        <Route path="/pages/:keyword" element={<ContentPage/>}/>
-                                        <Route path="/login" element={<Login/>}/>
-                                        <Route path="/logout" element={<Logout/>}/>
-                                        <Route path="/profile" element={<ProfilePage/>}/>
-                                        <Route path="/profile/:id" element={<AccountListContainer/>}/>
-                                        <Route path="/account/:customerSlug" element={<AccountPage/>}>
-                                            <Route index element={<BillToForm/>}/>
-                                            <Route path="delivery" element={<ShipToList/>}/>
-                                            <Route path="delivery/:shipToCode" element={<ShipToForm/>}/>
-                                            <Route path="users" element={<AccountUsers/>}/>
-                                            <Route path="users/:id" element={<AccountUsers/>}/>
-                                            <Route path="carts" element={<CartsList/>}/>
-                                            <Route path="carts/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                            <Route path="orders" element={<OpenOrdersList/>}/>
-                                            <Route path="orders/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                            <Route path="invoices" element={<InvoicesList/>}/>
-                                            <Route path="invoices/so/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                            <Route path="invoices/:type/:invoiceNo" element={<InvoicePage/>}/>
+                        <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+                            <Routes>
+                                <Route path="/" element={<MainOutlet/>}>
+                                    <Route index element={<Home/>}/>
+                                    <Route path="/home" element={<Home/>}/>
+                                    <Route path="/products" element={<ProductRouter/>}/>
+                                    <Route path="/products/:category" element={<ProductRouter/>}/>
+                                    <Route path="/products/:category/:product" element={<ProductRouter/>}/>
+                                    <Route path="/products/:category/:product/:sku" element={<ProductRouter/>}/>
+                                    {!loggedIn && (
+                                        <>
+                                            <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
+                                            <Route path="/set-password" element={<ResetPassword/>}/>
+                                            <Route path="/signup" element={<SignUp/>}/>
+                                            <Route path="*" element={<Login/>}/>
+                                        </>
+                                    )}
+                                    {loggedIn && (
+                                        <>
+                                            <Route path="/pages/:keyword" element={<ContentPage/>}/>
+                                            <Route path="/login" element={<Login/>}/>
+                                            <Route path="/logout" element={<Logout/>}/>
+                                            <Route path="/profile" element={<ProfilePage/>}/>
+                                            <Route path="/profile/:id" element={<AccountListContainer/>}/>
+                                            <Route path="/account/:customerSlug" element={<AccountPage/>}>
+                                                <Route index element={<BillToForm/>}/>
+                                                <Route path="delivery" element={<ShipToList/>}/>
+                                                <Route path="delivery/:shipToCode" element={<ShipToForm/>}/>
+                                                <Route path="users" element={<AccountUsers/>}/>
+                                                <Route path="users/:id" element={<AccountUsers/>}/>
+                                                <Route path="carts" element={<CartsList/>}/>
+                                                <Route path="carts/:salesOrderNo" element={<SalesOrderPage/>}/>
+                                                <Route path="orders" element={<OpenOrdersList/>}/>
+                                                <Route path="orders/:salesOrderNo" element={<SalesOrderPage/>}/>
+                                                <Route path="closed/:salesOrderNo" element={<ClosedSalesOrderPage/>}/>
+                                                <Route path="invoices" element={<InvoicesList/>}/>
+                                                <Route path="invoices/:type/:invoiceNo" element={<InvoicePage/>}/>
+                                                <Route path="*" element={<ContentPage404/>}/>
+                                            </Route>
                                             <Route path="*" element={<ContentPage404/>}/>
-                                        </Route>
-                                        <Route path="*" element={<ContentPage404/>}/>
-                                    </>
-                                )}
-                                <Route path="*" element={<ContentPage404/>}/>
-                            </Route>
-                        </Routes>
+                                        </>
+                                    )}
+                                    <Route path="*" element={<ContentPage404/>}/>
+                                </Route>
+                            </Routes>
+                        </GoogleOAuthProvider>
+
                     </CssBaseline>
                 </ThemeProvider>
             </LocalizationProvider>

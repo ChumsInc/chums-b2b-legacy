@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack serve --config webpack.dev.client.js --progress",
+    "start": "webpack serve --config webpack.dev.client.js --progress --stats-error-details",
     "build": "npm run build-all",
     "build-ssr": "npx tsc && webpack --config webpack.prod.server.js --progress",
     "start-ssr": "npm run build-ssr && nodemon server-render.compiled.js",
@@ -24,6 +24,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.13",
     "@mui/x-date-pickers": "^6.0.2",
+    "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.0.1",
     "@types/lodash.debounce": "^4.0.7",
     "@types/validator": "^13.11.9",

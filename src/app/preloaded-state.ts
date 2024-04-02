@@ -13,7 +13,7 @@ import {initialInvoicesState} from "../ducks/invoices";
 import {initialOpenOrderState} from "../ducks/open-orders";
 import {initialPageState} from "../ducks/page";
 import {initialPromoCodeState} from "../ducks/promo-code";
-import {initialSalesOrderState} from "../ducks/salesOrder";
+import {initialSalesOrderState} from "../ducks/sales-order";
 import {initialSearchState} from "../ducks/search";
 import {initialVersionState} from "../ducks/version";
 import {PreloadedState} from "../types/preload";

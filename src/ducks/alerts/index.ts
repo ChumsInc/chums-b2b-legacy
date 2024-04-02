@@ -73,7 +73,7 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                 state.list = [];
             }
         })
-        .addMatcher((action) => isRejected(action) && !!action.error,
+        .addMatcher(isRejected,
             (state, action) => {
                 state.index += 1;
                 const context = action.type.replace('/rejected', '');

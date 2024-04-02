@@ -29,14 +29,23 @@ const ProductRouter = () => {
 
     if (!!category && !product) {
         const [kw] = keywords.filter(kw => kw.keyword === category);
-        keyword = {...kw};
+        if (kw) {
+            keyword = {...kw};
+        }
     } else if (!!product) {
         const [kw] = keywords.filter(kw => kw.keyword === product);
-        keyword = {...kw};
+        if (kw) {
+            keyword = {...kw};
+        }
     }
 
-    if (keyword && keyword.redirect_to_parent > 0) {
-        const [kw] = keywords.filter(kw => kw.pagetype === 'product').filter(kw => kw.id === keyword?.redirect_to_parent);
+    if (!keyword) {
+        navigate('/products/all', {replace: true});
+        return;
+    }
+
+    if (keyword.redirect_to_parent > 0) {
+        const [kw] = keywords.filter(kw => kw.pagetype === 'product').filter(kw => kw.id === keyword.redirect_to_parent);
         if (kw) {
             let pathname = PATH_PRODUCT
                 .replace(':category', encodeURIComponent(kw.parent ? kw.parent : kw.keyword))
@@ -44,7 +53,7 @@ const ProductRouter = () => {
             const state = {variant: keyword.keyword};
             console.log('redirect to: ', {pathname, state});
             // this.props.history.replace(path, [{variant: keyword.keyword}])
-            navigate(pathname, {state})
+            navigate(pathname, {state, replace: true})
             return;
         }
     }
@@ -53,9 +62,8 @@ const ProductRouter = () => {
         <ErrorBoundary>
             <Box>
                 {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
-                {!keyword?.pagetype && <CategoryPage2 keyword="all"/>}
-                {keyword?.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
-                {keyword?.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
+                {keyword.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
+                {keyword.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
             </Box>
         </ErrorBoundary>
     );

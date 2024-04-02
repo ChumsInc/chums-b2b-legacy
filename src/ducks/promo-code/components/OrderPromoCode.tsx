@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectCurrentPromoCode, selectPromoCodesLoading} from "../selectors";
 import {loadPromoCode} from "../actions";
-import {selectSalesOrderProcessing} from "../../salesOrder/selectors";
+import {selectSalesOrderProcessing} from "../../sales-order/selectors";
 import {selectCartPromoCode} from "../../cart/selectors";
 import {applyPromoCode} from "../../cart/actions";
 

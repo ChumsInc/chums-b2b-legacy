@@ -114,6 +114,11 @@ const InvoiceHeader = () => {
                                            value={dayjs(invoice.InvoiceDueDate).format('YYYY-MM-DD')} placeholder=""
                                            inputProps={{readOnly: true}}/>
                             )}
+                            {permissions?.billTo && (
+                                <TextField label="Balance Due" type="text" fullWidth variant="filled" size="small"
+                                           value={numeral(new Decimal(invoice.Balance ?? '0')).format('$ 0,0.00')}
+                                           placeholder=""
+                                           inputProps={{readOnly: true}}/>)}
                         </Stack>
                         <Stack spacing={2} direction={{xs: 'column', lg: 'row'}}>
                             {!!invoice.UDF_PROMO_DEAL && (
@@ -121,11 +126,6 @@ const InvoiceHeader = () => {
                                            value={invoice.UDF_PROMO_DEAL} placeholder=""
                                            inputProps={{readOnly: true}}/>
                             )}
-                            {permissions?.billTo && (
-                                <TextField label="Balance Due" type="text" fullWidth variant="filled" size="small"
-                                           value={numeral(new Decimal(invoice.Balance ?? '0')).format('$ 0,0.00')}
-                                           placeholder=""
-                                           inputProps={{readOnly: true}}/>)}
                         </Stack>
                     </Stack>
                 </Grid>

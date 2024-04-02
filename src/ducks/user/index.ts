@@ -22,7 +22,14 @@ import {
     setUserAccess,
     signInWithGoogle
 } from "./actions";
-import {getPrimaryAccount, isCustomerAccess, isUserAction, isUserProfileAction, userAccountSort} from "./utils";
+import {
+    getPrimaryAccount,
+    is401Action,
+    isCustomerAccess,
+    isUserAction,
+    isUserProfileAction,
+    userAccountSort
+} from "./utils";
 import {DeprecatedUserProfileAction, UserPasswordState, UserSignupState} from "./types";
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
@@ -259,6 +266,11 @@ const userReducer = createReducer(initialUserState, (builder) => {
                     console.log('userReducer', action?.error);
                 }
             })
+        .addMatcher(is401Action, (state, action) => {
+            state.loggedIn = false;
+            state.token = null;
+            state.tokenExpires = 0;
+        })
         .addDefaultCase((state, action: UnknownAction | DeprecatedUserProfileAction) => {
             const _initialUserState = initialUserState();
             // console.log(action.type, JSON.parse(JSON.stringify(state)), action);

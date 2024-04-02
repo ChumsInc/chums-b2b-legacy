@@ -1,6 +1,7 @@
 import {RootState} from "../../app/configureStore";
 import {createSelector} from "@reduxjs/toolkit";
-import {detailSequenceSorter, isEditableSalesOrder, salesOrderSorter} from "../salesOrder/utils";
+import {detailSequenceSorter, isEditableSalesOrder, salesOrderSorter} from "../sales-order/utils";
+import {selectSalesOrderHeader} from "../sales-order/selectors";
 
 export const selectOpenOrders = (state: RootState) => state.openOrders.list;
 export const selectOpenOrdersLoading = (state: RootState) => state.openOrders.loading ?? false;
@@ -16,8 +17,8 @@ export const selectSendEmailError = (state: RootState) => state.openOrders.sendE
 export const selectActionStatus = (state: RootState) => state.openOrders.actionStatus;
 
 export const selectSalesOrder = createSelector(
-    [selectOpenOrders, (state: RootState, salesOrderNo: string) => salesOrderNo],
-    (list, salesOrderNo) => list[salesOrderNo] ?? null
+    [selectOpenOrders, selectSalesOrderHeader, (state: RootState, salesOrderNo: string) => salesOrderNo],
+    (list, header, salesOrderNo) => list[salesOrderNo] ?? (header?.SalesOrderNo === salesOrderNo ? header : null)
 )
 
 export const selectOpenOrdersLength = createSelector(
@@ -38,11 +39,22 @@ export const selectOpenOrdersList = createSelector(
     [selectOpenOrders, selectOpenOrdersFilter, selectOpenOrdersSort],
     (list, filter, sort) => {
         return Object.values(list)
-            .filter(so => so.OrderType !== 'Q')
+            .filter(so => so.OrderType !== 'Q' && so.OrderStatus !== 'C')
             .filter(so => !filter || so.SalesOrderNo.includes(filter) || so.CustomerPONo?.includes(filter))
             .sort(salesOrderSorter(sort));
     }
 )
+
+export const selectClosedOrdersList = createSelector(
+    [selectOpenOrders, selectOpenOrdersFilter, selectOpenOrdersSort],
+    (list, filter, sort) => {
+        return Object.values(list)
+            .filter(so => so.OrderType !== 'Q' && so.OrderStatus === 'C')
+            .filter(so => !filter || so.SalesOrderNo.includes(filter) || so.CustomerPONo?.includes(filter))
+            .sort(salesOrderSorter(sort));
+    }
+)
+
 export const selectCartsList = createSelector(
     [selectOpenOrders, selectCartsFilter, selectOpenOrdersSort],
     (list, filter, sort) => {

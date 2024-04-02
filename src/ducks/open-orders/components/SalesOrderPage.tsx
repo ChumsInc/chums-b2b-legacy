@@ -1,24 +1,12 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {generatePath, redirect} from 'react-router-dom';
-import {setCurrentCart} from '../../cart/actions';
-import {NEW_CART} from "../../../constants/orders";
 import OrderDetail from "./OrderDetail";
 import Alert from "@mui/material/Alert";
 import DocumentTitle from "../../../components/DocumentTitle";
 import {useMatch, useNavigate} from "react-router";
 import {selectCustomerAccount, selectCustomerLoading} from "../../customer/selectors";
-import {
-    selectAttempts,
-    selectIsCart,
-    selectSalesOrderNo,
-    selectSalesOrderProcessing,
-    selectSendEmailResponse,
-    selectSendEmailStatus,
-    selectSOLoaded,
-    selectSOLoading
-} from "../../salesOrder/selectors";
-import {selectCartNo} from "../../cart/selectors";
+import {selectIsCart, selectSalesOrderNo, selectSOLoading} from "../../sales-order/selectors";
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {loadSalesOrder} from "../actions";
 import SalesOrderHeaderElement from "./SalesOrderHeaderElement";
@@ -26,7 +14,7 @@ import SalesOrderSkeleton from "./SalesOrderSkeleton";
 import CartOrderHeaderElement from "../../cart/components/CartOrderHeaderElement";
 import {selectSalesOrder} from "../selectors";
 import SalesOrderLoadingProgress from "./SalesOrderLoadingProgress";
-import {isEditableSalesOrder} from "../../salesOrder/utils";
+import {isEditableSalesOrder} from "../../sales-order/utils";
 
 const SalesOrderPage = () => {
     const dispatch = useAppDispatch();
@@ -36,19 +24,11 @@ const SalesOrderPage = () => {
     const salesOrderNo = useSelector(selectSalesOrderNo);
     const salesOrderHeader = useAppSelector((state) => selectSalesOrder(state, match?.params.salesOrderNo ?? ''));
     const loading = useSelector(selectSOLoading);
-    const loaded = useSelector(selectSOLoaded);
     const customerLoading = useSelector(selectCustomerLoading);
-    const salesOrderProcessing = useSelector(selectSalesOrderProcessing)
     const isCart = useSelector(selectIsCart);
-    // const sendEmailStatus = useSelector(selectSendEmailResponse);
-    // const sendingEmail = useSelector(selectSendEmailStatus);
-    // const attempts = useSelector(selectAttempts);
-    // const cartNo = useSelector(selectCartNo);
-
-    const processing = customerLoading || salesOrderProcessing !== 'idle' || loading;
-    // const isCurrentCart = cartNo === salesOrderNo;
 
     useEffect(() => {
+        console.log('useEffect', [customer, match, loading, salesOrderHeader])
         if (customer && !!customer.CustomerNo) {
             if (!loading && !!match?.params?.salesOrderNo && (!isEditableSalesOrder(salesOrderHeader) || match?.params?.salesOrderNo !== salesOrderHeader.SalesOrderNo)) {
                 dispatch(loadSalesOrder(match.params.salesOrderNo))
@@ -58,7 +38,10 @@ const SalesOrderPage = () => {
 
     useEffect(() => {
         if (salesOrderHeader?.OrderStatus === 'Z' && match?.params?.orderType && match?.params?.customerSlug) {
-            const path = generatePath(`/account/:customerSlug/:orderType`, {customerSlug: match.params.customerSlug, orderType: match.params.orderType});
+            const path = generatePath(`/account/:customerSlug/:orderType`, {
+                customerSlug: match.params.customerSlug,
+                orderType: match.params.orderType
+            });
             navigate(path, {replace: true});
         }
     }, [salesOrderHeader?.OrderStatus]);

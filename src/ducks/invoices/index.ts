@@ -14,9 +14,16 @@ import {setLoggedIn, setUserAccess} from "../user/actions";
 import {InvoicesState} from "./types";
 import {SortProps} from "../../types/generic";
 import {InvoiceHistoryHeader} from "b2b-types";
+import {STORE_INVOICES_SORT} from "../../constants/stores";
+import localStore from "../../utils/LocalStore";
 
 export const defaultSort: SortProps<InvoiceHistoryHeader> = {
     field: 'InvoiceNo',
+    ascending: false,
+}
+
+export const defaultUserSort:SortProps<InvoiceHistoryHeader> = {
+    field: 'InvoiceDate',
     ascending: false,
 }
 
@@ -32,7 +39,7 @@ export const initialInvoicesState = (): InvoicesState => ({
         shipToCode: null,
         search: '',
     },
-    sort: {...defaultSort},
+    sort: localStore.getItem<SortProps<InvoiceHistoryHeader>>(STORE_INVOICES_SORT, defaultUserSort),
 })
 
 const invoicesReducer = createReducer(initialInvoicesState, builder => {
