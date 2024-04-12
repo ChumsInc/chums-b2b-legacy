@@ -1,8 +1,8 @@
 import {Banner} from "b2b-types";
 import {PreloadedState} from "../../types/preload";
-import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {RootState} from "../../app/configureStore";
-import {fetchBanners} from "./api";
+import {createReducer} from "@reduxjs/toolkit";
+import {bannerSorter} from "./utils";
+import {loadBanners} from "./actions";
 
 export interface BannersState {
     list: Banner[];
@@ -16,7 +16,7 @@ export interface LoadBannersResponse {
     updated: number,
 }
 
-export const initialBannersState = (preloadedState:PreloadedState|null = null):BannersState => {
+export const initialBannersState = (preloadedState: PreloadedState | null = null): BannersState => {
     return ({
         list: preloadedState?.banners?.list ?? [],
         loading: false,
@@ -25,29 +25,6 @@ export const initialBannersState = (preloadedState:PreloadedState|null = null):B
     });
 }
 
-export const selectBannersList = (state:RootState) => state.banners.list;
-export const selectBannersLoaded = (state: RootState) => state.banners.loaded;
-export const selectBannersLoading = (state: RootState) => state.banners.loading;
-export const selectBannersUpdated = (state:RootState) => state.banners.updated;
-
-export const loadBanners = createAsyncThunk<LoadBannersResponse, void>(
-    'banners/load',
-    async () => {
-        const banners = await fetchBanners();
-        return {
-            list: banners,
-            updated: new Date().valueOf()
-        }
-    },
-    {
-        condition: (arg, {getState}) => {
-            const state = getState() as RootState;
-            return !selectBannersLoading(state);
-        }
-    }
-)
-
-export const bannerSorter = (a:Banner, b:Banner) => ((a.priority ?? a.id) - (b.priority ?? b.id));
 
 const bannersReducer = createReducer(initialBannersState, (builder) => {
     builder

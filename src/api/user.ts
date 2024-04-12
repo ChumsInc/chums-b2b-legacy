@@ -15,6 +15,8 @@ import localStore from "../utils/LocalStore";
 import {STORE_AUTHTYPE} from "../constants/stores";
 import {AUTH_GOOGLE} from "../constants/app";
 import {isUserRole} from "../utils/typeguards";
+import {isJWT} from "validator";
+import {jwtDecode, JwtPayload} from 'jwt-decode';
 
 
 export async function postLocalLogin(arg: LocalAuth): Promise<string> {
@@ -74,6 +76,12 @@ export async function postUserProfile(arg:Pick<UserProfile, 'name'>):Promise<Use
         if (response.user?.accountType === 1) {
             response.reps = await fetchRepList();
         }
+        if (response.token) {
+            try {
+                const decoded = jwtDecode(response.token);
+                response.expires = decoded.exp;
+            } catch(err:unknown) {}
+        }
         return response as UserProfileResponse;
     } catch(err:unknown) {
         if (err instanceof Error) {
@@ -110,6 +118,12 @@ export async function fetchGoogleLogin(token: string): Promise<UserProfileRespon
         response.reps = [];
         if (response.user?.accountType === 1) {
             response.reps = await fetchRepList();
+        }
+        if (response.token) {
+            try {
+                const decoded = jwtDecode(response.token);
+                response.expires = decoded.exp;
+            } catch(err:unknown) {}
         }
         if (response.user) {
             const profile = getSignInProfile(token);

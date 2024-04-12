@@ -5,7 +5,7 @@ import {loginUser, resetPassword} from "../actions";
 import PasswordInput from "../../../common-components/PasswordInput";
 import FormGroup from "@mui/material/FormGroup";
 import {useAppDispatch} from "../../../app/configureStore";
-import {selectUserLoading} from "../selectors";
+import {selectResettingPassword, selectUserLoading} from "../selectors";
 import LinearProgress from "@mui/material/LinearProgress";
 import {FieldValue} from "../../../types/generic";
 import Typography from "@mui/material/Typography";
@@ -21,15 +21,19 @@ import Stack from "@mui/material/Stack";
 const LoginLocal = () => {
     const dispatch = useAppDispatch();
     const loading = useSelector(selectUserLoading);
+    const isResettingPassword = useSelector(selectResettingPassword);
     const [forgotPassword, setForgotPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
-    const submitHandler = (ev: FormEvent) => {
+
+    const submitHandler = async (ev: FormEvent) => {
         ev.preventDefault();
+        setShowPassword(false);
         if (forgotPassword) {
-            dispatch(resetPassword(email));
+            await dispatch(resetPassword(email));
+            setForgotPassword(false);
             return;
         }
         dispatch(loginUser({email, password}))
@@ -37,9 +41,9 @@ const LoginLocal = () => {
 
     return (
         <form onSubmit={submitHandler}>
-            {loading && <LinearProgress variant="indeterminate" title="Processing Login Request"/>}
             {!forgotPassword && (
-                <>
+                <Stack direction="column">
+                    {loading && <LinearProgress variant="indeterminate" title="Processing Login Request"/>}
                     <Typography component="h3">Login with your credentials</Typography>
                     <Box sx={{display: 'flex', alignItems: 'center', mb: 1}}>
                         <AccountCircle sx={{color: 'action.active', mr: 1}}/>
@@ -72,10 +76,13 @@ const LoginLocal = () => {
                         </Button>
                     </Stack>
 
-                </>
+                </Stack>
             )}
             {forgotPassword && (
                 <Stack direction="column" spacing={1}>
+                    {isResettingPassword && (
+                        <LinearProgress variant="indeterminate" title="Processing Password Rest Request"/>
+                    )}
                     <Typography component="h3">Reset Your Password</Typography>
                     <Box sx={{display: 'flex', alignItems: 'center'}}>
                         <AccountCircle sx={{color: 'action.active', mr: 1}}/>

@@ -1,8 +1,9 @@
 import {useAppDispatch, useAppSelector} from "../../app/configureStore";
-import {loadBanners, selectBannersList, selectBannersLoaded, selectBannersUpdated} from "./index";
 import {useEffect} from "react";
 import HomeBanner from "./HomeBanner";
 import Stack from "@mui/material/Stack";
+import {selectBannersList, selectBannersLoaded, selectBannersUpdated} from "./selectors";
+import {loadBanners} from "./actions";
 
 const bannersMaxAge = 1000 * 60 * 30;
 

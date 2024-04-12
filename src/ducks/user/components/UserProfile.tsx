@@ -73,7 +73,7 @@ const UserProfile = () => {
                 <form onSubmit={submitHandler}>
                     <Typography variant="h3" component="h3" sx={{mb: 5}}>Login Profile</Typography>
                     {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
-                    <Stack spacing={2} direction="column">
+                    <Stack spacing={2} direction={{xs: "column", lg: "row"}}>
                         <TextField label="Name" type="text" fullWidth variant="filled" size="small"
                                    value={user?.name ?? ''} onChange={changeHandler('name')}/>
                         <TextField label="Email Address" type="email" fullWidth variant="filled" size="small"
@@ -81,14 +81,14 @@ const UserProfile = () => {
                                    value={user?.email ?? ''} onChange={changeHandler('email')}/>
                         {user?.changed && (<Alert severity="warning">Don't forget to save your changes.</Alert>)}
                     </Stack>
-                    <Stack direction="row" spacing={2} sx={{mt: 5}} useFlexGap>
-                        <Button type="submit" variant="outlined">Save Changes</Button>
-                        <Button type="button" variant="text" onClick={refreshHandler}>Refresh</Button>
-                        {authType === AUTH_LOCAL && (
-                            <Button type="button" variant="text" onClick={() => setShowModal(!showModal)}>
-                                Change Password
-                            </Button>)}
+                    <Stack direction="row" spacing={2} sx={{mt: 5}} useFlexGap justifyContent="flex-end">
                         <Button type="button" variant="text" onClick={logoutHandler} color="error">Logout</Button>
+                        <Button type="button" variant="text" onClick={refreshHandler}>Refresh</Button>
+                        <Button type="button" variant="text" disabled={authType !== AUTH_LOCAL}
+                                onClick={() => setShowModal(!showModal)}>
+                            Change Password
+                        </Button>
+                        <Button type="submit" variant="outlined">Save Changes</Button>
                     </Stack>
                 </form>
             </Grid2>

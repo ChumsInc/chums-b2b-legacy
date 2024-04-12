@@ -6,7 +6,6 @@ import PropTypes from "prop-types";
 import {changeUserPassword} from "../ducks/user/actions";
 import {connect} from "react-redux";
 
-
 class PasswordForm extends Component{
     static propTypes = {
         email: PropTypes.string,

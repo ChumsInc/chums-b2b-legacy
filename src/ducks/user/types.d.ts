@@ -1,6 +1,5 @@
 import {
     BasicCustomer,
-    BooleanLike,
     Customer,
     Editable,
     RecentCustomer,
@@ -11,8 +10,6 @@ import {
 } from "b2b-types";
 import {EmptyObject} from "../../types/generic";
 import {ExtendedUserProfile} from "../../types/user";
-import {Action} from "redux";
-import {UnknownAction} from "@reduxjs/toolkit";
 import {DeprecatedAsyncAction} from "../../types/actions";
 
 export interface UserLoginState {
@@ -27,7 +24,7 @@ export interface UserSignupState {
     email: string;
     authKey: string; // not used?
     authHash: string;
-    error: string|null;
+    error: string | null;
     loading: boolean;
 }
 
@@ -40,35 +37,6 @@ export interface UserPasswordState {
 }
 
 
-export interface UserState {
-    token: string|null;
-    tokenExpires: number;
-    profile: (ExtendedUserProfile & Editable) | null;
-    accounts: UserCustomerAccess[];
-    roles: string[];
-    loggedIn: boolean;
-    userAccount: UserCustomerAccess|EmptyObject|null;
-    currentCustomer: BasicCustomer|null;
-    customerList: {
-        list: Customer[];
-        loading: boolean;
-        loaded: boolean;
-        filter: string;
-        repFilter: string;
-    };
-    repList: {
-        list: Salesperson[];
-        loading: boolean;
-        loaded: boolean;
-    };
-    signUp: UserSignupState;
-    recentAccounts: RecentCustomer[];
-    authType: string;
-    passwordChange: UserPasswordState;
-    login: UserLoginState;
-    loading: boolean;
-    customerPermissions: CustomerPermissionsState;
-}
 
 export interface SetLoggedInProps {
     loggedIn: boolean;
@@ -81,11 +49,13 @@ export interface UserProfileResponse {
     roles?: string[];
     accounts?: UserCustomerAccess[];
     reps?: Salesperson[];
-    picture?: string|null;
+    picture?: string | null;
+    expires?: number;
+    token?: string;
 }
 
 export interface FunkyUserProfileResponse extends UserProfileResponse {
-    roles?: (string|UserRole)[];
+    roles?: (string | UserRole)[];
 }
 
 

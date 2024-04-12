@@ -21,11 +21,14 @@ import {BillToCustomer, Editable} from "b2b-types";
 import LinearProgress from "@mui/material/LinearProgress";
 import ReloadCustomerButton from "./ReloadCustomerButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Button, TextField} from "@mui/material";
+import {Button, InputAdornment, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import TelephoneFormFields from "./TelephoneFormFields";
 import EmailAddressEditor from "../../../components/EmailAddressEditor";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 const BillToForm = () => {
     const dispatch = useAppDispatch();
@@ -34,10 +37,12 @@ const BillToForm = () => {
     const canEdit = useSelector(selectCanEdit);
     const permissions = useSelector(selectCustomerPermissions);
     const [customer, setCustomer] = useState<(BillToCustomer & Editable) | null>(current ?? null);
+    const [emailAddresses, setEmailAddresses] = useState<string[]>(current?.EmailAddress?.split(';')?.map(email => email.trim()) ?? [''])
 
     useEffect(() => {
         if (isBillToCustomer(current)) {
             setCustomer({...current});
+            setEmailAddresses(current?.EmailAddress?.split(';')?.map(email => email.trim()) ?? ['']);
         } else {
             setCustomer(null);
         }
@@ -55,6 +60,42 @@ const BillToForm = () => {
                 return changeHandler({[field]: ev.target.checked ? 'Y' : 'N'})
             default:
                 changeHandler(({[field]: ev.target.value}));
+        }
+    }
+
+    const emailChangeHandler = (index:number) => (ev:ChangeEvent<HTMLInputElement>) => {
+        if (!customer) {
+            return;
+        }
+        const email = [...emailAddresses];
+        if (email[index] !== undefined) {
+            email[index] = ev.target.value;
+        }
+        setEmailAddresses(email);
+        setCustomer({...customer, EmailAddress: email.join(';')});
+    }
+
+    const addEmailAddressHandler = (after:number) => {
+        if (!customer) {
+            return;
+        }
+        const email = emailAddresses.toSpliced(after + 1, 0, '');
+        console.log('addEmailAddressHandler', email);
+        setEmailAddresses(email);
+        setCustomer({...customer, EmailAddress: email.join(';')});
+    }
+
+    const removeEmailAddressHandler = (index:number) => {
+        if (!customer) {
+            return;
+        }
+        if (emailAddresses[index] !== undefined) {
+            const email = emailAddresses.filter((email, _index) => _index !== index);
+            if (email.length === 0) {
+                email.push('');
+            }
+            setEmailAddresses(email);
+            setCustomer({...customer, EmailAddress: email.join(';')});
         }
     }
 
@@ -112,11 +153,27 @@ const BillToForm = () => {
                                 <StoreMapToggle checked={customer.Reseller === 'Y'}
                                                 onChange={fieldChangeHandler('Reseller')}
                                                 readOnly={!canEdit}/>
-                                <EmailAddressEditor label="Email Address"
-                                                    required={true} readOnly={!canEdit}
-                                                    value={customer.EmailAddress}
-                                                    onChange={changeHandler}
-                                                    allowMultiple/>
+                                {emailAddresses.map((email, index) => (
+                                    <TextField key={index} variant="filled" label="Email Address" fullWidth size="small"
+                                               type="email" value={email} onChange={emailChangeHandler(index)}
+                                               inputProps={{readOnly: !canEdit, maxLength: 250 - emailAddresses.join(';').length}}
+                                               InputProps={{endAdornment: (
+                                                   <InputAdornment position="end">
+                                                       <IconButton aria-label="Add a new email address" disabled={!email || emailAddresses.join(';').length > 240} onClick={() => addEmailAddressHandler(index)}>
+                                                           <AddIcon />
+                                                       </IconButton>
+                                                       <IconButton aria-label="Add a new email address" onClick={() => removeEmailAddressHandler(index)} disabled={index === 0}>
+                                                           <RemoveIcon />
+                                                       </IconButton>
+                                                   </InputAdornment>
+                                                   )}}
+                                    />
+                                ))}
+                                {/*<EmailAddressEditor label="Email Address"*/}
+                                {/*                    required={true} readOnly={!canEdit}*/}
+                                {/*                    value={customer.EmailAddress}*/}
+                                {/*                    onChange={changeHandler}*/}
+                                {/*                    allowMultiple/>*/}
                                 <TelephoneFormFields account={customer} onChange={changeHandler} readOnly={!canEdit}/>
                                 {customer.changed &&
                                     <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>

@@ -6,7 +6,8 @@ import Menu from "@mui/material/Menu";
 import MenuItemRouterLink from "./MenuItemRouterLink";
 import GoogleSignInOneTap from "../../user/components/GoogleSignInOneTap";
 import UserAvatar from "../../user/components/UserAvatar";
-import {generatePath} from "react-router-dom";
+import {generatePath, useLocation} from "react-router-dom";
+import {useIsSSR} from "../../../hooks/is-server-side";
 
 const isExpired = (expires: number) => {
     if (!expires || expires < 0) {
@@ -17,6 +18,8 @@ const isExpired = (expires: number) => {
 
 
 const UserMenu = () => {
+    const isSSR = useIsSSR();
+    const location = useLocation();
     const isLoggedIn = useSelector(selectLoggedIn);
     const currentAccess = useSelector(selectCurrentAccess);
     const expires = useSelector(selectLoginExpiry);
@@ -28,28 +31,33 @@ const UserMenu = () => {
     const open = Boolean(anchorEl);
 
     useEffect(() => {
-        if (typeof window === 'undefined') {
+        if (isSSR) {
             return;
         }
-        window.clearTimeout(timerRef.current);
-        if (!isExpired(expires)) {
+        if (isLoggedIn) {
+            window.clearInterval(timerRef.current);
             timerRef.current = window.setInterval(() => {
-                setExpired(isExpired(expires));
-            })
+                console.log(`isExpired?`, {expires, isExpired: isExpired(expires)});
+                if (isExpired(expires)) {
+                    setExpired(true);
+                }
+            }, 60 * 1000);
         }
         return () => {
-            if (typeof window === 'undefined') {
+            if (isSSR) {
                 return;
             }
-            window.clearTimeout(timerRef.current);
+            console.log('clearInterval', {expires, isLoggedIn})
+            window.clearInterval(timerRef.current);
         }
-    }, [expires]);
+    }, [expires, isLoggedIn]);
 
     useEffect(() => {
         if (open && !isLoggedIn) {
             setAnchorEl(null);
         }
     }, [isLoggedIn]);
+
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
@@ -65,6 +73,7 @@ const UserMenu = () => {
             <Menu id={menuId} open={open} onClose={handleClose} anchorEl={anchorEl}
                   MenuListProps={{'aria-labelledby': buttonId}}>
                 {!isLoggedIn && (<MenuItemRouterLink to="/login">Login</MenuItemRouterLink>)}
+                {(!isLoggedIn || expired) && location.pathname !== '/login' && (<GoogleSignInOneTap/>)}
                 {isLoggedIn && (<MenuItemRouterLink to="/profile">Profile</MenuItemRouterLink>)}
                 {isLoggedIn && currentAccess && (
                     <MenuItemRouterLink to={generatePath('/profile/:id', {id: `${currentAccess.id}`})}>

@@ -14,6 +14,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Container from "@mui/material/Container";
 import {useLocation} from "react-router";
 import {setReturnToPath} from "../../customer/actions";
+import PasswordForm from "./PasswordForm";
 
 const ProfilePage = () => {
     const dispatch = useAppDispatch();
@@ -34,6 +35,7 @@ const ProfilePage = () => {
             <DocumentTitle documentTitle={DOCUMENT_TITLES.profile}/>
             <UserProfile/>
             {loading && <LinearProgress variant="indeterminate"/>}
+            <PasswordForm />
             {!!customerAccounts.length && <h4>Customer Accounts</h4>}
             {!!customerAccounts.length &&
                 <AccountButtons userAccounts={customerAccounts} userAccount={currentAccess}/>}

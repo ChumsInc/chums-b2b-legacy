@@ -217,6 +217,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             state.roles = (action.payload.roles ?? []).sort();
             state.loggedIn = !!(action.payload.user?.id ?? 0);
             state.picture = action.payload.picture ?? null;
+            state.tokenExpires = action.payload.expires ?? 0;
         })
         .addCase(signInWithGoogle.rejected, (state) => {
             state.actionStatus = 'idle';

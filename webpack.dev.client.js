@@ -22,7 +22,7 @@ const clientConfig = {
     devServer: {
         compress: true,
         client: {
-            logging: 'log',
+            // logging: 'warn',
             overlay: {
                 runtimeErrors: (error) => {
                     console.log(error);
@@ -54,6 +54,9 @@ const clientConfig = {
     plugins: [
         // new webpack.HotModuleReplacementPlugin(),
     ],
+    stats: {
+        errorDetails: true,
+    }
 }
 
 module.exports = merge(common, clientConfig);

@@ -311,7 +311,7 @@ export const resetPassword = createAsyncThunk<void, string>(
         dispatch(setAlert({
             severity: 'success',
             message: "We've sent you an email so you can validate your account and reset your password.",
-            context: 'user/resetPassword',
+            context: 'user/resetPasswordEmail',
             title: 'Thanks!'
         }));
     },

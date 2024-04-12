@@ -78,19 +78,12 @@ export const setCustomerAccount = createAsyncThunk<{
 export const loadCustomer = createAsyncThunk<FetchCustomerResponse | null, CustomerKey | null>(
     'customer/load',
     async (arg, {dispatch, getState}) => {
-        try {
-            const response = await fetchCustomerAccount(arg!);
-            dispatch(loadOpenOrders(response.customer));
-            const state = getState() as RootState;
-            response.recent = buildRecentCustomers(selectRecentCustomers(state), response.customer);
-            localStore.setItem(STORE_RECENT_ACCOUNTS, response.recent);
-            return response;
-        } catch (err: unknown) {
-            if (err instanceof Error) {
-                return Promise.reject(err);
-            }
-            return Promise.reject(new Error('Error in loadCustomer()'));
-        }
+        const response = await fetchCustomerAccount(arg!);
+        dispatch(loadOpenOrders(response.customer));
+        const state = getState() as RootState;
+        response.recent = buildRecentCustomers(selectRecentCustomers(state), response.customer);
+        localStore.setItem(STORE_RECENT_ACCOUNTS, response.recent);
+        return response;
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
