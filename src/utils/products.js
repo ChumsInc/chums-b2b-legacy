@@ -86,7 +86,8 @@ export const defaultCartItem = ({
                                     season_code,
                                     season_available,
                                     mix,
-                                    season
+                                    season,
+                                    additionalData,
                                 }, preferredColor) => {
     switch (sellAs) {
     case SELL_AS_SELF:
@@ -100,12 +101,15 @@ export const defaultCartItem = ({
             quantity: 1,
             season_code,
             season_available,
-            season
+            season,
+            additionalData
         };
     case SELL_AS_MIX:
         const [colorName = ''] = mix.items.filter(item => item.color.code === defaultColor)
             .map(item => item.color.name);
-        const additionalData = {};
+        if (!additionalData) {
+            additionalData = {};
+        }
         const [image_filename] = mix.items
             .filter(item => item.color.code === defaultColor)
             .map(item => {
@@ -225,7 +229,7 @@ export const getDefaultColor = (product, preferredColor = '') => {
             : (product.defaultColor || '');
     case SELL_AS_COLOR:
         return !!product.items && product.items
-            .filter(item => item.status === 1)
+            .filter(item => !!item.status)
             .filter(item => item.colorCode === preferredColor).length
             ? preferredColor
             : (product.defaultColor || '');

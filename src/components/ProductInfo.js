@@ -8,7 +8,7 @@ const ProductInfo = ({itemCode, msrp = [], salesUM}) => {
             <div>
                 <label>MSRP</label>
                 <span className="info">
-                    $ {msrp.map(price => numeral(price).format('0.00')).join(' - ')}
+                    $ {msrp.map(price => numeral(price).format('0,0.00')).join(' - ')}
                     {' '}
                     ({salesUM})
                 </span>

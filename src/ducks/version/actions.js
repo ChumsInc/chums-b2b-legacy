@@ -16,8 +16,7 @@ export const fetchVersion = (force) => async (dispatch, getState) => {
         }
         dispatch({type: versionFetchRequested});
         const {version} = await fetchGET(versionURL, {cache: 'no-cache'});
-        const {versionNo} = version;
-        dispatch({type: versionFetchSucceeded, payload: {versionNo, lastChecked: new Date().valueOf()}})
+        dispatch({type: versionFetchSucceeded, payload: {version, lastChecked: new Date().valueOf()}})
     } catch (err) {
         if (err instanceof Error) {
             console.log("fetchVersion()", err.message);

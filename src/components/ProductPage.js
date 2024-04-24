@@ -22,6 +22,7 @@ import customer from "../reducers/customer";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 import SizeIconList from "./SizeIconList";
 import {productSeasonShape} from "../constants/myPropTypes";
+import ProductPreseasonAlert from "./ProductPreseasonAlert";
 
 
 const mapStateToProps = ({user, products, customer, app}) => {
@@ -294,13 +295,7 @@ class ProductPage extends Component {
                                 <Alert type="alert-warning" message="Please log in to see prices and availability"
                                        title=""/>
                             )}
-                            {(  (!selectedProduct.availableForSale && selectedProduct.season && selectedProduct.season.active && !selectedProduct.season.product_available)
-                                || (selectedProduct.availableForSale && !!cartItem && cartItem.season && !cartItem.season.product_available)
-                            ) && (
-                                <Alert type="alert-info" title="Pre-Season Order:">
-                                    {cartItem.season?.preSeasonMessage ?? selectedProduct.season?.preSeasonMessage}
-                                </Alert>
-                            )}
+                            <ProductPreseasonAlert />
                             {!loading && !TaxSchedule && (
                                 <MissingTaxScheduleAlert />
                             )}

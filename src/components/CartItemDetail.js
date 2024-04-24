@@ -72,16 +72,19 @@ export default class CartItemDetail extends PureComponent {
                         <th>SKU</th>
                         <td>{itemCode}</td>
                     </tr>
-                    {canViewAvailable && (
-                        <tr className={classNames({'table-danger': QuantityAvailable <= 0})}>
+                    {canViewAvailable  && (
+                        <tr className={classNames({'table-danger': QuantityAvailable <= 0 && salesUM !== 'KIT'})}>
                             <th>Available Today</th>
                             <td>{numeral(QuantityAvailable / salesUMFactor).format('0,0')} ({salesUM})</td>
                         </tr>
                     )}
                     </tbody>
                 </table>
-                {QuantityAvailable < (quantity * salesUMFactor) && (
+                {salesUM !== 'KIT' && QuantityAvailable < (quantity * salesUMFactor) && (
                     <Alert type="alert-warning" title="Note: " >Product is not available for immediate delivery.</Alert>
+                )}
+                {salesUM === 'KIT' && (
+                    <Alert type="alert-info" title="Note: " >This item is made to order.</Alert>
                 )}
             </Fragment>
         );

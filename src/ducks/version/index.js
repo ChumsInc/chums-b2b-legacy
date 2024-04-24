@@ -66,7 +66,7 @@ const versionReducer = (state = {...defaultState}, action) => {
         if (payload?.versionNo && payload?.lastChecked) {
             return {
                 versionNo: payload.versionNo,
-                changed: payload.versionNo !== state.versionNo && state.versionNo !== defaultState.versionNo,
+                changed: payload.version !== state.versionNo && state.versionNo !== defaultState.versionNo,
                 loading: false,
                 lastChecked: payload.lastChecked,
                 ignored: payload.versionNo,
