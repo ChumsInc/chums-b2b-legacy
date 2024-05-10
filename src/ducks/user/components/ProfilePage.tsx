@@ -35,7 +35,6 @@ const ProfilePage = () => {
             <DocumentTitle documentTitle={DOCUMENT_TITLES.profile}/>
             <UserProfile/>
             {loading && <LinearProgress variant="indeterminate"/>}
-            <PasswordForm />
             {!!customerAccounts.length && <h4>Customer Accounts</h4>}
             {!!customerAccounts.length &&
                 <AccountButtons userAccounts={customerAccounts} userAccount={currentAccess}/>}

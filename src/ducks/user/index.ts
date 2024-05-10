@@ -2,9 +2,7 @@ import {
     CHANGE_USER_PASSWORD,
     CLEAR_USER_ACCOUNT,
     FETCH_INIT,
-    FETCH_SUCCESS,
     FETCH_USER_SIGNUP,
-    SET_LOGGED_IN,
     UPDATE_SIGNUP
 } from "../../constants/actions";
 import {auth} from '../../api/IntranetAuthService';
@@ -14,11 +12,12 @@ import {getFirstCustomer,} from "../../utils/customer";
 import {jwtDecode, JwtPayload} from "jwt-decode";
 import {createReducer, isRejected, UnknownAction} from "@reduxjs/toolkit";
 import {
+    changePassword,
     loadProfile,
     loginUser,
     resetPassword,
     saveUserProfile,
-    setLoggedIn,
+    setLoggedIn, setNewPassword,
     setUserAccess,
     signInWithGoogle
 } from "./actions";
@@ -33,15 +32,14 @@ import {
 import {DeprecatedUserProfileAction, UserPasswordState, UserSignupState} from "./types";
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
-import {ExtendedUserProfile} from "../../types/user";
 import {LoadStatus} from "../../types/generic";
+import {isErrorResponse} from "../../utils/typeguards";
 
 
 export interface UserState {
     token: string | null;
     tokenExpires: number;
-    user: (UserProfile & Editable) | null;
-    profile: (ExtendedUserProfile & Editable) | null;
+    profile: (UserProfile & Editable) | null;
     picture: string | null;
     access: {
         list: UserCustomerAccess[],
@@ -56,7 +54,7 @@ export interface UserState {
     signUp: UserSignupState;
     authType: string;
     passwordChange: UserPasswordState;
-    actionStatus: LoadStatus | 'saving-profile' | 'resetting-password' | 'logging-in';
+    actionStatus: LoadStatus | 'saving-profile' | 'resetting-password' | 'logging-in' | 'setting-password';
 }
 
 export const initialUserState = (): UserState => {
@@ -73,14 +71,13 @@ export const initialUserState = (): UserState => {
         ? localStore.getItem<BasicCustomer | null>(STORE_CUSTOMER, getFirstCustomer(accounts) ?? null)
         : null;
     const currentAccess: UserCustomerAccess | null = isLoggedIn
-        ? localStore.getItem<UserCustomerAccess | null>(STORE_USER_ACCESS, null)
+        ? localStore.getItem<UserCustomerAccess | null>(STORE_USER_ACCESS, (accounts.length === 1 ? accounts[0] : null))
         : null;
-    const authType = localStore.getItem<string>(STORE_AUTHTYPE, '');
+    const authType = isLoggedIn ? localStore.getItem<string|null>(STORE_AUTHTYPE, null) : null;
 
     return {
         token: existingToken ?? null,
         tokenExpires: existingTokenExpires,
-        user: profile?.chums?.user ?? null,
         profile: profile?.chums?.user ?? null,
         picture: profile?.imageUrl ?? null,
         accounts: profile?.chums?.user?.accounts ?? [],
@@ -126,13 +123,13 @@ const userReducer = createReducer(initialUserState, (builder) => {
             if (!state.loggedIn && action.payload?.loggedIn) {
                 const _initialUserState = initialUserState();
                 state.tokenExpires = _initialUserState.tokenExpires;
-                state.user = _initialUserState.user;
                 state.profile = _initialUserState.profile;
                 state.picture = _initialUserState.picture;
                 state.accounts = _initialUserState.accounts;
                 state.roles = _initialUserState.roles;
                 state.access = _initialUserState.access;
                 state.currentCustomer = _initialUserState.currentCustomer;
+                state.authType = _initialUserState.authType;
             }
             state.loggedIn = action.payload.loggedIn;
             state.token = action.payload.token ?? null;
@@ -140,7 +137,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 const _initialUserState = initialUserState();
                 state.token = null;
                 state.tokenExpires = 0;
-                state.user = null;
                 state.profile = null;
                 state.accounts = [];
                 state.roles = [];
@@ -150,6 +146,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 state.signUp = {..._initialUserState.signUp};
                 state.authType = '';
                 state.passwordChange = {..._initialUserState.passwordChange};
+                state.picture = null;
             }
         })
         .addCase(loadProfile.pending, (state, action) => {
@@ -157,16 +154,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
         })
         .addCase(loadProfile.fulfilled, (state, action) => {
             state.actionStatus = 'idle';
-            state.user = action.payload.user ?? null;
-            if (action.payload.user) {
-                state.profile = {
-                    ...action.payload.user,
-                    accounts: action.payload.accounts ?? [],
-                    roles: (action.payload.roles ?? []).sort(),
-                }
-            } else {
-                state.profile = null;
-            }
+            state.profile = action.payload.user ?? null;
             state.roles = (action.payload.roles ?? []).sort();
             state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
             state.access.list = (action.payload.accounts ?? []).sort(userAccountSort);
@@ -212,7 +200,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
         .addCase(signInWithGoogle.fulfilled, (state, action) => {
             state.actionStatus = 'idle';
             state.token = action.meta.arg;
-            state.profile = action.payload.user ?? null;
             state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
             state.roles = (action.payload.roles ?? []).sort();
             state.loggedIn = !!(action.payload.user?.id ?? 0);
@@ -236,16 +223,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
         })
         .addCase(saveUserProfile.fulfilled, (state, action) => {
             state.actionStatus = 'idle';
-            state.user = action.payload.user ?? null;
-            if (action.payload.user) {
-                state.profile = {
-                    ...action.payload.user,
-                    accounts: action.payload.accounts ?? [],
-                    roles: (action.payload.roles ?? []).sort(),
-                }
-            } else {
-                state.profile = null;
-            }
+            state.profile = action.payload.user ?? null;
             state.roles = (action.payload.roles ?? []).sort();
             state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
             state.access.list = (action.payload.accounts ?? []).sort(userAccountSort);
@@ -261,10 +239,35 @@ const userReducer = createReducer(initialUserState, (builder) => {
         .addCase(saveUserProfile.rejected, (state) => {
             state.actionStatus = 'idle';
         })
+        .addCase(setNewPassword.pending, (state) => {
+            state.actionStatus = 'setting-password';
+        })
+        .addCase(setNewPassword.fulfilled, (state, action) => {
+            state.actionStatus = 'idle';
+            if (action.payload?.success) {
+
+            }
+        })
+        .addCase(setNewPassword.rejected, (state, action) => {
+            state.actionStatus = 'idle';
+        })
+        .addCase(changePassword.pending, (state) => {
+            state.actionStatus = 'setting-password';
+        })
+        .addCase(changePassword.fulfilled, (state, action) => {
+            state.actionStatus = 'idle';
+            if (action.payload.success) {
+                state.loggedIn = false;
+            }
+        })
+        .addCase(changePassword.rejected, (state) => {
+            state.actionStatus = 'idle';
+        })
         .addMatcher((action) => isUserAction(action) && isRejected(action) && !!action.error,
             (state, action) => {
                 if (isRejected(action)) {
                     console.log('userReducer', action?.error);
+                    // apK7KF@W8Yz&uwBwN%
                 }
             })
         .addMatcher(is401Action, (state, action) => {
@@ -276,37 +279,12 @@ const userReducer = createReducer(initialUserState, (builder) => {
             const _initialUserState = initialUserState();
             // console.log(action.type, JSON.parse(JSON.stringify(state)), action);
             switch (action.type) {
-                case SET_LOGGED_IN:
-                    if (isUserProfileAction(action)) {
-                        state.loggedIn = action.loggedIn === true;
-                        if (!action.loggedIn) {
-                            state.token = null;
-                            state.tokenExpires = 0;
-                            state.profile = null;
-                            state.accounts = [];
-                            state.roles = [];
-                            state.access.list = [];
-                            state.access.current = null;
-                            state.currentCustomer = null;
-                            state.signUp = {..._initialUserState.signUp};
-                            state.authType = '';
-                            state.passwordChange = {..._initialUserState.passwordChange};
-                        }
-                        if (action.token) {
-                            state.token = action.token;
-                            state.tokenExpires = jwtDecode<JwtPayload>(action.token)?.exp ?? 0;
-                        }
-                    }
-                    return;
                 case FETCH_USER_SIGNUP:
                     if (isUserProfileAction(action)) {
                         state.signUp = {
                             ...state.signUp, ...(action.props ?? {}),
                             loading: action.status === FETCH_INIT
                         };
-                        if (action.status === FETCH_SUCCESS) {
-                            state.profile = action.props;
-                        }
                     }
                     return;
                 case CLEAR_USER_ACCOUNT:

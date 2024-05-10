@@ -104,6 +104,12 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 state.orderType = 'past';
                 state.attempts = 0;
                 state.loaded = false;
+                state.customerKey = null;
+                state.sendEmail = {
+                    error: null,
+                    status: 'idle',
+                    response: null,
+                };
             }
         })
         .addCase(setUserAccess.pending, (state, action) => {

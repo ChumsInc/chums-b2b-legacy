@@ -12,7 +12,6 @@ function getCredentials():string|null {
     return null
 }
 
-
 async function handleJSONResponse<T = any>(res:Response):Promise<T> {
     if (!res.ok) {
         const text = await res.text();
@@ -26,20 +25,41 @@ async function handleJSONResponse<T = any>(res:Response):Promise<T> {
     return json || {};
 }
 
-export async function fetchJSON<T = any>(url:string, options:RequestInit = {}, skipCredentials:boolean = false):Promise<T> {
+export async function allowErrorResponseHandler<T = any>(res:Response):Promise<T> {
     try {
-        options.headers = new Headers(options?.headers);
-        if (!skipCredentials) {
+        return await res.json() as T;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("allowErrorResponseHandler()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("allowErrorResponseHandler()", err);
+        return Promise.reject(new Error('Error in allowErrorResponseHandler()'));
+    }
+}
+
+export interface FetchJSONOptions extends RequestInit {
+    responseHandler?: <T = any>(res:Response) => Promise<T>;
+}
+
+export async function fetchJSON<T = any>(url:string, options:FetchJSONOptions = {}):Promise<T> {
+    try {
+        const {responseHandler, ..._options} = options;
+        _options.headers = new Headers(_options?.headers);
+        if (!_options.credentials || _options.credentials === 'same-origin') {
             const credentials = getCredentials();
             if (credentials) {
-                options.headers.append('Authorization', credentials)
+                _options.headers.append('Authorization', credentials);
             }
         }
-        if (!!options?.method && ['POST', 'PUT'].includes(options.method.toUpperCase())) {
-            options.headers.append('Accept', 'application/json')
-            options.headers.append('Content-Type', 'application/json')
+        if (!!_options?.method && ['POST', 'PUT'].includes(_options.method.toUpperCase())) {
+            _options.headers.append('Accept', 'application/json')
+            _options.headers.append('Content-Type', 'application/json')
         }
-        const res = await fetch(url, {credentials: 'same-origin', ...options});
+        const res = await fetch(url, {credentials: 'same-origin', ..._options});
+        if (typeof responseHandler !== 'undefined') {
+            return responseHandler(res);
+        }
         return await handleJSONResponse<T>(res);
     } catch(err:unknown) {
         if (err instanceof Error) {

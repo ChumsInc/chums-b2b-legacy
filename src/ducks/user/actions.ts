@@ -7,10 +7,8 @@ import {
     FETCH_USER_SIGNUP,
     SET_LOGGED_IN,
 } from "../../constants/actions";
-
 import {handleError} from '../app/actions';
 import {setAlert} from '../alerts/actions';
-
 import localStore from '../../utils/LocalStore';
 import {
     STORE_AUTHTYPE,
@@ -21,7 +19,6 @@ import {
     STORE_TOKEN,
     STORE_USER_ACCESS
 } from '../../constants/stores';
-
 import {auth} from '../../api/IntranetAuthService';
 import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
@@ -37,24 +34,33 @@ import {
     selectLoggedIn,
     selectLoggingIn,
     selectResettingPassword,
-    selectUserAccount,
+    selectUserAccount, selectUserActionStatus,
     selectUserLoading
 } from "./selectors";
 import {
     fetchGoogleLogin,
     fetchUserProfile,
     postLocalLogin,
-    postLocalReauth,
+    postLocalReauth, postNewPassword, postPasswordChange,
     postResetPassword,
     postUserProfile
 } from "../../api/user";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
-import {SetLoggedInProps, UserPasswordState, UserProfileResponse} from "./types";
+import {
+    ChangePasswordProps,
+    ChangePasswordResponse,
+    SetLoggedInProps, SetNewPasswordProps,
+    UserPasswordState,
+    UserProfileResponse
+} from "./types";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
 import {isCustomerAccess} from "./utils";
 import {SignUpUser, StoredProfile} from "../../types/user";
 import {loadCustomerList} from "../customers/actions";
+import {redirect} from 'react-router-dom'
+import {isErrorResponse} from "../../utils/typeguards";
+import {APIErrorResponse} from "../../types/generic";
 
 let reauthTimer: number = 0;
 
@@ -66,15 +72,19 @@ export interface LoginUserProps {
     password: string;
 }
 
-export const loginUser = createAsyncThunk<void, LoginUserProps>(
+export const loginUser = createAsyncThunk<string|APIErrorResponse, LoginUserProps>(
     'user/login',
     async (arg, {dispatch}) => {
-        const token = await postLocalLogin(arg);
-        auth.setToken(token);
-        localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
-        auth.setProfile(getProfile(token));
-        dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-        dispatch(loadProfile());
+        const res = await postLocalLogin(arg);
+        if (!isErrorResponse(res)) {
+            const token = res;
+            auth.setToken(token);
+            localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
+            auth.setProfile(getProfile(token));
+            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
+            dispatch(loadProfile());
+        }
+        return res;
     },
     {
         condition: (arg, {getState}) => {
@@ -208,6 +218,38 @@ export const loadProfile = createAsyncThunk<UserProfileResponse>(
 // export const changeUser = (props: Pick<UserProfile, 'name' | 'email'>) => ({type: CHANGE_USER, props});
 export const changeUserPassword = (props: Partial<UserPasswordState>) => ({type: CHANGE_USER_PASSWORD, props});
 
+
+export const changePassword = createAsyncThunk<ChangePasswordResponse, ChangePasswordProps>(
+    'user/changePassword',
+    async (arg) => {
+        return await postPasswordChange(arg);
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return selectUserActionStatus(state) === 'idle';
+        }
+    }
+)
+
+export const setNewPassword = createAsyncThunk<ChangePasswordResponse|null, SetNewPasswordProps>(
+    'user/setNewPassword',
+    async (arg) => {
+        const res = await postNewPassword(arg);
+        if (res?.success) {
+            // redirect('/login')
+        }
+        return res;
+    },
+    {
+        condition: (arg, {getState}) => {
+            const state = getState() as RootState;
+            return selectUserActionStatus(state) === 'idle';
+        }
+    }
+)
+
+
 export const submitPasswordChange = () => (dispatch: AppDispatch, getState: () => RootState) => {
     const {user} = getState();
     const {oldPassword, newPassword} = user.passwordChange;
@@ -304,17 +346,11 @@ export const submitNewUser = ({
         });
 };
 
-export const resetPassword = createAsyncThunk<void, string>(
+export const resetPassword = createAsyncThunk<boolean, string>(
     'user/resetPassword',
-    async (arg, {dispatch}) => {
-        await postResetPassword(arg);
-        dispatch(setAlert({
-            severity: 'success',
-            message: "We've sent you an email so you can validate your account and reset your password.",
-            context: 'user/resetPasswordEmail',
-            title: 'Thanks!'
-        }));
-    },
+    async (arg) => {
+        return await postResetPassword(arg);
+   },
     {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;

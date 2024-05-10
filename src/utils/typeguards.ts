@@ -1,5 +1,5 @@
 import {BillToCustomer, Editable, SalesOrderHeader, UserRole} from "b2b-types";
-import {EmptyObject} from "../types/generic";
+import {APIErrorResponse, EmptyObject} from "../types/generic";
 
 export function isBillToCustomer(customer:BillToCustomer|EmptyObject|null): customer is BillToCustomer {
     if (!customer) {
@@ -19,4 +19,11 @@ export function isCartHeader(header:SalesOrderHeader|null): header is (SalesOrde
 
 export const isUserRole = (role:string|UserRole): role is UserRole => {
     return (role as UserRole).role !== undefined;
+}
+
+export function isErrorResponse<T = any>(res:T|APIErrorResponse|null):res is APIErrorResponse {
+    if (!res) {
+        return false;
+    }
+    return (res as APIErrorResponse)?.error !== undefined;
 }

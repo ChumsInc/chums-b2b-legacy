@@ -7,7 +7,7 @@ import {selectCurrentInvoiceLoading, selectInvoicesLoading} from "./selectors";
 import {RootState} from "../../app/configureStore";
 import {CustomerKey, ExtendedInvoice, InvoiceHistoryHeader} from "b2b-types";
 import {selectLoggedIn} from "../user/selectors";
-import {FetchInvoiceArg} from "./types";
+import {FetchInvoiceArg, LoadInvoicesProps} from "./types";
 import {SortProps} from "../../types/generic";
 
 
@@ -33,14 +33,15 @@ export const loadInvoice = createAsyncThunk<ExtendedInvoice | null, FetchInvoice
     }
 )
 
-export const loadInvoices = createAsyncThunk<InvoiceHistoryHeader[], CustomerKey | null>(
+
+export const loadInvoices = createAsyncThunk<InvoiceHistoryHeader[], LoadInvoicesProps>(
     'invoices/loadInvoices',
     async (arg) => {
-        return await fetchInvoices(arg as CustomerKey);
+        return await fetchInvoices(arg);
     }, {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;
-            return selectLoggedIn(state) && !!arg && !selectInvoicesLoading(state) && isValidCustomer(arg);
+            return selectLoggedIn(state) && !!arg && !selectInvoicesLoading(state) && isValidCustomer(arg.key);
         }
     }
 )

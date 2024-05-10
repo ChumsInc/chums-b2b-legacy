@@ -53,7 +53,7 @@ const UserAvatar = (props:BoxProps) => {
                 </Avatar>
             )}
             {isLoggedIn && profile && profilePic && (
-                <Avatar alt={profile.name} src={profilePic} />
+                <Avatar alt={profile.name} src={profilePic} slotProps={{img: {referrerPolicy: 'no-referrer'}}} />
             )}
             {isLoggedIn && profile && !profilePic && (
                 <Avatar {...stringAvatar(profile.name)} />

@@ -187,7 +187,7 @@ export async function fetchCustomerValidation({ARDivisionNo, CustomerNo}:{
 }):Promise<CustomerPermissions|null> {
     try {
         const url = `/api/user/b2b/validate/customer/chums/${encodeURIComponent(ARDivisionNo)}-${encodeURIComponent(CustomerNo)}`;
-        const response = await fetchJSON<CustomerPermissions>(url);
+        const response = await fetchJSON<CustomerPermissions>(url, {cache: 'no-cache'});
         return response ?? null;
     } catch(err) {
         if (err instanceof Error) {

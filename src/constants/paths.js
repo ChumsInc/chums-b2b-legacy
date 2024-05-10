@@ -166,5 +166,6 @@ export const DOCUMENT_TITLES = {
     home: 'Home',
     login: 'Log In',
     profile: 'Profile Page',
+    profileChangePassword: 'Change Password',
     signUp: 'Sign Up',
 };

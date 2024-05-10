@@ -28,12 +28,11 @@ import {useAppDispatch} from "../../../app/configureStore";
 import ProgressBar from "../../../components/ProgressBar";
 import CartSelect from "../../open-orders/components/CartSelect";
 import CartQuantityInput from "../../../components/CartQuantityInput";
-import {CartItem, ShipToAddress} from "b2b-types";
+import {CartProduct, ShipToAddress} from "b2b-types";
 import Decimal from "decimal.js";
-import {CartProduct} from "b2b-types";
 
 const AddToCartForm = ({
-                            cartItem,
+                           cartItem,
                            quantity,
                            unitOfMeasure,
                            comment,
@@ -44,6 +43,7 @@ const AddToCartForm = ({
                            onDone,
                            onChangeQuantity,
                            excludeSalesOrder,
+    afterAddToCart,
                        }: {
     cartItem: CartProduct;
     quantity: number;
@@ -56,6 +56,7 @@ const AddToCartForm = ({
     onDone: () => void;
     onChangeQuantity: (val: number) => void;
     excludeSalesOrder?: string;
+    afterAddToCart?: (message: string) => void;
 }) => {
     const dispatch = useAppDispatch();
     const customer = useSelector(selectCustomerAccount);
@@ -154,6 +155,9 @@ const AddToCartForm = ({
                 comment,
             }));
             onDone();
+            if (afterAddToCart) {
+                afterAddToCart(`Added to cart: ${cartItem.itemCode}; quantity: ${cartItem.quantity} ${cartItem.salesUM}`);
+            }
             return;
         }
         await dispatch(saveNewCart({
@@ -185,7 +189,7 @@ const AddToCartForm = ({
                     <CartQuantityInput quantity={quantity} onChange={quantityChangeHandler}
                                        unitOfMeasure={unitOfMeasure}
                                        disabled={disabled} required/>
-                    <AddToCartButton disabled={disabled || !quantity}/>
+                    <AddToCartButton disabled={disabled || !quantity || loading}/>
                 </Stack>
                 {loading && <LinearProgress variant="indeterminate"/>}
                 {!!cartMessage && <Alert severity="success">{cartMessage}</Alert>}

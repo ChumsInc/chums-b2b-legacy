@@ -99,15 +99,6 @@ export function isDeprecatedAppendOrderCommentAction(action:UnknownAction|Deprec
     return action.type === "APPEND_ORDER_COMMENT";
 }
 
-export interface DeprecatedSetLoggedInAction extends UnknownAction {
-    type: 'SET_LOGGED_IN',
-    authType?: string;
-    token?: string;
-    loggedIn?: boolean;
-}
-export function isDeprecatedSetLoggedInAction(action:UnknownAction|DeprecatedSetLoggedInAction):action is DeprecatedSetLoggedInAction {
-    return action.type === 'SET_LOGGED_IN';
-}
 
 export interface DeprecatedSetAlertAction extends UnknownAction {
     type: 'SET_ALERT',

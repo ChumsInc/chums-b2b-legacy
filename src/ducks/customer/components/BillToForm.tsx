@@ -139,7 +139,7 @@ const BillToForm = () => {
 
                 {!customer.TaxSchedule && (<MissingTaxScheduleAlert/>)}
                 <hr/>
-                <Typography variant="h2" component="h2">Billing Contact &amp; Address</Typography>
+                <Typography variant="h3" component="h3">Billing Contact &amp; Address</Typography>
 
                 <form onSubmit={submitHandler}>
                     <Grid2 container spacing={2}>

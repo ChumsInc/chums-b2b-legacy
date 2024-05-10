@@ -70,3 +70,21 @@ export interface DeprecatedUserProfileAction extends DeprecatedUserAction {
     props: ExtendedUserProfile;
 }
 
+export interface ChangePasswordProps {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export interface ChangePasswordResponse {
+    error?: string;
+    success?: boolean;
+    token?: string;
+}
+
+export interface SetNewPasswordProps {
+    key: string;
+    hash: string;
+    newPassword: string;
+}
+
+export type SignUpProfile = Pick<UserProfile, 'id'|'email'|'name'|'accountType'>;

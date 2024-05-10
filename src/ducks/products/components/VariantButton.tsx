@@ -38,7 +38,7 @@ const VariantButton = ({variant, selected, direction, spacing, onClick}: {
             <Stack direction={direction ?? {xs: 'row', sm: 'column'}}
                    spacing={spacing ?? {xs: 2, sm: 0}} alignItems="center">
                 <Box>
-                    <Typography variant="variantButtonText" dangerouslySetInnerHTML={{__html: variant.title}}/>
+                    <Typography variant="variantButtonText" >{variant.title}</Typography>
                 </Box>
                 <Box>
                     <Typography variant="variantButtonPrice">

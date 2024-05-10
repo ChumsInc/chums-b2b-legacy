@@ -3,7 +3,12 @@ import {SortProps} from "../../types/generic";
 
 export interface InvoicesState {
     customerKey: string | null;
-    list: InvoiceHistoryHeader[];
+    list: {
+        invoices: InvoiceHistoryHeader[];
+        offset: number;
+        limitReached: boolean;
+        limit: number;
+    };
     invoice: ExtendedInvoice | null;
     loading: boolean;
     loaded: boolean;
@@ -19,3 +24,9 @@ export interface InvoicesState {
 
 export type FetchInvoiceArg = Pick<InvoiceHistoryHeader, 'InvoiceNo' | 'InvoiceType'>;
 export type FetchInvoicesArg = CustomerKey;
+
+export interface LoadInvoicesProps {
+    key: CustomerKey|null;
+    start?: number;
+    limit?: number;
+}

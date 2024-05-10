@@ -3,6 +3,7 @@ import {FetchInvoiceArg, FetchInvoicesArg} from "../ducks/invoices/types";
 import {ExtendedInvoice, Invoice, InvoiceHeader, InvoiceHistoryHeader} from "b2b-types";
 import {fetchJSON} from "./fetch";
 import {InvoiceTracking} from "b2b-types/src/invoice";
+import {LoadInvoicesProps} from "../ducks/invoices/types";
 
 export interface FetchInvoiceResponse {
     invoice: ExtendedInvoice|null;
@@ -30,11 +31,17 @@ export async function fetchInvoice(arg:FetchInvoiceArg):Promise<ExtendedInvoice|
 }
 
 
-export async function fetchInvoices(arg:FetchInvoicesArg):Promise<InvoiceHistoryHeader[]> {
+export async function fetchInvoices(arg:LoadInvoicesProps):Promise<InvoiceHistoryHeader[]> {
     try {
-        const url = '/api/sales/b2b/invoices/chums/:ARDivisionNo-:CustomerNo'
-            .replace(':ARDivisionNo', encodeURIComponent(arg.ARDivisionNo))
-            .replace(':CustomerNo', encodeURIComponent(arg.CustomerNo));
+        if (!arg.key) {
+            return [];
+        }
+        const params = new URLSearchParams();
+        params.set('start', String(arg.start ?? 0));
+        params.set('limit', String(arg.limit ?? 500));
+        const url = `/api/sales/b2b/invoices/chums/:ARDivisionNo-:CustomerNo?${params.toString()}`
+            .replace(':ARDivisionNo', encodeURIComponent(arg.key.ARDivisionNo))
+            .replace(':CustomerNo', encodeURIComponent(arg.key.CustomerNo));
         const response = await fetchGET(url, {cache: 'no-cache'});
         return response?.list ?? [];
     } catch(err) {

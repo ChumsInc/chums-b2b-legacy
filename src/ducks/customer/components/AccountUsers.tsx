@@ -17,7 +17,7 @@ const AccountUsers = () => {
         <Grid2 container spacing={2} sx={{mt: '2'}}>
             <Grid2 xs={12} sm={6}>
                 <Stack direction="row" spacing={2} justifyContent="space-between">
-                    <Typography variant="h2" component="h2">
+                    <Typography variant="h3" component="h3">
                         User List
                     </Typography>
                     <ReloadCustomerButton/>

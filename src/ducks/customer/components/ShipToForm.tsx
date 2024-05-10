@@ -1,10 +1,10 @@
 import React, {ChangeEvent, FormEvent, useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
-import {loadCustomer, saveShipToAddress, setDefaultShipTo} from '../actions';
+import {saveShipToAddress} from '../actions';
 import Alert from "@mui/material/Alert";
 import ShipToAddressFormFields from "./ShipToAddressFormFields";
 import {selectCanEdit} from "../../user/selectors";
-import {selectCustomerLoading, selectPermittedShipToAddresses, selectPrimaryShipTo} from "../selectors";
+import {selectCustomerLoading, selectPermittedShipToAddresses} from "../selectors";
 import StoreMapToggle from "../../../components/StoreMapToggle";
 import {Editable, ShipToCustomer} from "b2b-types";
 import {useAppDispatch} from "../../../app/configureStore";
@@ -14,19 +14,16 @@ import LinearProgress from "@mui/material/LinearProgress";
 import ReloadCustomerButton from "./ReloadCustomerButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import {Button, TextField} from "@mui/material";
-import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import EmailAddressEditor from "../../../components/EmailAddressEditor";
 import TelephoneFormFields from "./TelephoneFormFields";
-import PrimaryShipToIcon from "./PrimaryShipToIcon";
 import {generatePath} from "react-router-dom";
 import {customerSlug} from "../../../utils/customer";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import PrimaryShipToButton from "./PrimaryShipToButton";
 
 const ShipToForm = () => {
     const dispatch = useAppDispatch();
     const shipToAddresses = useSelector(selectPermittedShipToAddresses);
-    const primaryShipTo = useSelector(selectPrimaryShipTo);
     const loading = useSelector(selectCustomerLoading);
     const canEdit = useSelector(selectCanEdit);
     const params = useParams<'shipToCode'>();
@@ -69,13 +66,6 @@ const ShipToForm = () => {
         }
     }
 
-    const onSetDefaultShipTo = async () => {
-        if (shipTo && shipTo.ShipToCode !== primaryShipTo?.ShipToCode) {
-            await dispatch(setDefaultShipTo(shipTo.ShipToCode))
-            dispatch(loadCustomer(shipTo));
-        }
-    }
-
     const cancelHandler = () => {
         navigate(generatePath('/account/:customerSlug/delivery', {customerSlug: customerSlug(shipTo)}));
     }
@@ -103,21 +93,7 @@ const ShipToForm = () => {
                                        inputProps={{readOnly: readOnly}}/>
                         </Grid2>
                         <Grid2 xs={12} md={6} alignItems="center">
-                            {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
-                                <Button type="button" variant="outlined"
-                                        startIcon={<LocalShippingIcon/>}
-                                        disabled={shipTo.changed || readOnly || shipTo.ShipToCode === primaryShipTo?.ShipToCode}
-                                        onClick={onSetDefaultShipTo}>
-                                    Set as default delivery location
-                                </Button>
-                            )}
-                            {primaryShipTo?.ShipToCode === shipTo.ShipToCode && (
-                                <Stack direction="row" spacing={2} alignItems="center">
-                                    <PrimaryShipToIcon shipToCode={shipTo.ShipToCode}/>
-                                    <Typography variant="body1">Default delivery location</Typography>
-                                </Stack>
-
-                            )}
+                            <PrimaryShipToButton shipTo={shipTo} disabled={readOnly}/>
                         </Grid2>
                     </Grid2>
                     <hr/>

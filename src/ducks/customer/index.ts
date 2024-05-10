@@ -1,7 +1,4 @@
-import {SET_LOGGED_IN} from "../../constants/actions";
 import {companyCode, customerSlug, customerUserSorter, emptyCustomer} from "../../utils/customer";
-import localStore from "../../utils/LocalStore";
-import {STORE_CUSTOMER} from "../../constants/stores";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     BillToCustomer,
@@ -20,14 +17,14 @@ import {
     saveShipToAddress,
     saveUser,
     setCustomerAccount,
-    setDefaultShipTo, setReturnToPath
+    setDefaultShipTo,
+    setReturnToPath
 } from "./actions";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {LoadStatus, Selectable} from "../../types/generic";
 import {CustomerPermissions} from "../../types/customer";
 import {dismissContextAlert} from "../alerts/actions";
 import {customerResponseToState} from "./utils";
-import {isDeprecatedSetLoggedInAction} from "../../types/actions";
 
 export interface CustomerPermissionsState {
     values: CustomerPermissions | null;
@@ -52,7 +49,7 @@ export interface CustomerState {
     saving: boolean;
     loaded: boolean;
     users: (CustomerUser & Selectable & Editable)[];
-    returnToPath: string|null;
+    returnToPath: string | null;
 }
 
 export const initialCustomerState = (): CustomerState => ({
@@ -135,7 +132,16 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(saveBillingAddress.fulfilled, (state, action) => {
             state.loadStatus = 'idle';
             state.loading = false;
-            const {account, shipToCode, permissions, contacts, pricing, shipToAddresses, paymentCards, users} = customerResponseToState(action.payload, state);
+            const {
+                account,
+                shipToCode,
+                permissions,
+                contacts,
+                pricing,
+                shipToAddresses,
+                paymentCards,
+                users
+            } = customerResponseToState(action.payload, state);
             state.account = account ?? null;
             state.shipToCode = shipToCode ?? null;
             state.permissions.values = permissions?.values ?? null;
@@ -157,7 +163,16 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(saveShipToAddress.fulfilled, (state, action) => {
             state.loading = false;
             state.loadStatus = 'idle';
-            const {account, shipToCode, permissions, contacts, pricing, shipToAddresses, paymentCards, users} = customerResponseToState(action.payload, state);
+            const {
+                account,
+                shipToCode,
+                permissions,
+                contacts,
+                pricing,
+                shipToAddresses,
+                paymentCards,
+                users
+            } = customerResponseToState(action.payload, state);
             state.account = account ?? null;
             state.shipToCode = shipToCode ?? null;
             state.permissions.values = permissions?.values ?? null;
@@ -200,7 +215,16 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         .addCase(loadCustomer.fulfilled, (state, action) => {
             state.loadStatus = 'idle';
             state.loading = false;
-            const {account, shipToCode, permissions, contacts, pricing, shipToAddresses, paymentCards, users} = customerResponseToState(action.payload, state);
+            const {
+                account,
+                shipToCode,
+                permissions,
+                contacts,
+                pricing,
+                shipToAddresses,
+                paymentCards,
+                users
+            } = customerResponseToState(action.payload, state);
             state.account = account ?? null;
             state.shipToCode = shipToCode ?? null;
             state.permissions.values = permissions?.values ?? null;
@@ -251,20 +275,6 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         })
         .addCase(setReturnToPath, (state, action) => {
             state.returnToPath = action.payload;
-        })
-        .addDefaultCase((state, action) => {
-            switch (action.type) {
-                case SET_LOGGED_IN:
-                    if (isDeprecatedSetLoggedInAction(action) && action.loggedIn === false) {
-                        state.account = null;
-                        state.contacts = [];
-                        state.pricing = [];
-                        state.shipToAddresses = [];
-                        state.paymentCards = [];
-                        state.users = [];
-                    }
-                    return;
-            }
         })
 })
 

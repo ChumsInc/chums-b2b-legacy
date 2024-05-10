@@ -20,7 +20,6 @@ const VariantButtons = () => {
     const loggedIn = useSelector(selectLoggedIn);
     const product = useSelector(selectCurrentProduct);
     const priceCodes = useSelector(selectCustomerPricing);
-    const [show, setShow] = useState(false);
 
     if (!isSellAsVariants(product)) {
         return null;
@@ -28,13 +27,11 @@ const VariantButtons = () => {
 
     const variants = product?.variants ?? [];
 
-    const onClickSelector = () => setShow(!show);
 
     const selectHandler = (variant: ProductVariant) => {
         if (!variant || !variant.id) {
             return;
         }
-        setShow(false);
         dispatch(setCurrentVariant(variant))
     }
 

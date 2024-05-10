@@ -1,11 +1,11 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import CustomerSignUp from "./CustomerSignUp";
-import {DOCUMENT_TITLES, PATH_SET_PASSWORD} from "../constants/paths";
-import MAPPolicy from "./MAPPolicy";
-import UsagePolicy from "./UsagePolicy";
-import DocumentTitle from "./DocumentTitle";
-import {selectLoggedIn} from "../ducks/user/selectors";
+import {DOCUMENT_TITLES, PATH_SET_PASSWORD} from "../../constants/paths";
+import MAPPolicy from "../../components/MAPPolicy";
+import UsagePolicy from "../../components/UsagePolicy";
+import DocumentTitle from "../../components/DocumentTitle";
+import {selectLoggedIn} from "../user/selectors";
 import {useLocation, useNavigate} from "react-router";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";

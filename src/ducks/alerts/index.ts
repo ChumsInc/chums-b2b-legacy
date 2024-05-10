@@ -1,18 +1,10 @@
-import {
-    AsyncThunkAction,
-    createReducer,
-    isAsyncThunkAction,
-    isFulfilled,
-    isRejected, PayloadAction,
-    ThunkAction
-} from "@reduxjs/toolkit";
-import {ALERT_CONTEXT_LOGIN, SET_ALERT, SET_LOGGED_IN} from "../../constants/actions";
-import {isDeprecatedSetAlertAction, isDeprecatedSetLoggedInAction} from "../../types/actions";
+import {createReducer, isFulfilled, isRejected, PayloadAction} from "@reduxjs/toolkit";
+import {SET_ALERT} from "../../constants/actions";
+import {isDeprecatedSetAlertAction} from "../../types/actions";
 import {AlertColor} from "@mui/material/Alert";
 import {setLoggedIn} from '../user/actions'
 import {alertSorter} from "./utils";
 import {dismissAlert, dismissContextAlert, setAlert} from "./actions";
-import {Action} from "redux";
 
 
 export interface B2BContextAlert {
@@ -99,9 +91,9 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
             })
         .addMatcher((action) => isFulfilled(action as PayloadAction),
             (state, action) => {
-            const context = action.type.replace('/fulfilled', '');
-            state.list = state.list.filter(alert => alert.context !== context).sort(alertSorter);
-        })
+                const context = action.type.replace('/fulfilled', '');
+                state.list = state.list.filter(alert => alert.context !== context).sort(alertSorter);
+            })
         .addDefaultCase((state, action) => {
             switch (action.type) {
                 case SET_ALERT:
@@ -124,11 +116,6 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                                 newAlert
                             ].sort(alertSorter);
                         }
-                    }
-                    return;
-                case SET_LOGGED_IN:
-                    if (isDeprecatedSetLoggedInAction(action) && action.loggedIn) {
-                        state.list = state.list.filter(alert => alert.context !== ALERT_CONTEXT_LOGIN).sort(alertSorter);
                     }
                     return;
             }

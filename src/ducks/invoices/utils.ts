@@ -7,33 +7,41 @@ export const invoiceTotal = (invoice: InvoiceHistoryHeader): Decimal => {
     return new Decimal(invoice.TaxableSalesAmt ?? 0).add(invoice.NonTaxableSalesAmt ?? 0).sub(invoice.DiscountAmt ?? 0);
 }
 
+export const invoiceKey = (invoice: InvoiceHistoryHeader) => `${invoice.InvoiceNo}-${invoice.InvoiceType}`;
 
 export const invoicesSorter = (sort: SortProps<InvoiceHistoryHeader> = defaultSort) =>
     (a: InvoiceHistoryHeader, b: InvoiceHistoryHeader) => {
-        const sortMod = sort.ascending ? 1 : -1;
-        switch (sort.field) {
+        const {field, ascending} = sort;
+        const sortMod = ascending ? 1 : -1;
+        switch (field) {
             case 'InvoiceDate':
-                return ((a.InvoiceDate === b.InvoiceDate)
-                        ? (a.InvoiceNo > b.InvoiceNo ? 1 : -1)
-                        : (a.InvoiceDate > b.InvoiceDate ? 1 : -1)
-                ) * sortMod;
             case "SalesOrderNo":
             case 'CustomerPONo':
             case 'OrderDate':
-                return (((a.SalesOrderNo ?? '') === (b.SalesOrderNo ?? ''))
-                        ? (a.InvoiceNo > b.InvoiceNo ? 1 : -1)
-                        : ((a.SalesOrderNo ?? '') > (b.SalesOrderNo ?? '') ? 1 : -1)
+            case 'ShipToName':
+            case 'ShipToCity':
+            case 'InvoiceDueDate':
+                return (((a[field] ?? '') === (b[field] ?? ''))
+                        ? (invoiceKey(a) > invoiceKey(b) ? 1 : -1)
+                        : ((a[field] ?? '') > (b[field] ?? '') ? 1 : -1)
                 ) * sortMod;
             case 'TaxableSalesAmt':
             case 'NonTaxableSalesAmt': {
-                const aTotal = invoiceTotal(a).toNumber();
-                const bTotal = invoiceTotal(b).toNumber();
+                const aTotal = invoiceTotal(a);
+                const bTotal = invoiceTotal(b);
                 return (
-                    (aTotal === bTotal) ? (a.InvoiceNo > b.InvoiceNo ? 1 : -1) : (aTotal - bTotal)
+                    aTotal.eq(bTotal)
+                        ? (invoiceKey(a) > invoiceKey(b) ? 1 : -1)
+                        : (aTotal.gt(bTotal) ? 1 : -1)
                 ) * sortMod
             }
+            case 'Balance':
+                return (
+                    new Decimal(a[field] ?? 0).sub(b[field] ?? 0).toNumber()
+                    ||(invoiceKey(a) > invoiceKey(b) ? 1 : -1)
+                ) * sortMod
             default:
-                return (a.InvoiceNo > b.InvoiceNo ? 1 : -1) * sortMod;
+                return (invoiceKey(a) > invoiceKey(b) ? 1 : -1) * sortMod;
         }
     }
 

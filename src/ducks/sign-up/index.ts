@@ -1,41 +1,22 @@
-import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {SignUpUser} from "../../types/user";
-import {RootState} from "../../app/configureStore";
-import isEmail from 'validator/lib/isEmail';
-import {postSignUpUser} from "../../api/user";
+import {createReducer} from "@reduxjs/toolkit";
 import {setLoggedIn} from "../user/actions";
+import {SignUpProfile} from "./types";
+import {loadSignUpProfile, signUpUser} from "./actions";
+import {isErrorResponse} from "../../utils/typeguards";
 
 export interface SignUpState {
     email: string;
-    authKey: string;
-    authHash: string;
-    error: string|null;
-    status: 'idle'|'loading'|'saving'|'rejected'|'success';
+    profile: SignUpProfile | null;
+    error: string | null;
+    status: 'idle' | 'loading' | 'saving' | 'rejected' | 'success';
 }
 
-const initialState = ():SignUpState => ({
+const initialState = (): SignUpState => ({
     email: '',
-    authKey: '',
-    authHash: '',
+    profile: null,
     error: null,
     status: 'idle',
 });
-
-export const signUpUser = createAsyncThunk<unknown, SignUpUser>(
-    'sign-up/saveUser',
-    async (arg) => {
-        return await postSignUpUser(arg);
-    },
-    {
-        condition: (arg, {getState}) => {
-            const state = getState() as RootState;
-            return isEmail(arg.email) && arg.agreeToPolicy && selectSignUpStatus(state) === 'idle';
-        }
-    }
-)
-
-export const selectSignUpStatus = (state:RootState) => state.signUp.status;
-export const selectSignUpError = (state:RootState) => state.signUp.error;
 
 const signUpReducer = createReducer(initialState(), builder => {
     builder
@@ -52,8 +33,20 @@ const signUpReducer = createReducer(initialState(), builder => {
         })
         .addCase(setLoggedIn, (state) => {
             state.email = '';
-            state.authKey = '';
-            state.authHash = '';
+            state.profile = null;
+        })
+        .addCase(loadSignUpProfile.pending, (state) => {
+            state.status = 'loading';
+        })
+        .addCase(loadSignUpProfile.fulfilled, (state, action) => {
+            if (!isErrorResponse(action.payload)) {
+                state.profile = action.payload;
+            }
+            state.status = 'idle';
+        })
+        .addCase(loadSignUpProfile.rejected, (state, action) => {
+            state.profile = null;
+            state.status = 'idle';
         })
 });
 

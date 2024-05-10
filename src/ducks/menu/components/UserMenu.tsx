@@ -37,17 +37,13 @@ const UserMenu = () => {
         if (isLoggedIn) {
             window.clearInterval(timerRef.current);
             timerRef.current = window.setInterval(() => {
-                console.log(`isExpired?`, {expires, isExpired: isExpired(expires)});
-                if (isExpired(expires)) {
-                    setExpired(true);
-                }
+                setExpired(isExpired(expires));
             }, 60 * 1000);
         }
         return () => {
             if (isSSR) {
                 return;
             }
-            console.log('clearInterval', {expires, isLoggedIn})
             window.clearInterval(timerRef.current);
         }
     }, [expires, isLoggedIn]);

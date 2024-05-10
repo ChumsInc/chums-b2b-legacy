@@ -124,11 +124,11 @@ export const isValidCustomerNo = (CustomerNo: string = ''): boolean => {
     return /^[A-Z0-9]+$/i.test(CustomerNo ?? '')
 };
 
-export const isValidCustomer = ({ARDivisionNo, CustomerNo}: {
-    ARDivisionNo: string;
-    CustomerNo: string;
-}) => {
-    return isValidARDivisionNo(ARDivisionNo) && isValidCustomerNo(CustomerNo);
+export const isValidCustomer = (arg:CustomerKey|null):arg is CustomerKey => {
+    if (!arg) {
+        return false;
+    }
+    return isValidARDivisionNo(arg.ARDivisionNo) && isValidCustomerNo(arg.CustomerNo);
 };
 
 

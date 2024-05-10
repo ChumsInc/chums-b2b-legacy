@@ -4,7 +4,7 @@ import {isUserProfile} from "./utils";
 import {UserCustomerAccess} from "b2b-types";
 
 export const selectUserProfile = (state:RootState) => state.user.profile;
-export const selectProfilePicture = (state: RootState): string | null => state.user.picture;
+export const selectProfilePicture = (state: RootState) => state.user.picture;
 export const selectUserAccounts = (state:RootState) => state.user.accounts ?? [];
 export const selectUserCustomerAccounts = (state:RootState) => state.user.accounts.filter(acct => !acct.isRepAccount);
 export const selectUserRepAccounts = (state:RootState) => state.user.accounts.filter(acct => !!acct.isRepAccount);
@@ -20,6 +20,7 @@ export const selectUserAccount = (state:RootState) => state.user.access.current 
 
 export const selectCurrentCustomer = (state:RootState) => state.user.currentCustomer ?? null;
 
+export const selectUserActionStatus = (state:RootState) => state.user.actionStatus;
 export const selectUserLoading = (state:RootState) => state.user.actionStatus !== 'idle';
 export const selectResettingPassword = (state:RootState) => state.user.actionStatus === 'resetting-password';
 

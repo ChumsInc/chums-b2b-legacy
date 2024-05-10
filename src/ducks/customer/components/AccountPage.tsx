@@ -13,10 +13,18 @@ import DocumentTitle from "../../../components/DocumentTitle";
 import AccountTabs from "./AccountTabs";
 import {useAppDispatch} from "../../../app/configureStore";
 import {generatePath, Outlet, redirect} from "react-router-dom";
-import {billToCustomerSlug, customerSlug, isSameCustomer, parseCustomerSlug} from "../../../utils/customer";
+import {
+    billToCustomerSlug,
+    customerNo,
+    customerSlug,
+    isSameCustomer,
+    isValidCustomer,
+    parseCustomerSlug
+} from "../../../utils/customer";
 import {PATH_PROFILE} from "../../../constants/paths";
 import Typography from "@mui/material/Typography";
 import ReturnToAlert from "./ReturnToAlert";
+import Box from "@mui/material/Box";
 
 const AccountPage = () => {
     const dispatch = useAppDispatch();
@@ -70,7 +78,13 @@ const AccountPage = () => {
             <DocumentTitle documentTitle={customer?.CustomerName ?? ''}/>
             <AccountBreadcrumbs/>
             <ReturnToAlert />
-            <Typography variant="h1" component="h1" >{customer?.CustomerName}</Typography>
+            <Typography variant="h1" component="h1">
+                {customer?.CustomerName}
+            </Typography>
+            <Typography variant="h2" component="h2" >
+                {isValidCustomer(customer) && <Box sx={{me: 3}}>{customerNo(customer)}</Box>}
+                {!isValidCustomer(customer) && !loading && <Box>Please select a customer</Box>}
+            </Typography>
             <AccountTabs/>
             <Outlet/>
         </div>

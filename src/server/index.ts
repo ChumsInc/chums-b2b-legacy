@@ -19,7 +19,6 @@ app.use('/css', express.static('./public/css', {fallthrough: false}));
 app.use('/js', express.static('./public/js', {fallthrough: false}));
 app.use('/build', express.static('./public/build', {fallthrough: false}));
 app.use('/images', express.static('./public/images', {fallthrough: false}));
-app.set('view engine', 'pug');
 app.set('trust proxy', true);
 app.use((req, res, next) => {
     debug(req.ip, req.method,  req.url);

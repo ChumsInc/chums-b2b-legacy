@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {setCurrentVariant} from '../actions';
 import classNames from "classnames";
@@ -34,11 +34,14 @@ import SelectCustomerAlert from "../../customer/components/SelectCustomerAlert";
 import Box from "@mui/material/Box";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import VariantButtons from "./VariantButtons";
+import {Collapse} from "@mui/material";
+import {useIsSSR} from "../../../hooks/is-server-side";
 
 
 const ProductPage = ({keyword}: {
     keyword: string;
 }) => {
+    const isSSR = useIsSSR();
     const dispatch = useAppDispatch();
     const loggedIn = useSelector(selectLoggedIn);
     const product = useSelector(selectCurrentProduct);
@@ -49,10 +52,31 @@ const ProductPage = ({keyword}: {
     const season_code = useSelector(selectProductSeasonCode);
     const season_available = useSelector(selectProductSeasonAvailable);
     const location = useLocation();
+    const [cartMessage, setCartMessage] = useState<string|null>(null);
+    const timerHandle = useRef<number>(0);
 
     useEffect(() => {
         dispatch(loadProduct(keyword));
     }, [keyword]);
+
+    useEffect(() => {
+        setCartMessage(null);
+    }, [cartItem]);
+
+    useEffect(() => {
+        if (isSSR) {
+            return;
+        }
+        if (!!cartMessage) {
+            timerHandle.current = window.setTimeout(() => {
+                setCartMessage(null);
+            }, 5000);
+        }
+        return () => {
+            window.clearTimeout(timerHandle.current);
+        }
+    }, [cartMessage]);
+
 
     useEffect(() => {
         if (location?.state?.variant
@@ -123,9 +147,12 @@ const ProductPage = ({keyword}: {
                                                        setGlobalCart unitOfMeasure={cartItem.salesUM ?? 'EA'}
                                                        season_code={season_code} season_available={season_available}
                                                        disabled={!customerAccount?.TaxSchedule}
-                                                       onChangeQuantity={onChangeQuantity} onDone={noop} comment=""/>
+                                                       onChangeQuantity={onChangeQuantity} onDone={noop} comment=""
+                                                       afterAddToCart={setCartMessage}/>
                                     )}
-
+                                <Collapse in={!!cartMessage}>
+                                    <Alert severity="info" onClose={() => setCartMessage(null)}>{cartMessage}</Alert>
+                                </Collapse>
                                 <CartItemDetail cartItem={cartItem} msrp={[selectedProduct?.msrp]}/>
                             </>
                         </RequireLogin>

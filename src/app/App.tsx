@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
 import {Route, Routes} from 'react-router-dom';
-import {PATH_LOGOUT} from "../constants/paths";
 import Login from "../ducks/user/components/LoginPage";
 import {useSelector} from 'react-redux';
 import {loadProfile} from '../ducks/user/actions';
@@ -8,13 +7,13 @@ import {loadCustomer} from '../ducks/customer/actions';
 import ProfilePage from "../ducks/user/components/ProfilePage";
 import AccountPage from "../ducks/customer/components/AccountPage";
 import SalesOrderPage from "../ducks/open-orders/components/SalesOrderPage";
-import SignUp from "../components/SignUp";
+import SignUp from "../ducks/sign-up/SignUp";
 import Logout from "../components/Logout";
-import ResetPassword from "../components/ResetPassword";
+import ResetPassword from "../ducks/user/components/ResetPassword";
 import ContentPage from "../ducks/page/ContentPage";
 import InvoicePage from "../ducks/invoices/components/InvoicePage";
 import ErrorBoundary from "../common-components/ErrorBoundary";
-import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../ducks/user/selectors";
+import {selectCurrentCustomer, selectLoggedIn} from "../ducks/user/selectors";
 import {selectCustomerLoaded, selectCustomerLoading} from "../ducks/customer/selectors";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -37,6 +36,8 @@ import Home from "../components/Home";
 import ClosedSalesOrderPage from "../ducks/open-orders/components/ClosedSalesOrderPage";
 import {GoogleOAuthProvider} from "@react-oauth/google";
 import {GOOGLE_CLIENT_ID} from "../constants/app";
+import RequestPasswordResetForm from "../ducks/user/components/RequestPasswordResetForm";
+import ChangePasswordPage from "../ducks/user/components/ChangePasswordPage";
 
 
 const App = () => {
@@ -45,7 +46,7 @@ const App = () => {
     const currentCustomer = useSelector(selectCurrentCustomer);
     const customerLoading = useSelector(selectCustomerLoading);
     const customerLoaded = useSelector(selectCustomerLoaded);
-    const userLoading = useSelector(selectUserLoading);
+
 
     useEffect(() => {
     }, []);
@@ -60,20 +61,6 @@ const App = () => {
             dispatch(loadCustomer(currentCustomer));
         }
     }, [loggedIn]);
-
-    // return (
-    //     <ErrorBoundary>
-    //         <LocalizationProvider dateAdapter={AdapterDayjs}>
-    //             <CssBaseline>
-    //                 <Routes>
-    //                     <Route path="/" element={<MainOutlet/>}></Route>
-    //                 </Routes>
-    //                 <ContentPage404 />
-    //             </CssBaseline>
-    //         </LocalizationProvider>
-    //     </ErrorBoundary>
-    // )
-
 
     return (
         <ErrorBoundary>
@@ -92,8 +79,12 @@ const App = () => {
                                     {!loggedIn && (
                                         <>
                                             <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
+                                            <Route path="/set-password/:hash/:key" element={<ResetPassword/>}/>
                                             <Route path="/set-password" element={<ResetPassword/>}/>
+                                            <Route path="/signup/:hash/:key" element={<ResetPassword/>}/>
                                             <Route path="/signup" element={<SignUp/>}/>
+                                            <Route path="/reset-password" element={<RequestPasswordResetForm/>}/>
+                                            <Route path="/login" element={<Login/>}/>
                                             <Route path="*" element={<Login/>}/>
                                         </>
                                     )}
@@ -103,6 +94,7 @@ const App = () => {
                                             <Route path="/login" element={<Login/>}/>
                                             <Route path="/logout" element={<Logout/>}/>
                                             <Route path="/profile" element={<ProfilePage/>}/>
+                                            <Route path="/profile/set-password" element={<ChangePasswordPage/>}/>
                                             <Route path="/profile/:id" element={<AccountListContainer/>}/>
                                             <Route path="/account/:customerSlug" element={<AccountPage/>}>
                                                 <Route index element={<BillToForm/>}/>

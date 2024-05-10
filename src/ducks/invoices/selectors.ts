@@ -3,7 +3,10 @@ import {createSelector} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
 import {invoicesSorter} from "./utils";
 
-export const selectInvoicesList = (state:RootState) => state.invoices.list ?? [];
+export const selectInvoicesList = (state:RootState) => state.invoices.list.invoices ?? [];
+export const selectInvoicesListLimit = (state:RootState) => state.invoices.list.limit;
+export const selectInvoicesListLimitReached = (state:RootState) => state.invoices.list.limitReached;
+export const selectInvoicesListOffset = (state:RootState) => state.invoices.list.offset;
 export const selectCurrentInvoice = (state:RootState) => state.invoices.invoice ?? null;
 export const selectCurrentInvoiceNo = (state:RootState) => state.invoices.invoice?.InvoiceNo ?? null;
 export const selectInvoicesLoading = (state:RootState) => state.invoices.loading ?? false;
@@ -16,7 +19,8 @@ export const selectInvoicesSearch = (state:RootState) => state.invoices.filters.
 export const selectInvoicesSort = (state:RootState) => state.invoices.sort;
 
 export const selectFilteredInvoicesList = createSelector(
-    [selectInvoicesList, selectInvoicesShowPaid, selectInvoicesShipToFilter, selectInvoicesSearch, selectInvoicesSort],
+    [selectInvoicesList, selectInvoicesShowPaid, selectInvoicesShipToFilter,
+        selectInvoicesSearch, selectInvoicesSort],
     (list, showPaid, shipTo, search, sort) => {
         return list
             .filter(inv => showPaid || !new Decimal(inv.Balance ?? '0').eq(0))

@@ -1,11 +1,11 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {useAppDispatch} from "../../../app/configureStore";
+import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCurrentCustomer} from "../../user/selectors";
 import {
     selectCurrentInvoiceNo,
     selectFilteredInvoicesList,
-    selectInvoicesList,
+    selectInvoicesList, selectInvoicesListLimit, selectInvoicesListLimitReached, selectInvoicesListOffset,
     selectInvoicesLoaded,
     selectInvoicesLoading, selectInvoicesSort
 } from "../selectors";
@@ -22,11 +22,12 @@ import LinearProgress from "@mui/material/LinearProgress";
 import OrderFilter from "../../open-orders/components/OrderFilter";
 import SortableTable from "../../../common-components/SortableTable";
 import TablePagination from "@mui/material/TablePagination";
-import {invoicesSorter} from "../utils";
+import {invoiceKey, invoicesSorter} from "../utils";
 import localStore from "../../../utils/LocalStore";
 import {STORE_INVOICES_ROWS_PER_PAGE} from "../../../constants/stores";
 import {Button} from "@mui/material";
 import InvoiceListFilter from "./InvoiceListFilter";
+import Box from "@mui/material/Box";
 
 
 const invoiceFields: SortableTableField<InvoiceHeader>[] = [
@@ -73,6 +74,9 @@ const invoiceFields: SortableTableField<InvoiceHeader>[] = [
 const InvoicesList = () => {
     const dispatch = useAppDispatch();
     const list = useSelector(selectFilteredInvoicesList);
+    const limit = useAppSelector(selectInvoicesListLimit);
+    const limitReached = useAppSelector(selectInvoicesListLimitReached);
+    const offset = useAppSelector(selectInvoicesListOffset);
     const invoiceNo = useSelector(selectCurrentInvoiceNo);
     const loading = useSelector(selectInvoicesLoading);
     const loaded = useSelector(selectInvoicesLoaded);
@@ -83,7 +87,7 @@ const InvoicesList = () => {
 
     useEffect(() => {
         if (!loading && !loaded && !!currentCustomer) {
-            dispatch(loadInvoices(currentCustomer))
+            dispatch(loadInvoices({key: currentCustomer, start: 0, limit}))
             setPage(0);
         }
     }, [currentCustomer, loading, loaded]);
@@ -102,8 +106,15 @@ const InvoicesList = () => {
         if (!currentCustomer) {
             return;
         }
-        dispatch(loadInvoices(currentCustomer));
+        dispatch(loadInvoices({key: currentCustomer, start: 0, limit: 500}));
         setPage(0);
+    }
+
+    const loadMoreHandler = () => {
+        if (!currentCustomer || limitReached) {
+            return;
+        }
+        dispatch(loadInvoices({key: currentCustomer, start: offset + limit, limit}));
     }
 
     if (!currentCustomer || !currentCustomer.CustomerNo) {
@@ -118,14 +129,19 @@ const InvoicesList = () => {
         <div>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
             <InvoiceListFilter onReload={reloadHandler}/>
-            <SortableTable keyField="InvoiceNo"
+            <SortableTable keyField={row => invoiceKey(row)}
                            data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
                            selected={invoiceNo}
                            fields={invoiceFields} currentSort={sort} onChangeSort={sortChangeHandler}/>
-            <TablePagination component="div"
-                             count={list.length} page={page} onPageChange={(ev, page) => setPage(page)}
-                             rowsPerPage={rowsPerPage} onRowsPerPageChange={rowsPerPageChangeHandler}
-                             showFirstButton showLastButton/>
+            <Box display="flex" justifyContent="flex-end">
+                <TablePagination component="div"
+                                 count={list.length} page={page} onPageChange={(ev, page) => setPage(page)}
+                                 rowsPerPage={rowsPerPage} onRowsPerPageChange={rowsPerPageChangeHandler}
+                                 showFirstButton showLastButton/>
+                <Button type="button" variant="text" onClick={loadMoreHandler} disabled={limitReached || loading}>
+                    Load More
+                </Button>
+            </Box>
         </div>
     );
 }

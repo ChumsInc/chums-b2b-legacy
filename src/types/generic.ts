@@ -40,3 +40,8 @@ export type EmailActionStatus = LoadStatus | 'fulfilled'
 export interface KeyedObject<T = any> {
     [key:string]: T
 }
+
+export interface APIErrorResponse {
+    error?: string;
+    name?: string;
+}
