@@ -135,7 +135,7 @@ const AddToCartForm = ({
             return;
         }
         let comment = '';
-        if (!!season_code && !season_available) {
+        if (!!season_code && !(season_available || cartItem.seasonAvailable)) {
             comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
         if (global?.window?.gtag) {

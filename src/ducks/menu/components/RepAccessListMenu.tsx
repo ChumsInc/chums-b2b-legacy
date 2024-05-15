@@ -17,13 +17,15 @@ const RepAccessListMenu = ({open, onClick}: {
         return null;
     }
 
-    if (accessList.length === 1) {
-        return (
-            <MenuItemRouterLink to={generatePath('/profile/:id', {id: `${accessList[0].id}`})} onClick={onClick}>
-                Account List
-            </MenuItemRouterLink>
-        )
-    }
+    // 39u9#!vfphQiqCA$WR
+
+    // if (accessList.length === 1) {
+    //     return (
+    //         <MenuItemRouterLink to={generatePath('/profile/:id', {id: `${accessList[0].id}`})} onClick={onClick}>
+    //             Account List
+    //         </MenuItemRouterLink>
+    //     )
+    // }
     return (
         <div>
             <MenuItem>
