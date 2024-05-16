@@ -1,5 +1,4 @@
 import React, {useEffect} from 'react';
-import UserProfile from "../ducks/user/components/UserProfile";
 import {useAppDispatch} from "../app/configureStore";
 import {logout} from "../ducks/user/actions";
 import {useNavigate} from "react-router";
@@ -13,7 +12,7 @@ const Logout = () => {
             .then(() => {
                 navigate('/login');
             })
-    }, []);
+    }, [dispatch, navigate]);
 
     return (
         <div>Logging out.</div>

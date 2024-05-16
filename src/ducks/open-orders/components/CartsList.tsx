@@ -30,7 +30,9 @@ const cartFields: SortableTableField<SalesOrderHeader>[] = [
     },
     {field: 'CustomerPONo', title: 'PO #', sortable: true},
     {field: 'OrderDate', title: 'Ordered Created', render: (so) => <DateString date={so.OrderDate}/>, sortable: true},
-    {field: 'ShipToName', title: 'Ship To', sortable: true},
+    {field: 'ShipToName', title: 'Ship To', sortable: true, render: (row) => (
+            <span>{!!row.ShipToCode && (<span>[{row.ShipToCode}]</span>)} {row.ShipToName}</span>
+        )},
     {field: 'ShipToCity', title: 'Location', render: (so) => `${so.ShipToCity}, ${so.ShipToState} ${so.ShipToZipCode}`, sortable: true},
     {
         field: 'NonTaxableAmt',

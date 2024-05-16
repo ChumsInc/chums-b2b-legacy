@@ -1,11 +1,13 @@
 import {useEffect, useState} from "react";
 
 export const useIsSSR = () => {
-    const [isSSR, setIsSSR] = useState(true);
+    const [isSSR, setIsSSR] = useState(!(typeof window !== 'undefined'
+        && window.document
+        && window.document.createElement));
 
     useEffect(() => {
-        setIsSSR(false);
-    })
+        setIsSSR(() => false);
+    }, [])
 
     return isSSR;
 }

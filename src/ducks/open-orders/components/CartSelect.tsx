@@ -7,13 +7,15 @@ import Select, {SelectChangeEvent} from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import {useSelector} from "react-redux";
 import {selectCartsList} from "../selectors";
+import Box from "@mui/material/Box";
 
 const checkHasCart = (list:SalesOrderHeader[], cartNo:string) => {
     return cartNo === NEW_CART || list.filter(so => so.SalesOrderNo === cartNo).length > 0;
 }
 
-const CartSelect = ({cartNo = '', onChange, excludeCartNo}: {
+const CartSelect = ({cartNo = '', shipToCode, onChange, excludeCartNo}: {
     cartNo: string;
+    shipToCode?: string;
     onChange: (value:string) => void;
     excludeCartNo?: string;
 }) => {
@@ -41,15 +43,13 @@ const CartSelect = ({cartNo = '', onChange, excludeCartNo}: {
                 {cartList.map(so => (
                     <MenuItem key={so.SalesOrderNo} value={so.SalesOrderNo}
                               disabled={so.SalesOrderNo === excludeCartNo}>
-                        {so.CustomerPONo}
+                        <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                            <div>{so.CustomerPONo}</div>
+                            <div>[{so.ShipToCode}] {so.ShipToName}</div>
+                        </Box>
                     </MenuItem>
                 ))}
             </Select>
-            {/*<select className="form-select form-select-sm" value={cartNo} onChange={onChange}>*/}
-            {/*    <option value={NEW_CART}>New Cart</option>*/}
-            {/*    {cartList.map(so => (<option key={so.SalesOrderNo} value={so.SalesOrderNo}*/}
-            {/*                                 title={`Cart #${so.SalesOrderNo}`}>{so.CustomerPONo}</option>))}*/}
-            {/*</select>*/}
         </FormControl>
     )
 };

@@ -1,10 +1,10 @@
-import React, {FormEvent, useEffect, useId, useState} from 'react';
+import React, {FormEvent, useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {addToCart, saveNewCart, setCurrentCart} from "../actions";
 
 import Alert from "@mui/material/Alert";
 import {NEW_CART} from "../../../constants/orders";
-import {selectCartsList, selectOpenOrdersLoading} from "../../open-orders/selectors";
+import {selectCartsList} from "../../open-orders/selectors";
 import {
     selectCartLoading,
     selectCartMessage,
@@ -15,8 +15,8 @@ import {
 import {
     selectCustomerAccount,
     selectCustomerPermissions,
-    selectCustomerPermissionsLoaded,
-    selectCustomerPermissionsLoading
+    selectCustomerPermissionsLoading,
+    selectCustomerShipToCode
 } from "../../customer/selectors";
 import ShipToSelect from "../../customer/components/ShipToSelect";
 import {loadCustomerPermissions} from "../../customer/actions";
@@ -43,7 +43,7 @@ const AddToCartForm = ({
                            onDone,
                            onChangeQuantity,
                            excludeSalesOrder,
-    afterAddToCart,
+                           afterAddToCart,
                        }: {
     cartItem: CartProduct;
     quantity: number;
@@ -61,27 +61,38 @@ const AddToCartForm = ({
     const dispatch = useAppDispatch();
     const customer = useSelector(selectCustomerAccount);
     const cartsList = useSelector(selectCartsList);
-    const cartsLoading = useSelector(selectOpenOrdersLoading);
     const cartNo = useSelector(selectCartNo);
     const cartName = useSelector(selectCartName);
     const loading = useSelector(selectCartLoading);
     const cartMessage = useSelector(selectCartMessage);
     const permissions = useSelector(selectCustomerPermissions);
     const permissionsLoading = useSelector(selectCustomerPermissionsLoading);
-    const permissionsLoaded = useSelector(selectCustomerPermissionsLoaded);
     const availabilityLoading = useSelector(selectItemAvailabilityLoading);
-    const cartNameId = useId();
+    const currentShipToCode = useSelector(selectCustomerShipToCode);
 
     const [_comment, setComment] = useState<string>(comment ?? '');
     const [localCartName, setLocalCartName] = useState<string>(cartName ?? '');
     const [localCartNo, setLocalCartNo] = useState<string>(cartNo ?? '');
-    const [shipToCode, setShipToCode] = useState<string>('');
+    const [shipToCode, setShipToCode] = useState<string>(currentShipToCode ?? '');
 
     useEffect(() => {
         if (!permissions && !permissionsLoading) {
             dispatch(loadCustomerPermissions(customer));
         }
-    }, [])
+    }, [customer, dispatch, permissions, permissionsLoading])
+
+    useEffect(() => {
+        let shipToCode = currentShipToCode;
+        if (!shipToCode) {
+            if (permissions?.billTo) {
+                setShipToCode(customer?.PrimaryShipToCode ?? '');
+            } else {
+                setShipToCode(permissions?.shipTo[0] ?? '');
+            }
+
+        }
+        setShipToCode(shipToCode ?? '');
+    }, [currentShipToCode, customer, permissions]);
 
     useEffect(() => {
         setLocalCartName(cartName ?? '');
@@ -89,14 +100,6 @@ const AddToCartForm = ({
         setComment(comment ?? '');
     }, [cartNo, cartName, comment]);
 
-
-    useEffect(() => {
-        if (permissions?.billTo) {
-            setShipToCode(customer?.PrimaryShipToCode ?? '');
-        } else {
-            setShipToCode(permissions?.shipTo[0] ?? '');
-        }
-    }, [customer, permissions])
 
     const cartChangeHandler = (value: string) => {
         if (value === NEW_CART && setGlobalCart) {
@@ -174,7 +177,8 @@ const AddToCartForm = ({
         <form onSubmit={submitHandler} className="add-to-cart" method="post">
             {availabilityLoading && <ProgressBar striped label="Checking Availability"/>}
             <Stack spacing={2} direction="column">
-                <CartSelect cartNo={localCartNo} onChange={cartChangeHandler} excludeCartNo={excludeSalesOrder}/>
+                <CartSelect cartNo={localCartNo} shipToCode={shipToCode} onChange={cartChangeHandler}
+                            excludeCartNo={excludeSalesOrder}/>
                 {(!localCartNo || localCartNo === NEW_CART) && (
                     <Stack spacing={2} direction="row">
                         <CartNameInput value={localCartName} onChange={onChangeCartName}

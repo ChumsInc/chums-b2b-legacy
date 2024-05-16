@@ -10,7 +10,7 @@ const isExpired = (expires: number) => {
     return new Date(expires * 1000).valueOf() <= new Date().valueOf();
 }
 
-const GoogleSignInOneTap = () => {
+const GoogleSignInOneTap = ({onDone}:{onDone?: () => void}) => {
     const dispatch = useAppDispatch();
 
     useGoogleOneTapLogin({
@@ -18,7 +18,15 @@ const GoogleSignInOneTap = () => {
             if (credentialResponse?.credential) {
                 dispatch(signInWithGoogle(credentialResponse.credential));
             }
-        }
+            if (onDone) {
+                onDone();
+            }
+        },
+        onError: () => {
+            if (onDone) {
+                onDone();
+            }
+        },
     })
 
     return (

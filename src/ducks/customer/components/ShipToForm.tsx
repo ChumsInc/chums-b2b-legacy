@@ -92,7 +92,11 @@ const ShipToForm = () => {
                                        onChange={fieldChangeHandler('ShipToName')}
                                        inputProps={{readOnly: readOnly}}/>
                         </Grid2>
-                        <Grid2 xs={12} md={6} alignItems="center">
+                        <Grid2 xs={12} md={6} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+                            <TextField variant="filled" label="Location Code" size="small"
+                                       type="text" value={shipTo.ShipToCode ?? ''}
+                                       onChange={fieldChangeHandler('ShipToCode')}
+                                       inputProps={{readOnly: true}}/>
                             <PrimaryShipToButton shipTo={shipTo} disabled={readOnly}/>
                         </Grid2>
                     </Grid2>

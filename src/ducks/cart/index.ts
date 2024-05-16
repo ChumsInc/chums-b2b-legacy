@@ -132,9 +132,9 @@ const cartReducer = createReducer(initialCartState, builder => {
             if (!cart && action.payload.filter(so => isCartOrder(so)).length === 1) {
                 [cart] =  action.payload.filter(so => isCartOrder(so));
             }
-            // if (!cart && state.cartNo === NEW_CART) {
-            //     [cart] = action.payload.filter(so => so.OrderType === 'Q');
-            // }
+            if (!cart && state.cartNo === NEW_CART) {
+                [cart] = action.payload.filter(so => so.OrderType === 'Q');
+            }
             if (!cart) {
                 state.cartNo = NEW_CART;
                 state.cartName = '';

@@ -38,9 +38,12 @@ import {GoogleOAuthProvider} from "@react-oauth/google";
 import {GOOGLE_CLIENT_ID} from "../constants/app";
 import RequestPasswordResetForm from "../ducks/user/components/RequestPasswordResetForm";
 import ChangePasswordPage from "../ducks/user/components/ChangePasswordPage";
+import {useIsSSR} from "../hooks/is-server-side";
+import LocalStore from "../utils/LocalStore";
 
 
 const App = () => {
+    const isSSR = useIsSSR();
     const dispatch = useAppDispatch();
     const loggedIn = useSelector(selectLoggedIn);
     const currentCustomer = useSelector(selectCurrentCustomer);
@@ -49,7 +52,12 @@ const App = () => {
 
 
     useEffect(() => {
-    }, []);
+        console.log({isSSR});
+        if (isSSR) {
+            return;
+        }
+        LocalStore.removeDeprecatedItems();
+    }, [isSSR]);
 
 
     useEffect(() => {

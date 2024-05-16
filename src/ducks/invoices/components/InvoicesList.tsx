@@ -46,7 +46,11 @@ const invoiceFields: SortableTableField<InvoiceHeader>[] = [
     },
     {field: 'CustomerPONo', title: 'PO #', sortable: true},
     {field: 'OrderDate', title: 'Order Date', render: (so) => <DateString date={so.OrderDate}/>, sortable: true},
-    {field: 'ShipToName', title: 'Ship To', className: 'hidden-xs', sortable: true},
+    {
+        field: 'ShipToName', title: 'Ship To', className: 'hidden-xs', sortable: true, render: (row) => (
+            <span>{!!row.ShipToCode && (<span>[{row.ShipToCode}]</span>)} {row.ShipToName}</span>
+        )
+    },
     {
         field: 'ShipToCity', title: 'Location', className: 'hidden-xs',
         render: (so) => `${so.ShipToCity ?? ''}, ${so.ShipToState ?? ''} ${so.ShipToZipCode ?? ''}`,

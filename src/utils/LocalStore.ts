@@ -1,7 +1,7 @@
 /**
  * Created by steve on 5/18/2017.
  */
-
+import {deprecatedStorageKeys} from "../constants/stores";
 
 export default class LocalStore {
     static getItem<T = any>(key:string, defaultValue:T):T {
@@ -35,6 +35,21 @@ export default class LocalStore {
             return;
         }
         window.localStorage.removeItem(key);
+    }
+
+    static removeDeprecatedItems() {
+        if (typeof window === 'undefined' || !window.localStorage) {
+            return;
+        }
+        Object.keys(deprecatedStorageKeys).forEach(key => {
+            const newKey = deprecatedStorageKeys[key];
+            const item = LocalStore.getItem(key, null);
+            if (!!item && !!newKey) {
+                LocalStore.setItem(newKey, item);
+            }
+            LocalStore.removeItem(key);
+            console.log(`removed key:`, key)
+        });
     }
 
 }

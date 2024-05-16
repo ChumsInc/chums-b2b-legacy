@@ -30,7 +30,7 @@ const AccountList = () => {
         if (!loading && !loaded && profileId === userAccount?.id) {
             dispatch(loadCustomerList(userAccount));
         }
-    }, [loading, loaded, match, userAccount]);
+    }, [loading, loaded, match, userAccount, dispatch]);
 
 
     if (!userAccount) {

@@ -1,0 +1,14 @@
+{
+  "plugins": [
+    "react-redux"
+  ],
+  "extends": [
+    "react-app",
+    "plugin:react-redux/recommended"
+  ],
+  "rules": {
+    "react-hooks/rules-of-hooks": ["off", {
+      "additionalHooks": "(useAppDispatch|useAppSelector)"
+    }]
+  }
+}

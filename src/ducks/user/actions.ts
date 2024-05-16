@@ -1,12 +1,5 @@
-import {fetchGET, fetchPOST} from '../../utils/fetch';
-import {
-    CHANGE_USER_PASSWORD,
-    FETCH_FAILURE,
-    FETCH_INIT,
-    FETCH_SUCCESS,
-    FETCH_USER_SIGNUP,
-    SET_LOGGED_IN,
-} from "../../constants/actions";
+import {fetchPOST} from '../../utils/fetch';
+import {CHANGE_USER_PASSWORD, SET_LOGGED_IN,} from "../../constants/actions";
 import {handleError} from '../app/actions';
 import {setAlert} from '../alerts/actions';
 import localStore from '../../utils/LocalStore';
@@ -15,54 +8,49 @@ import {
     STORE_CURRENT_CART,
     STORE_CUSTOMER,
     STORE_CUSTOMER_SHIPPING_ACCOUNT,
-    STORE_RECENT_ACCOUNTS,
     STORE_TOKEN,
     STORE_USER_ACCESS
 } from '../../constants/stores';
 import {auth} from '../../api/IntranetAuthService';
 import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
-import {
-    API_PATH_CHANGE_PASSWORD,
-    API_PATH_LOGOUT,
-    API_PATH_USER_SET_PASSWORD,
-    API_PATH_USER_SIGN_UP
-} from "../../constants/paths";
-import {AUTH_GOOGLE, AUTH_LOCAL, USER_EXISTS} from "../../constants/app";
+import {API_PATH_CHANGE_PASSWORD, API_PATH_LOGOUT} from "../../constants/paths";
+import {AUTH_GOOGLE, AUTH_LOCAL} from "../../constants/app";
 import {
     selectAuthType,
     selectLoggedIn,
     selectLoggingIn,
     selectResettingPassword,
-    selectUserAccount, selectUserActionStatus,
+    selectUserAccount,
+    selectUserActionStatus,
     selectUserLoading
 } from "./selectors";
 import {
     fetchGoogleLogin,
     fetchUserProfile,
     postLocalLogin,
-    postLocalReauth, postNewPassword, postPasswordChange,
+    postLocalReauth,
+    postNewPassword,
+    postPasswordChange,
     postResetPassword,
     postUserProfile
 } from "../../api/user";
-import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
+import {createAction, createAsyncThunk, isFulfilled} from "@reduxjs/toolkit";
 import {
     ChangePasswordProps,
     ChangePasswordResponse,
-    SetLoggedInProps, SetNewPasswordProps,
+    SetLoggedInProps,
+    SetNewPasswordProps,
     UserPasswordState,
     UserProfileResponse
 } from "./types";
 import {AppDispatch, RootState} from "../../app/configureStore";
 import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
 import {isCustomerAccess} from "./utils";
-import {SignUpUser, StoredProfile} from "../../types/user";
+import {StoredProfile} from "../../types/user";
 import {loadCustomerList} from "../customers/actions";
-import {redirect} from 'react-router-dom'
 import {isErrorResponse} from "../../utils/typeguards";
 import {APIErrorResponse} from "../../types/generic";
-
-let reauthTimer: number = 0;
 
 export const setLoggedIn = createAction<SetLoggedInProps>('user/setLoggedIn');
 
@@ -72,7 +60,7 @@ export interface LoginUserProps {
     password: string;
 }
 
-export const loginUser = createAsyncThunk<string|APIErrorResponse, LoginUserProps>(
+export const loginUser = createAsyncThunk<string | APIErrorResponse, LoginUserProps>(
     'user/login',
     async (arg, {dispatch}) => {
         const res = await postLocalLogin(arg);
@@ -82,7 +70,10 @@ export const loginUser = createAsyncThunk<string|APIErrorResponse, LoginUserProp
             localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
             auth.setProfile(getProfile(token));
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-            dispatch(loadProfile());
+            const profileResponse = await dispatch(loadProfile());
+            if (isFulfilled(profileResponse) && profileResponse.payload.accounts?.length === 1) {
+                dispatch(loadCustomerList(profileResponse.payload.accounts[0]))
+            }
         }
         return res;
     },
@@ -124,7 +115,10 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
         auth.setToken(arg);
         if (response.user) {
             const profile = getSignInProfile(arg);
-            const {user, roles, accounts} = response;
+            const {user, roles, accounts, token} = response;
+            if (token) {
+                localStore.setItem<string>(STORE_TOKEN, token);
+            }
             const storedProfile: StoredProfile = {
                 ...profile,
                 chums: {
@@ -142,33 +136,26 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
         return response;
     },
     {
-        condition: (arg, {getState}) => {
+        condition: (_arg, {getState}) => {
             const state = getState() as RootState;
             return !selectUserLoading(state);
         }
     }
 )
 
-
-export const logout = () => async (dispatch: AppDispatch, getState: () => RootState) => {
-    try {
+export const logout = createAsyncThunk<void>(
+    'user/logout',
+    async (_arg, {dispatch}) => {
         await fetchPOST(API_PATH_LOGOUT);
-    } catch (err) {
-        if (err instanceof Error) {
-            console.debug("logout()", err.message);
-        }
+        auth.logout();
+        localStore.removeItem(STORE_CUSTOMER);
+        localStore.removeItem(STORE_USER_ACCESS);
+        localStore.removeItem(STORE_AUTHTYPE);
+        localStore.removeItem(STORE_CURRENT_CART);
+        localStore.removeItem(STORE_CUSTOMER_SHIPPING_ACCOUNT);
+        dispatch(setLoggedIn({loggedIn: false}));
     }
-    auth.logout();
-    clearTimeout(reauthTimer);
-    localStore.removeItem(STORE_CUSTOMER);
-    localStore.removeItem(STORE_USER_ACCESS);
-    localStore.removeItem(STORE_RECENT_ACCOUNTS);
-    localStore.removeItem(STORE_AUTHTYPE);
-    localStore.removeItem(STORE_CURRENT_CART);
-    localStore.removeItem(STORE_CUSTOMER_SHIPPING_ACCOUNT);
-    dispatch(setLoggedIn({loggedIn: false}));
-};
-
+)
 
 export const setUserAccess = createAsyncThunk<UserCustomerAccess | null, UserCustomerAccess | null>(
     'user/access/set',
@@ -208,7 +195,7 @@ export const loadProfile = createAsyncThunk<UserProfileResponse>(
         return await fetchUserProfile();
     },
     {
-        condition: (arg, {getState}) => {
+        condition: (_arg, {getState}) => {
             const state = getState() as RootState;
             return !selectUserLoading(state);
         }
@@ -225,14 +212,14 @@ export const changePassword = createAsyncThunk<ChangePasswordResponse, ChangePas
         return await postPasswordChange(arg);
     },
     {
-        condition: (arg, {getState}) => {
+        condition: (_arg, {getState}) => {
             const state = getState() as RootState;
             return selectUserActionStatus(state) === 'idle';
         }
     }
 )
 
-export const setNewPassword = createAsyncThunk<ChangePasswordResponse|null, SetNewPasswordProps>(
+export const setNewPassword = createAsyncThunk<ChangePasswordResponse | null, SetNewPasswordProps>(
     'user/setNewPassword',
     async (arg) => {
         const res = await postNewPassword(arg);
@@ -242,7 +229,7 @@ export const setNewPassword = createAsyncThunk<ChangePasswordResponse|null, SetN
         return res;
     },
     {
-        condition: (arg, {getState}) => {
+        condition: (_arg, {getState}) => {
             const state = getState() as RootState;
             return selectUserActionStatus(state) === 'idle';
         }
@@ -271,86 +258,12 @@ export const submitPasswordChange = () => (dispatch: AppDispatch, getState: () =
         })
 };
 
-export const submitNewPassword = () => (dispatch: AppDispatch, getState: () => RootState) => {
-    const {user} = getState();
-    const {authKey, authHash} = user.signUp;
-    const {newPassword} = user.passwordChange;
-    const url = API_PATH_USER_SET_PASSWORD
-        .replace(':authHash', encodeURIComponent(authHash))
-        .replace(':authKey', encodeURIComponent(authKey));
-    return fetchPOST(url, {newPassword})
-        .then(({token}) => {
-            auth.setToken(token);
-            auth.setProfile(getProfile(token));
-            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
-            dispatch(loadProfile());
-            return {success: true};
-        })
-        .catch(err => {
-            dispatch(handleError(err, 'SET_PASSWORD'));
-            console.log(err.message);
-        })
-};
-
-export const fetchSignUpUser = ({authKey, authHash}: {
-    authKey: string,
-    authHash: string
-}) => (dispatch: AppDispatch, getState: () => RootState) => {
-    dispatch({type: FETCH_USER_SIGNUP, status: FETCH_INIT, props: {authKey, authHash}});
-    const url = API_PATH_USER_SET_PASSWORD
-        .replace(':authKey', encodeURIComponent(authKey))
-        .replace(':authHash', encodeURIComponent(authHash))
-    fetchGET(url, {cache: 'no-cache'})
-        .then(({user}) => {
-            dispatch({type: FETCH_USER_SIGNUP, status: FETCH_SUCCESS, props: user});
-        })
-        .catch(err => {
-            dispatch({type: FETCH_USER_SIGNUP, status: FETCH_FAILURE, props: {authKey: null, authHash: null}});
-            dispatch(handleError(err, FETCH_USER_SIGNUP));
-            console.log(err.message);
-        });
-};
-
-export const submitNewUser = ({
-                                  email,
-                                  name,
-                                  account,
-                                  accountName,
-                                  telephone,
-                                  address
-                              }: SignUpUser) => (dispatch: AppDispatch) => {
-    dispatch({type: FETCH_USER_SIGNUP, status: FETCH_INIT});
-    const url = API_PATH_USER_SIGN_UP.replace(':email', encodeURIComponent(email));
-    const body = {email, name, account, accountName, telephone, address};
-    fetchPOST(url, body)
-        .then(({error, message, success, result}) => {
-            // console.log({error, message, success, result});
-            dispatch({type: FETCH_USER_SIGNUP, status: FETCH_SUCCESS});
-            if (success) {
-                return dispatch(setAlert({
-                    severity: 'success',
-                    title: 'Welcome!',
-                    message: "We've sent you an email so you can validate your account and set your new password."
-                }));
-            }
-            dispatch(setAlert({title: 'Thanks!', message, severity: 'success'}));
-        })
-        .catch(err => {
-            dispatch({
-                type: FETCH_USER_SIGNUP,
-                status: FETCH_FAILURE,
-                props: {error: err.name === USER_EXISTS ? err.name : null}
-            });
-            dispatch(handleError(err, FETCH_USER_SIGNUP));
-            console.log(err.name, err.message);
-        });
-};
 
 export const resetPassword = createAsyncThunk<boolean, string>(
     'user/resetPassword',
     async (arg) => {
         return await postResetPassword(arg);
-   },
+    },
     {
         condition: (arg, {getState}) => {
             const state = getState() as RootState;

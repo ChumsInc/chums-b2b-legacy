@@ -69,7 +69,11 @@ const UserMenu = () => {
             <Menu id={menuId} open={open} onClose={handleClose} anchorEl={anchorEl}
                   MenuListProps={{'aria-labelledby': buttonId}}>
                 {!isLoggedIn && (<MenuItemRouterLink to="/login">Login</MenuItemRouterLink>)}
-                {(!isLoggedIn || expired) && location.pathname !== '/login' && (<GoogleSignInOneTap/>)}
+                {!(isLoggedIn && !expired)
+                    && location.pathname !== '/login'
+                    && (
+                        <GoogleSignInOneTap onDone={handleClose}/>
+                    )}
                 {isLoggedIn && (<MenuItemRouterLink to="/profile">Profile</MenuItemRouterLink>)}
                 {isLoggedIn && currentAccess && (
                     <MenuItemRouterLink to={generatePath('/profile/:id', {id: `${currentAccess.id}`})}>

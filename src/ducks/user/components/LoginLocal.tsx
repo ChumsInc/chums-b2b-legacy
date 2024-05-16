@@ -34,7 +34,6 @@ const LoginLocal = () => {
             return;
         }
         const res = await dispatch(loginUser({email, password}))
-        console.warn('submitHandler()', res);
         if (isErrorResponse(res.payload)) {
             setAlert(res.payload.error ?? null);
             setPassword('');

@@ -3,12 +3,13 @@ import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
 import {Button, TextField} from "@mui/material";
 import RepSelect from "../../reps/components/RepSelect";
-import React, {ChangeEvent} from "react";
+import React, {ChangeEvent, useEffect} from "react";
 import {loadCustomerList, setCustomersFilter, setCustomersRepFilter} from "../actions";
 import {useSelector} from "react-redux";
 import {selectCustomersFilter, selectCustomersRepFilter} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectCanFilterReps, selectUserAccount} from "../../user/selectors";
+import {useDebounceValue} from "usehooks-ts";
 
 const AccountListFilters = () => {
     const dispatch = useAppDispatch();
@@ -16,9 +17,14 @@ const AccountListFilters = () => {
     const filter = useSelector(selectCustomersFilter);
     const allowSelectReps = useSelector(selectCanFilterReps);
     const userAccount = useSelector(selectUserAccount);
+    const [search, setSearch] = useDebounceValue(filter, 500);
+
+    useEffect(() => {
+        dispatch(setCustomersFilter(search));
+    }, [dispatch, search]);
 
     const filterChangeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
-        dispatch(setCustomersFilter(ev.target.value));
+        setSearch(ev.target.value);
     }
     const repChangeHandler = (value: string | null) => {
         dispatch(setCustomersRepFilter(value));
@@ -34,7 +40,8 @@ const AccountListFilters = () => {
                 <Box sx={{display: 'flex', alignItems: 'flex-end'}}>
                     <SearchIcon sx={{color: 'action.active', mr: 1, my: 0.5}}/>
                     <TextField variant="standard"
-                               value={filter} onChange={filterChangeHandler} label="Filter Customers" fullWidth/>
+                               defaultValue={filter}
+                               onChange={filterChangeHandler} label="Filter Customers" fullWidth/>
                 </Box>
             </Grid2>
             {allowSelectReps && (
