@@ -1,17 +1,13 @@
 const {merge} = require('webpack-merge');
-const common = require('./webpack.common.js');
-const path = require('path');
-const TerserPlugin = require("terser-webpack-plugin");
+const common = require('./webpack.common.cjs');
+const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
-
-const serverConfig = {
-    target: 'node',
+module.exports = merge(common, {
     mode: 'production',
-    name: 'server',
-    entry: {
-        server: './src/server/index.ts'
-    },
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     optimization: {
         minimize: true,
         minimizer: [
@@ -29,11 +25,11 @@ const serverConfig = {
         ],
     },
     output: {
-        path: path.resolve(__dirname, './dist'),
-        filename: "[name].js",
-        sourceMapFilename: '[file].map',
-        publicPath: '/',
+        filename: "[name].[contenthash].js",
     },
-}
-
-module.exports = merge(common, serverConfig);
+    plugins: [
+        new BundleAnalyzerPlugin(),
+        new CleanWebpackPlugin(),
+        new WebpackManifestPlugin(),
+    ]
+});
