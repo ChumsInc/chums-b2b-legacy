@@ -11,7 +11,7 @@ const serverConfig = {
     entry: {
         server: './src/server/index.ts'
     },
-    devtool: 'inline-source-map',
+    devtool: 'source-map',
     optimization: {
         minimize: true,
         minimizer: [

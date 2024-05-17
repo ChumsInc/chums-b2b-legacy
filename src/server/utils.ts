@@ -23,8 +23,7 @@ export const handleInvalidURL = (req:Request, res:Response, next: NextFunction) 
 export const getAPIRequest = async (req:Request, res:Response) => {
     try {
         const result = await loadJSON(`http://localhost:${process.env.API_PORT}` + req.path);
-        await res.json(result);
-        return;
+        res.json(result);
     } catch(err:unknown) {
         if (err instanceof Error) {
             debug("getAPIRequest()", err.message);

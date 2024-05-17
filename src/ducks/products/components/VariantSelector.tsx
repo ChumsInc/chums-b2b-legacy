@@ -8,7 +8,7 @@ import {ClickAwayListener} from '@mui/base';
 import VariantItem from "./VariantItem";
 import {selectCurrentProduct, selectProductColorCode, selectProductVariantId} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
-import {setCurrentVariant} from "../../../actions/products";
+import {setCurrentVariant} from "../actions";
 import {selectCustomerPricing} from "../../customer/selectors";
 import {ProductVariant} from "b2b-types";
 import {isSellAsVariants} from "../utils";
@@ -40,7 +40,7 @@ const VariantSelector = () => {
             return;
         }
         setShow(false);
-        dispatch(setCurrentVariant(variant, colorCode))
+        dispatch(setCurrentVariant(variant))
     }
 
     // const {productId, variants, selectedVariantId, priceCodes} = this.props;

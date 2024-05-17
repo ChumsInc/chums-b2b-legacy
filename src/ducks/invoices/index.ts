@@ -40,7 +40,7 @@ export const initialInvoicesState = (): InvoicesState => ({
     loaded: false,
     invoiceLoading: false,
     filters: {
-        showPaidInvoices: false,
+        showPaidInvoices: true,
         shipToCode: null,
         search: '',
     },

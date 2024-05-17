@@ -4,7 +4,6 @@
 
 import { auth } from '../api/IntranetAuthService';
 import 'isomorphic-fetch';
-import {compile} from 'path-to-regexp';
 
 
 fetch.credentials = 'include';

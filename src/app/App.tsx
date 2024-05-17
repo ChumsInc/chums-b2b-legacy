@@ -87,6 +87,7 @@ const App = () => {
                                     {!loggedIn && (
                                         <>
                                             <Route path="/pages/chums-reps" element={<RepResourcesRedirect/>}/>
+                                            <Route path="/pages/:keyword" element={<ContentPage/>}/>
                                             <Route path="/set-password/:hash/:key" element={<ResetPassword/>}/>
                                             <Route path="/set-password" element={<ResetPassword/>}/>
                                             <Route path="/signup/:hash/:key" element={<ResetPassword/>}/>

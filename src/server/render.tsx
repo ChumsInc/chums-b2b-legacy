@@ -22,7 +22,7 @@ const debug = Debug('chums:index');
 
 async function loadMainCSS(): Promise<string> {
     try {
-        const file = await fs.readFile('./public/css/chums.css');
+        const file = await fs.readFile('./public/css/chums-b2b.css');
         return Buffer.from(file).toString();
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -105,11 +105,11 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         if (req.params.product) {
             const [found] = keywords.filter(kw => kw.pagetype === 'product')
                 .filter(kw => kw.keyword === req.params.product);
-            if (!found || (!found.status && !found.redirect_to_parent)) {
-                next();
+            if (!found) {
+                res.redirect(`/products/${req.params.category}`);
                 return;
             }
-            if (found.redirect_to_parent) {
+            if (found?.redirect_to_parent) {
                 const [parent] = keywords.filter(kw => kw.status).filter(kw => kw.id === found.redirect_to_parent);
                 if (!parent || !parent.status) {
                     next();
@@ -121,11 +121,11 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         } else if (req.params.category) {
             const [found] = keywords.filter(kw => kw.pagetype === 'product' || kw.pagetype === 'category')
                 .filter(kw => kw.keyword === req.params.category);
-            if (!found || (!found.status && !found.redirect_to_parent)) {
-                next();
+            if (!found) {
+                res.redirect(`/products/all`);
                 return;
             }
-            if (found.redirect_to_parent) {
+            if (found?.redirect_to_parent) {
                 const [parent] = keywords.filter(kw => kw.status).filter(kw => kw.id === found.redirect_to_parent);
                 if (!parent || !parent.status) {
                     next();

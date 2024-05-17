@@ -1,30 +1,3 @@
-/** stuff from old site */
-/*
- * Typography
- * ========================================================================== */
-/*
- * Layout
- * ========================================================================== */
-/*
- * Media queries breakpoints
- * ========================================================================== */
-/* Extra small screen / phone */
-/* Small screen / tablet */
-/* Medium screen / desktop */
-/* Large screen / wide desktop */
-/*
- * Animations
- * ========================================================================== */
-/*
- * CHUMS Specific
- */
-.loading-spinner {
-  background-size: 50%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-image: url("data:image/svg+xml;utf8,%3Csvg%20width%3D%22100%25%22%20height%3D%22100%25%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%20preserveAspectRatio%3D%22xMidYMid%22%3E%3Cpath%20stroke%3D%22none%22%20d%3D%22M10%2050A40%2040%200%200%200%2090%2050A40%2042%200%200%201%2010%2050%22%20fill%3D%22%23c5523f%22%20transform%3D%22rotate(35.4082%2050%2051)%22%3E%3CanimateTransform%20attributeName%3D%22transform%22%20type%3D%22rotate%22%20calcMode%3D%22linear%22%20values%3D%220%2050%2051%3B360%2050%2051%22%20keyTimes%3D%220%3B1%22%20dur%3D%221.5s%22%20begin%3D%220s%22%20repeatCount%3D%22indefinite%22%3E%3C%2FanimateTransform%3E%3C%2Fpath%3E%3C%2Fsvg%3E");
-}
-
 /*!
  * Bootstrap Grid v5.3.3 (https://getbootstrap.com/)
  * Copyright 2011-2024 The Bootstrap Authors
@@ -4116,6 +4089,7 @@
   --footer-contacts-padding: 1.5rem;
   --social-icon-size: 25px;
   --footer-top-margin: 0;
+  --resources-h4-color: #5f5f5f;
 }
 
 a.pdf, a.pdf-icon {
@@ -4149,7 +4123,7 @@ a.external {
 .page-bc-reps h4 {
   margin-top: 1.5rem;
   font-size: 1rem;
-  color: #5f5f5f;
+  color: var(--resources-h4-color);
 }
 
 .usage-policy-container,

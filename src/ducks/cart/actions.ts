@@ -332,35 +332,6 @@ export const removeCart = createAsyncThunk<SalesOrderHeader[], SalesOrderHeader>
     }
 )
 
-export const _removeCart = (cart: SalesOrderHeader) =>
-    async (dispatch: AppDispatch, getState: () => RootState) => {
-        try {
-            if (!isCartOrder(cart)) {
-                return;
-            }
-            const {Company, ARDivisionNo, CustomerNo, ShipToCode} = cart;
-            const state = getState();
-            const _cartNo = selectCartNo(state);
-            const isCart = _cartNo === cart.SalesOrderNo;
-
-            const data: DeleteCartBody = {
-                action: 'delete',
-                SalesOrderNo: cart.SalesOrderNo,
-            };
-            dispatch({type: DELETE_CART, status: FETCH_INIT});
-            await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, data);
-            dispatch({type: DELETE_CART, status: FETCH_SUCCESS, isCart});
-            dispatch(fetchOpenOrders({ARDivisionNo, CustomerNo}));
-        } catch (err) {
-            dispatch({type: DELETE_CART, status: FETCH_FAILURE});
-            if (err instanceof B2BError) {
-                dispatch(handleError(err, DELETE_CART));
-                dispatch(logError({message: err.message, debug: err.debug}));
-            }
-        }
-
-    };
-
 
 export const appendCommentLine = (commentText: string) => ({type: APPEND_ORDER_COMMENT, commentText});
 

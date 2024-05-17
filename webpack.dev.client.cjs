@@ -3,6 +3,8 @@ const common = require('./webpack.common.cjs');
 const path = require('path');
 const webpack = require('webpack');
 
+process.traceDeprecation = true;
+
 const localProxy = {
     target: 'http://localhost:8081',
     // ignorePath: false,
@@ -33,14 +35,8 @@ const clientConfig = {
         },
         historyApiFallback: true,
         static: [
-            {
-                directory: path.join(__dirname, 'public'),
-                watch: false,
-            },
-            {
-                directory: path.join(__dirname),
-                watch: false,
-            }
+            {directory: path.join(__dirname, 'public'), watch: false},
+            {directory: path.join(__dirname), watch: false}
         ],
         hot: true,
         proxy: [

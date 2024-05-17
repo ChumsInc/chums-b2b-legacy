@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import {selectVersion} from "../ducks/version";
 import {selectUserProfile} from "../ducks/user/selectors";
 import {ErrorBoundary as ReactErrorBoundary, FallbackProps} from 'react-error-boundary';
-import {postErrors} from "../api/log-errors";
+import {postErrors} from "../api/fetch";
 import Alert from "@mui/material/Alert";
 
 function ErrorFallback({error, resetErrorBoundary}: FallbackProps) {

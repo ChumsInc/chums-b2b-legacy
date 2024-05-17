@@ -10,6 +10,8 @@ const clientConfig = {
     target: 'web',
     mode: 'production',
     devtool: 'source-map',
+    entry: './src/client/index.tsx',
+
     optimization: {
         minimize: true,
         minimizer: [
@@ -27,7 +29,10 @@ const clientConfig = {
         ],
     },
     output: {
-        filename: "[name].[contenthash:8].js",
+        path: path.resolve(__dirname, './public/build'),
+        filename: "[name].js",
+        sourceMapFilename: '[file].map',
+        publicPath: '/build',
     },
     plugins: [
         new CleanWebpackPlugin(),
