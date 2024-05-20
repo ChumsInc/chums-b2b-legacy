@@ -42,6 +42,10 @@ export class AuthService extends EventEmitter {
         LocalStore.setItem(STORE_TOKEN, idToken);
     }
 
+    removeToken() {
+        LocalStore.removeItem(STORE_TOKEN);
+    }
+
     getToken(): string | null {
         // Retrieves the user token from localStorage
         return LocalStore.getItem<string|null>(STORE_TOKEN, null);

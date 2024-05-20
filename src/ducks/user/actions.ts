@@ -8,14 +8,13 @@ import {
     STORE_CURRENT_CART,
     STORE_CUSTOMER,
     STORE_CUSTOMER_SHIPPING_ACCOUNT,
-    STORE_TOKEN,
     STORE_USER_ACCESS
 } from '../../constants/stores';
 import {auth} from '../../api/IntranetAuthService';
 import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {API_PATH_CHANGE_PASSWORD} from "../../constants/paths";
-import {AUTH_GOOGLE, AUTH_LOCAL} from "../../constants/app";
+import {AUTH_LOCAL} from "../../constants/app";
 import {
     selectAuthType,
     selectLoggedIn,
@@ -95,7 +94,7 @@ export const updateLocalAuth = createAsyncThunk<void, void>(
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
         } catch (err: unknown) {
             dispatch(setLoggedIn({loggedIn: false}));
-            localStore.removeItem(STORE_TOKEN);
+            auth.removeToken();
             return;
         }
         dispatch(loadProfile());
@@ -113,12 +112,12 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
     'user/signInWithGoogle',
     async (arg) => {
         const response = await fetchGoogleLogin(arg);
-        auth.setToken(arg);
+        auth.setToken(response.token ?? arg);
         if (response.user) {
             const profile = getSignInProfile(arg);
             const {user, roles, accounts, token} = response;
             if (token) {
-                localStore.setItem<string>(STORE_TOKEN, token);
+                auth.setToken(token);
             }
             const storedProfile: StoredProfile = {
                 ...profile,
@@ -132,7 +131,6 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
             }
             response.picture = getSignInProfile(arg)?.imageUrl ?? null;
             auth.setProfile(storedProfile);
-            localStore.setItem<string>(STORE_AUTHTYPE, AUTH_GOOGLE);
         }
         return response;
     },

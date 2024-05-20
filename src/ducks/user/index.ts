@@ -199,7 +199,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
         })
         .addCase(signInWithGoogle.fulfilled, (state, action) => {
             state.actionStatus = 'idle';
-            state.token = action.meta.arg;
+            state.token = action.payload.token ?? null;
             state.accounts = (action.payload.accounts ?? []).sort(userAccountSort);
             state.roles = (action.payload.roles ?? []).sort();
             state.loggedIn = !!(action.payload.user?.id ?? 0);

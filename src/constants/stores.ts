@@ -9,8 +9,8 @@ export const STORE_USER_PREFS = 'chums/b2b/prefs';
 export const STORE_RECENT_ACCOUNTS = 'chums/b2b/recentAccounts';
 export const STORE_INVOICES_ROWS_PER_PAGE = 'chums/b2b/invoices.rowsPerPage';
 export const STORE_INVOICES_SORT = 'chums/b2b/invoices.sort';
-
-export const STORE_CUSTOMER_SHIPPING_ACCOUNT = 'com.chums.b2b.customerShippingAccount';
+export const STORE_VERSION = 'chums/b2b/version';
+export const STORE_CUSTOMER_SHIPPING_ACCOUNT = 'chums/b2b/customerShippingAccount';
 
 export interface DeprecatedStorageKeyList {
     [key: string]: string | null;
@@ -28,6 +28,7 @@ export const deprecatedStorageKeys: DeprecatedStorageKeyList = {
     'com.chums.b2b.prefs': STORE_USER_PREFS,
     'chums-b2b::accountList::rowsPerPage': null,
     'com.chums.b2b.recentAccounts': STORE_RECENT_ACCOUNTS,
+    'com.chums.b2b.customerShippingAccount': STORE_CUSTOMER_SHIPPING_ACCOUNT,
     'invoices.rowsPerPage': STORE_INVOICES_ROWS_PER_PAGE,
     'invoices.sort': STORE_INVOICES_SORT,
 }

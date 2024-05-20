@@ -3,7 +3,8 @@
  */
 import {auth} from "./IntranetAuthService";
 import B2BError from "../types/generic";
-import {fetchPOST} from "../utils/fetch";
+import localStore from "../utils/LocalStore";
+import {STORE_VERSION} from "../constants/stores";
 
 function getCredentials():string|null {
     const token = auth.getToken();
@@ -16,7 +17,7 @@ function getCredentials():string|null {
 async function handleJSONResponse<T = any>(res:Response, args?: any):Promise<T> {
     if (!res.ok) {
         const text = await res.text();
-        await postErrors({message: `error: ${res.status}`, componentStack: res.url, version: '-'})
+        await postErrors({message: `error: ${res.status}`, componentStack: res.url})
         return Promise.reject(new B2BError(text, res.url, null, res.status));
     }
     const json = await res.json();
@@ -25,7 +26,7 @@ async function handleJSONResponse<T = any>(res:Response, args?: any):Promise<T> 
             url: res.url,
             args: args ?? null
         })
-        await postErrors({message: json.error, version: '-', componentStack: res.url});
+        await postErrors({message: json.error, componentStack: res.url});
         console.warn(json.error);
         return Promise.reject(new B2BError(json.error, res.url));
     }
@@ -110,12 +111,12 @@ export async function fetchHTML(url:string, options: RequestInit = {}):Promise<s
 export interface PostErrorsArg {
     message: string;
     componentStack?: string;
-    version: string;
     userId?: number;
 }
 
-export async function postErrors({message, componentStack, version, userId}:PostErrorsArg): Promise<void> {
+export async function postErrors({message, componentStack, userId}:PostErrorsArg): Promise<void> {
     try {
+        const version = localStore.getItem(STORE_VERSION, '-');
         const body = JSON.stringify({
             message,
             componentStack: componentStack ?? '',
