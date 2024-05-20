@@ -40,6 +40,8 @@ import RequestPasswordResetForm from "../ducks/user/components/RequestPasswordRe
 import ChangePasswordPage from "../ducks/user/components/ChangePasswordPage";
 import {useIsSSR} from "../hooks/is-server-side";
 import LocalStore from "../utils/LocalStore";
+import {STORE_TOKEN} from "../constants/stores";
+import {isTokenExpired} from "../utils/jwtHelper";
 
 
 const App = () => {
@@ -57,6 +59,10 @@ const App = () => {
             return;
         }
         LocalStore.removeDeprecatedItems();
+        const token = LocalStore.getItem<string|null>(STORE_TOKEN, null);
+        if (token && isTokenExpired(token)) {
+            LocalStore.removeItem(STORE_TOKEN);
+        }
     }, [isSSR]);
 
 

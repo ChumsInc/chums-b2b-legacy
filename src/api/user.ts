@@ -249,3 +249,18 @@ export async function postNewPassword(arg:SetNewPasswordProps):Promise<ChangePas
         return Promise.reject(new Error('Error in postNewPassword()'));
     }
 }
+
+export async function postLogout():Promise<void> {
+    try {
+        const url = '/api/user/b2b/logout';
+        await fetchJSON(url, {method: 'POST', responseHandler: allowErrorResponseHandler});
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("postLogout()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("postLogout()", err);
+        return Promise.reject(new Error('Error in postLogout()'));
+    }
+
+}

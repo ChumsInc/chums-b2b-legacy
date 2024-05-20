@@ -14,7 +14,7 @@ import {
 import {auth} from '../../api/IntranetAuthService';
 import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
-import {API_PATH_CHANGE_PASSWORD, API_PATH_LOGOUT} from "../../constants/paths";
+import {API_PATH_CHANGE_PASSWORD} from "../../constants/paths";
 import {AUTH_GOOGLE, AUTH_LOCAL} from "../../constants/app";
 import {
     selectAuthType,
@@ -30,6 +30,7 @@ import {
     fetchUserProfile,
     postLocalLogin,
     postLocalReauth,
+    postLogout,
     postNewPassword,
     postPasswordChange,
     postResetPassword,
@@ -146,7 +147,7 @@ export const signInWithGoogle = createAsyncThunk<UserProfileResponse, string>(
 export const logout = createAsyncThunk<void>(
     'user/logout',
     async (_arg, {dispatch}) => {
-        await fetchPOST(API_PATH_LOGOUT);
+        await postLogout();
         auth.logout();
         localStore.removeItem(STORE_CUSTOMER);
         localStore.removeItem(STORE_USER_ACCESS);
