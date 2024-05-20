@@ -16,6 +16,7 @@ function getCredentials():string|null {
 async function handleJSONResponse<T = any>(res:Response, args?: any):Promise<T> {
     if (!res.ok) {
         const text = await res.text();
+        await postErrors({message: `error: ${res.status}`, componentStack: res.url, version: '-'})
         return Promise.reject(new B2BError(text, res.url, null, res.status));
     }
     const json = await res.json();
@@ -122,12 +123,5 @@ export async function postErrors({message, componentStack, version, userId}:Post
             version,
         });
         await fetchJSON('/api/error-reporting', {method: 'POST', body, responseHandler: allowErrorResponseHandler});
-    } catch (err) {
-        if (err instanceof Error) {
-            console.debug("postErrors()", err.message);
-            return Promise.reject(err);
-        }
-        console.debug("postErrors()", err);
-        return Promise.reject(new Error('Error in postErrors()'));
-    }
+    } catch (err) {}
 }
