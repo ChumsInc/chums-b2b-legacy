@@ -1,17 +1,13 @@
 import {
     APPEND_ORDER_COMMENT,
     CREATE_NEW_CART,
-    DELETE_CART,
     FETCH_FAILURE,
-    FETCH_INIT,
-    FETCH_SUCCESS,
     SAVE_CART,
     SAVE_CART_FAILURE,
     UPDATE_CART_ITEM
 } from "../../constants/actions";
-import {isCartOrder} from "../../utils/orders";
 import {handleError, logError} from "../app/actions";
-import {fetchOpenOrders, loadSalesOrder} from "../../actions/salesOrder";
+import {loadSalesOrder} from "../../actions/salesOrder";
 import {shipToAddressFromBillingAddress} from "../../utils/customer";
 import {CREDIT_CARD_PAYMENT_TYPES} from "../../constants/account";
 import localStore from "../../utils/LocalStore";
@@ -148,7 +144,7 @@ export interface AddToCartProps {
     salesOrderNo: string;
     itemCode: string;
     quantity: string | number;
-    comment?: string|null;
+    comment?: string | null;
 }
 
 export const addToCart = createAsyncThunk<SalesOrder | null, AddToCartProps>(
