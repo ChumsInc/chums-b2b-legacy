@@ -28,7 +28,6 @@ export default function ErrorBoundary({children}: {
     const logError = (error: Error, info: React.ErrorInfo) => {
         postErrors({
             message: error.message,
-            version: version ?? 'n/a',
             userId: userProfile?.id,
             componentStack: info.componentStack ?? ''
         })
