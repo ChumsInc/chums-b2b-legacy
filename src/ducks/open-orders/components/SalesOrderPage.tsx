@@ -28,7 +28,6 @@ const SalesOrderPage = () => {
     const isCart = useSelector(selectIsCart);
 
     useEffect(() => {
-        console.log('useEffect', [customer, match, loading, salesOrderHeader])
         if (customer && !!customer.CustomerNo) {
             if (!loading && !!match?.params?.salesOrderNo && (!isEditableSalesOrder(salesOrderHeader) || match?.params?.salesOrderNo !== salesOrderHeader.SalesOrderNo)) {
                 dispatch(loadSalesOrder(match.params.salesOrderNo))

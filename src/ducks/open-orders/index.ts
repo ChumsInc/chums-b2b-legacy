@@ -105,7 +105,11 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         .addCase(saveNewCart.fulfilled, (state, action) => {
             if (action.payload) {
                 state.actionStatus[action.payload?.SalesOrderNo] = 'idle';
-                state.list[action.payload.SalesOrderNo] = {...action.payload, actionStatus: 'idle'};
+                const detail: OpenOrderDetailList = {};
+                action.payload.detail.forEach(line => {
+                    detail[line.LineKey] = line;
+                })
+                state.list[action.payload.SalesOrderNo] = {...action.payload, detail, actionStatus: 'idle'};
             }
         })
         .addCase(saveCart.pending, (state, action) => {
@@ -117,7 +121,12 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         .addCase(saveCart.fulfilled, (state, action) => {
             state.actionStatus[action.meta.arg.SalesOrderNo] = 'idle';
             if (action.payload) {
-                state.list[action.payload.SalesOrderNo] = {...action.payload, actionStatus: 'idle'};
+                const detail: OpenOrderDetailList = {};
+                action.payload.detail.forEach(line => {
+                    detail[line.LineKey] = line;
+                })
+
+                state.list[action.payload.SalesOrderNo] = {...action.payload, detail, actionStatus: 'idle'};
             }
         })
         .addCase(saveCart.rejected, (state, action) => {
@@ -247,8 +256,11 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         .addCase(updateDetailLine, (state, action) => {
             const {SalesOrderNo, LineKey, ...props} = action.payload;
             const so = state.list[SalesOrderNo];
-            if (so && isEditableSalesOrder(so) && so.detail[LineKey]) {
-                so.detail[LineKey] = {...so.detail[LineKey], ...props, changed: true};
+            console.log('updateDetailLine', so, isEditableSalesOrder(so))
+            if (so && isEditableSalesOrder(so)) {
+                if (so.detail[LineKey]) {
+                    so.detail[LineKey] = {...so.detail[LineKey], ...props, changed: true};
+                }
             }
         })
         .addCase(sendOrderEmail.pending, (state) => {
