@@ -30,7 +30,7 @@ const clientConfig = {
     },
     output: {
         path: path.resolve(__dirname, './public/build'),
-        filename: "[name].js",
+        filename: "[name].[contenthash:8].js",
         sourceMapFilename: '[file].map',
         publicPath: '/build',
     },

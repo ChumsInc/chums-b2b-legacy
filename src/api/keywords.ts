@@ -4,7 +4,7 @@ import {fetchJSON} from "./fetch";
 export async function fetchKeywords():Promise<Keyword[]> {
     try {
         const url = '/api/keywords';
-        const res = await fetchJSON<{result: Keyword[]}>(url);
+        const res = await fetchJSON<{result: Keyword[]}>(url, {cache: 'no-cache'});
         return res.result ?? [];
     } catch(err:unknown) {
         if (err instanceof Error) {

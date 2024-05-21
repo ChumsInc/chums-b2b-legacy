@@ -3,7 +3,7 @@ import {fetchJSON} from "./fetch";
 
 export const fetchMessages = async (): Promise<Message[]> => {
     try {
-        const response = await fetchJSON<{ messages: Message[] }>('/api/messages/current');
+        const response = await fetchJSON<{ messages: Message[] }>('/api/messages/current', {cache: 'no-cache'});
         return response?.messages ?? [];
     } catch (err) {
         if (err instanceof Error) {

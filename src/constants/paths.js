@@ -50,7 +50,6 @@ export const API_PATH_LOGIN_LOCAL = '/api/user/b2b/login/local';
 export const API_PATH_LOGIN_LOCAL_REAUTH = '/api/user/b2b/auth/update';
 export const API_PATH_LOGOUT = '/api/user/b2b/logout';
 export const API_PATH_PASSWORD_RESET = '/api/user/b2b/login/reset-password';
-export const API_PATH_PROFILE = '/api/user/b2b/profile';
 export const API_PATH_CHANGE_PASSWORD = '/api/user/b2b/password';
 export const API_PATH_USER_SET_PASSWORD = '/api/user/b2b/signup/:authHash/:authKey';
 export const API_PATH_USER_SIGN_UP = '/api/user/b2b/signup/:email';

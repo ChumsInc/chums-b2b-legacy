@@ -29,7 +29,7 @@ export async function fetchPage(arg:string):Promise<ContentPage|null> {
             return pageCache.get(arg)!;
         }
         const url = `/api/pages/${encodeURIComponent(arg)}`;
-        const response = await fetchJSON<{pages: ContentPage[]}>(url);
+        const response = await fetchJSON<{pages: ContentPage[]}>(url, {cache: 'no-cache'});
         const page = response?.pages[0] ?? null;
         if (page) {
             pageCache.set(arg, {...page, lastUsed: new Date().valueOf()});

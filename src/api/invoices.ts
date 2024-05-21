@@ -14,7 +14,7 @@ export async function fetchInvoice(arg:FetchInvoiceArg):Promise<ExtendedInvoice|
         const url = '/api/sales/invoice/chums/:InvoiceType/:InvoiceNo'
             .replace(':InvoiceType', encodeURIComponent(arg.InvoiceType ?? 'IN'))
             .replace(':InvoiceNo', encodeURIComponent(arg.InvoiceNo));
-        const response = await fetchJSON<FetchInvoiceResponse>(url);
+        const response = await fetchJSON<FetchInvoiceResponse>(url, {cache: 'no-cache'});
         if (!response?.invoice || !response?.invoice?.InvoiceNo) {
             return Promise.reject(new Error(`Invoice '${arg.InvoiceNo}-${arg.InvoiceType}' was not found`));
         }

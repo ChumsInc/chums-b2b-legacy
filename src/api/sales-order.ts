@@ -32,7 +32,7 @@ export async function fetchOpenSalesOrders({ARDivisionNo, CustomerNo}: CustomerK
         const url = '/node-sage/api/CHI/salesorder/:ARDivisionNo-:CustomerNo/open'
             .replace(':ARDivisionNo', encodeURIComponent(ARDivisionNo))
             .replace(':CustomerNo', encodeURIComponent(CustomerNo));
-        const {result} = await fetchJSON<{ result: SalesOrderHeader[] }>(url);
+        const {result} = await fetchJSON<{ result: SalesOrderHeader[] }>(url, {cache: 'no-cache'});
         return result;
     } catch (err: unknown) {
         if (err instanceof Error) {

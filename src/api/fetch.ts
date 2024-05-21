@@ -58,13 +58,14 @@ export async function fetchJSON<T = any>(url:string, options:FetchJSONOptions = 
             const credentials = getCredentials();
             if (credentials) {
                 _options.headers.append('Authorization', credentials);
+                options.credentials = 'omit';
             }
         }
         if (!!_options?.method && ['POST', 'PUT'].includes(_options.method.toUpperCase())) {
             _options.headers.append('Accept', 'application/json')
             _options.headers.append('Content-Type', 'application/json')
         }
-        const res = await fetch(url, {credentials: 'same-origin', ..._options});
+        const res = await fetch(url, {..._options});
         if (typeof responseHandler !== 'undefined') {
             return responseHandler(res);
         }
@@ -89,7 +90,7 @@ export async function fetchHTML(url:string, options: RequestInit = {}):Promise<s
         if (credentials) {
             options.headers.append('Authorization', credentials)
         }
-        const res = await fetch(url, {credentials: 'same-origin', ...options});
+        const res = await fetch(url, {...options});
         if (!res.ok) {
             const text = await res.text();
             return Promise.reject(new Error(text));
@@ -118,6 +119,7 @@ export async function postErrors({message, componentStack, userId}:PostErrorsArg
     try {
         const version = localStore.getItem(STORE_VERSION, '-');
         const body = JSON.stringify({
+            url: global.window.location.pathname,
             message,
             componentStack: componentStack ?? '',
             user_id: userId ?? 0,

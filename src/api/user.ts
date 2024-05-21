@@ -4,13 +4,13 @@ import {
     API_PATH_LOGIN_LOCAL,
     API_PATH_LOGIN_LOCAL_REAUTH,
     API_PATH_PASSWORD_RESET,
-    API_PATH_PROFILE,
     API_PATH_REP_LIST
 } from "../constants/paths";
 import {
     ChangePasswordProps,
     ChangePasswordResponse,
-    FunkyUserProfileResponse, SetNewPasswordProps,
+    FunkyUserProfileResponse,
+    SetNewPasswordProps,
     UserProfileResponse
 } from "../ducks/user/types";
 import {allowErrorResponseHandler, fetchJSON} from "./fetch";
@@ -26,10 +26,15 @@ import {LoadProfileProps, SignUpProfile} from "../ducks/sign-up/types";
 import {APIErrorResponse} from "../types/generic";
 
 
-export async function postLocalLogin(arg: LocalAuth): Promise<string|APIErrorResponse> {
+export async function postLocalLogin(arg: LocalAuth): Promise<string | APIErrorResponse> {
     try {
         const body = JSON.stringify(arg);
-        const res = await fetchJSON<{ token: string }>(API_PATH_LOGIN_LOCAL, {method: 'POST', body, credentials: 'omit', responseHandler: allowErrorResponseHandler});
+        const res = await fetchJSON<{ token: string }>(API_PATH_LOGIN_LOCAL, {
+            method: 'POST',
+            body,
+            credentials: 'omit',
+            responseHandler: allowErrorResponseHandler
+        });
         if (isErrorResponse(res)) {
             return res;
         }
@@ -60,7 +65,7 @@ export async function postLocalReauth(): Promise<string> {
 
 export async function fetchUserProfile(): Promise<UserProfileResponse> {
     try {
-        const response = await fetchJSON<FunkyUserProfileResponse>(API_PATH_PROFILE);
+        const response = await fetchJSON<FunkyUserProfileResponse>('/api/user/b2b/profile', {cache: 'no-cache'});
         response.reps = [];
         response.roles = response.roles?.map(role => isUserRole(role) ? role.role : role);
         if (response.user?.accountType === 1) {
@@ -80,7 +85,7 @@ export async function fetchUserProfile(): Promise<UserProfileResponse> {
 export async function postUserProfile(arg: Pick<UserProfile, 'name'>): Promise<UserProfileResponse> {
     try {
         const body = JSON.stringify(arg);
-        const response = await fetchJSON<FunkyUserProfileResponse>(API_PATH_PROFILE, {method: 'PUT', body});
+        const response = await fetchJSON<FunkyUserProfileResponse>('/api/user/b2b/profile', {method: 'PUT', body});
         response.reps = [];
         response.roles = response.roles?.map(role => isUserRole(role) ? role.role : role);
         if (response.user?.accountType === 1) {
@@ -106,7 +111,7 @@ export async function postUserProfile(arg: Pick<UserProfile, 'name'>): Promise<U
 
 export async function fetchRepList(): Promise<Salesperson[]> {
     try {
-        const response = await fetchJSON<{ list: Salesperson[] }>(API_PATH_REP_LIST, {cache: 'no-cache'});
+        const response = await fetchJSON<{ list: Salesperson[] }>('/api/sales/rep/list/chums/condensed', {cache: 'no-cache'});
         return (response.list ?? []).filter(rep => !!rep.active);
     } catch (err) {
         if (err instanceof Error) {
@@ -125,7 +130,11 @@ export async function fetchGoogleLogin(token: string): Promise<UserProfileRespon
             auth.setToken(token);
         }
         const body = JSON.stringify({token});
-        const response = await fetchJSON<UserProfileResponse>(API_PATH_LOGIN_GOOGLE, {method: 'POST', body, credentials: 'omit'});
+        const response = await fetchJSON<UserProfileResponse>(API_PATH_LOGIN_GOOGLE, {
+            method: 'POST',
+            body,
+            credentials: 'omit'
+        });
         response.reps = [];
         if (response.user?.accountType === 1) {
             response.reps = await fetchRepList();
@@ -167,7 +176,11 @@ export async function fetchGoogleLogin(token: string): Promise<UserProfileRespon
 export async function postResetPassword(arg: string): Promise<boolean> {
     try {
         const body = JSON.stringify({email: arg});
-        const response = await fetchJSON<{ success: boolean }>(API_PATH_PASSWORD_RESET, {method: 'POST', body, credentials: 'omit'});
+        const response = await fetchJSON<{ success: boolean }>(API_PATH_PASSWORD_RESET, {
+            method: 'POST',
+            body,
+            credentials: 'omit'
+        });
         return response?.success ?? false;
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -179,17 +192,19 @@ export async function postResetPassword(arg: string): Promise<boolean> {
     }
 }
 
-export async function fetchSignUpProfile(arg:LoadProfileProps):Promise<SignUpProfile|APIErrorResponse|null> {
+export async function fetchSignUpProfile(arg: LoadProfileProps): Promise<SignUpProfile | APIErrorResponse | null> {
     try {
         const url = '/api/user/b2b/signup/:hash/:key'
             .replace(':hash', encodeURIComponent(arg.hash))
             .replace(':key', encodeURIComponent(arg.key));
-        const res = await fetchJSON<{user: SignUpProfile}|APIErrorResponse>(url, {responseHandler: allowErrorResponseHandler});
+        const res = await fetchJSON<{
+            user: SignUpProfile
+        } | APIErrorResponse>(url, {responseHandler: allowErrorResponseHandler, cache: 'no-cache'});
         if (isErrorResponse(res)) {
             return res;
         }
         return res.user ?? null;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchSignUpProfile()", err.message);
             return Promise.reject(err);
@@ -221,7 +236,11 @@ export async function postPasswordChange(arg: ChangePasswordProps): Promise<Chan
     try {
         const url = '/api/user/b2b/password';
         const body = JSON.stringify(arg);
-        return await fetchJSON<ChangePasswordResponse>(url, {method: 'POST', body, responseHandler: allowErrorResponseHandler});
+        return await fetchJSON<ChangePasswordResponse>(url, {
+            method: 'POST',
+            body,
+            responseHandler: allowErrorResponseHandler
+        });
     } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postPasswordChange()", err.message);
@@ -232,15 +251,19 @@ export async function postPasswordChange(arg: ChangePasswordProps): Promise<Chan
     }
 }
 
-export async function postNewPassword(arg:SetNewPasswordProps):Promise<ChangePasswordResponse | null> {
+export async function postNewPassword(arg: SetNewPasswordProps): Promise<ChangePasswordResponse | null> {
     try {
         const url = `/api/user/b2b/signup/:hash/:key`
             .replace(':hash', encodeURIComponent(arg.hash))
             .replace(':key', encodeURIComponent(arg.key));
         const body = JSON.stringify({newPassword: arg.newPassword});
-        const res =  await fetchJSON<ChangePasswordResponse>(url, {method: 'POST', body, responseHandler: allowErrorResponseHandler});
+        const res = await fetchJSON<ChangePasswordResponse>(url, {
+            method: 'POST',
+            body,
+            responseHandler: allowErrorResponseHandler
+        });
         return res ?? null;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postNewPassword()", err.message);
             return Promise.reject(err);
@@ -250,11 +273,11 @@ export async function postNewPassword(arg:SetNewPasswordProps):Promise<ChangePas
     }
 }
 
-export async function postLogout():Promise<void> {
+export async function postLogout(): Promise<void> {
     try {
         const url = '/api/user/b2b/logout';
         await fetchJSON(url, {method: 'POST', responseHandler: allowErrorResponseHandler});
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("postLogout()", err.message);
             return Promise.reject(err);
