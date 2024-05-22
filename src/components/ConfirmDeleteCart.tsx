@@ -1,10 +1,9 @@
 import React, {useId} from 'react';
-import ModalAlert from "./ModalAlert";
 import Dialog from "@mui/material/Dialog";
 import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const ConfirmDeleteCart = ({open, salesOrderNo, onConfirm, onCancel}:{
+const ConfirmDeleteCart = ({open, salesOrderNo, onConfirm, onCancel}: {
     open: boolean;
     salesOrderNo: string;
     onConfirm: () => void;
@@ -19,7 +18,7 @@ const ConfirmDeleteCart = ({open, salesOrderNo, onConfirm, onCancel}:{
     }
     return (
         <Dialog fullScreen={fullScreen}
-            open={open} onClose={onCancel} aria-labelledby={idTitle} aria-describedby={idContent} >
+                open={open} onClose={onCancel} aria-labelledby={idTitle} aria-describedby={idContent}>
             <DialogTitle id={idTitle}>
                 Confirm Deletion?
             </DialogTitle>

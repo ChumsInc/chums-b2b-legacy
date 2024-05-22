@@ -3,7 +3,6 @@ import {Editable, SalesOrderDetailLine} from "b2b-types";
 import {Appendable} from "../../../types/generic";
 import classNames from "classnames";
 import OrderItemImage from "../../../components/OrderItemImage";
-import UPCA from "../../../common/upc-a";
 import AvailabilityAlert from "../../../components/AvailabilityAlert";
 import numeral from "numeral";
 import CartQuantityInput from "../../../components/CartQuantityInput";
@@ -14,6 +13,8 @@ import SalesOrderCommentLine from "./SalesOrderCommentLine";
 import {TableCell, TableRow} from "@mui/material";
 import FormattedUPC from "../../../components/FormattedUPC";
 import Typography from "@mui/material/Typography";
+import {selectCanViewAvailable} from "../../user/selectors";
+import {useAppSelector} from "../../../app/configureStore";
 
 export default function SalesOrderItemLine({
                                                line,
@@ -33,6 +34,7 @@ export default function SalesOrderItemLine({
     onAddToCart?: () => void;
 }) {
     const commentRef = React.createRef<HTMLInputElement>();
+    const canViewAvailable = useAppSelector(selectCanViewAvailable);
     const [showCommentInput, setShowCommentInput] = useState(!!line.CommentText);
     const unitPrice = new Decimal(1).sub(new Decimal(line.LineDiscountPercent).div(100)).times(new Decimal(line.UnitPrice).div(line.UnitOfMeasureConvFactor ?? 1));
     const itemPrice = new Decimal(1).sub(new Decimal(line.LineDiscountPercent).div(100)).times(line.UnitPrice);
@@ -65,8 +67,8 @@ export default function SalesOrderItemLine({
                 </TableCell>
                 <TableCell>
                     <Typography variant="body1">{line.ItemCodeDesc}</Typography>
-                    {!!line.UDF_UPC && <FormattedUPC value={line.UDF_UPC} />}
-                    {!readOnly && (
+                    {!!line.UDF_UPC && <FormattedUPC value={line.UDF_UPC}/>}
+                    {!readOnly && canViewAvailable && (
                         <AvailabilityAlert QuantityOrdered={line.QuantityOrdered}
                                            QuantityAvailable={line.QuantityAvailable}/>
                     )}

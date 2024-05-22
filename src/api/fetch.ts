@@ -5,6 +5,7 @@ import {auth} from "./IntranetAuthService";
 import B2BError from "../types/generic";
 import localStore from "../utils/LocalStore";
 import {STORE_VERSION} from "../constants/stores";
+import 'isomorphic-fetch';
 
 function getCredentials():string|null {
     const token = auth.getToken();
