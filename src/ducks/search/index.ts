@@ -2,7 +2,7 @@ import {createAction, createAsyncThunk, createReducer} from "@reduxjs/toolkit";
 import {RootState} from "../../app/configureStore";
 import {SearchResult} from "b2b-types";
 import {fetchSearchResults} from "../../api/search";
-import {ga_search} from "../../utils/google-analytics";
+import {sendGtagEvent} from "../../api/gtag";
 
 export interface SearchState {
     term: string;
@@ -30,7 +30,7 @@ export const showSearch = createAction<boolean | undefined>('search/show');
 export const getSearchResults = createAsyncThunk<SearchResult[], string>(
     'search/load',
     async (arg) => {
-        ga_search(arg);
+        sendGtagEvent('search', {search_term: arg});
         return await fetchSearchResults(arg);
     },
     {

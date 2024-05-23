@@ -21,7 +21,6 @@ const ClosedSalesOrderPage = () => {
     const customerLoading = useSelector(selectCustomerLoading);
 
     useEffect(() => {
-        console.log('useEffect', [customer, match, loading, salesOrderHeader])
         if (customer && !!customer.CustomerNo) {
             if (!loading && !!match?.params?.salesOrderNo && (match?.params?.salesOrderNo !== salesOrderHeader?.SalesOrderNo)) {
                 dispatch(loadSalesOrder(match.params.salesOrderNo))

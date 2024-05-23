@@ -80,7 +80,6 @@ const BillToForm = () => {
             return;
         }
         const email = emailAddresses.toSpliced(after + 1, 0, '');
-        console.log('addEmailAddressHandler', email);
         setEmailAddresses(email);
         setCustomer({...customer, EmailAddress: email.join(';')});
     }

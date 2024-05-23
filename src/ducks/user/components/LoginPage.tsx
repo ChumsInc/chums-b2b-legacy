@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import LoginLocal from "./LoginLocal";
-import {DOCUMENT_TITLES, PATH_PROFILE} from "../../../constants/paths";
+import {documentTitles, PATH_PROFILE} from "../../../constants/paths";
 import Alert from '@mui/material/Alert';
 import GoogleSignInButton from "./GoogleSignInButton";
 import DocumentTitle from "../../../components/DocumentTitle";
@@ -34,7 +34,7 @@ const LoginPage = () => {
 
     return (
         <Container maxWidth="sm">
-            <DocumentTitle documentTitle={DOCUMENT_TITLES.login}/>
+            <DocumentTitle documentTitle={documentTitles.login}/>
             <Typography variant="h1" component="h1" sx={{my: 3}}>Chums B2B Portal</Typography>
             <Typography variant="body1">Hey there friend! This site is for authorized Chums dealers only.</Typography>
 

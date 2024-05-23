@@ -9,6 +9,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid2 from "@mui/material/Unstable_Grid2";
+import {sendGtagEvent} from "../../../api/gtag";
+import {isCategoryChildProduct} from "../../products/utils";
+import {CategoryChildProduct} from "b2b-types";
 
 const CategoryPage = ({keyword}: {
     keyword: string;
@@ -20,6 +23,20 @@ const CategoryPage = ({keyword}: {
     useEffect(() => {
         dispatch(loadCategory(keyword));
     }, [keyword]);
+
+    useEffect(() => {
+        if (category) {
+            sendGtagEvent('view_item_list', {
+                item_list_id: category.keyword,
+                item_list_name: category.title ?? category.keyword,
+                items: category.children.filter(child => isCategoryChildProduct(child))
+                    .map(child => ({
+                        item_id: (child as CategoryChildProduct).product.itemCode,
+                        item_name: (child as CategoryChildProduct).product.name,
+                    }))
+            })
+        }
+    }, [category]);
 
     if (!category) {
         return (

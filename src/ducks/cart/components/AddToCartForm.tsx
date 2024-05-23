@@ -5,13 +5,7 @@ import {addToCart, saveNewCart, setCurrentCart} from "../actions";
 import Alert from "@mui/material/Alert";
 import {NEW_CART} from "../../../constants/orders";
 import {selectCartsList} from "../../open-orders/selectors";
-import {
-    selectCartLoading,
-    selectCartMessage,
-    selectCartName,
-    selectCartNo,
-    selectItemAvailabilityLoading
-} from "../selectors";
+import {selectCartLoading, selectCartMessage, selectCartName, selectCartNo} from "../selectors";
 import {
     selectCustomerAccount,
     selectCustomerPermissions,
@@ -25,11 +19,11 @@ import LinearProgress from "@mui/material/LinearProgress";
 import CartNameInput from "./CartNameInput";
 import AddToCartButton from "./AddToCartButton";
 import {useAppDispatch} from "../../../app/configureStore";
-import ProgressBar from "../../../components/ProgressBar";
 import CartSelect from "../../open-orders/components/CartSelect";
 import CartQuantityInput from "../../../components/CartQuantityInput";
-import {CartProduct, ShipToAddress} from "b2b-types";
+import {CartProduct} from "b2b-types";
 import Decimal from "decimal.js";
+import {sendGtagEvent} from "../../../api/gtag";
 
 const AddToCartForm = ({
                            cartItem,
@@ -67,7 +61,6 @@ const AddToCartForm = ({
     const cartMessage = useSelector(selectCartMessage);
     const permissions = useSelector(selectCustomerPermissions);
     const permissionsLoading = useSelector(selectCustomerPermissionsLoading);
-    const availabilityLoading = useSelector(selectItemAvailabilityLoading);
     const currentShipToCode = useSelector(selectCustomerShipToCode);
 
     const [_comment, setComment] = useState<string>(comment ?? '');
@@ -82,7 +75,7 @@ const AddToCartForm = ({
     }, [customer, dispatch, permissions, permissionsLoading])
 
     useEffect(() => {
-        let shipToCode = currentShipToCode;
+        const shipToCode = currentShipToCode;
         if (!shipToCode) {
             if (permissions?.billTo) {
                 setShipToCode(customer?.PrimaryShipToCode ?? '');
@@ -113,7 +106,6 @@ const AddToCartForm = ({
             dispatch(setCurrentCart(cart.SalesOrderNo));
             return;
         }
-        console.log(value, cart);
         setLocalCartNo(value);
         setLocalCartName(value === NEW_CART ? '' : cart.CustomerPONo ?? '');
         setShipToCode(value === NEW_CART ? '' : cart.ShipToCode ?? '');
@@ -127,8 +119,7 @@ const AddToCartForm = ({
         onChangeQuantity(quantity);
     }
 
-    const shipToCodeChangeHandler = (code: string | null, address: ShipToAddress | null) => {
-        console.log('shipToCodeChangeHandler', code, address);
+    const shipToCodeChangeHandler = (code: string | null) => {
         setShipToCode(code ?? '')
     }
 
@@ -141,15 +132,13 @@ const AddToCartForm = ({
         if (!!season_code && !(season_available || cartItem.seasonAvailable)) {
             comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
-        if (global?.window?.gtag) {
-            const price = !!cartItem.price ? new Decimal(cartItem.price).toNumber() : undefined;
-            const value = !!cartItem.price ? new Decimal(cartItem.price).times(quantity).toNumber() : undefined;
-            global.window.gtag('event', 'add_to_cart', {
-                currency: 'USD',
-                value: value,
-                items: [{item_id: cartItem.itemCode, item_name: cartItem.name, price: price, quantity}]
-            })
-        }
+        const price = !!cartItem.price ? new Decimal(cartItem.price).toNumber() : 0;
+        const value = !!cartItem.price ? new Decimal(cartItem.price).times(quantity).toNumber() : 0;
+        sendGtagEvent('add_to_cart', {
+            currency: 'USD',
+            value: value,
+            items: [{item_id: cartItem.itemCode, item_name: cartItem.name, price: price, quantity}]
+        })
         if (!!localCartNo && localCartNo !== NEW_CART) {
             await dispatch(addToCart({
                 salesOrderNo: localCartNo,
@@ -175,7 +164,6 @@ const AddToCartForm = ({
 
     return (
         <form onSubmit={submitHandler} className="add-to-cart" method="post">
-            {availabilityLoading && <ProgressBar striped label="Checking Availability"/>}
             <Stack spacing={2} direction="column">
                 <CartSelect cartNo={localCartNo} shipToCode={shipToCode} onChange={cartChangeHandler}
                             excludeCartNo={excludeSalesOrder}/>

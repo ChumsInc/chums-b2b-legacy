@@ -256,7 +256,6 @@ const openOrdersReducer = createReducer(initialOpenOrderState, (builder) => {
         .addCase(updateDetailLine, (state, action) => {
             const {SalesOrderNo, LineKey, ...props} = action.payload;
             const so = state.list[SalesOrderNo];
-            console.log('updateDetailLine', so, isEditableSalesOrder(so))
             if (so && isEditableSalesOrder(so)) {
                 if (so.detail[LineKey]) {
                     so.detail[LineKey] = {...so.detail[LineKey], ...props, changed: true};

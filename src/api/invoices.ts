@@ -1,15 +1,12 @@
-import {fetchGET} from "../utils/fetch";
-import {FetchInvoiceArg, FetchInvoicesArg} from "../ducks/invoices/types";
-import {ExtendedInvoice, Invoice, InvoiceHeader, InvoiceHistoryHeader} from "b2b-types";
+import {FetchInvoiceArg, LoadInvoicesProps} from "../ducks/invoices/types";
+import {ExtendedInvoice, InvoiceHistoryHeader} from "b2b-types";
 import {fetchJSON} from "./fetch";
-import {InvoiceTracking} from "b2b-types/src/invoice";
-import {LoadInvoicesProps} from "../ducks/invoices/types";
 
 export interface FetchInvoiceResponse {
-    invoice: ExtendedInvoice|null;
+    invoice: ExtendedInvoice | null;
 }
 
-export async function fetchInvoice(arg:FetchInvoiceArg):Promise<ExtendedInvoice|null> {
+export async function fetchInvoice(arg: FetchInvoiceArg): Promise<ExtendedInvoice | null> {
     try {
         const url = '/api/sales/invoice/chums/:InvoiceType/:InvoiceNo'
             .replace(':InvoiceType', encodeURIComponent(arg.InvoiceType ?? 'IN'))
@@ -20,7 +17,7 @@ export async function fetchInvoice(arg:FetchInvoiceArg):Promise<ExtendedInvoice|
         }
 
         return response.invoice;
-    } catch(err) {
+    } catch (err) {
         if (err instanceof Error) {
             console.debug("deprecated_loadInvoice()", err.message);
             return Promise.reject(err);
@@ -31,7 +28,7 @@ export async function fetchInvoice(arg:FetchInvoiceArg):Promise<ExtendedInvoice|
 }
 
 
-export async function fetchInvoices(arg:LoadInvoicesProps):Promise<InvoiceHistoryHeader[]> {
+export async function fetchInvoices(arg: LoadInvoicesProps): Promise<InvoiceHistoryHeader[]> {
     try {
         if (!arg.key) {
             return [];
@@ -42,9 +39,9 @@ export async function fetchInvoices(arg:LoadInvoicesProps):Promise<InvoiceHistor
         const url = `/api/sales/b2b/invoices/chums/:ARDivisionNo-:CustomerNo?${params.toString()}`
             .replace(':ARDivisionNo', encodeURIComponent(arg.key.ARDivisionNo))
             .replace(':CustomerNo', encodeURIComponent(arg.key.CustomerNo));
-        const response = await fetchGET(url, {cache: 'no-cache'});
+        const response = await fetchJSON<{ list?: InvoiceHistoryHeader[] }>(url, {cache: 'no-cache'});
         return response?.list ?? [];
-    } catch(err) {
+    } catch (err) {
         if (err instanceof Error) {
             console.debug("fetchInvoices()", err.message);
             return Promise.reject(err);

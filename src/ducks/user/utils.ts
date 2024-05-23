@@ -7,7 +7,8 @@ import {isRejected, UnknownAction} from "@reduxjs/toolkit";
 import {DeprecatedUserAction, DeprecatedUserProfileAction} from "./types";
 import {ExtendedUserProfile} from "../../types/user";
 import {Action} from "redux";
-import {AUTH_ERROR} from "../../utils/fetch";
+
+export const AUTH_ERROR = 'AUTH_ERROR';
 
 export const salespersonKey = (sp: Salesperson) => `${sp.SalespersonDivisionNo}-${sp.SalespersonNo}`;
 

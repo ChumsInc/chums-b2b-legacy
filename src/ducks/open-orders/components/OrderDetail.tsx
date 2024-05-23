@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import OrderDetailLine from "./OrderDetailLine";
 import SalesOrderTotal from "./SalesOrderTotal";
 import {CartItem, CartProduct, SalesOrderDetailLine} from "b2b-types";
@@ -15,17 +15,35 @@ import {
     TableRow
 } from "@mui/material";
 import AddToCartForm from "../../cart/components/AddToCartForm";
-import {selectSalesOrderDetail, selectSalesOrderIsCart} from "../selectors";
+import {selectSalesOrder, selectSalesOrderDetail, selectSalesOrderIsCart} from "../selectors";
 import {useAppSelector} from "../../../app/configureStore";
 import ItemAutocomplete from "../../item-lookup/ItemAutocomplete";
+import {sendGtagEvent} from "../../../api/gtag";
+import Decimal from "decimal.js";
 
 export default function OrderDetail({salesOrderNo}: {
     salesOrderNo?: string;
 }) {
     const detail = useAppSelector((state) => selectSalesOrderDetail(state, salesOrderNo ?? ''));
     const isCart = useAppSelector((state) => selectSalesOrderIsCart(state, salesOrderNo ?? ''));
+    const salesOrderHeader = useAppSelector((state) => selectSalesOrder(state, salesOrderNo ?? ''));
     const [cartItem, setCartItem] = useState<CartProduct | null>(null)
     const [unitOfMeasure, setUnitOfMeasure] = useState<string>('EA');
+
+    useEffect(() => {
+        if (salesOrderHeader && isCart && detail.length) {
+            sendGtagEvent('view_cart', {
+                currency: 'USD',
+                value: new Decimal(salesOrderHeader.TaxableAmt).add(salesOrderHeader.NonTaxableAmt).sub(salesOrderHeader.DiscountAmt).toNumber(),
+                items: detail.map(item => ({
+                    item_id: item.ItemCode,
+                    item_name: item.ItemCodeDesc,
+                    quantity: +item.QuantityOrdered,
+                    price: new Decimal(item.ExtensionAmt).toNumber()
+                }))
+            })
+        }
+    }, [salesOrderHeader, isCart, detail]);
 
     const addToCartHandler = (line: SalesOrderDetailLine) => {
         setUnitOfMeasure(line.UnitOfMeasure);

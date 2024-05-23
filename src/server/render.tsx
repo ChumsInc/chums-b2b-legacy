@@ -65,7 +65,6 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         const initialState = prepState(preload ?? {});
         const store = configureStore({reducer: rootReducer, preloadedState: initialState});
         const helmetData = new HelmetData({});
-        console.log('rendering App', Object.keys(helmetData));
         const app = renderToString(
             <Provider store={store}>
                 <HelmetProvider context={helmetData.context}>
@@ -82,7 +81,6 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         } catch(err:unknown) {}
 
         const css = await loadMainCSS();
-        console.log('rendering HTML')
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles} helmet={helmetData.context.helmet}
                                              swatchTimestamp={swatchMTime.toString(36)}/>)

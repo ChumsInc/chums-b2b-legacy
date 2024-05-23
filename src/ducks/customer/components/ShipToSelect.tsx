@@ -42,7 +42,6 @@ export default function ShipToSelect({
 
 
     const changeHandler = (ev: SelectChangeEvent) => {
-        console.log('changeHandler', customer, ev.target.value);
         if (!customer) {
             return onChange(ev.target.value, null);
         }

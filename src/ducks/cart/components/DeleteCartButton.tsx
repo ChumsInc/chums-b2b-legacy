@@ -1,6 +1,4 @@
 import React, {useState} from 'react';
-import {useSelector} from "react-redux";
-import {selectSalesOrderHeader} from "../../sales-order/selectors";
 import {ButtonProps} from "@mui/material/Button";
 import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
@@ -13,8 +11,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 import {selectSalesOrder} from "../../open-orders/selectors";
 
 export interface DeleteCartButtonProps extends ButtonProps {
-    salesOrderNo?: string|null;
+    salesOrderNo?: string | null;
 }
+
 export default function DeleteCartButton({salesOrderNo, disabled, children, ...rest}: DeleteCartButtonProps) {
     const dispatch = useAppDispatch();
     const header = useAppSelector((state) => selectSalesOrder(state, salesOrderNo ?? ''));
@@ -28,16 +27,13 @@ export default function DeleteCartButton({salesOrderNo, disabled, children, ...r
     const closeHandler = () => setOpen(false);
 
     const confirmHandler = async () => {
-        console.log('confirmHandler()', header);
         setBusy(true);
         const res = await dispatch(removeCart(header!));
-        console.log('confirmHandler', res);
         setOpen(false);
         setBusy(false);
         const path = generatePath('/account/:customerSlug/carts', {
             customerSlug: customerSlug(header!)
         })
-        console.log('confirmHandler()', path);
         navigate(path);
     }
 

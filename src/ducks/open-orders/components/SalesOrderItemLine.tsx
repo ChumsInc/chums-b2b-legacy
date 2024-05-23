@@ -63,7 +63,7 @@ export default function SalesOrderItemLine({
                 <TableCell rowSpan={showCommentInput ? 2 : 1}>
                     <Typography variant="body1" sx={{fontWeight: 700}}>{line.ItemCode}</Typography>
                     {line.ItemType === '1' &&
-                        <OrderItemImage ItemCode={line.ItemCode} ItemCodeDesc={line.ItemCodeDesc} image={line.image}/>}
+                        <OrderItemImage itemCode={line.ItemCode} itemCodeDesc={line.ItemCodeDesc} image={line.image}/>}
                 </TableCell>
                 <TableCell>
                     <Typography variant="body1">{line.ItemCodeDesc}</Typography>

@@ -18,8 +18,8 @@ import {CART_PROGRESS_STATES, NEW_CART} from "../../constants/orders";
 import {createReducer} from "@reduxjs/toolkit";
 import Decimal from "decimal.js";
 import {
-    addToCart, duplicateSalesOrder,
-    getItemAvailability,
+    addToCart,
+    duplicateSalesOrder,
     promoteCart,
     removeCart,
     saveNewCart,
@@ -40,7 +40,8 @@ import {isEditableSalesOrder} from "../sales-order/utils";
 import {
     isDeprecatedCreateNewCartAction,
     isDeprecatedDeleteCartAction,
-    isDeprecatedFetchOrdersAction, isDeprecatedSaveCartAction
+    isDeprecatedFetchOrdersAction,
+    isDeprecatedSaveCartAction
 } from "../../utils/cart";
 
 
@@ -85,16 +86,6 @@ export const initialCartState = (): CartState => ({
 
 const cartReducer = createReducer(initialCartState, builder => {
     builder
-        .addCase(getItemAvailability.pending, (state) => {
-            state.itemAvailabilityLoading = true;
-        })
-        .addCase(getItemAvailability.fulfilled, (state, action) => {
-            state.itemAvailabilityLoading = false;
-            state.itemAvailability = action.payload ?? null;
-        })
-        .addCase(getItemAvailability.rejected, (state) => {
-            state.itemAvailabilityLoading = false;
-        })
         .addCase(setCartProgress, (state, action) => {
             state.cartProgress = action.payload ?? CART_PROGRESS_STATES.cart;
         })
@@ -130,7 +121,7 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.loaded = true;
             let [cart] = action.payload.filter(so => so.OrderType === 'Q' && so.SalesOrderNo === state.cartNo);
             if (!cart && action.payload.filter(so => isCartOrder(so)).length === 1) {
-                [cart] =  action.payload.filter(so => isCartOrder(so));
+                [cart] = action.payload.filter(so => isCartOrder(so));
             }
             if (!cart && state.cartNo === NEW_CART) {
                 [cart] = action.payload.filter(so => so.OrderType === 'Q');

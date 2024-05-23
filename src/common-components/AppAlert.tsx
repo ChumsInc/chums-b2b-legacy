@@ -1,9 +1,4 @@
 import React from 'react';
-import classNames from "classnames";
-import {ALERT_TYPES} from '../constants/actions';
-import Badge from "@mui/material/Badge";
-import numeral from 'numeral';
-import {BootstrapBGColor} from "../types/colors";
 import Alert, {AlertProps} from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
@@ -30,10 +25,10 @@ export interface AppAlertProps extends AlertProps {
 }
 
 const AppAlert = ({
-                   alertId, severity, message, alertTitle, context, count, onDismiss,
+                      alertId, severity, message, alertTitle, context, count, onDismiss,
                       onDismissContext,
-                   children,
-               }: AppAlertProps) => {
+                      children,
+                  }: AppAlertProps) => {
 
     const dismissHandler = () => {
         if (!!context && !!onDismissContext) {
@@ -54,7 +49,8 @@ const AppAlert = ({
                     {(count ?? 0) > 1 && <Typography variant="caption">({count})</Typography>}
                 </Stack>
             </AlertTitle>
-            <Typography sx={{display: 'inline-block'}} variant="body1">{message ?? children ?? 'Undefined alert'}</Typography>
+            <Typography sx={{display: 'inline-block'}}
+                        variant="body1">{message ?? children ?? 'Undefined alert'}</Typography>
         </Alert>
     )
 }

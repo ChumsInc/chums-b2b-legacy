@@ -9,8 +9,13 @@ export const SUB_NAV_TYPES = {
     resources: 'resources',
 };
 
+export interface CustomerTab {
+    id: number;
+    title: string;
+    path?: string;
+}
 
-export const CUSTOMER_TABS = [
+export const CUSTOMER_TABS:CustomerTab[] = [
     {id: 1, title: 'Billing Address'},
     {id: 2, title: 'Delivery Addresses'},
     // {id: 3, title: 'Contacts'},

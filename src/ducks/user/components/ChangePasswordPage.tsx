@@ -6,7 +6,7 @@ import Alert from "@mui/material/Alert";
 import PasswordForm from "./PasswordForm";
 import Container from "@mui/material/Container";
 import React, {useState} from "react";
-import {DOCUMENT_TITLES} from "../../../constants/paths";
+import {documentTitles} from "../../../constants/paths";
 import DocumentTitle from "../../../components/DocumentTitle";
 import {selectUserActionStatus, selectUserProfile} from "../selectors";
 import {ChangePasswordProps, SetNewPasswordProps} from "../types";
@@ -40,7 +40,7 @@ const ChangePasswordPage = () => {
 
     return (
         <Container maxWidth="sm">
-            <DocumentTitle documentTitle={DOCUMENT_TITLES.profileChangePassword}/>
+            <DocumentTitle documentTitle={documentTitles.profileChangePassword}/>
             <Typography component="h1" variant="h1" sx={{mb: 5}}>Change Password</Typography>
             {loading !== 'idle' && <LinearProgress variant="indeterminate" />}
             <Stack direction="column" spacing={2}>

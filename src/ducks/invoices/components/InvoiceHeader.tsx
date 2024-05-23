@@ -146,8 +146,10 @@ const InvoiceHeader = () => {
                             <div>
                                 {!invoice.Track?.length &&
                                     <Alert severity="info">Tracking is not available for this invoice.</Alert>}
-                                {(invoice.Track || []).map(track => (
-                                    <TrackingLinkBadge key={track.PackageNo} {...track}/>)
+                                {!!invoice.Track?.length && invoice.Track.map(track => (
+                                    <TrackingLinkBadge key={track.PackageNo}
+                                                       trackingId={track.TrackingID}
+                                                       shipVia={track.StarshipShipVia} weight={track.Weight}/>)
                                 )}
                             </div>
                         </Stack>

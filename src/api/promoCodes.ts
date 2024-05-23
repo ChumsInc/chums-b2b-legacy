@@ -1,6 +1,8 @@
 import {PromoCode} from "b2b-types";
-import {API_PATH_PROMO_CODE, API_PATH_VALID_PROMO_CODES} from "../constants/paths";
 import {fetchJSON} from "./fetch";
+
+export const API_PATH_PROMO_CODE = '/api/sales/b2b/promo/:code?valid=1';
+export const API_PATH_VALID_PROMO_CODES = '/api/sales/b2b/promo/?valid=1';
 
 export async function fetchPromoCodes():Promise<PromoCode[]> {
     try {

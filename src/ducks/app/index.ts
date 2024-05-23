@@ -6,9 +6,22 @@ import {createReducer} from "@reduxjs/toolkit";
 import {setCustomerTab, setLifestyle, setRowsPerPage, setSubNavBar, toggleXSNavBar} from "./actions";
 import {setCustomerAccount} from "../customer/actions";
 import {PreloadedState} from "../../types/preload";
-import {AppState} from "./types";
 import {isDeprecatedKeywordsAction} from "../keywords/utils";
 import {isAsyncAction} from "../../types/actions";
+
+import {Keyword, Menu} from "b2b-types";
+
+export interface AppState {
+    productMenu: Menu | null;
+    showNavBar: boolean;
+    subNav: string;
+    rowsPerPage: number;
+    customerTab: number;
+    documentTitle: string;
+    keywords: Keyword[],
+    lifestyle: string;
+    debug: boolean | null;
+}
 
 export const initialAppState = (preload?: PreloadedState): AppState => ({
     productMenu: preload?.app?.productMenu ?? null,
@@ -24,7 +37,7 @@ export const initialAppState = (preload?: PreloadedState): AppState => ({
 
 const appReducer = createReducer(initialAppState, (builder) => {
     builder
-        .addCase(setCustomerAccount.fulfilled, (state, action) => {
+        .addCase(setCustomerAccount.fulfilled, (state) => {
             state.customerTab = CUSTOMER_TABS[0].id;
         })
         .addCase(toggleXSNavBar, (state) => {

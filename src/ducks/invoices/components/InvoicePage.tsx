@@ -46,7 +46,6 @@ const InvoicePage = () => {
     const customer = useSelector(selectCurrentCustomer);
 
     useEffect(() => {
-        console.log(match, invoice, loading);
         if (!!customer && billToCustomerSlug(customer) !== match?.params?.customerSlug) {
             redirect('/profile');
             return;

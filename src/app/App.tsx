@@ -43,6 +43,8 @@ import LocalStore from "../utils/LocalStore";
 import {isTokenExpired} from "../utils/jwtHelper";
 import {auth} from "../api/IntranetAuthService";
 import {STORE_PROFILE, STORE_TOKEN, STORE_VERSION} from "../constants/stores";
+import {useLocation} from "react-router";
+import {sendGtagEvent} from "../api/gtag";
 
 
 const App = () => {
@@ -52,10 +54,13 @@ const App = () => {
     const currentCustomer = useSelector(selectCurrentCustomer);
     const customerLoading = useSelector(selectCustomerLoading);
     const customerLoaded = useSelector(selectCustomerLoaded);
-
+    const location = useLocation();
 
     useEffect(() => {
-        console.log({isSSR});
+        sendGtagEvent('page_view');
+    }, [location]);
+
+    useEffect(() => {
         if (isSSR) {
             return;
         }

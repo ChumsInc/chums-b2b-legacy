@@ -1,6 +1,7 @@
 import {Product} from "b2b-types";
-import {API_PATH_PRODUCT} from "../constants/paths";
 import {fetchJSON} from "./fetch";
+
+export const API_PATH_PRODUCT = '/api/products/v2/keyword/:keyword';
 
 export async function fetchProduct(arg:string):Promise<Product|null> {
     try {

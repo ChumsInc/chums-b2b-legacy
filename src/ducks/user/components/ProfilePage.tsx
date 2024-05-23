@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import AccountButtons from "./AccountButtons";
 import UserProfile from "./UserProfile";
-import {DOCUMENT_TITLES} from '../../../constants/paths';
+import {documentTitles} from '../../../constants/paths';
 import DocumentTitle from "../../../components/DocumentTitle";
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {
@@ -32,7 +32,7 @@ const ProfilePage = () => {
 
     return (
         <Container maxWidth="lg">
-            <DocumentTitle documentTitle={DOCUMENT_TITLES.profile}/>
+            <DocumentTitle documentTitle={documentTitles.profile}/>
             <UserProfile/>
             {loading && <LinearProgress variant="indeterminate"/>}
             {!!customerAccounts.length && <h4>Customer Accounts</h4>}

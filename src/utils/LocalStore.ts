@@ -15,10 +15,6 @@ export default class LocalStore {
         try {
             return JSON.parse(data) ?? defaultValue;
         } catch(err:unknown) {
-            if (err instanceof Error) {
-                console.log(err.message);
-                return defaultValue;
-            }
             return defaultValue;
         }
     }
@@ -48,7 +44,6 @@ export default class LocalStore {
                 LocalStore.setItem(newKey, item);
             }
             LocalStore.removeItem(key);
-            console.log(`removed key:`, key)
         });
     }
 

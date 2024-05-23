@@ -1,13 +1,16 @@
 import {SearchResult} from "b2b-types";
-import {API_PATH_SEARCH} from "../constants/paths";
 import {fetchJSON} from "./fetch";
+import {sendGtagEvent} from "./gtag";
 
-export async function fetchSearchResults(arg:string):Promise<SearchResult[]> {
+export const API_PATH_SEARCH = '/api/search/v3/:term';
+
+export async function fetchSearchResults(arg: string): Promise<SearchResult[]> {
     try {
+        sendGtagEvent('search', {search_term: arg.trim()});
         const url = API_PATH_SEARCH.replace(':term', encodeURIComponent(arg.trim()));
-        const response = await fetchJSON<{result: SearchResult[]}>(url);
+        const response = await fetchJSON<{ result: SearchResult[] }>(url);
         return response?.result ?? [];
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("fetchSearchResults()", err.message);
             return Promise.reject(err);

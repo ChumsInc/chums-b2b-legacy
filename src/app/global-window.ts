@@ -1,11 +1,16 @@
 import {PreloadedState} from "../types/preload";
 import {Theme} from "@mui/material/styles";
+import {GtagFn} from "../api/gtag";
 
 declare global {
     interface Window {
         __PRELOADED_STATE__?: PreloadedState;
-        gtag?: (event:string, eventName: string, options?: any) => void;
-        theme?: Theme
+        gtag?: GtagFn;
+        theme?: Theme;
+        Chums?: {
+            version?: string;
+            gtagID?: string;
+        }
     }
 }
 

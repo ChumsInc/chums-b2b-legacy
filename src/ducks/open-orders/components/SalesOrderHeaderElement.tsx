@@ -36,7 +36,6 @@ const SalesOrderHeaderElement = () => {
     const shipDate = header?.ShipExpireDate ? dayjs(header.ShipExpireDate).format('YYYY-MM-DD') : '';
 
     useEffect(() => {
-        console.log('useEffect', [header, match])
         if (header?.OrderType === 'Q' && match?.params?.orderType !== 'carts') {
             navigate(generatePath('/account/:customerSlug/carts/:salesOrderNo', {
                 customerSlug: customerSlug(customer),

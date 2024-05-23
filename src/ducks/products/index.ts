@@ -1,37 +1,35 @@
 import {
     CLEAR_PRODUCT,
     FETCH_INIT,
-    FETCH_KEYWORDS,
     FETCH_PRODUCT,
     FETCH_SUCCESS,
     SELECT_COLOR,
     SELECT_VARIANT
 } from "../../constants/actions";
-import {getDefaultColor, getMSRP, getPrices, keywordSorter} from "../../utils/products";
+import {getDefaultColor, getMSRP, getPrices} from "../../utils/products";
 import {customerPriceRecordSorter, customerSlug,} from "../../utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
-import {PreloadedState} from "../../types/preload";
 import {
     getImageItemCode,
     isCartProduct,
     isDeprecatedProductAction,
     isDeprecatedSelectColorAction,
-    isDeprecatedVariantAction, isSellAsColors, isSellAsMix, isSellAsSelf,
+    isDeprecatedVariantAction,
     updateCartProductPricing
 } from "./utils";
 import {loadCustomer} from "../customer/actions";
-import {CartProduct, CustomerPriceRecord, Keyword, Product} from "b2b-types";
+import {CartProduct, CustomerPriceRecord, Product} from "b2b-types";
 import {loadProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from "./actions";
 import {setLoggedIn} from "../user/actions";
 import {parseImageFilename} from "../../common/image";
-import {isDeprecatedKeywordsAction} from "../keywords/utils";
 import {ProductImage} from "../../types/product";
+import {PreloadedState} from "../../types/preload";
 
 
 export interface ProductsState {
     product: Product | null;
     selectedProduct: Product | null;
-    selectedItemCode: string|null;
+    selectedItemCode: string | null;
     image: ProductImage;
     colorCode: string;
     variantId: number | null;
@@ -44,8 +42,8 @@ export interface ProductsState {
     customerKey: string | null;
 }
 
-export const initialProductsState = (preload: PreloadedState = {}): ProductsState => ({
-    product: null,
+export const initialProductsState = (preload:PreloadedState = {}): ProductsState => ({
+    product: preload.products?.product ?? null,
     selectedProduct: null,
     selectedItemCode: null,
     image: {
@@ -79,7 +77,7 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
             state.customerKey = customerSlug(action.payload?.customer ?? null);
             state.pricing = [...(action.payload?.pricing ?? [])].sort(customerPriceRecordSorter);
             state.msrp = getMSRP(state.selectedProduct);
-            state.customerPrice = !!state.customerKey ? getPrices(state.selectedProduct, state.pricing) : state.msrp;
+            state.customerPrice = state.customerKey ? getPrices(state.selectedProduct, state.pricing) : state.msrp;
             if (isCartProduct(state.cartItem)) {
                 state.cartItem.priceLevel = action.payload?.customer.PriceLevel ?? '';
                 state.cartItem = updateCartProductPricing(state.cartItem, state.pricing);
@@ -104,7 +102,7 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
             state.image.filename = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
             state.image.itemCode = getImageItemCode(state);
         })
-        .addCase(loadProduct.rejected, (state, action) => {
+        .addCase(loadProduct.rejected, (state) => {
             state.loading = false;
         })
         .addCase(setColorCode.fulfilled, (state, action) => {

@@ -114,7 +114,6 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         })
         .addCase(setUserAccess.pending, (state, action) => {
             if (!action.meta.arg?.isRepAccount && customerSlug(action.meta.arg) !== customerSlug(state.header)) {
-                const customerKey = customerSlug(action.meta.arg);
                 state.header = null;
                 state.salesOrderNo = '';
                 state.detail = [];

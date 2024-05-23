@@ -7,10 +7,11 @@ import {useAppDispatch} from "../../../app/configureStore";
 import {setCurrentVariant} from "../actions";
 import {selectCustomerPricing} from "../../customer/selectors";
 import {ProductVariant} from "b2b-types";
-import {isSellAsVariants} from "../utils";
+import {isSellAsMix, isSellAsVariants} from "../utils";
 import VariantButton from "./VariantButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import {styled} from "@mui/material/styles";
+import {sendGtagEvent} from "../../../api/gtag";
 
 
 
@@ -31,6 +32,14 @@ const VariantButtons = () => {
     const selectHandler = (variant: ProductVariant) => {
         if (!variant || !variant.id) {
             return;
+        }
+        if (variant.product && isSellAsMix(variant.product)) {
+            sendGtagEvent('select_item', {
+                item_list_id: product.itemCode,
+                item_list_name: [product.name, product.additionalData?.subtitle].filter(val => !!val).join(' / '),
+                items: [{item_id: variant.product.itemCode, item_name: `${variant.product.name}${variant.product.additionalData?.subtitle ? ' / ' + variant.product.additionalData?.subtitle : ''}`}]});
+        } else {
+            sendGtagEvent('select_content', {content_type: 'variant', content_id: variant.product?.itemCode ?? variant.id.toString()});
         }
         dispatch(setCurrentVariant(variant))
     }

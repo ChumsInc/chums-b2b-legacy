@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import CustomerSignUp from "./CustomerSignUp";
-import {DOCUMENT_TITLES, PATH_SET_PASSWORD} from "../../constants/paths";
+import {documentTitles, PATH_SET_PASSWORD} from "../../constants/paths";
 import MAPPolicy from "../../components/MAPPolicy";
 import UsagePolicy from "../../components/UsagePolicy";
 import DocumentTitle from "../../components/DocumentTitle";
@@ -32,7 +32,7 @@ const SignUp = () => {
 
     return (
         <div>
-            <DocumentTitle documentTitle={DOCUMENT_TITLES.signUp}/>
+            <DocumentTitle documentTitle={documentTitles.signUp}/>
             <Typography variant="h1" component="h1" sx={{my: 3}}>Chums B2B Portal</Typography>
             <Typography component="h2" variant="h2" gutterBottom>Sign Up</Typography>
             <Grid2 container spacing={2}>

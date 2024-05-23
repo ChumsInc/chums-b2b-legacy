@@ -1,12 +1,5 @@
 import {Salesperson, UserProfile} from 'b2b-types'
 import {
-    API_PATH_LOGIN_GOOGLE,
-    API_PATH_LOGIN_LOCAL,
-    API_PATH_LOGIN_LOCAL_REAUTH,
-    API_PATH_PASSWORD_RESET,
-    API_PATH_REP_LIST
-} from "../constants/paths";
-import {
     ChangePasswordProps,
     ChangePasswordResponse,
     FunkyUserProfileResponse,
@@ -24,6 +17,12 @@ import {isErrorResponse, isUserRole} from "../utils/typeguards";
 import {jwtDecode} from 'jwt-decode';
 import {LoadProfileProps, SignUpProfile} from "../ducks/sign-up/types";
 import {APIErrorResponse} from "../types/generic";
+import {configGtag, sendGtagEvent} from "./gtag";
+
+export const API_PATH_LOGIN_GOOGLE = '/api/user/b2b/login/google';
+export const API_PATH_LOGIN_LOCAL = '/api/user/b2b/login/local';
+export const API_PATH_LOGIN_LOCAL_REAUTH = '/api/user/b2b/auth/update';
+export const API_PATH_PASSWORD_RESET = '/api/user/b2b/login/reset-password';
 
 
 export async function postLocalLogin(arg: LocalAuth): Promise<string | APIErrorResponse> {
@@ -38,6 +37,7 @@ export async function postLocalLogin(arg: LocalAuth): Promise<string | APIErrorR
         if (isErrorResponse(res)) {
             return res;
         }
+        sendGtagEvent('login', {method: 'credentials'})
         return res.token;
     } catch (err) {
         if (err instanceof Error) {
@@ -111,7 +111,9 @@ export async function postUserProfile(arg: Pick<UserProfile, 'name'>): Promise<U
 
 export async function fetchRepList(): Promise<Salesperson[]> {
     try {
-        const response = await fetchJSON<{ list: Salesperson[] }>('/api/sales/rep/list/chums/condensed', {cache: 'no-cache'});
+        const response = await fetchJSON<{
+            list: Salesperson[]
+        }>('/api/sales/rep/list/chums/condensed', {cache: 'no-cache'});
         return (response.list ?? []).filter(rep => !!rep.active);
     } catch (err) {
         if (err instanceof Error) {
@@ -159,6 +161,7 @@ export async function fetchGoogleLogin(token: string): Promise<UserProfileRespon
                     }
                 }
             }
+            sendGtagEvent('login', {method: 'google'});
             auth.setProfile(storedProfile);
             localStore.setItem<string>(STORE_AUTHTYPE, AUTH_GOOGLE);
         }
@@ -203,6 +206,7 @@ export async function fetchSignUpProfile(arg: LoadProfileProps): Promise<SignUpP
         if (isErrorResponse(res)) {
             return res;
         }
+        configGtag({user_id: `${res.user?.id ?? 0}`})
         return res.user ?? null;
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -221,6 +225,7 @@ export async function postSignUpUser(arg: SignUpUser): Promise<unknown> {
             .replace(':email', encodeURIComponent(email));
         const body = JSON.stringify(arg);
         const res = await fetchJSON<unknown>(url, {method: 'POST', body});
+        sendGtagEvent('sign_up');
         return res;
     } catch (err: unknown) {
         if (err instanceof Error) {

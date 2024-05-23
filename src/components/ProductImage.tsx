@@ -3,11 +3,8 @@
  */
 
 import React from 'react';
-import {parseImageFilename, parseImageFilename2} from '../common/image';
-import {CONTENT_PATH_PRODUCT_IMAGE, CONTENT_PATH_PRODUCT_MISSING_IMAGE} from "../constants/paths";
-import classNames from 'classnames';
+import {parseImageFilename} from '../common/image';
 import {ProductAlternateImage} from "b2b-types";
-import Box from "@mui/material/Box";
 import ProductImageList from "./ProductImageList";
 
 export interface ProductImageProps {

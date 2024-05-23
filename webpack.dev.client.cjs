@@ -41,8 +41,14 @@ const clientConfig = {
         hot: true,
         proxy: [
             {
-                context: ['/api', '/images', '/pdf', '/files', '/node_modules', '/node-sage', '/sage', '/version'],
+                context: ['/api', '/node_modules', '/node-sage', '/sage', '/version'],
                 ...localProxy
+            },
+            {
+                context: ['/images', '/pdf', '/files'],
+                target: 'https://b2b.chums.com',
+                changeOrigin: true,
+                secure: true
             }
         ],
         watchFiles: 'src/**/*',

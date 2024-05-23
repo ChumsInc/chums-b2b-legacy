@@ -1,6 +1,7 @@
 import {Customer, UserCustomerAccess} from "b2b-types";
-import {API_PATH_CUSTOMER_LIST} from "../constants/paths";
 import {fetchJSON} from "./fetch";
+
+export const API_PATH_CUSTOMER_LIST = '/api/sales/b2b/account-list/:Company/:SalespersonDivisionNo-:SalespersonNo';
 
 export async function fetchCustomerList(arg:UserCustomerAccess):Promise<Customer[]> {
     try {

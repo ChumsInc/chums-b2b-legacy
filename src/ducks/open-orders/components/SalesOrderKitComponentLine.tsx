@@ -28,7 +28,7 @@ export default function SalesOrderKitComponentLine({
             <TableCell>
                 <div>{line.ItemCode}</div>
                 {line.ItemType === '1' &&
-                    <OrderItemImage ItemCode={line.ItemCode} ItemCodeDesc={line.ItemCodeDesc} image={line.image}/>}
+                    <OrderItemImage itemCode={line.ItemCode} itemCodeDesc={line.ItemCodeDesc} image={line.image}/>}
             </TableCell>
             <TableCell>
                 <p>{line.ItemCodeDesc}</p>

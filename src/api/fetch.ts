@@ -6,6 +6,7 @@ import B2BError from "../types/generic";
 import localStore from "../utils/LocalStore";
 import {STORE_VERSION} from "../constants/stores";
 import 'isomorphic-fetch';
+import {sendGtagEvent} from "./gtag";
 
 function getCredentials():string|null {
     const token = auth.getToken();
@@ -16,18 +17,18 @@ function getCredentials():string|null {
 }
 
 async function handleJSONResponse<T = any>(res:Response, args?: any):Promise<T> {
+    const componentStack = JSON.stringify({
+        url: res.url,
+        args: args ?? null
+    })
     if (!res.ok) {
         const text = await res.text();
-        await postErrors({message: `error: ${res.status}`, componentStack: res.url})
+        await postErrors({message: `error: ${res.status}`, componentStack})
         return Promise.reject(new B2BError(text, res.url, null, res.status));
     }
     const json = await res.json();
     if (json.error) {
-        const componentStack = JSON.stringify({
-            url: res.url,
-            args: args ?? null
-        })
-        await postErrors({message: json.error, componentStack: res.url});
+        await postErrors({message: json.error, componentStack});
         console.warn(json.error);
         return Promise.reject(new B2BError(json.error, res.url));
     }
@@ -114,9 +115,10 @@ export interface PostErrorsArg {
     message: string;
     componentStack?: string;
     userId?: number;
+    fatal?: boolean;
 }
 
-export async function postErrors({message, componentStack, userId}:PostErrorsArg): Promise<void> {
+export async function postErrors({message, componentStack, userId, fatal}:PostErrorsArg): Promise<void> {
     try {
         const version = localStore.getItem(STORE_VERSION, '-');
         const body = JSON.stringify({
@@ -127,5 +129,6 @@ export async function postErrors({message, componentStack, userId}:PostErrorsArg
             version,
         });
         await fetchJSON('/api/error-reporting', {method: 'POST', body, responseHandler: allowErrorResponseHandler});
+        sendGtagEvent('exception', {description: message, fatal});
     } catch (err) {}
 }

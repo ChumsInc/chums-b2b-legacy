@@ -23,6 +23,7 @@ const AddressFormFields = ({address, onChange, readOnly}: {
             case 'AddressLine3':
             case 'City':
             case 'State':
+            case 'ZipCode':
                 return onChange({[field]: ev.target.value})
         }
     }

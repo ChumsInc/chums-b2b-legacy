@@ -41,7 +41,7 @@ const InvoiceDetailLine = ({line, onAddToCart}:{line:InvoiceDetail, onAddToCart:
                     <TableCell rowSpan={showComment ? 2 : 1}>
                         <Typography variant="body1" sx={{fontWeight: 700}}>{line.ItemCode}</Typography>
                         {ItemType === '1' &&
-                            <OrderItemImage ItemCode={ItemCode} ItemCodeDesc={ItemCodeDesc} image={null}/>}
+                            <OrderItemImage itemCode={ItemCode} itemCodeDesc={ItemCodeDesc} image={null}/>}
                     </TableCell>
                     <TableCell>
                         <p>{ItemCodeDesc}</p>

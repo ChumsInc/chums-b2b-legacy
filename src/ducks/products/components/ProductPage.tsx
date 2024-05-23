@@ -36,6 +36,7 @@ import Grid2 from "@mui/material/Unstable_Grid2";
 import VariantButtons from "./VariantButtons";
 import {Collapse} from "@mui/material";
 import {useIsSSR} from "../../../hooks/is-server-side";
+import {sendGtagEvent} from "../../../api/gtag";
 
 
 const ProductPage = ({keyword}: {
@@ -58,6 +59,17 @@ const ProductPage = ({keyword}: {
     useEffect(() => {
         dispatch(loadProduct(keyword));
     }, [keyword]);
+
+    useEffect(() => {
+        if (product) {
+            sendGtagEvent('view_item', {
+                items: [{
+                    item_id: product.itemCode,
+                    item_name: product.name,
+                }]
+            })
+        }
+    }, [product])
 
     useEffect(() => {
         setCartMessage(null);

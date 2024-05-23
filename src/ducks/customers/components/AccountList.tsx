@@ -7,7 +7,7 @@ import {selectUserAccount,} from "../../user/selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
-import {DOCUMENT_TITLES, PATH_PROFILE} from "../../../constants/paths";
+import {documentTitles, PATH_PROFILE} from "../../../constants/paths";
 import DocumentTitle from "../../../components/DocumentTitle";
 import Breadcrumb from "../../../components/Breadcrumb";
 import {useLocation, useMatch} from "react-router";
@@ -41,7 +41,7 @@ const AccountList = () => {
         )
     }
 
-    const documentTitle = DOCUMENT_TITLES.accountList.replace(':name', userAccount.SalespersonName || '');
+    const documentTitle = documentTitles.accountList.replace(':name', userAccount.SalespersonName || '');
 
     const paths = [
         {title: 'Profile', pathname: PATH_PROFILE},

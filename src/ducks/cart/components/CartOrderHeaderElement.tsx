@@ -1,15 +1,13 @@
 import React, {ChangeEvent, FormEvent, useEffect, useRef, useState} from 'react';
 import {useSelector} from "react-redux";
-import {selectSendEmailStatus} from "../../sales-order/selectors";
 import {Button, Collapse, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import {addressFromShipToAddress, multiLineAddress} from "../../customer/utils";
 import {RootState, useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {loadSalesOrder} from "../../open-orders/actions";
-import {sendOrderEmail} from "../../sales-order/actions";
 import {Editable, SalesOrderHeader, ShipToAddress} from "b2b-types";
-import {selectCartNo, selectShippingAccount} from "../selectors";
+import {selectCartNo} from "../selectors";
 import CustomerShippingAccountControl from "./CustomerShippingAccountControl";
 import {
     CartProgress,
@@ -30,7 +28,6 @@ import CartPaymentSelect from "./CartPaymentSelect";
 import CheckoutButton from "./CheckoutButton";
 import {selectCustomerAccount} from "../../customer/selectors";
 import {promoteCart, saveCart, setCurrentCart} from "../actions";
-import SendEmailModal from "../../open-orders/components/SendEmailModal";
 import Alert from "@mui/material/Alert";
 import DeleteCartButton from "./DeleteCartButton";
 import {useMatch, useNavigate} from "react-router";
@@ -48,6 +45,8 @@ import ItemAutocomplete from "../../item-lookup/ItemAutocomplete";
 import CartCommentInput from "./CartCommentInput";
 import Divider from "@mui/material/Divider";
 import Decimal from "decimal.js";
+import {sendGtagEvent} from "../../../api/gtag";
+import CartHeader from "../../../components/Cart/CartHeader";
 
 const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -58,8 +57,6 @@ const CartOrderHeaderElement = () => {
     const detail = useAppSelector((state) => selectSalesOrderDetail(state, match?.params.salesOrderNo ?? ''));
     const detailChanged = useAppSelector((state: RootState) => selectDetailChanged(state, header?.SalesOrderNo ?? ''));
     const loadingStatus = useAppSelector(state => selectSalesOrderActionStatus(state, match?.params.salesOrderNo ?? ''));
-    const shippingAccount = useSelector(selectShippingAccount);
-    const sendEmailStatus = useAppSelector(selectSendEmailStatus);
     const shipDateRef = useRef<HTMLInputElement | null>(null);
     const shipMethodRef = useRef<HTMLDivElement | null>(null);
     const paymentMethodRef = useRef<HTMLDivElement | null>(null);
@@ -69,12 +66,7 @@ const CartOrderHeaderElement = () => {
     const [cartHeader, setCartHeader] = useState<(SalesOrderHeader & Editable) | null>(header);
     const [cartProgress, setCartProgress] = useState<CartProgress>(cartProgress_Cart);
 
-    useEffect(() => {
-
-    }, []);
-
     const validateForm = (cartProgress: CartProgress): CartProgress => {
-        console.log('cartProgress:', cartProgress);
         if (!cartHeader) {
             return cartProgress_Cart;
         }
@@ -85,7 +77,6 @@ const CartOrderHeaderElement = () => {
                 return cartProgress_Delivery;
             }
             if (!cartHeader.ShipVia) {
-                console.log(shipMethodRef.current);
                 shipMethodRef.current?.focus();
                 return cartProgress_Delivery;
             }
@@ -116,24 +107,7 @@ const CartOrderHeaderElement = () => {
     }
 
 
-    const hasCancelDate = cartHeader?.UDF_CANCEL_DATE ? dayjs(cartHeader?.UDF_CANCEL_DATE).valueOf() > 0 : false;
-    const cancelDate = hasCancelDate ? dayjs(cartHeader?.UDF_CANCEL_DATE).format('YYYY-MM-DD') : '';
     const orderDate = cartHeader?.OrderDate ? dayjs(cartHeader.OrderDate).format('YYYY-MM-DD') : '';
-    const shipDate = cartHeader?.ShipExpireDate ? dayjs(cartHeader.ShipExpireDate).format('YYYY-MM-DD') : '';
-
-    const beginCheckoutHandler = () => {
-        setCartProgress(cartProgress_Delivery);
-        if (!cartHeader?.ShipVia) {
-            shipMethodRef.current?.focus();
-        }
-    }
-
-    const confirmDelivery = () => {
-        setCartProgress(cartProgress_Payment);
-        if (!cartHeader?.CustomerPONo) {
-            customerPORef.current?.focus();
-        }
-    }
 
     const changeHandler = (field: keyof SalesOrderHeader) => (ev: ChangeEvent<HTMLInputElement>) => {
         if (!cartHeader) {
@@ -181,13 +155,6 @@ const CartOrderHeaderElement = () => {
         dispatch(loadSalesOrder(header?.SalesOrderNo))
     }
 
-    const sendEmailHandler = () => {
-        if (!cartHeader) {
-            return;
-        }
-        dispatch(sendOrderEmail(cartHeader));
-    }
-
     const saveCartHandler = () => {
         if (!customer || !cartHeader) {
             return;
@@ -201,46 +168,45 @@ const CartOrderHeaderElement = () => {
         }
         if (cartProgress < cartProgress_Confirm) {
             const next = validateForm(cartProgress);
-            if (global.window.gtag) {
-                switch (next) {
-                    case cartProgress_Delivery:
-                        global.window.gtag('event', 'begin_checkout', {
-                            currency: "USD",
-                            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt)
-                        })
-                        break;
-                    case cartProgress_Payment:
-                        global.window.gtag('event', 'add_shipping_info', {
-                            currency: "USD",
-                            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt),
-                            shipping_tier: cartHeader.ShipVia,
-                        })
-                        break;
-                    case cartProgress_Confirm:
-                        global.window.gtag('event', 'add_payment_info', {
-                            currency: "USD",
-                            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt),
-                            payment_type: cartHeader.PaymentType,
-                        })
-                        break;
-                }
-
+            switch (next) {
+                case cartProgress_Delivery:
+                    sendGtagEvent('begin_checkout', {
+                        currency: "USD",
+                        value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
+                        items: detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}))
+                    });
+                    break;
+                case cartProgress_Payment:
+                    sendGtagEvent( 'add_shipping_info', {
+                        currency: "USD",
+                        value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
+                        shipping_tier: cartHeader.ShipVia,
+                        items: detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}))
+                    })
+                    break;
+                case cartProgress_Confirm:
+                    sendGtagEvent( 'add_payment_info', {
+                        currency: "USD",
+                        value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
+                        payment_type: cartHeader.PaymentType,
+                        items: detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}))
+                    })
+                    break;
             }
             setCartProgress(next);
             return;
         }
-        if (global.window.gtag) {
-            global.window.gtag('event', 'purchase', {
-                currency: "USD",
-                value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt),
-                items: detail.filter(item => item.ItemType !== '4').map(item => ({
-                    item_id: item.ItemCode,
-                    item_name: item.ItemCodeDesc,
-                    price: item.UnitPrice,
-                    quantity: item.QuantityOrdered,
-                }))
-            })
-        }
+        sendGtagEvent('purchase', {
+            currency: "USD",
+            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
+            transaction_id: cartHeader.SalesOrderNo,
+            items: detail.filter(item => item.ItemType !== '4').map(item => ({
+                item_id: item.ItemCode,
+                item_name: item.ItemCodeDesc,
+                price: +item.UnitPrice,
+                quantity: +item.QuantityOrdered,
+            }))
+        })
         await dispatch(promoteCart(cartHeader));
         navigate(generatePath('/account/:customerSlug/orders/:salesOrderNo', {
             customerSlug: customerSlug(customer),
@@ -357,9 +323,9 @@ const CartOrderHeaderElement = () => {
                 </Stack>
             </Stack>
             <AlertList context={promoteCart.typePrefix}/>
-            <hr />
+            <hr/>
             <Stack spacing={2} direction={{sm: 'column', md: 'row'}} justifyContent="space-between"
-                   divider={<Divider orientation="vertical" flexItem />}>
+                   divider={<Divider orientation="vertical" flexItem/>}>
                 <ItemAutocomplete salesOrderNo={header.SalesOrderNo}/>
                 <CartCommentInput salesOrderNo={header.SalesOrderNo}/>
             </Stack>

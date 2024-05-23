@@ -1,7 +1,6 @@
 import React, {useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {useNavigate, useParams} from 'react-router';
-import ProgressBar from "../../../components/ProgressBar";
 import CategoryPage2 from "../../category/components/CategoryPage";
 import ProductPage from "./ProductPage";
 import {PATH_PRODUCT} from "../../../constants/paths";
@@ -11,6 +10,7 @@ import {Keyword} from "b2b-types";
 import Box from "@mui/material/Box";
 import {loadKeywords} from "../../keywords/actions";
 import {selectKeywordsList, selectKeywordsLoading} from "../../keywords/selectors";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const ProductRouter = () => {
     const dispatch = useAppDispatch();
@@ -47,12 +47,10 @@ const ProductRouter = () => {
     if (keyword.redirect_to_parent > 0) {
         const [kw] = keywords.filter(kw => kw.pagetype === 'product').filter(kw => kw.id === keyword.redirect_to_parent);
         if (kw) {
-            let pathname = PATH_PRODUCT
+            const pathname = PATH_PRODUCT
                 .replace(':category', encodeURIComponent(kw.parent ? kw.parent : kw.keyword))
                 .replace(':product?', encodeURIComponent(kw.parent ? kw.keyword : ''));
             const state = {variant: keyword.keyword};
-            console.log('redirect to: ', {pathname, state});
-            // this.props.history.replace(path, [{variant: keyword.keyword}])
             navigate(pathname, {state, replace: true})
             return;
         }
@@ -61,7 +59,7 @@ const ProductRouter = () => {
     return (
         <ErrorBoundary>
             <Box>
-                {keywordsLoading && <ProgressBar label="Loading Keywords"/>}
+                {keywordsLoading && <LinearProgress variant="indeterminate" title="Loading Keywords"/>}
                 {keyword.pagetype === 'category' && <CategoryPage2 keyword={keyword.keyword}/>}
                 {keyword.pagetype === 'product' && (<ProductPage keyword={keyword.keyword}/>)}
             </Box>

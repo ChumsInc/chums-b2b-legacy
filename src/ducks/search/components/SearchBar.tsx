@@ -1,10 +1,9 @@
 import React, {SyntheticEvent, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
-import {getSearchResults, selectSearchLoading, selectSearchResults} from "../index";
+import {getSearchResults, selectSearchResults} from "../index";
 import {Autocomplete, TextField} from "@mui/material";
 import {
     CONTENT_PATH_SEARCH_IMAGE,
-    PATH_CATEGORY,
     PATH_PAGE,
     PATH_PRODUCT,
     PATH_PRODUCT_WITHOUT_PARENT
@@ -13,6 +12,8 @@ import {generatePath, Link} from 'react-router-dom';
 import {SearchResult} from "b2b-types";
 import {useDebounceValue} from 'usehooks-ts'
 import {useNavigate} from "react-router";
+
+export const PATH_CATEGORY = '/products/:category';
 
 
 const itemLink = (result: SearchResult) => {
@@ -33,7 +34,6 @@ const itemLink = (result: SearchResult) => {
 export default function SearchBar() {
     const dispatch = useAppDispatch();
     const results = useAppSelector(selectSearchResults);
-    const loading = useAppSelector(selectSearchLoading);
     const navigate = useNavigate();
 
     const [value, setValue] = useState(null);
@@ -55,7 +55,6 @@ export default function SearchBar() {
     }, [searchTerm]);
 
     const changeHandler = (ev: React.SyntheticEvent, newValue: SearchResult | null) => {
-        console.log('changeHandler', newValue);
         setValue(null);
         setInputValue('');
         if (newValue) {

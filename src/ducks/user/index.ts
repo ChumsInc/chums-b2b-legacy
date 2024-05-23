@@ -267,7 +267,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
             (state, action) => {
                 if (isRejected(action)) {
                     console.log('userReducer', action?.error);
-                    // apK7KF@W8Yz&uwBwN%
                 }
             })
         .addMatcher(is401Action, (state, action) => {
@@ -276,8 +275,6 @@ const userReducer = createReducer(initialUserState, (builder) => {
             state.tokenExpires = 0;
         })
         .addDefaultCase((state, action: UnknownAction | DeprecatedUserProfileAction) => {
-            const _initialUserState = initialUserState();
-            // console.log(action.type, JSON.parse(JSON.stringify(state)), action);
             switch (action.type) {
                 case FETCH_USER_SIGNUP:
                     if (isUserProfileAction(action)) {

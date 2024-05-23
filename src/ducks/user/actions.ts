@@ -1,7 +1,4 @@
-import {fetchPOST} from '../../utils/fetch';
-import {CHANGE_USER_PASSWORD, SET_LOGGED_IN,} from "../../constants/actions";
-import {handleError} from '../app/actions';
-import {setAlert} from '../alerts/actions';
+import {CHANGE_USER_PASSWORD,} from "../../constants/actions";
 import localStore from '../../utils/LocalStore';
 import {
     STORE_AUTHTYPE,
@@ -13,7 +10,6 @@ import {
 import {auth} from '../../api/IntranetAuthService';
 import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
-import {API_PATH_CHANGE_PASSWORD} from "../../constants/paths";
 import {AUTH_LOCAL} from "../../constants/app";
 import {
     selectAuthType,
@@ -44,7 +40,7 @@ import {
     UserPasswordState,
     UserProfileResponse
 } from "./types";
-import {AppDispatch, RootState} from "../../app/configureStore";
+import {RootState} from "../../app/configureStore";
 import {BasicCustomer, UserCustomerAccess, UserProfile} from "b2b-types";
 import {isCustomerAccess} from "./utils";
 import {StoredProfile} from "../../types/user";
@@ -234,29 +230,6 @@ export const setNewPassword = createAsyncThunk<ChangePasswordResponse | null, Se
         }
     }
 )
-
-
-export const submitPasswordChange = () => (dispatch: AppDispatch, getState: () => RootState) => {
-    const {user} = getState();
-    const {oldPassword, newPassword} = user.passwordChange;
-    if (!oldPassword || !newPassword) {
-        return;
-    }
-    const body = {oldPassword, newPassword};
-    fetchPOST(API_PATH_CHANGE_PASSWORD, body)
-        .then(({token}) => {
-            auth.setToken(token);
-            dispatch(setAlert({severity: 'success', title: 'Done!', message: 'Your password has been changed'}));
-            dispatch({type: SET_LOGGED_IN, authType: AUTH_LOCAL, token});
-            dispatch(loadProfile());
-            dispatch(updateLocalAuth());
-        })
-        .catch(err => {
-            dispatch(handleError(err, 'HANDLE_PASSWORD_CHANGE'));
-            console.log(err.message);
-        })
-};
-
 
 export const resetPassword = createAsyncThunk<boolean, string>(
     'user/resetPassword',

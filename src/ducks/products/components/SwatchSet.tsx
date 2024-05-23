@@ -6,14 +6,14 @@ import {useSelector} from "react-redux";
 import {selectProductCartItem, selectProductColorCode, selectSelectedProduct} from "../selectors";
 import {setColorCode} from "../actions";
 import {ProductSwatchBase} from "b2b-types";
-import {ga_viewItem} from "../../../utils/google-analytics";
 import {isSellAsColors, isSellAsMix} from "../utils";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import {styled} from "@mui/material/styles";
+import {sendGtagEvent} from "../../../api/gtag";
 
 const SwatchContainer = styled(Box)`
-    display: flex; 
+    display: flex;
     flex-direction: row;
     justify-content: center;
     flex-wrap: wrap;
@@ -37,7 +37,7 @@ const SwatchSet = () => {
         if (isSellAsMix(selectedProduct)) {
             setItems(selectedProduct.mix.items);
         } else if (isSellAsColors(selectedProduct)) {
-            setItems(selectedProduct.items.filter(item => item.status))
+            setItems(selectedProduct.items.filter(item => item.status));
         } else {
             setItems([]);
         }
@@ -45,7 +45,18 @@ const SwatchSet = () => {
 
     useEffect(() => {
         if (cartItem) {
-            ga_viewItem(cartItem);
+            if (isSellAsColors(selectedProduct) && cartItem.colorCode !== selectedProduct.defaultColor) {
+                sendGtagEvent('select_item', {
+                    item_list_id: selectedProduct.itemCode,
+                    item_list_name: selectedProduct.description,
+                    items: [{
+                        item_id: cartItem.itemCode,
+                        item_name: cartItem.colorName ?? cartItem.colorCode ?? '',
+                        price: cartItem.price ? +cartItem.price : undefined,
+                        quantity: cartItem.quantity
+                    }]
+                })
+            }
         }
     }, [cartItem]);
 
@@ -66,7 +77,8 @@ const SwatchSet = () => {
                     {selectedProduct.sellAs === SELL_AS_MIX && (<span>Selected Color:</span>)}
                     {selectedProduct.sellAs === SELL_AS_COLOR && (<span>Color:</span>)}
                 </Typography>
-                <Typography variant="body1" sx={{fontWeight: 700, display: 'inline-block'}}>{cartItem?.colorName}</Typography>
+                <Typography variant="body1"
+                            sx={{fontWeight: 700, display: 'inline-block'}}>{cartItem?.colorName}</Typography>
             </Box>
             <SwatchContainer>
                 {items

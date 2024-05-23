@@ -32,7 +32,6 @@ export const selectShouldAlertVersion = createSelector(
 export const selectShouldCheckVersion = createSelector(
     [selectVersion, selectLastChecked],
     (version, lastChecked) => {
-        // console.log('selectShouldCheckVersion', {version, lastChecked, now: new Date().valueOf()})
         if (!version || !lastChecked) {
             return true;
         }

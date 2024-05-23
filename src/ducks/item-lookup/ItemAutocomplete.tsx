@@ -48,7 +48,6 @@ export default function ItemAutocomplete({salesOrderNo}: {
     }, [searchTerm]);
 
     const changeHandler = (ev: React.SyntheticEvent, newValue: ItemSearchResult | null) => {
-        console.log('changeHandler', newValue);
         setValue(newValue);
     }
 
