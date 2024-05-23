@@ -21,7 +21,7 @@ import {loadCustomer} from "../customer/actions";
 import {CartProduct, CustomerPriceRecord, Product} from "b2b-types";
 import {loadProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from "./actions";
 import {setLoggedIn} from "../user/actions";
-import {parseImageFilename} from "../../common/image";
+import {parseImageFilename, parsePossiblyMissingFilename} from "../../common/image";
 import {ProductImage} from "../../types/product";
 import {PreloadedState} from "../../types/preload";
 
@@ -99,7 +99,7 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
                 ?? action.payload?.variant?.product?.defaultColor
                 ?? action.payload?.product?.defaultColor
                 ?? '';
-            state.image.filename = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
+            state.image.filename = parsePossiblyMissingFilename(state.cartItem?.image ?? state.selectedProduct?.image ?? null, state.colorCode);
             state.image.itemCode = getImageItemCode(state);
         })
         .addCase(loadProduct.rejected, (state) => {
@@ -108,7 +108,7 @@ const productsReducer = createReducer(initialProductsState, (builder) => {
         .addCase(setColorCode.fulfilled, (state, action) => {
             state.colorCode = action.meta.arg;
             state.cartItem = action.payload;
-            state.image.filename = parseImageFilename(state.cartItem?.image ?? state.selectedProduct?.image, state.colorCode);
+            state.image.filename = parsePossiblyMissingFilename(state.cartItem?.image ?? state.selectedProduct?.image ?? null, state.colorCode);
             state.image.itemCode = getImageItemCode(state);
         })
         .addCase(setCartItemQuantity, (state, action) => {
