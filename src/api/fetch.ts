@@ -16,14 +16,16 @@ function getCredentials():string|null {
     return null
 }
 
-async function handleJSONResponse<T = any>(res:Response, args?: any):Promise<T> {
+async function handleJSONResponse<T = unknown>(res:Response, args?: unknown):Promise<T> {
     const componentStack = JSON.stringify({
         url: res.url,
         args: args ?? null
     })
     if (!res.ok) {
         const text = await res.text();
-        await postErrors({message: `error: ${res.status}`, componentStack})
+        if (![401, 403].includes(res.status)) {
+            await postErrors({message: `error: ${res.status}`, componentStack})
+        }
         return Promise.reject(new B2BError(text, res.url, null, res.status));
     }
     const json = await res.json();
@@ -35,7 +37,7 @@ async function handleJSONResponse<T = any>(res:Response, args?: any):Promise<T> 
     return json || {};
 }
 
-export async function allowErrorResponseHandler<T = any>(res:Response):Promise<T> {
+export async function allowErrorResponseHandler<T = unknown>(res:Response):Promise<T> {
     try {
         return await res.json() as T;
     } catch(err:unknown) {
@@ -49,10 +51,10 @@ export async function allowErrorResponseHandler<T = any>(res:Response):Promise<T
 }
 
 export interface FetchJSONOptions extends RequestInit {
-    responseHandler?: <T = any>(res:Response) => Promise<T>;
+    responseHandler?: <T = unknown>(res:Response) => Promise<T>;
 }
 
-export async function fetchJSON<T = any>(url:string, options:FetchJSONOptions = {}):Promise<T> {
+export async function fetchJSON<T = unknown>(url:string, options:FetchJSONOptions = {}):Promise<T> {
     try {
         const {responseHandler, ..._options} = options;
         _options.headers = new Headers(_options?.headers);
@@ -130,5 +132,15 @@ export async function postErrors({message, componentStack, userId, fatal}:PostEr
         });
         await fetchJSON('/api/error-reporting', {method: 'POST', body, responseHandler: allowErrorResponseHandler});
         sendGtagEvent('exception', {description: message, fatal});
-    } catch (err) {}
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.log("postErrors()", err.message);
+            return Promise.reject(err);
+        }
+        console.error("postErrors()", err)
+        if (typeof err === 'string') {
+            return Promise.reject(new Error(err));
+        }
+        return Promise.reject(err);
+    }
 }
