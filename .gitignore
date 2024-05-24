@@ -3,7 +3,6 @@
 /public/css/*.css.map
 /public/css/*.css
 /public/js/*.js.map
-*.js.map
 /public/images/
 /public/build/
 /.idea/
