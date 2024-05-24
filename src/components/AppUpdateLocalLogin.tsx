@@ -14,27 +14,22 @@ const AppUpdateLocalLogin = () => {
     const isLoggedIn = useSelector(selectLoggedIn);
     const expires = useSelector(selectLoginExpiry);
     const timer = useRef<number>(0);
+    const now = useRef<number>(0);
 
     useEffect(() => {
         if (isSSR || !isLoggedIn) {
             return;
         }
-        if (typeof global.window !== 'undefined') {
-            const now = new Date().valueOf();
-            const willExpire = new Date(expires * 1000).valueOf();
-            if (willExpire <= now) {
-                return;
-            }
-            const expiresIn = willExpire - now;
-            if (expiresIn > fiveMinutes) {
-                timer.current = window.setTimeout(() => {
-                    dispatch(updateLocalAuth())
-                }, expiresIn - fiveMinutes);
-            } else {
-                timer.current = window.setTimeout(() => {
-                    dispatch(updateLocalAuth())
-                }, Math.max(expiresIn - oneMinute, 0));
-            }
+        const _now = new Date().valueOf();
+        now.current = _now;
+        const willExpire = new Date(expires * 1000).valueOf();
+        const expiresIn = willExpire - _now;
+        if (expiresIn < fiveMinutes) {
+            dispatch(updateLocalAuth())
+        } else {
+            timer.current = window.setInterval(() => {
+                now.current = new Date().valueOf();
+            }, oneMinute);
         }
         return () => {
             if (!isSSR) {
@@ -48,7 +43,7 @@ const AppUpdateLocalLogin = () => {
     }
 
     return (
-        <div className="login-container" style={{display: 'none'}}/>
+        <div className="login-container" style={{display: 'none'}} data-now={now.current}/>
     )
 }
 
