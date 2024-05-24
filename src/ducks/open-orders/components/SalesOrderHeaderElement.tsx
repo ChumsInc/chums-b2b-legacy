@@ -99,7 +99,7 @@ const SalesOrderHeaderElement = () => {
                         {!!invoices.length && (
                             <div>
                                 <Typography>Invoices:</Typography>
-                                {invoices.map(inv => <Chip label={inv} component={NavLink}
+                                {invoices.map(inv => <Chip key={inv} label={inv} component={NavLink}
                                                            to={genInvoicePath(customer, inv)}/>)}
                             </div>
                         )}

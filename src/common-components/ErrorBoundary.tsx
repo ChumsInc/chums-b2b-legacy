@@ -1,12 +1,12 @@
 import React from 'react';
 import {useSelector} from 'react-redux';
-import {selectVersion} from "../ducks/version";
 import {selectUserProfile} from "../ducks/user/selectors";
 import {ErrorBoundary as ReactErrorBoundary, FallbackProps} from 'react-error-boundary';
 import {postErrors} from "../api/fetch";
 import Alert from "@mui/material/Alert";
 
 function ErrorFallback({error, resetErrorBoundary}: FallbackProps) {
+    resetErrorBoundary();
     return (
         <Alert severity="error">
             <strong>Sorry! Something went wrong.</strong>
@@ -15,14 +15,9 @@ function ErrorFallback({error, resetErrorBoundary}: FallbackProps) {
     )
 }
 
-interface ErrorInfo {
-    componentStack: string;
-}
-
 export default function ErrorBoundary({children}: {
     children: React.ReactNode
 }) {
-    const version = useSelector(selectVersion);
     const userProfile = useSelector(selectUserProfile);
 
     const logError = (error: Error, info: React.ErrorInfo) => {
