@@ -1,3 +1,7 @@
+interface GtagEventArgs {
+    [key:string]: string|number|null|GtagItem[]|boolean|undefined;
+}
+
 export interface GtagItem {
     item_id: string;
     item_name?: string;
@@ -5,7 +9,7 @@ export interface GtagItem {
     quantity?: number;
 }
 
-export interface GtagAddPaymentInfoArgs {
+export interface GtagAddPaymentInfoArgs extends GtagEventArgs {
     currency: string;
     value: number;
     coupon?: string;
@@ -13,7 +17,7 @@ export interface GtagAddPaymentInfoArgs {
     items: GtagItem[]
 }
 
-export interface GtagAddShippingInfoArgs {
+export interface GtagAddShippingInfoArgs extends GtagEventArgs {
     currency: string;
     value: number;
     coupon?: string;
@@ -21,35 +25,35 @@ export interface GtagAddShippingInfoArgs {
     items: GtagItem[]
 }
 
-export interface GtagAddToCartArgs {
+export interface GtagAddToCartArgs extends GtagEventArgs {
     currency: string;
     value: number;
     items: GtagItem[];
 }
 
-export interface GtagBeginCheckoutArgs {
+export interface GtagBeginCheckoutArgs extends GtagEventArgs {
     currency: string;
     value: number;
     coupon?: string;
     items: GtagItem[];
 }
 
-export interface GtagLoginArgs {
+export interface GtagLoginArgs extends GtagEventArgs {
     method?: 'credentials' | 'google';
 }
 
-export interface GtagExceptionArgs {
+export interface GtagExceptionArgs extends GtagEventArgs {
     description?: string;
     fatal?: boolean;
 }
 
-export interface GtagPageViewArgs {
+export interface GtagPageViewArgs extends GtagEventArgs {
     page_location?: string;
     client_id?: string;
     page_title?: string;
 }
 
-export interface GtagPurchaseArgs {
+export interface GtagPurchaseArgs extends GtagEventArgs {
     currency: string;
     value: number;
     transaction_id: string;
@@ -58,47 +62,47 @@ export interface GtagPurchaseArgs {
     tax?: number;
     items: GtagItem[];
 }
-export interface GtagRemoveFromCartArgs {
+export interface GtagRemoveFromCartArgs extends GtagEventArgs {
     currency?: string;
     value?: number;
     items: GtagItem[];
 }
 
-export interface GtagSearchArgs {
+export interface GtagSearchArgs extends GtagEventArgs {
     search_term: string;
 }
 
-export interface GtagSelectContentArgs {
+export interface GtagSelectContentArgs extends GtagEventArgs {
     content_type?: 'variant' | 'color' | 'customer';
     content_id?: string;
 }
 
-export interface GtagSelectItemArgs {
+export interface GtagSelectItemArgs extends GtagEventArgs {
     item_list_id?: string;
     item_list_name?: string;
     items: GtagItem[]
 }
 
-export interface GtagViewCartArgs {
+export interface GtagViewCartArgs extends GtagEventArgs {
     currency: string;
     value: number;
     items: GtagItem[]
 }
 
-export interface GtagViewItemArgs {
+export interface GtagViewItemArgs extends GtagEventArgs {
     items: GtagItem[];
 }
-export interface GtagViewItemListArgs {
+export interface GtagViewItemListArgs extends GtagEventArgs {
     item_list_id: string;
     item_list_name: string;
     items: GtagItem[];
 }
 
-export interface GtagConfigArgs {
+export interface GtagConfigArgs extends GtagEventArgs {
     user_id: string;
 }
 
-export type GtagFn = (event: 'event' | 'config', eventName: string, options?: any) => void;
+export type GtagFn = (event: 'event' | 'config', eventName: string, options?: GtagEventArgs) => void;
 
 export type GtagEventName = 'add_payment_info' | 'add_shipping_info' | 'add_to_cart' | 'begin_checkout' |
     'exception' | 'login' | 'page_view' | 'purchase' | 'remove_from_cart' | 'search' | 'select_content'
@@ -116,21 +120,28 @@ export function sendGtagEvent(eventName: 'remove_from_cart', options: GtagRemove
 export function sendGtagEvent(eventName: 'search', options: GtagSearchArgs): void;
 export function sendGtagEvent(eventName: 'select_content', options: GtagSelectContentArgs): void;
 export function sendGtagEvent(eventName: 'select_item', options: GtagSelectItemArgs): void;
-export function sendGtagEvent(eventName: 'sign_up', options?: GtagLoginArgs): void
-export function sendGtagEvent(eventName: 'view_cart', options?: GtagViewCartArgs): void
-export function sendGtagEvent(eventName: 'view_item', options?: GtagViewItemArgs): void
-export function sendGtagEvent(eventName: 'view_item_list', options?: GtagViewItemListArgs): void
-
-export function sendGtagEvent(eventName: GtagEventName, options?: unknown) {
+export function sendGtagEvent(eventName: 'sign_up', options?: GtagLoginArgs): void;
+export function sendGtagEvent(eventName: 'view_cart', options?: GtagViewCartArgs): void;
+export function sendGtagEvent(eventName: 'view_item', options?: GtagViewItemArgs): void;
+export function sendGtagEvent(eventName: 'view_item_list', options?: GtagViewItemListArgs): void;
+export function sendGtagEvent(eventName: GtagEventName, options?: GtagEventArgs) {
     if (typeof global.window !== 'undefined' && typeof global.window.gtag !== 'undefined') {
-        global.window.gtag('event', eventName, options ?? {});
+        if (!options) {
+            options = {};
+        }
+        global.window.gtag('event', eventName, options);
+        console.log('dataLayer:event', global.window.dataLayer);
     }
 }
 
 export function configGtag(options?: GtagConfigArgs) {
-    if (typeof global.window !== 'undefined'
-        && typeof global.window.gtag !== 'undefined'
-        && typeof global.window.Chums?.gtagID !== 'undefined') {
-        global.window.gtag('config', global.window.Chums.gtagID, options ?? {});
+    if (typeof global.window === 'undefined') {
+        return;
+    }
+    const gtag = window.gtag;
+    const gtagID = window.Chums?.gtagID;
+    if (gtag && gtagID) {
+        gtag('config', gtagID, options ?? {});
+        console.log('dataLayer:configGtag', window.dataLayer);
     }
 }

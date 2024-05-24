@@ -71,6 +71,7 @@ export async function fetchUserProfile(): Promise<UserProfileResponse> {
         if (response.user?.accountType === 1) {
             response.reps = await fetchRepList();
         }
+        configGtag({user_id: `${response?.user?.id ?? 0}`})
         return response as UserProfileResponse;
     } catch (err) {
         if (err instanceof Error) {
@@ -96,6 +97,7 @@ export async function postUserProfile(arg: Pick<UserProfile, 'name'>): Promise<U
                 const decoded = jwtDecode(response.token);
                 response.expires = decoded.exp;
             } catch (err: unknown) {
+                //do nothing
             }
         }
         return response as UserProfileResponse;
@@ -146,6 +148,7 @@ export async function fetchGoogleLogin(token: string): Promise<UserProfileRespon
                 const decoded = jwtDecode(response.token);
                 response.expires = decoded.exp;
             } catch (err: unknown) {
+                // do nothing
             }
         }
         if (response.user) {

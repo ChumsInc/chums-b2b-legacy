@@ -24,17 +24,17 @@
     <link rel="stylesheet" href="https://b2b.chums.com/b2b-swatches/swatches.css" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script>CHUMS = {}; Chums = {}</script>
     <script src="/api/preload/state.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-KMH9RBEF98" ></script>
     <script>
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
         gtag('config', 'G-KMH9RBEF98');
+        window.Chums.gtagID = 'G-KMH9RBEF98';
     </script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script>CHUMS = {}; Chums = {}</script>
     <!-- refresh state when needed from https://b2b.chums.com/api/preload/state.js -->
     <script async>
         if (window?.__PRELOADED_STATE__?.app) {
