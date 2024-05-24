@@ -46,7 +46,8 @@ import CartCommentInput from "./CartCommentInput";
 import Divider from "@mui/material/Divider";
 import Decimal from "decimal.js";
 import {sendGtagEvent} from "../../../api/gtag";
-import CartHeader from "../../../components/Cart/CartHeader";
+import {selectSOLoading} from "../../sales-order/selectors";
+
 
 const CartOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -57,6 +58,7 @@ const CartOrderHeaderElement = () => {
     const detail = useAppSelector((state) => selectSalesOrderDetail(state, match?.params.salesOrderNo ?? ''));
     const detailChanged = useAppSelector((state: RootState) => selectDetailChanged(state, header?.SalesOrderNo ?? ''));
     const loadingStatus = useAppSelector(state => selectSalesOrderActionStatus(state, match?.params.salesOrderNo ?? ''));
+    const loading = useAppSelector(selectSOLoading);
     const shipDateRef = useRef<HTMLInputElement | null>(null);
     const shipMethodRef = useRef<HTMLDivElement | null>(null);
     const paymentMethodRef = useRef<HTMLDivElement | null>(null);
@@ -65,6 +67,13 @@ const CartOrderHeaderElement = () => {
 
     const [cartHeader, setCartHeader] = useState<(SalesOrderHeader & Editable) | null>(header);
     const [cartProgress, setCartProgress] = useState<CartProgress>(cartProgress_Cart);
+
+
+    useEffect(() => {
+        if (loading) {
+            setCartProgress(cartProgress_Cart);
+        }
+    }, [loading]);
 
     const validateForm = (cartProgress: CartProgress): CartProgress => {
         if (!cartHeader) {
@@ -162,7 +171,7 @@ const CartOrderHeaderElement = () => {
         dispatch(saveCart(cartHeader));
     }
 
-    const submitHandler = async (ev: FormEvent) => {
+    const submitHandler = async () => {
         if (!cartHeader) {
             return;
         }
@@ -177,7 +186,7 @@ const CartOrderHeaderElement = () => {
                     });
                     break;
                 case cartProgress_Payment:
-                    sendGtagEvent( 'add_shipping_info', {
+                    sendGtagEvent('add_shipping_info', {
                         currency: "USD",
                         value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
                         shipping_tier: cartHeader.ShipVia,
@@ -185,7 +194,7 @@ const CartOrderHeaderElement = () => {
                     })
                     break;
                 case cartProgress_Confirm:
-                    sendGtagEvent( 'add_payment_info', {
+                    sendGtagEvent('add_payment_info', {
                         currency: "USD",
                         value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
                         payment_type: cartHeader.PaymentType,
@@ -288,7 +297,7 @@ const CartOrderHeaderElement = () => {
             <Stack spacing={2} direction={{sm: 'column', md: 'row'}} justifyContent="space-between">
                 <Stack sx={{flex: '1 1 auto'}}>
                     {(detailChanged || cartHeader?.changed) && cartProgress === cartProgress_Cart && (
-                        <Alert severity="warning">Don't forget to save your changes!</Alert>
+                        <Alert severity="warning">Don&apos;t forget to save your changes!</Alert>
                     )}
                 </Stack>
                 <Stack spacing={3} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
