@@ -6,7 +6,6 @@ import FormGroup from "../common-components/FormGroup";
 import DatePicker from "../common-components/DatePicker";
 import {CART_PROGRESS_STATES, NEW_CART, ORDER_TYPE} from "../constants/orders";
 import PaymentSelect from "./PaymentSelect";
-import parseDate from 'date-fns/parseJSON';
 import classNames from 'classnames';
 import {duplicateOrder, loadSalesOrder, sendOrderEmail} from "../actions/salesOrder";
 import {
@@ -43,6 +42,7 @@ import ConfirmDeleteCart from "./ConfirmDeleteCart";
 import MaterialIcon from "../common-components/MaterialIcon";
 import OrderHeaderShipTo from "./OrderHeaderShipTo";
 import CustomerPONoField from "./Cart/CustomerPONoField";
+import dayjs from "dayjs";
 
 const SaveChangedButton = ({changed, onClick, disabled}) => {
     return (
@@ -361,8 +361,7 @@ class OrderHeader extends Component {
         const isNewCart = isCart && SalesOrderNo === NEW_CART;
 
         const cancelHidden = (isCart && cartProgress < CART_PROGRESS_STATES.delivery)
-            || UDF_CANCEL_DATE === null
-            || parseDate(UDF_CANCEL_DATE).valueOf() === 0;
+            || !dayjs(UDF_CANCEL_DATE).isValid();
 
         return (
             <form className="mb-1" onSubmit={this.promoteCart} method="post">

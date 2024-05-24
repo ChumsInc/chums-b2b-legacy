@@ -24,7 +24,7 @@ import {auth} from '../utils/IntranetAuthService';
 import localStore from "../utils/LocalStore";
 import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_RECENT_ACCOUNTS, STORE_USER_ACCOUNT} from "../constants/stores";
 import {buildRecentAccounts, getFirstCustomer, getFirstUserAccount, getUserAccount,} from "../utils/customer";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 
 const defaults = {

@@ -27,7 +27,6 @@ import {
     CART_ACTIONS
 } from "../constants/paths";
 import {handleError, logError, setAlert} from "./app";
-import parseDate from "date-fns/parseJSON";
 import {fetchOpenOrders, loadSalesOrder} from "./salesOrder";
 import {sageCompanyCode, shipToAddressFromBillingAddress} from "../utils/customer";
 import {CREDIT_CARD_PAYMENT_TYPES} from "../constants/account";
@@ -39,6 +38,7 @@ import {selectCustomerAccount} from "../selectors/customer";
 import {selectCartNo} from "../selectors/cart";
 import {fetchSalesOrder} from "../api/sales-order";
 import {ga_addToCart, ga_purchase} from "./gtag";
+import dayjs from "dayjs";
 
 export const customerFromState = ({user}) => {
     const {Company, ARDivisionNo, CustomerNo, ShipToCode = ''} = user.currentCustomer;
@@ -258,7 +258,7 @@ export const promoteCart = () => (dispatch, getState) => {
         action: CART_ACTIONS.promoteCart,
         SalesOrderNo: header.SalesOrderNo,
         CartName: header.CustomerPONo,
-        ShipExpireDate: parseDate(cart.shipDate).toISOString(),
+        ShipExpireDate: dayjs(cart.shipDate).toISOString(),
         ShipVia: header.ShipVia,
         PaymentType: header.PaymentType,
         ShipToCode: header.ShipToCode,

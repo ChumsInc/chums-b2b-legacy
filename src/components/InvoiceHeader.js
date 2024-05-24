@@ -6,7 +6,6 @@ import FormGroup from "../common-components/FormGroup";
 import DatePicker from "../common-components/DatePicker";
 import ShipToAddress from "./Address/ShipToAddress";
 import {CART_PROGRESS_STATES, ORDER_TYPE} from "../constants/orders";
-import parseDate from 'date-fns/parseJSON';
 import {duplicateOrder, sendOrderEmail} from "../actions/salesOrder";
 import {fetchInvoice} from '../actions/invoices';
 
@@ -15,8 +14,8 @@ import {
     promoteCart,
     removeCart,
     saveCart,
-    setCurrentCart,
     setCartProgress,
+    setCurrentCart,
     setShipDate,
     setShippingAccount,
     updateCart,
@@ -32,6 +31,7 @@ import DuplicateCartAlert from "./DuplicateCartAlert";
 import Button, {BTN_OUTLINE_SECONDARY, BTN_WARNING} from "../common-components/Button";
 import {noop} from "../utils/general";
 import TrackingLinkBadge from "./TrackingLinkBadge";
+import dayjs from "dayjs";
 
 const SaveChangedButton = ({changed, onClick}) => {
     return (
@@ -151,7 +151,15 @@ class InvoiceHeader extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        const {changed, cartProgress, setCartProgress, cartLoading, header, defaultPaymentType, updateCart} = this.props;
+        const {
+            changed,
+            cartProgress,
+            setCartProgress,
+            cartLoading,
+            header,
+            defaultPaymentType,
+            updateCart
+        } = this.props;
         if (cartProgress !== CART_PROGRESS_STATES.cart && changed) {
             setCartProgress(CART_PROGRESS_STATES.cart);
         }
@@ -208,7 +216,8 @@ class InvoiceHeader extends Component {
         } = this.props.invoice;
 
         const cancelHidden = UDF_CANCEL_DATE === null
-            || parseDate(UDF_CANCEL_DATE).valueOf() === 0;
+            || !dayjs(UDF_CANCEL_DATE).isValid();
+
 
         return (
             <div className="mb-1">

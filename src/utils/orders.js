@@ -1,10 +1,7 @@
 import {ORDER_TYPE} from "../constants/orders";
-import setHours from 'date-fns/setHours';
-import startOfDay from 'date-fns/startOfDay';
 import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone'
-
 
 
 export const calcOrderType = ({OrderType, OrderStatus}) => {
@@ -62,10 +59,10 @@ const nextWorkDay = (date = new Date()) => {
     const day = d.day();
     switch (day) {
     case 0: // sunday
-            // set date to monday
+        // set date to monday
         return d.day(1).toISOString();
     case 6: // saturday
-            // set date to next monday
+        // set date to next monday
         return d.day(8).toISOString();
     default:
         return d.toISOString();

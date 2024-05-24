@@ -1,11 +1,10 @@
 import React, {Fragment} from 'react';
-import formatDate from 'date-fns/format';
-import parseDate from 'date-fns/parseJSON';
+import dayjs from "dayjs";
 
-export const DateString = ({date = new Date(), format = "MM/dd/yyyy"}) => {
-    if (date === null) {
+export const DateString = ({date = new Date(), format = "MM/DD/YYYY"}) => {
+    if (date === null || !dayjs(date).isValid()) {
         return null;
     }
-    return (<Fragment>{formatDate(parseDate(date), format)}</Fragment>);
+    return (<Fragment>{dayjs(date).formatDate(format)}</Fragment>)
 };
 

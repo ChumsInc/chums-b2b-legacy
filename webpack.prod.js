@@ -28,7 +28,7 @@ module.exports = merge(common, {
         ],
     },
     output: {
-        filename: "[name].[contenthash].js",
+        filename: "[name].[contenthash:8].js",
     },
     plugins: [
         new BundleAnalyzerPlugin(),

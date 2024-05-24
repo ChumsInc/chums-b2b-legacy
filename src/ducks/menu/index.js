@@ -1,5 +1,4 @@
-import {createAsyncThunk, createReducer} from "@reduxjs/toolkit";
-import {fetchMenu} from "./api";
+import {createReducer} from "@reduxjs/toolkit";
 
 const initialState = {
     productMenu: {},
