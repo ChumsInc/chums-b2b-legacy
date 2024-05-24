@@ -11,7 +11,6 @@ import {PAYMENT_TYPES} from "../../../constants/account";
 
 export interface CartPaymentSelectProps extends Omit<FormControlProps, 'onChange'> {
     value: string;
-    defaultName?: string;
     onChange: (value: string) => void;
     readOnly?: boolean;
     required?: boolean;
@@ -20,7 +19,6 @@ export interface CartPaymentSelectProps extends Omit<FormControlProps, 'onChange
 
 export default React.forwardRef(function CartPaymentSelect({
                                                                value,
-                                                               defaultName,
                                                                onChange,
                                                                readOnly,
                                                                required,

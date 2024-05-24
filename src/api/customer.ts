@@ -34,7 +34,7 @@ export async function postAddCustomerUserLocation(arg:CustomerUser, customer:Cus
             .replace(':Company', 'chums')
             .replace(':ARDivisionNo', encodeURIComponent(customer.ARDivisionNo))
             .replace(':CustomerNo', encodeURIComponent(customer.CustomerNo))
-            .replace(':id', !!arg.id ? encodeURIComponent(arg.id) : '')
+            .replace(':id', arg.id ? encodeURIComponent(arg.id) : '')
             .replace(':ShipToCode', encodeURIComponent(arg.shipToCode[0]));
         const method = 'POST';
         const body = JSON.stringify(arg);
@@ -59,8 +59,8 @@ export async function postCustomerUser(arg: CustomerUser, customer: CustomerKey)
             .replace(':Company', 'chums')
             .replace(':ARDivisionNo', encodeURIComponent(customer.ARDivisionNo))
             .replace(':CustomerNo', encodeURIComponent(customer.CustomerNo))
-            .replace(':id', !!arg.id ? encodeURIComponent(arg.id) : '');
-        const method = !!arg.id ? 'PUT' : 'POST';
+            .replace(':id', arg.id ? encodeURIComponent(arg.id) : '');
+        const method = arg.id ? 'PUT' : 'POST';
         const body = JSON.stringify(arg);
         const response = await fetchJSON<{ users: CustomerUser[] }>(url, {method, body});
         return response.users ?? [];

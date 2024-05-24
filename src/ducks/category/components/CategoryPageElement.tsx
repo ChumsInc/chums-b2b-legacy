@@ -1,7 +1,6 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 import CategoryLink from "./CategoryLink";
 import ProductLink from "./ProductLink";
-import ProductImage from "../../../components/ProductImage";
 import {Link as RoutedLink} from "react-router-dom";
 import {ProductCategoryChild} from "b2b-types";
 import {
@@ -15,8 +14,6 @@ import Link from "@mui/material/Link";
 import CategoryGridItem from "./CategoryGridItem";
 import ResponsiveProductImage from "../../../components/ResponsiveProductImage";
 import Typography from "@mui/material/Typography";
-
-
 
 
 export const ITEM_TYPES = {
@@ -33,12 +30,11 @@ const CategoryPageElement = ({item}: {
 }) => {
     if (isCategoryChildCategory(item)) {
         return (<CategoryLink title={item.title} description={item.description}
-                              keyword={item.category.keyword} imageUrl={item.imageUrl} />);
+                              keyword={item.category.keyword} imageUrl={item.imageUrl}/>);
     }
     if (isCategoryChildProduct(item)) {
-        const {title, description, product, ...rest} = item;
         return (<ProductLink title={item.title} description={item.description}
-                             product={item.product} imageUrl={item.imageUrl} />);
+                             product={item.product} imageUrl={item.imageUrl}/>);
     }
     if (isCategoryChildLink(item) && item.urlOverride) {
         return (
@@ -47,7 +43,7 @@ const CategoryPageElement = ({item}: {
                     {!!item.imageUrl && (
                         <ResponsiveProductImage filename={item.imageUrl} alt={item.title} loading="lazy"
                                                 sizes={imageSizes}
-                                                width={400} height={400} />
+                                                width={400} height={400}/>
                     )}
                     <div className="product-title">{item.title}</div>
                 </Link>
@@ -63,7 +59,7 @@ const CategoryPageElement = ({item}: {
                 {!!item.imageUrl && (
                     <ResponsiveProductImage filename={item.imageUrl} alt={item.title} loading="lazy"
                                             sizes={imageSizes}
-                                            width={400} height={400} />
+                                            width={400} height={400}/>
                 )}
                 <div className="product-title">{item.title}</div>
                 <div className="description">

@@ -40,13 +40,9 @@ const AccountTabs = () => {
         }
     }, [tabMatch?.params]);
 
-    const tabChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
-
-    }
-
     return (
         <Box sx={{width: '100%', mb: 1}}>
-            <Tabs onChange={tabChangeHandler} value={value}>
+            <Tabs value={value}>
                 {CUSTOMER_TABS.map(tab => (
                     <LinkTab key={tab.value} {...tab} />
                 ))}

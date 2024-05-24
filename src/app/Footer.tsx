@@ -10,12 +10,12 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import Stack from "@mui/material/Stack";
 
-const SiteFooter = styled(Box)(({theme}) => ({
+const SiteFooter = styled(Box)(() => ({
     width: '100%',
     maxWidth: '100%',
 }));
 
-const ContactsContainer = styled(Stack)(({theme}) => ({
+const ContactsContainer = styled(Stack)(() => ({
     backgroundColor: '#000000',
     color: '#FFFFFF',
     justifyContent: 'space-between',

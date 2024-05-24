@@ -19,7 +19,7 @@ const InlineJSHeadContent = (versionNo: string) => {
 export interface B2BHtmlProps {
     html: string;
     css: string;
-    state: any;
+    state: unknown;
     helmet?: HelmetServerState,
     manifestFiles: ManifestFiles;
     swatchTimestamp?: string;

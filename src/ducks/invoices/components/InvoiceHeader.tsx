@@ -6,8 +6,8 @@ import {ShippingMethods} from "../../../utils/general";
 import TrackingLinkBadge from "../../../components/TrackingLinkBadge";
 import {selectCurrentInvoice} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
-import {selectCartLoading, selectCartNo} from "../../cart/selectors";
-import {generatePath, useLocation} from "react-router-dom";
+import {selectCartLoading} from "../../cart/selectors";
+import {generatePath} from "react-router-dom";
 import dayjs from "dayjs";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
@@ -29,8 +29,6 @@ const InvoiceHeader = () => {
     const invoice = useSelector(selectCurrentInvoice);
     const [confirmDuplicate, setConfirmDuplicate] = useState(false);
     const cartLoading = useSelector(selectCartLoading);
-    const cartNo = useSelector(selectCartNo);
-    const location = useLocation();
     const permissions = useSelector(selectCustomerPermissions);
     const navigate = useNavigate();
 
@@ -48,7 +46,7 @@ const InvoiceHeader = () => {
             shipToCode,
         }
         const res = await dispatch(duplicateSalesOrder(arg));
-        if (!!(res.payload as SalesOrderHeader | null)?.SalesOrderNo) {
+        if ((res.payload as SalesOrderHeader | null)?.SalesOrderNo) {
             const salesOrderNo = (res.payload as SalesOrderHeader).SalesOrderNo;
             navigate(generatePath('/account/:customerSlug/carts/:salesOrderNo', {
                 customerSlug: customerSlug(invoice),

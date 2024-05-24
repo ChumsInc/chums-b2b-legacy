@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import UserIcon from "./UserIcon";
 import {customerUserSorter} from "../../../utils/customer";
-import classNames from "classnames";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import BusinessIcon from '@mui/icons-material/Business';
 import {useSelector} from "react-redux";
@@ -16,7 +15,7 @@ import TableBody from "@mui/material/TableBody";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import Tooltip from "@mui/material/Tooltip";
-import {useMatch, generatePath, useNavigate} from "react-router";
+import {generatePath, useMatch, useNavigate} from "react-router";
 import {selectCustomerUsers} from "../selectors";
 import {customerUserPath} from "../../../utils/path-utils";
 
@@ -28,9 +27,12 @@ const AccountUserTable = () => {
     const match = useMatch(customerUserPath);
     const navigate = useNavigate();
 
-    const userSelectHandler = (user:CustomerUser) => {
+    const userSelectHandler = (user: CustomerUser) => {
         if (match?.params?.customerSlug) {
-            navigate(generatePath(customerUserPath, {customerSlug: match?.params?.customerSlug, id: user.id.toString()}))
+            navigate(generatePath(customerUserPath, {
+                customerSlug: match?.params?.customerSlug,
+                id: user.id.toString()
+            }))
         }
     }
 

@@ -132,8 +132,8 @@ const AddToCartForm = ({
         if (!!season_code && !(season_available || cartItem.seasonAvailable)) {
             comment = [`PRE-SEASON ITEM: ${season_code}`, _comment].filter(val => !!val).join('; ');
         }
-        const price = !!cartItem.price ? new Decimal(cartItem.price).toNumber() : 0;
-        const value = !!cartItem.price ? new Decimal(cartItem.price).times(quantity).toNumber() : 0;
+        const price = cartItem.price ? new Decimal(cartItem.price).toNumber() : 0;
+        const value = cartItem.price ? new Decimal(cartItem.price).times(quantity).toNumber() : 0;
         sendGtagEvent('add_to_cart', {
             currency: 'USD',
             value: value,

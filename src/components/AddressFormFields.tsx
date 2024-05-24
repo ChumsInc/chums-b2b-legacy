@@ -1,9 +1,6 @@
 import React, {ChangeEvent} from 'react';
 import StateSelect from './StateSelect';
 import CountrySelect from './CountrySelect';
-import FormGroupTextInput from "../common-components/FormGroupTextInput";
-import FormGroup from "../common-components/FormGroup";
-import TextInput from "../common-components/TextInput";
 import {CustomerAddress} from "b2b-types";
 import {isCanada, isUSA} from "../utils/customer";
 import Stack from "@mui/material/Stack";
@@ -41,7 +38,7 @@ const AddressFormFields = ({address, onChange, readOnly}: {
 
             <TextField variant="filled" fullWidth label="Address 1" size="small"
                        onChange={changeHandler('AddressLine1')} value={address.AddressLine1 ?? ''}
-                       inputProps={{readOnly, maxLength: 30, autoComplete: 'address-line-1'}} required />
+                       inputProps={{readOnly, maxLength: 30, autoComplete: 'address-line-1'}} required/>
             <TextField variant="filled" onChange={changeHandler('AddressLine2')} value={address.AddressLine2 ?? ''}
                        inputProps={{readOnly, maxLength: 30, autoComplete: 'address-line-2'}} size="small"
                        fullWidth label="Address 2"/>
@@ -65,10 +62,10 @@ const AddressFormFields = ({address, onChange, readOnly}: {
                 )}
                 <TextField variant="filled" fullWidth label="Postal Code" size="small"
                            onChange={changeHandler('ZipCode')} value={address.ZipCode ?? ''}
-                           inputProps={{readOnly, maxLength: 10, autoComplete: 'postal-code'}} required />
+                           inputProps={{readOnly, maxLength: 10, autoComplete: 'postal-code'}} required/>
                 <CountrySelect value={address.CountryCode ?? ''} onChange={valueChangeHandler('CountryCode')}
                                variant="filled" size="small"
-                               inputProps={{autoComplete: "country-code", readOnly, disabled:readOnly}}
+                               inputProps={{autoComplete: "country-code", readOnly, disabled: readOnly}}
                                required/>
 
             </Stack>

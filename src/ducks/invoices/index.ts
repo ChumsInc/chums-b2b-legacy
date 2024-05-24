@@ -109,7 +109,7 @@ const invoicesReducer = createReducer(initialInvoicesState, builder => {
                 ].sort(invoicesSorter(defaultSort));
             }
         })
-        .addCase(loadInvoice.rejected, (state, action) => {
+        .addCase(loadInvoice.rejected, (state) => {
             state.invoiceLoading = false;
         })
         .addCase(setCustomerAccount.fulfilled, (state) => {

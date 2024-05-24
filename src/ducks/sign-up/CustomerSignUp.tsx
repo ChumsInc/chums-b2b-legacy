@@ -110,7 +110,7 @@ const CustomerSignUp = () => {
             </form>
             {!!error && error === USER_EXISTS && (
                 <Alert severity="warning" variant="filled">
-                    If you've recently signed up and have not received an email to validate your account
+                    If you&#39;ve recently signed up and have not received an email to validate your account
                     {' '} and set your password please contact CHUMS Customer Service (800-222-2486 or
                     {' '} <Link href="mailto:cs@chums.com?subject=Problems%20signing%20up%20for%20CHUMS%20B2B"
                                 target="_blank">send an email</Link>) or

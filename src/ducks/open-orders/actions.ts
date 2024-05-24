@@ -8,12 +8,10 @@ import LocalStore from "../../utils/LocalStore";
 import {STORE_CURRENT_CART} from "../../constants/stores";
 import {DetailLineChangeProps} from "../../types/salesorder";
 import {selectCurrentCustomer, selectLoggedIn} from "../user/selectors";
-import {isCartOrder} from "../../utils/orders";
-import {setCurrentCart} from "../cart/actions";
 
 export const loadOpenOrders = createAsyncThunk<SalesOrderHeader[], CustomerKey>(
     'open-orders/load',
-    async (arg, {dispatch}) => {
+    async (arg) => {
         const currentCartNo = LocalStore.getItem<string>(STORE_CURRENT_CART, '');
         const orders = await fetchOpenSalesOrders(arg);
         if (currentCartNo) {

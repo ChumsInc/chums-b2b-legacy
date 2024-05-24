@@ -21,7 +21,7 @@ import {loadCustomer} from "../customer/actions";
 import {CartProduct, CustomerPriceRecord, Product} from "b2b-types";
 import {loadProduct, setCartItemQuantity, setColorCode, setCurrentVariant} from "./actions";
 import {setLoggedIn} from "../user/actions";
-import {parseImageFilename, parsePossiblyMissingFilename} from "../../common/image";
+import {parsePossiblyMissingFilename} from "../../common/image";
 import {ProductImage} from "../../types/product";
 import {PreloadedState} from "../../types/preload";
 
@@ -42,7 +42,7 @@ export interface ProductsState {
     customerKey: string | null;
 }
 
-export const initialProductsState = (preload:PreloadedState = {}): ProductsState => ({
+export const initialProductsState = (preload: PreloadedState = {}): ProductsState => ({
     product: preload.products?.product ?? null,
     selectedProduct: null,
     selectedItemCode: null,

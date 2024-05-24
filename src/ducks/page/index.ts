@@ -33,7 +33,7 @@ const pageReducer = createReducer(initialPageState, (builder) => {
             state.loaded = true;
             state.content = action.payload;
         })
-        .addCase(loadPage.rejected, (state, action) => {
+        .addCase(loadPage.rejected, (state) => {
             state.loading = false;
             state.loaded = false;
         })

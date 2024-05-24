@@ -1,3 +1,4 @@
+import React from 'react';
 import {Banner} from "b2b-types";
 import BannerLinkWrapper from "./BannerLinkWrapper";
 import Box from "@mui/material/Box";

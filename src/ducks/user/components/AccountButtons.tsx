@@ -10,8 +10,8 @@ const UserAccountButton = ({access, selected = 0}: {
     access: UserCustomerAccess;
     selected?: number;
 }) => {
-    const {id, CustomerName, SalespersonName, isRepAccount, ARDivisionNo, CustomerNo, ShipToCode} = access;
-    const linkPath = !!isRepAccount
+    const {id, CustomerName, SalespersonName, isRepAccount, ARDivisionNo, CustomerNo} = access;
+    const linkPath = isRepAccount
         ? generatePath(PATH_PROFILE_ACCOUNT, {id: `${id}`})
         : generatePath(PATH_CUSTOMER_ACCOUNT, {customerSlug: customerSlug(access)});
 

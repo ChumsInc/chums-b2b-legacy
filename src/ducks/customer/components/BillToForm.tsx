@@ -8,7 +8,6 @@ import {useSelector} from "react-redux";
 import {longCustomerNo} from "../../../utils/customer";
 import {saveBillingAddress} from '../actions';
 import Alert from "@mui/material/Alert";
-import FormGroup from "../../../common-components/FormGroup";
 import MissingTaxScheduleAlert from "./MissingTaxScheduleAlert";
 import {selectCustomerAccount, selectCustomerLoading, selectCustomerPermissions} from "../selectors";
 import {selectCanEdit} from "../../user/selectors";
@@ -25,7 +24,6 @@ import {Button, InputAdornment, TextField} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import TelephoneFormFields from "./TelephoneFormFields";
-import EmailAddressEditor from "../../../components/EmailAddressEditor";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -63,7 +61,7 @@ const BillToForm = () => {
         }
     }
 
-    const emailChangeHandler = (index:number) => (ev:ChangeEvent<HTMLInputElement>) => {
+    const emailChangeHandler = (index: number) => (ev: ChangeEvent<HTMLInputElement>) => {
         if (!customer) {
             return;
         }
@@ -75,7 +73,7 @@ const BillToForm = () => {
         setCustomer({...customer, EmailAddress: email.join(';')});
     }
 
-    const addEmailAddressHandler = (after:number) => {
+    const addEmailAddressHandler = (after: number) => {
         if (!customer) {
             return;
         }
@@ -84,7 +82,7 @@ const BillToForm = () => {
         setCustomer({...customer, EmailAddress: email.join(';')});
     }
 
-    const removeEmailAddressHandler = (index:number) => {
+    const removeEmailAddressHandler = (index: number) => {
         if (!customer) {
             return;
         }
@@ -155,17 +153,26 @@ const BillToForm = () => {
                                 {emailAddresses.map((email, index) => (
                                     <TextField key={index} variant="filled" label="Email Address" fullWidth size="small"
                                                type="email" value={email} onChange={emailChangeHandler(index)}
-                                               inputProps={{readOnly: !canEdit, maxLength: 250 - emailAddresses.join(';').length}}
-                                               InputProps={{endAdornment: (
-                                                   <InputAdornment position="end">
-                                                       <IconButton aria-label="Add a new email address" disabled={!email || emailAddresses.join(';').length > 240} onClick={() => addEmailAddressHandler(index)}>
-                                                           <AddIcon />
-                                                       </IconButton>
-                                                       <IconButton aria-label="Add a new email address" onClick={() => removeEmailAddressHandler(index)} disabled={index === 0}>
-                                                           <RemoveIcon />
-                                                       </IconButton>
-                                                   </InputAdornment>
-                                                   )}}
+                                               inputProps={{
+                                                   readOnly: !canEdit,
+                                                   maxLength: 250 - emailAddresses.join(';').length
+                                               }}
+                                               InputProps={{
+                                                   endAdornment: (
+                                                       <InputAdornment position="end">
+                                                           <IconButton aria-label="Add a new email address"
+                                                                       disabled={!email || emailAddresses.join(';').length > 240}
+                                                                       onClick={() => addEmailAddressHandler(index)}>
+                                                               <AddIcon/>
+                                                           </IconButton>
+                                                           <IconButton aria-label="Add a new email address"
+                                                                       onClick={() => removeEmailAddressHandler(index)}
+                                                                       disabled={index === 0}>
+                                                               <RemoveIcon/>
+                                                           </IconButton>
+                                                       </InputAdornment>
+                                                   )
+                                               }}
                                     />
                                 ))}
                                 {/*<EmailAddressEditor label="Email Address"*/}
@@ -175,9 +182,9 @@ const BillToForm = () => {
                                 {/*                    allowMultiple/>*/}
                                 <TelephoneFormFields account={customer} onChange={changeHandler} readOnly={!canEdit}/>
                                 {customer.changed &&
-                                    <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>
+                                    <Alert severity="warning" title="Hey!">Don&#39;t forget to save your changes.</Alert>
                                 }
-                                <Stack direction="row" spacing={2} sx={{my:3}} justifyContent="flex-end">
+                                <Stack direction="row" spacing={2} sx={{my: 3}} justifyContent="flex-end">
                                     <ReloadCustomerButton/>
                                     <Button type="submit" variant="contained" disabled={!canEdit || loading}>
                                         Save

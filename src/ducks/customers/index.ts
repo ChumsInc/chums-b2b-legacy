@@ -22,7 +22,7 @@ export interface CustomersState {
     recent: RecentCustomer[];
 }
 
-export const initialUserState = (preload: PreloadedState = {}): CustomersState => {
+export const initialUserState = (): CustomersState => {
     const isLoggedIn = auth.loggedIn();
     const recentCustomers = isLoggedIn
         ? localStore.getItem<RecentCustomer[]>(STORE_RECENT_ACCOUNTS, [])
@@ -56,7 +56,7 @@ export const customersReducer = createReducer(initialUserState, builder => {
             state.loaded = true;
             state.list = action.payload.sort(customerListSorter({field: 'CustomerNo', ascending: true}))
         })
-        .addCase(loadCustomerList.rejected, (state, action) => {
+        .addCase(loadCustomerList.rejected, (state) => {
             state.list = [];
             state.loading = false;
         })

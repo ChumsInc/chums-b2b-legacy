@@ -38,9 +38,9 @@ export default function Badge({
         'bg-light': type === 'light',
         'bg-dark': type === 'dark',
     });
-    if (!!url) {
+    if (url) {
         return (
-            <a href={url} target="_blank"
+            <a href={url} target="_blank" rel="noreferrer"
                className={badgeClassNames}
                style={{backgroundColor}}>
                 {text || children || ''}

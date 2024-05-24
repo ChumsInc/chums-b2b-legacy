@@ -1,15 +1,14 @@
 import React, {ChangeEvent, useId} from 'react';
-import FormControl, {FormControlProps} from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
 
 export interface CartNameInputProps extends Omit<TextFieldProps, 'value' | 'onChange'> {
     value: string;
-    onChange: (value:string) => void;
+    onChange: (value: string) => void;
 }
-const CartNameInput = ({value, onChange, ...rest}:CartNameInputProps) => {
+
+const CartNameInput = ({value, onChange, ...rest}: CartNameInputProps) => {
     const id = useId();
-    const changeHandler = (ev:ChangeEvent<HTMLInputElement>) => {
+    const changeHandler = (ev: ChangeEvent<HTMLInputElement>) => {
         onChange(ev.target.value);
     }
 

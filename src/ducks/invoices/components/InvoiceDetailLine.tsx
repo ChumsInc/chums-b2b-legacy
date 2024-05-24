@@ -12,11 +12,14 @@ import FormattedUPC from "../../../components/FormattedUPC";
 import Typography from "@mui/material/Typography";
 
 
-const InvoiceDetailLine = ({line, onAddToCart}:{line:InvoiceDetail, onAddToCart: (line:InvoiceDetail) => void}) => {
+const InvoiceDetailLine = ({line, onAddToCart}: {
+    line: InvoiceDetail,
+    onAddToCart: (line: InvoiceDetail) => void
+}) => {
     const {
-        ItemType, ItemCode, ItemCodeDesc, UnitOfMeasure, UnitOfMeasureConvFactor = 1,
-        QuantityOrdered, ProductType, InactiveItem, ExplodedKitItem, PriceLevel,
-        UnitPrice, LineDiscountPercent, ExtensionAmt, SuggestedRetailPrice, UDF_UPC, CommentText
+        ItemType, ItemCode, ItemCodeDesc, UnitOfMeasure,
+        QuantityOrdered, ProductType, ExplodedKitItem, PriceLevel,
+        LineDiscountPercent, SuggestedRetailPrice, UDF_UPC, CommentText
     } = line;
     const isKitComponent = line.KitItem === 'N' && line.ExplodedKitItem === 'C';
 
@@ -45,7 +48,7 @@ const InvoiceDetailLine = ({line, onAddToCart}:{line:InvoiceDetail, onAddToCart:
                     </TableCell>
                     <TableCell>
                         <p>{ItemCodeDesc}</p>
-                        {!!UDF_UPC && <FormattedUPC value={line.UDF_UPC} />}
+                        {!!UDF_UPC && <FormattedUPC value={line.UDF_UPC}/>}
                     </TableCell>
                     <TableCell>{UnitOfMeasure || null}</TableCell>
                     <TableCell align="right">
@@ -56,9 +59,20 @@ const InvoiceDetailLine = ({line, onAddToCart}:{line:InvoiceDetail, onAddToCart:
                         {!!LineDiscountPercent && (<div className="sale">{LineDiscountPercent}% Off</div>)}
                         {!!PriceLevel && (<PriceLevelNotice priceLevel={PriceLevel}/>)}
                     </TableCell>
-                    <TableCell  align="right" sx={{display: {xs: 'none', md: 'table-cell'}}}>{numeral(SuggestedRetailPrice).format('0,0.00')}</TableCell>
-                    <TableCell  align="right" sx={{display: {xs: 'none', md: 'table-cell'}}}>{numeral(itemPrice).format('0,0.00')}</TableCell>
-                    <TableCell align="right">{numeral(new Decimal(line.QuantityOrdered ?? 0).times(itemPrice).toString()).format('0,0.00')}</TableCell>
+                    <TableCell align="right" sx={{
+                        display: {
+                            xs: 'none',
+                            md: 'table-cell'
+                        }
+                    }}>{numeral(SuggestedRetailPrice).format('0,0.00')}</TableCell>
+                    <TableCell align="right" sx={{
+                        display: {
+                            xs: 'none',
+                            md: 'table-cell'
+                        }
+                    }}>{numeral(itemPrice).format('0,0.00')}</TableCell>
+                    <TableCell
+                        align="right">{numeral(new Decimal(line.QuantityOrdered ?? 0).times(itemPrice).toString()).format('0,0.00')}</TableCell>
                     <TableCell rowSpan={showComment ? 2 : 1}>
                         <SalesOrderLineButtons onCopyToCart={() => onAddToCart(line)}
                                                copyToCartDisabled={(!line.ProductType || line.ProductType === 'D' || line.InactiveItem === 'Y' || line.ItemType !== '1')}
@@ -81,8 +95,9 @@ const InvoiceDetailLine = ({line, onAddToCart}:{line:InvoiceDetail, onAddToCart:
                     <TableCell>{UnitOfMeasure || null}</TableCell>
                     <TableCell align="right">{numeral(QuantityOrdered).format('0,0')}</TableCell>
                     <TableCell align="right">&nbsp;</TableCell>
-                    <TableCell  sx={{display: {xs: 'none', md: 'table-cell'}}} align="right">{numeral(SuggestedRetailPrice).format('0,0.00')}</TableCell>
-                    <TableCell  sx={{display: {xs: 'none', md: 'table-cell'}}} align="right">&nbsp;</TableCell>
+                    <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}}
+                               align="right">{numeral(SuggestedRetailPrice).format('0,0.00')}</TableCell>
+                    <TableCell sx={{display: {xs: 'none', md: 'table-cell'}}} align="right">&nbsp;</TableCell>
                     <TableCell align="right">&nbsp;</TableCell>
                     <TableCell align="right">
                         <SalesOrderLineButtons onCopyToCart={() => onAddToCart(line)}
@@ -105,7 +120,7 @@ const InvoiceDetailLine = ({line, onAddToCart}:{line:InvoiceDetail, onAddToCart:
                     <TableCell colSpan={4}>
                         {CommentText}
                     </TableCell>
-                    <TableCell colSpan={2}  sx={{display: {xs: 'none', md: 'table-cell'}}}>&nbsp;</TableCell>
+                    <TableCell colSpan={2} sx={{display: {xs: 'none', md: 'table-cell'}}}>&nbsp;</TableCell>
                     <TableCell>&nbsp;</TableCell>
                     <TableCell align="right"> </TableCell>
                 </TableRow>

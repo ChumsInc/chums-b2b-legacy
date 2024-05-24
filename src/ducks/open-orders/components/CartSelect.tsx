@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useId, useState} from 'react';
+import React, {useEffect, useId, useState} from 'react';
 import {NEW_CART} from "../../../constants/orders";
 import {SalesOrderHeader} from "b2b-types";
 import FormControl from "@mui/material/FormControl";
@@ -9,14 +9,14 @@ import {useSelector} from "react-redux";
 import {selectCartsList} from "../selectors";
 import Box from "@mui/material/Box";
 
-const checkHasCart = (list:SalesOrderHeader[], cartNo:string) => {
+const checkHasCart = (list: SalesOrderHeader[], cartNo: string) => {
     return cartNo === NEW_CART || list.filter(so => so.SalesOrderNo === cartNo).length > 0;
 }
 
 const CartSelect = ({cartNo = '', shipToCode, onChange, excludeCartNo}: {
     cartNo: string;
     shipToCode?: string;
-    onChange: (value:string) => void;
+    onChange: (value: string) => void;
     excludeCartNo?: string;
 }) => {
     const id = useId();
@@ -27,7 +27,7 @@ const CartSelect = ({cartNo = '', shipToCode, onChange, excludeCartNo}: {
         setHasCart(checkHasCart(cartList, cartNo));
     }, [cartNo, cartList]);
 
-    const changeHandler = (ev:SelectChangeEvent) => {
+    const changeHandler = (ev: SelectChangeEvent) => {
         onChange(ev.target.value);
     }
 

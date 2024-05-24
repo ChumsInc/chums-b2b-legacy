@@ -17,7 +17,7 @@ const CartItemPriceDescription = ({priceCodeRecord = null, priceLevel = ''}:{
     if (!priceCodeRecord?.ItemCode && !priceLevel) {
         return null;
     }
-    if (!!priceCodeRecord?.ItemCode) {
+    if (priceCodeRecord?.ItemCode) {
         switch (priceCodeRecord?.PricingMethod) {
         case 'P':
             return (

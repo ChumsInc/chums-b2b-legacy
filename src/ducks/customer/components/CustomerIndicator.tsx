@@ -1,9 +1,10 @@
 import {useSelector} from "react-redux";
 import {
-    selectCustomerAccount, selectCustomerLoaded, selectCustomerLoading,
+    selectCustomerAccount,
+    selectCustomerLoaded,
+    selectCustomerLoading,
     selectCustomerLoadStatus,
-    selectCustomerShipTo,
-    selectCustomerShipToCode
+    selectCustomerShipTo
 } from "../selectors";
 import React, {useEffect} from "react";
 import {Tooltip} from "@mui/material";
@@ -11,8 +12,6 @@ import Box from "@mui/material/Box";
 import {billToCustomerSlug, customerNo, customerSlug, parseCustomerSlug} from "../../../utils/customer";
 import Typography from "@mui/material/Typography";
 import {useParams} from "react-router";
-import {redirect} from "react-router-dom";
-import {PATH_PROFILE} from "../../../constants/paths";
 import {loadCustomer} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
 
@@ -50,14 +49,14 @@ export default function CustomerIndicator() {
         return null;
     }
 
-    const ttTitle = [customer.CustomerName, currentShipTo?.ShipToName]
-        .filter(val => !!val)
-        .join(' / ');
     return (
-        <Tooltip title={<>
-            <Typography color="inherit" component="div">{customer.CustomerName}</Typography>
-            {currentShipTo && <Typography color="inherit" sx={{fontSize: 'small'}}>{currentShipTo.ShipToName}</Typography>}
-        </>} arrow>
+        <Tooltip title={(
+            <>
+                <Typography color="inherit" component="div">{customer.CustomerName}</Typography>
+                {currentShipTo &&
+                    <Typography color="inherit" sx={{fontSize: 'small'}}>{currentShipTo.ShipToName}</Typography>}
+            </>
+        )} arrow>
             <Box sx={{mx: 1, whiteSpace: 'pre'}}>
                 {customerNo(customer)}
                 {!!currentShipTo && <span>/{currentShipTo.ShipToCode}</span>}

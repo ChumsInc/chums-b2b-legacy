@@ -1,6 +1,6 @@
+import React, {forwardRef} from "react";
 import Box from "@mui/material/Box";
 import {TableComponents, TableVirtuoso} from "react-virtuoso";
-import React from "react";
 import {useSelector} from "react-redux";
 import {selectCustomerSort, selectFilteredCustomerList} from "../selectors";
 import {Customer} from "b2b-types";
@@ -13,14 +13,15 @@ import {accountListColumns} from "./ColumnData";
 
 
 const VirtuosoTableComponents: TableComponents<Customer> = {
-    Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
+    Scroller: forwardRef<HTMLDivElement>((props, ref) => (
         <TableContainer component={Paper} {...props} ref={ref} elevation={0}/>
     )),
     Table: (props) => (
         <Table {...props} sx={{borderCollapse: 'separate', tableLayout: 'fixed'}}/>
     ),
+    // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
     TableRow: ({item: _item, ...props}) => <TableRow {...props} />,
-    TableBody: React.forwardRef<HTMLTableSectionElement>((props, ref) => (
+    TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
         <TableBody {...props} ref={ref}/>
     ))
 }

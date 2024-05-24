@@ -18,14 +18,14 @@ import {
     postShipToAddress
 } from "../../api/customer";
 import {BasicCustomer, BillToCustomer, CustomerKey, CustomerUser, RecentCustomer, ShipToCustomer} from "b2b-types";
-import {AppDispatch, RootState} from "../../app/configureStore";
+import {RootState} from "../../app/configureStore";
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {FetchCustomerResponse} from "./types";
 import {loadOpenOrders} from "../open-orders/actions";
 import {CustomerPermissions} from "../../types/customer";
 import {selectRecentCustomers} from "../customers/selectors";
 
-export const setReturnToPath = createAction<string|null>('customer/setReturnTo');
+export const setReturnToPath = createAction<string | null>('customer/setReturnTo');
 
 export const saveUser = createAsyncThunk<CustomerUser[], CustomerUser>(
     'customer/saveUser',
@@ -108,7 +108,7 @@ export const saveBillingAddress = createAsyncThunk<FetchCustomerResponse | null,
 
 export const saveShipToAddress = createAsyncThunk<FetchCustomerResponse | null, ShipToCustomer>(
     'customer/saveShipToAddress',
-    async (arg, {dispatch}) => {
+    async (arg) => {
         return await postShipToAddress(arg);
     },
     {
@@ -139,8 +139,7 @@ export const setDefaultShipTo = createAsyncThunk<void, string>(
 
 export const loadCustomerPermissions = createAsyncThunk<CustomerPermissions | null, CustomerKey | null>(
     'customer/values/load',
-    async (arg, {getState}) => {
-        const state = getState() as RootState;
+    async (arg) => {
         return await fetchCustomerValidation(arg!);
     }, {
         condition: (arg, {getState}) => {

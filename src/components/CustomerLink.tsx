@@ -1,6 +1,5 @@
 import React from 'react';
 import {generatePath, Link as RoutedLink} from 'react-router-dom';
-import classNames from "classnames";
 import {PATH_CUSTOMER_ACCOUNT, PATH_CUSTOMER_DELIVERY} from "../constants/paths";
 import {billToCustomerSlug, customerSlug, longCustomerNo} from "../utils/customer";
 import {BasicCustomer} from "b2b-types";

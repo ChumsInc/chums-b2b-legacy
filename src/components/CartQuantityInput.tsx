@@ -1,7 +1,6 @@
-import React, {ChangeEvent, useId} from 'react';
+import React, {ChangeEvent} from 'react';
 import FormControl from '@mui/material/FormControl';
 import FilledInput from "@mui/material/FilledInput";
-import InputLabel from "@mui/material/InputLabel";
 import {InputAdornment} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
@@ -16,7 +15,7 @@ const CartQuantityInput = ({quantity, unitOfMeasure = 'EA', onChange, min = 0, d
     disabled?: boolean;
     required?: boolean;
 }) => {
-    const id = useId();
+
 
     const incrementHandler = () => {
         onChange(+quantity + 1);
@@ -43,8 +42,9 @@ const CartQuantityInput = ({quantity, unitOfMeasure = 'EA', onChange, min = 0, d
                              inputMode: 'numeric',
                              pattern: '[0-9]*',
                              readOnly: disabled,
-                             sx: {textAlign: 'center'}
+                             sx: {textAlign: 'center'},
                          }}
+                         required={required}
                          startAdornment={
                              <InputAdornment position="start">
                                  <IconButton onClick={decrementHandler} size="small" edge="start"

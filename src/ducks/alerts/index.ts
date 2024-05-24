@@ -30,7 +30,7 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
     builder
         .addCase(setAlert, (state, action) => {
             state.index += 1;
-            const [alert] = state.list.filter(alert => alert.context === action.payload.context ?? 'N/A');
+            const [alert] = state.list.filter(alert => alert.context === (action.payload.context ?? 'N/A'));
             if (alert) {
                 alert.count = (alert.count ?? 0) + 1;
                 state.list = [
@@ -69,7 +69,7 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
             (state, action) => {
                 state.index += 1;
                 const context = action.type.replace('/rejected', '');
-                const [alert] = state.list.filter(alert => alert.context === context ?? 'N/A');
+                const [alert] = state.list.filter(alert => alert.context === (context ?? 'N/A'));
                 if (alert) {
                     state.list = [
                         ...state.list.filter(a => a.alertId !== alert.alertId),
@@ -99,7 +99,7 @@ const alertsReducer = createReducer(initialAlertState, (builder) => {
                 case SET_ALERT:
                     if (isDeprecatedSetAlertAction(action)) {
                         state.index += 1;
-                        const [alert] = state.list.filter(alert => alert.context === action.props.context ?? 'N/A');
+                        const [alert] = state.list.filter(alert => alert.context === (action.props.context ?? 'N/A'));
                         if (alert) {
                             state.list = [
                                 ...state.list.filter(a => a.alertId !== alert.alertId),

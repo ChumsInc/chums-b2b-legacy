@@ -1,18 +1,18 @@
 import React from 'react';
 import AppAlert from "../../common-components/AppAlert";
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {dismissAlert, dismissContextAlert} from "./actions";
 import {useAppSelector} from "../../app/configureStore";
 import {selectContextAlerts} from "./selectors";
 
-const AlertList = ({context}:{context?:string}) => {
+const AlertList = ({context}: { context?: string }) => {
     const dispatch = useDispatch();
     const alerts = useAppSelector((state) => selectContextAlerts(state, context));
 
-    const dismissHandler = (id:number) => {
+    const dismissHandler = (id: number) => {
         dispatch(dismissAlert(id));
     }
-    const contextDismissHandler = (context:string) => {
+    const contextDismissHandler = (context: string) => {
         dispatch(dismissContextAlert(context))
     }
     return (

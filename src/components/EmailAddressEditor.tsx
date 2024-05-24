@@ -1,13 +1,10 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import PropTypes from 'prop-types';
 import FormGroupEmailAddress from "../common-components/FormGroupEmailAddress";
-import {FieldValue} from "../types/generic";
-import Alert from "@mui/material/Alert";
 import {FormHelperText} from "@mui/material";
 import {BillToCustomer, ShipToCustomer} from "b2b-types";
 
 
-const splitEmailAddresses = (emailAddress:string|null, separator:string = ';'):string[] => {
+const splitEmailAddresses = (emailAddress: string | null, separator: string = ';'): string[] => {
     if (!emailAddress) {
         return [];
     }
@@ -17,7 +14,7 @@ const splitEmailAddresses = (emailAddress:string|null, separator:string = ';'):s
         .filter(addr => addr !== '');
 };
 
-const joinEmailAddresses = (emailAddresses:string[]):string => {
+const joinEmailAddresses = (emailAddresses: string[]): string => {
     return emailAddresses
         .map(addr => addr.trim())
         .filter(addr => addr !== '')
@@ -41,7 +38,7 @@ const EmailAddressEditor = ({
     label: string;
     required?: boolean;
     readOnly?: boolean;
-    onChange: (arg:Partial<BillToCustomer&ShipToCustomer>) => void;
+    onChange: (arg: Partial<BillToCustomer & ShipToCustomer>) => void;
 }) => {
     const [emailAddresses, setEmailAddresses] = useState<string[]>(splitEmailAddresses(value));
 
@@ -54,8 +51,7 @@ const EmailAddressEditor = ({
     }, [value]);
 
 
-    const changeHandler = (index:number) => (ev:ChangeEvent<HTMLInputElement>) =>
-    {
+    const changeHandler = (index: number) => (ev: ChangeEvent<HTMLInputElement>) => {
         if (!allowMultiple) {
             return onChange({EmailAddress: ev.target.value});
         }
@@ -73,7 +69,7 @@ const EmailAddressEditor = ({
                 {emailAddresses
                     .map((addr, index) => {
                         const otherLength = emailAddresses.filter(a => a !== addr)
-                            .reduce((acc:number, val:string) => acc + val.length, 0);
+                            .reduce((acc: number, val: string) => acc + val.length, 0);
                         const maxLength = Math.min(maxEmailLength, Math.max(maxMultipleLength - otherLength, addr.length));
                         return (
                             <FormGroupEmailAddress key={index} label={label} value={addr}

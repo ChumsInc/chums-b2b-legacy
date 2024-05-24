@@ -211,7 +211,7 @@ const cartReducer = createReducer(initialCartState, builder => {
             state.shippingAccount.value = action.payload.value;
             state.shippingAccount.enabled = action.payload.enabled;
         })
-        .addCase(promoteCart.fulfilled, (state, action) => {
+        .addCase(promoteCart.fulfilled, (state) => {
             state.cartNo = NEW_CART;
             state.cartTotal = 0;
             state.cartQuantity = 0;
@@ -276,7 +276,7 @@ const cartReducer = createReducer(initialCartState, builder => {
                             state.cartName = '';
                             state.cartTotal = 0;
                             state.cartQuantity = 0;
-                        } else if (!!existing) {
+                        } else if (existing) {
                             state.cartNo = existing.SalesOrderNo;
                             state.cartName = existing.CustomerPONo ?? '';
                             state.cartTotal = new Decimal(existing.TaxableAmt).add(existing.NonTaxableAmt).toNumber();

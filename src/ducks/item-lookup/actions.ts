@@ -11,8 +11,7 @@ export const loadItemLookup = createAsyncThunk<ItemSearchResult[], string>(
         return await fetchItemLookup(arg);
     },
     {
-        condition: (arg, {getState}) => {
-            const state = getState() as RootState;
+        condition: (arg) => {
             return !!arg.trim()
 
         }

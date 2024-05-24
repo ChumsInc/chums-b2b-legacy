@@ -1,7 +1,8 @@
 import {createAction, createAsyncThunk} from "@reduxjs/toolkit";
 import {RootState} from "../../app/configureStore";
 import {
-    selectProductCartItem, selectProductColorCode,
+    selectProductCartItem,
+    selectProductColorCode,
     selectProductCustomerKey,
     selectProductLoading,
     selectSelectedProduct
@@ -13,7 +14,6 @@ import {defaultCartItem, defaultVariant, getMSRP, getPrices, getSalesUM, hasVari
 import {selectLoggedIn} from "../user/selectors";
 import {isSellAsColors, isSellAsMix, updateCartProductPricing} from "./utils";
 import {parseImageFilename} from "../../common/image";
-import {priceRecord} from "../../utils/customer";
 
 export interface LoadProductResponse {
     product: Product | null;
@@ -62,13 +62,13 @@ export const loadProduct = createAsyncThunk<LoadProductResponse | null, string>(
 )
 
 
-export const setColorCode = createAsyncThunk<CartProduct|null, string>(
+export const setColorCode = createAsyncThunk<CartProduct | null, string>(
     'products/setColorCode',
     (arg, {getState}) => {
         const state = getState() as RootState;
         const existingCartItem = selectProductCartItem(state);
         const selectedProduct = selectSelectedProduct(state);
-        const customerKey =  selectProductCustomerKey(state);
+        const customerKey = selectProductCustomerKey(state);
         const customerPricing = selectCustomerPricing(state);
         const account = selectCustomerAccount(state);
         if (isSellAsColors(selectedProduct)) {
@@ -119,7 +119,7 @@ export const setCurrentVariant = createAsyncThunk<SetVariantResponse, ProductVar
     (arg, {getState}) => {
         const state = getState() as RootState;
         const loggedIn = selectLoggedIn(state);
-        const customerKey =  selectProductCustomerKey(state);
+        const customerKey = selectProductCustomerKey(state);
         const priceCodes = selectCustomerPricing(state);
         const customerAccount = selectCustomerAccount(state);
         const msrp = getMSRP(arg.product);

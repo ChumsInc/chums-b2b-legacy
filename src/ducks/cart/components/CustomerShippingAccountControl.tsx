@@ -9,7 +9,9 @@ import IconButton from "@mui/material/IconButton";
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
-const CustomerShippingAccountControl = ({readOnly = false}) => {
+const CustomerShippingAccountControl = ({readOnly = false}:{
+    readOnly?: boolean;
+}) => {
     const dispatch = useAppDispatch();
     const shippingAccount = useSelector(selectShippingAccount);
     const id = useId();

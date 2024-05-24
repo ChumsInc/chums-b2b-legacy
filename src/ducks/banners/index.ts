@@ -20,8 +20,8 @@ export const initialBannersState = (preloadedState: PreloadedState | null = null
     return ({
         list: preloadedState?.banners?.list ?? [],
         loading: false,
-        loaded: !!preloadedState?.banners?.list.length ?? false,
-        updated: !!preloadedState?.banners?.list.length ? new Date().valueOf() : 0,
+        loaded: !!preloadedState?.banners?.list.length,
+        updated: preloadedState?.banners?.list.length ? new Date().valueOf() : 0,
     });
 }
 

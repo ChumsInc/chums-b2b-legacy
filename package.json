@@ -89,7 +89,7 @@
     "babel-loader": "^9.1.0",
     "clean-webpack-plugin": "^4.0.0",
     "core-js": "^3.8.2",
-    "eslint": "^9.3.0",
+    "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
     "globals": "^15.3.0",
     "nodemon": "^3.0.1",

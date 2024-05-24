@@ -6,7 +6,6 @@ import isEmail from "validator/lib/isEmail";
 import {selectSignUpStatus} from "./selectors";
 import {LoadProfileProps, SignUpProfile} from "./types";
 import {APIErrorResponse} from "../../types/generic";
-import {isErrorResponse} from "../../utils/typeguards";
 
 export const signUpUser = createAsyncThunk<unknown, SignUpUser>(
     'sign-up/saveUser',
@@ -21,7 +20,7 @@ export const signUpUser = createAsyncThunk<unknown, SignUpUser>(
     }
 )
 
-export const loadSignUpProfile = createAsyncThunk<SignUpProfile|APIErrorResponse|null, LoadProfileProps>(
+export const loadSignUpProfile = createAsyncThunk<SignUpProfile | APIErrorResponse | null, LoadProfileProps>(
     'sign-up/loadProfile',
     async (arg) => {
         return await fetchSignUpProfile(arg);

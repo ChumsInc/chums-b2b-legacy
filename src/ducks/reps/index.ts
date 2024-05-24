@@ -1,5 +1,4 @@
 import {Salesperson} from "b2b-types";
-import {PreloadedState} from "../../types/preload";
 import {createReducer} from "@reduxjs/toolkit";
 import {setLoggedIn} from "../user/actions";
 import {userRepListSort} from "../user/utils";
@@ -11,7 +10,7 @@ export interface RepsState {
     loaded: boolean;
 }
 
-export const initialRepState = (preload:PreloadedState = {}):RepsState => {
+export const initialRepState = (): RepsState => {
     return {
         list: [],
         loading: false,

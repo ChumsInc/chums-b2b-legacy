@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Route} from 'react-router-dom';
+import {BrowserRouter} from 'react-router-dom';
 import {Provider} from 'react-redux';
 import App from "../app/App";
 import {createRoot} from "react-dom/client";
@@ -15,7 +15,7 @@ root.render(
         <Provider store={store}>
             <HelmetProvider>
                 <BrowserRouter>
-                    <App />
+                    <App/>
                 </BrowserRouter>
             </HelmetProvider>
         </Provider>

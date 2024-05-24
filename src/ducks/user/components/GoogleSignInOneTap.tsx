@@ -3,13 +3,6 @@ import {signInWithGoogle} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
 import {useGoogleOneTapLogin} from "@react-oauth/google";
 
-const isExpired = (expires: number) => {
-    if (!expires || expires < 0) {
-        return true;
-    }
-    return new Date(expires * 1000).valueOf() <= new Date().valueOf();
-}
-
 const GoogleSignInOneTap = ({onDone}:{onDone?: () => void}) => {
     const dispatch = useAppDispatch();
 

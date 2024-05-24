@@ -4,16 +4,6 @@ import Typography from "@mui/material/Typography";
 import AlertTitle from "@mui/material/AlertTitle";
 import Stack from "@mui/material/Stack";
 
-
-const AlertDismisser = ({onDismiss}: {
-    onDismiss: () => void;
-}) => {
-    return (
-        <button type="button" className="btn-close" aria-label="Close"
-                onClick={() => onDismiss()}/>
-    )
-};
-
 export interface AppAlertProps extends AlertProps {
     alertId?: number;
     context?: string;

@@ -74,7 +74,7 @@ export const companyPriority = (code: string): number => {
  * @param {string} [ShipToCode]
  * @return {string}
  */
-export const longCustomerNo = ({ARDivisionNo, CustomerNo, ShipToCode}: CustomerKey): string => !!ShipToCode
+export const longCustomerNo = ({ARDivisionNo, CustomerNo, ShipToCode}: CustomerKey): string => ShipToCode
     ? `${ARDivisionNo}-${CustomerNo}/${ShipToCode}`
     : `${ARDivisionNo}-${CustomerNo}`;
 
@@ -318,7 +318,7 @@ export const customerSlug = (customer: CustomerKey | null): string | null => {
     if (!customer) {
         return null;
     }
-    return !!customer.ShipToCode
+    return customer.ShipToCode
         ? shipToCustomerSlug(customer)
         : billToCustomerSlug(customer);
 }
@@ -366,7 +366,7 @@ export const parseCustomerSlug = (slug: string): BasicCustomer | null => {
     return {ARDivisionNo, CustomerNo, ShipToCode};
 }
 
-export const shortCustomerKey = (customer: CustomerKey | null) => !!customer ? `${customer?.ARDivisionNo ?? ''}-${customer.CustomerNo ?? ''}` : '';
+export const shortCustomerKey = (customer: CustomerKey | null) => customer ? `${customer?.ARDivisionNo ?? ''}-${customer.CustomerNo ?? ''}` : '';
 
 export const customerNo = (customer: CustomerKey) => `${customer.ARDivisionNo}-${customer.CustomerNo}` + (customer.ShipToCode ? `:${customer.ShipToCode}` : '');
 

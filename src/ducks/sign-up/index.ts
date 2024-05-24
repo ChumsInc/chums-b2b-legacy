@@ -23,7 +23,7 @@ const signUpReducer = createReducer(initialState(), builder => {
         .addCase(signUpUser.pending, (state) => {
             state.status = 'saving';
         })
-        .addCase(signUpUser.fulfilled, (state, action) => {
+        .addCase(signUpUser.fulfilled, (state) => {
             state.status = 'success';
 
         })
@@ -44,7 +44,7 @@ const signUpReducer = createReducer(initialState(), builder => {
             }
             state.status = 'idle';
         })
-        .addCase(loadSignUpProfile.rejected, (state, action) => {
+        .addCase(loadSignUpProfile.rejected, (state) => {
             state.profile = null;
             state.status = 'idle';
         })

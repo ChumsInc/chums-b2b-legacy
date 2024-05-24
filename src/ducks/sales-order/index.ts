@@ -248,6 +248,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
         .addCase(loadSalesOrder.fulfilled, (state, action) => {
             state.processing = 'idle';
             if (action.payload && isClosedSalesOrder(action.payload)) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 const {invoices, detail, payment, b2bUsers, ...rest} = action.payload;
                 state.header = rest;
                 state.detail = [...detail].sort(defaultDetailSorter);

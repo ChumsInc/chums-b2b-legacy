@@ -28,7 +28,7 @@ export default function DeleteCartButton({salesOrderNo, disabled, children, ...r
 
     const confirmHandler = async () => {
         setBusy(true);
-        const res = await dispatch(removeCart(header!));
+        await dispatch(removeCart(header!));
         setOpen(false);
         setBusy(false);
         const path = generatePath('/account/:customerSlug/carts', {
