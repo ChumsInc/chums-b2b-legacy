@@ -9,6 +9,9 @@ import Select from "../common-components/Select";
 import {paymentCardShape} from "../constants/myPropTypes";
 
 const PaymentOption = ({paymentType, last4, exp}) => {
+    if (!PAYMENT_TYPES[paymentType]) {
+        return null;
+    }
     const {description, allowTerms, disabled, allowCC} = PAYMENT_TYPES[paymentType];
     const fullDescription = `${description} ${!!allowCC && !!last4 ? '#' + last4 : ''} ${!!allowCC && !!exp ? exp : ''}`;
     return (

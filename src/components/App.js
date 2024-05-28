@@ -44,8 +44,6 @@ import InvoicePage from "./InvoicePage";
 import ErrorBoundary from "../common-components/ErrorBoundary";
 import {selectCurrentCustomer, selectLoggedIn, selectUserLoading} from "../selectors/user";
 import {selectCustomerLoading} from "../selectors/customer";
-import {LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 
 const App = () => {
@@ -81,71 +79,69 @@ const App = () => {
 
     return (
         <>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Route component={Header}/>
-                <main>
-                    <DocumentTitle/>
-                    <Route component={LifestyleImage}/>
-                    <Route path={PATH_HOME} component={HomeV2}/>
-                    <Route path="/" exact component={HomeV2}/>
-                    <div className="container main-container">
-                        {!!loggedIn && <AppUpdateLocalLogin/>}
-                        <AlertList/>
+            <Route component={Header}/>
+            <main>
+                <DocumentTitle/>
+                <Route component={LifestyleImage}/>
+                <Route path={PATH_HOME} component={HomeV2}/>
+                <Route path="/" exact component={HomeV2}/>
+                <div className="container main-container">
+                    {!!loggedIn && <AppUpdateLocalLogin/>}
+                    <AlertList/>
 
-                        {/* The login and signup paths will redirect away to home when the user is logged in */}
-                        <ErrorBoundary>
-                            <Route path={PATH_LOGIN} component={Login}/>
-                            <Route path={PATH_SIGNUP} component={SignUp}/>
-                            <Route path={PATH_SET_PASSWORD} component={ResetPassword}/>
-                        </ErrorBoundary>
+                    {/* The login and signup paths will redirect away to home when the user is logged in */}
+                    <ErrorBoundary>
+                        <Route path={PATH_LOGIN} component={Login}/>
+                        <Route path={PATH_SIGNUP} component={SignUp}/>
+                        <Route path={PATH_SET_PASSWORD} component={ResetPassword}/>
+                    </ErrorBoundary>
 
-                        <Route path={PATH_PRODUCT} component={ProductRouter}/>
-                        {!loggedIn && (
-                            <Route path={PATH_RESOURCES_CHUMS_REPS}>
-                                <Redirect to={PATH_PAGE_RESOURCES}/>
-                            </Route>
-                        )}
-                        <Route path={PATH_PAGE} component={ContentPage}/>
-                        {!loggedIn && (
-                            <Fragment>
-                                <Route exact path={PATH_SALES_ORDERS} component={Login}/>
-                                <Route exact path={PATH_SALES_ORDER} component={Login}/>
-                            </Fragment>
-                        )}
-                        {!!loggedIn && (
-                            <Fragment>
-                                <Route path={PATH_LOGOUT} component={Logout}/>
-                                <Route exact path={PATH_PROFILE} component={ProfilePage}/>
-                                <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage}/>
-                                <Route path={PATH_PROFILE_ACCOUNT} component={AccountList}/>
-                                <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb}/>
-                                <Route path={PATH_INVOICE} component={OrdersBreadcrumb}/>
-                                <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer}/>
-                                {!!currentCustomer.CustomerNo && (
-                                    <Fragment>
-                                        <ErrorBoundary>
-                                            <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage}/>
-                                            {/*<Route exact path={PATH_CART_CHECKOUT} component={CartPage}/>*/}
-                                            {/*<Route exact path={PATH_SALES_ORDER_OPEN} component={SalesOrderPage}/>*/}
-                                            {/*<Route exact path={PATH_SALES_ORDER_PAST} component={SalesOrderPage}/>*/}
-                                            {/*<Route exact path={PATH_SALES_ORDER_MASTER} component={SalesOrderPage}/>*/}
-                                            {/*<Route exact path={PATH_SALES_ORDER_INVOICES} component={SalesOrderPage}/>*/}
-                                        </ErrorBoundary>
-                                        <ErrorBoundary>
-                                            <Route exact path={PATH_INVOICE} component={InvoicePage}/>
+                    <Route path={PATH_PRODUCT} component={ProductRouter}/>
+                    {!loggedIn && (
+                        <Route path={PATH_RESOURCES_CHUMS_REPS}>
+                            <Redirect to={PATH_PAGE_RESOURCES}/>
+                        </Route>
+                    )}
+                    <Route path={PATH_PAGE} component={ContentPage}/>
+                    {!loggedIn && (
+                        <Fragment>
+                            <Route exact path={PATH_SALES_ORDERS} component={Login}/>
+                            <Route exact path={PATH_SALES_ORDER} component={Login}/>
+                        </Fragment>
+                    )}
+                    {!!loggedIn && (
+                        <Fragment>
+                            <Route path={PATH_LOGOUT} component={Logout}/>
+                            <Route exact path={PATH_PROFILE} component={ProfilePage}/>
+                            <Route path={PATH_CUSTOMER_ACCOUNT} component={AccountPage}/>
+                            <Route path={PATH_PROFILE_ACCOUNT} component={AccountList}/>
+                            <Route path={PATH_SALES_ORDER_BREADCRUMB} component={OrdersBreadcrumb}/>
+                            <Route path={PATH_INVOICE} component={OrdersBreadcrumb}/>
+                            <Route exact path={PATH_SALES_ORDERS} component={OrdersContainer}/>
+                            {!!currentCustomer.CustomerNo && (
+                                <Fragment>
+                                    <ErrorBoundary>
+                                        <Route exact path={PATH_SALES_ORDER} component={SalesOrderPage}/>
+                                        {/*<Route exact path={PATH_CART_CHECKOUT} component={CartPage}/>*/}
+                                        {/*<Route exact path={PATH_SALES_ORDER_OPEN} component={SalesOrderPage}/>*/}
+                                        {/*<Route exact path={PATH_SALES_ORDER_PAST} component={SalesOrderPage}/>*/}
+                                        {/*<Route exact path={PATH_SALES_ORDER_MASTER} component={SalesOrderPage}/>*/}
+                                        {/*<Route exact path={PATH_SALES_ORDER_INVOICES} component={SalesOrderPage}/>*/}
+                                    </ErrorBoundary>
+                                    <ErrorBoundary>
+                                        <Route exact path={PATH_INVOICE} component={InvoicePage}/>
 
-                                        </ErrorBoundary>
-                                    </Fragment>
-                                )}
-                                {!currentCustomer.CustomerNo && (
-                                    <Route exact path={PATH_SALES_ORDER} component={AccountList}/>
-                                )}
-                            </Fragment>
-                        )}
-                    </div>
-                </main>
-                <Footer/>
-            </LocalizationProvider>
+                                    </ErrorBoundary>
+                                </Fragment>
+                            )}
+                            {!currentCustomer.CustomerNo && (
+                                <Route exact path={PATH_SALES_ORDER} component={AccountList}/>
+                            )}
+                        </Fragment>
+                    )}
+                </div>
+            </main>
+            <Footer/>
         </>
     )
 }
