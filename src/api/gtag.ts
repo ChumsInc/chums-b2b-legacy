@@ -130,7 +130,6 @@ export function sendGtagEvent(eventName: GtagEventName, options?: GtagEventArgs)
             options = {};
         }
         global.window.gtag('event', eventName, options);
-        console.log('dataLayer:event', global.window.dataLayer);
     }
 }
 
@@ -142,6 +141,5 @@ export function configGtag(options?: GtagConfigArgs) {
     const gtagID = window.Chums?.gtagID;
     if (gtag && gtagID) {
         gtag('config', gtagID, options ?? {});
-        console.log('dataLayer:configGtag', window.dataLayer);
     }
 }
