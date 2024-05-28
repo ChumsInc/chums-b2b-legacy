@@ -6,7 +6,11 @@ module.exports = function (api) {
         "@babel/preset-react"
     ];
 
-    const plugins = [];
+    const plugins = [
+        "@babel/plugin-transform-property-mutators",
+        "@babel/plugin-transform-regenerator",
+        "@babel/plugin-transform-async-to-generator",
+    ];
 
 
     return {

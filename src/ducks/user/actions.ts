@@ -8,7 +8,7 @@ import {
     STORE_USER_ACCESS
 } from '../../constants/stores';
 import {auth} from '../../api/IntranetAuthService';
-import {getProfile, getSignInProfile} from "../../utils/jwtHelper";
+import {getProfile, getSignInProfile, getTokenExpiry} from "../../utils/jwtHelper";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {AUTH_LOCAL} from "../../constants/app";
 import {
@@ -47,6 +47,7 @@ import {StoredProfile} from "../../types/user";
 import {loadCustomerList} from "../customers/actions";
 import {isErrorResponse} from "../../utils/typeguards";
 import {APIErrorResponse} from "../../types/generic";
+import {selectActionStatus} from "../open-orders/selectors";
 
 export const setLoggedIn = createAction<SetLoggedInProps>('user/setLoggedIn');
 
@@ -65,7 +66,8 @@ export const loginUser = createAsyncThunk<string | APIErrorResponse, LoginUserPr
             auth.setToken(token);
             localStore.setItem(STORE_AUTHTYPE, AUTH_LOCAL);
             auth.setProfile(getProfile(token));
-            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
+            const expires = getTokenExpiry(token);
+            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token, expires}));
             const profileResponse = await dispatch(loadProfile());
             if (isFulfilled(profileResponse) && profileResponse.payload.accounts?.length === 1) {
                 dispatch(loadCustomerList(profileResponse.payload.accounts[0]))
@@ -87,7 +89,9 @@ export const updateLocalAuth = createAsyncThunk<void, void>(
         try {
             const token = await postLocalReauth();
             auth.setToken(token);
-            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token}));
+            auth.setProfile(getProfile(token));
+            const expires = getTokenExpiry(token);
+            dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token, expires}));
         } catch (err: unknown) {
             dispatch(setLoggedIn({loggedIn: false}));
             auth.removeToken();
@@ -98,8 +102,8 @@ export const updateLocalAuth = createAsyncThunk<void, void>(
         condition: (_, {getState}) => {
             const state = getState() as RootState;
             const loggedIn = selectLoggedIn(state);
-            const authType = selectAuthType(state);
-            return loggedIn && authType === AUTH_LOCAL;
+            const actionStatus = selectUserActionStatus(state);
+            return loggedIn && actionStatus === 'idle';
         }
     }
 )

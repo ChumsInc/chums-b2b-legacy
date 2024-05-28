@@ -17,10 +17,9 @@ import {
     loginUser,
     resetPassword,
     saveUserProfile,
-    setLoggedIn,
-    setNewPassword,
+    setLoggedIn, setNewPassword,
     setUserAccess,
-    signInWithGoogle
+    signInWithGoogle, updateLocalAuth
 } from "./actions";
 import {
     getPrimaryAccount,
@@ -34,6 +33,7 @@ import {DeprecatedUserProfileAction, UserPasswordState, UserSignupState} from ".
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {LoadStatus} from "../../types/generic";
+
 
 
 export interface UserState {
@@ -73,7 +73,7 @@ export const initialUserState = (): UserState => {
     const currentAccess: UserCustomerAccess | null = isLoggedIn
         ? localStore.getItem<UserCustomerAccess | null>(STORE_USER_ACCESS, (accounts.length === 1 ? accounts[0] : null))
         : null;
-    const authType = isLoggedIn ? localStore.getItem<string | null>(STORE_AUTHTYPE, null) : null;
+    const authType = isLoggedIn ? localStore.getItem<string|null>(STORE_AUTHTYPE, null) : null;
 
     return {
         token: existingToken ?? null,
@@ -119,6 +119,15 @@ const userReducer = createReducer(initialUserState, (builder) => {
         .addCase(loginUser.rejected, (state) => {
             state.actionStatus = 'idle';
         })
+        .addCase(updateLocalAuth.pending, (state) => {
+            state.actionStatus === 'logging-in';
+        })
+        .addCase(updateLocalAuth.fulfilled, (state) => {
+            state.actionStatus === 'idle';
+        })
+        .addCase(updateLocalAuth.rejected, (state) => {
+            state.actionStatus === 'idle';
+        })
         .addCase(setLoggedIn, (state, action) => {
             if (!state.loggedIn && action.payload?.loggedIn) {
                 const _initialUserState = initialUserState();
@@ -133,6 +142,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             }
             state.loggedIn = action.payload.loggedIn;
             state.token = action.payload.token ?? null;
+            state.tokenExpires = action.payload.expires ?? 0;
             if (!action.payload?.loggedIn) {
                 const _initialUserState = initialUserState();
                 state.token = null;
@@ -167,7 +177,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 state.access.current = getPrimaryAccount(state.accounts) ?? null;
             }
         })
-        .addCase(loadProfile.rejected, (state) => {
+        .addCase(loadProfile.rejected, (state, action) => {
             state.actionStatus = 'idle';
         })
         .addCase(setCustomerAccount.fulfilled, (state, action) => {
@@ -245,7 +255,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
         .addCase(setNewPassword.fulfilled, (state, action) => {
             state.actionStatus = 'idle';
             if (action.payload?.success) {
-                //@TODO Should something go here?
+
             }
         })
         .addCase(setNewPassword.rejected, (state) => {

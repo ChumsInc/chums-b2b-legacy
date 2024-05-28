@@ -24,9 +24,9 @@ const ProductImageList = ({images}: ProductImageListProps) => {
     const onSelectImage = async (img: ProductAlternateImage) => {
         if (img.image !== image?.image) {
             setShow(false);
-            await waitForIt(15);
+            await waitForIt(150);
             setImage(img);
-            await waitForIt(350);
+            await waitForIt(150);
             setShow(true);
         }
     }
@@ -71,6 +71,7 @@ const ProductImageList = ({images}: ProductImageListProps) => {
                         </Paper>
                     ))}
             </Stack>
+            <link rel="preload" as="image" imageSrcSet={images.map(img => `/images/products/800/${img.image} 800w`).join(', ')} />
         </Stack>
     )
 }
