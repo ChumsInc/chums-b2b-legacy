@@ -42,6 +42,7 @@ export interface SetLoggedInProps {
     loggedIn: boolean;
     authType?: string;
     token?: string;
+    expires?: number;
 }
 
 export interface UserProfileResponse {

@@ -59,6 +59,11 @@ export const getProfile = (token:string):StoredProfile|null => {
     }
 };
 
+export function getTokenExpiry(token:string):number {
+    const decoded = jwtDecode(token);
+    return decoded.exp ?? 0;
+}
+
 export function getTokenExpirationDate(token:string):Date|null {
     const decoded = jwtDecode(token);
     if (!decoded.exp) {
@@ -70,10 +75,13 @@ export function getTokenExpirationDate(token:string):Date|null {
     return date;
 }
 
-export function isTokenExpired(token:string) {
+export function isTokenExpired(token:string|null) {
+    if (!token) {
+        return true;
+    }
     const date = getTokenExpirationDate(token);
     if (date === null) {
-        return false;
+        return true;
     }
     return !(date.valueOf() > new Date().valueOf());
 }

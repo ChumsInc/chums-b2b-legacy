@@ -19,7 +19,7 @@ import {
     saveUserProfile,
     setLoggedIn, setNewPassword,
     setUserAccess,
-    signInWithGoogle
+    signInWithGoogle, updateLocalAuth
 } from "./actions";
 import {
     getPrimaryAccount,
@@ -33,7 +33,7 @@ import {DeprecatedUserProfileAction, UserPasswordState, UserSignupState} from ".
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {LoadStatus} from "../../types/generic";
-import {isErrorResponse} from "../../utils/typeguards";
+
 
 
 export interface UserState {
@@ -113,11 +113,20 @@ const userReducer = createReducer(initialUserState, (builder) => {
         .addCase(loginUser.pending, (state) => {
             state.actionStatus = 'logging-in';
         })
-        .addCase(loginUser.fulfilled, (state, action) => {
+        .addCase(loginUser.fulfilled, (state) => {
             state.actionStatus = 'idle';
         })
-        .addCase(loginUser.rejected, (state, action) => {
+        .addCase(loginUser.rejected, (state) => {
             state.actionStatus = 'idle';
+        })
+        .addCase(updateLocalAuth.pending, (state) => {
+            state.actionStatus === 'logging-in';
+        })
+        .addCase(updateLocalAuth.fulfilled, (state) => {
+            state.actionStatus === 'idle';
+        })
+        .addCase(updateLocalAuth.rejected, (state) => {
+            state.actionStatus === 'idle';
         })
         .addCase(setLoggedIn, (state, action) => {
             if (!state.loggedIn && action.payload?.loggedIn) {
@@ -133,6 +142,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             }
             state.loggedIn = action.payload.loggedIn;
             state.token = action.payload.token ?? null;
+            state.tokenExpires = action.payload.expires ?? 0;
             if (!action.payload?.loggedIn) {
                 const _initialUserState = initialUserState();
                 state.token = null;
@@ -149,7 +159,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 state.picture = null;
             }
         })
-        .addCase(loadProfile.pending, (state, action) => {
+        .addCase(loadProfile.pending, (state) => {
             state.actionStatus = 'pending';
         })
         .addCase(loadProfile.fulfilled, (state, action) => {
@@ -194,7 +204,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
             }
 
         })
-        .addCase(signInWithGoogle.pending, (state, action) => {
+        .addCase(signInWithGoogle.pending, (state) => {
             state.actionStatus = 'pending';
         })
         .addCase(signInWithGoogle.fulfilled, (state, action) => {
@@ -248,7 +258,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
 
             }
         })
-        .addCase(setNewPassword.rejected, (state, action) => {
+        .addCase(setNewPassword.rejected, (state) => {
             state.actionStatus = 'idle';
         })
         .addCase(changePassword.pending, (state) => {
@@ -269,7 +279,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
                     console.log('userReducer', action?.error);
                 }
             })
-        .addMatcher(is401Action, (state, action) => {
+        .addMatcher(is401Action, (state) => {
             state.loggedIn = false;
             state.token = null;
             state.tokenExpires = 0;
