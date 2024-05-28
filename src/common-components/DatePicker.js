@@ -39,7 +39,7 @@ const DatePicker = ({value, onChange, readOnly, disabled, minDate}) => {
     return (
         <MUIDatePicker slots={{textField: BrowserInput}} value={dayjs(value)}
                        onChange={changeHandler}
-                       readOnly={readOnly} disabled={disabled}
+                         readOnly={readOnly} disabled={disabled}
                        minDate={dayjs(minDate)}
                        maxDate={dayjs(minDate).add(1, 'year')}/>
     )

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {orderHeaderPropType, paymentCardShape, shipToAddressPropType} from "../constants/myPropTypes";
 import FormGroupTextInput from "../common-components/FormGroupTextInput";
 import FormGroup from "../common-components/FormGroup";
-import DatePicker from "../common-components/DatePicker";
 import ShipToAddress from "./Address/ShipToAddress";
 import {CART_PROGRESS_STATES, ORDER_TYPE} from "../constants/orders";
 import {duplicateOrder, sendOrderEmail} from "../actions/salesOrder";
@@ -232,33 +231,47 @@ class InvoiceHeader extends Component {
                     <div className="col-md-6">
                         {!!OrderDate && !!SalesOrderNo && (
                             <FormGroup colWidth={8} label="Order Date">
-                                <DatePicker value={OrderDate || null} readOnly={true}/>
+                                <input type="date" value={dayjs(OrderDate).format('YYYY-MM-DD')} readOnly
+                                       className="form-control form-control-sm"/>
                             </FormGroup>
                         )}
                         {!cancelHidden && (
                             <FormGroup colWidth={8} label="Cancel Date">
-                                <DatePicker value={UDF_CANCEL_DATE || null} onChange={this.onChangeField}
-                                            readOnly={true}/>
+                                <input type="date" value={dayjs(UDF_CANCEL_DATE).format('YYYY-MM-DD')} readOnly
+                                       className="form-control form-control-sm"/>
                             </FormGroup>
                         )}
                         <FormGroup colWidth={8} label="Invoiced / Due Date">
-                            <div className="input-group">
-                                <DatePicker value={InvoiceDate || null} onChange={this.onChangeField}
-                                            readOnly={true}
-                                            disabled={true}/>
-                                <DatePicker value={InvoiceDueDate || null} onChange={this.onChangeField}
-                                            readOnly={true}
-                                            disabled={true}/>
+                            <div className="row g-3">
+                                <div className="col-sm-6">
+                                    <input type="date"
+                                           value={dayjs(InvoiceDate).isValid() ? dayjs(InvoiceDate).format('YYYY-MM-DD') : ''}
+                                           readOnly disabled
+                                           className="form-control form-control-sm"/>
+                                </div>
+                                <div className="col-sm-6">
+                                    <input type="date"
+                                           value={dayjs(InvoiceDueDate).isValid() ? dayjs(InvoiceDueDate).format('YYYY-MM-DD') : ''}
+                                           readOnly disabled
+                                           className="form-control form-control-sm"/>
+                                </div>
                             </div>
                         </FormGroup>
                         <FormGroup colWidth={8} label="Ship Date">
-                            <div className="input-group">
-                                <DatePicker value={ShipDate || null} readOnly={true}/>
-                                <ShippingMethodSelect value={ShipVia || ''} onChange={noop}
-                                                      readOnly={true}
-                                                      onChangeShippingAccount={noop}
-                                                      allowCustomerAccount={false}
-                                                      shippingAccount={shippingAccount}/>
+                            <div className="row g-3">
+                                <div className="col-sm-6">
+                                    <input type="date"
+                                           value={dayjs(ShipDate).isValid() ? dayjs(ShipDate).format('YYYY-MM-DD') : ''}
+                                           readOnly disabled
+                                           className="form-control form-control-sm"/>
+                                </div>
+                                <div className="col-sm-6">
+                                    <ShippingMethodSelect value={ShipVia || ''} onChange={noop}
+                                                          readOnly={true}
+                                                          onChangeShippingAccount={noop}
+                                                          allowCustomerAccount={false}
+                                                          shippingAccount={shippingAccount}/>
+                                </div>
                             </div>
                             {(Track || []).map(track => (
                                 <TrackingLinkBadge key={track.PackageNo} {...track}/>)
