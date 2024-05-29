@@ -1,11 +1,12 @@
 import React from 'react';
-import DataTableRow from "../DataTableRow/DataTableRow";
-import {DataTableTBodyProps} from "./DataTableTBody.types";
+import DataTableRow from "./DataTableRow";
 import {noop} from "../../utils/general";
-import {TableBody} from "@mui/material";
+import TableBody from "@mui/material/TableBody";
+import {DataTableTBodyProps} from "./types";
+import {KeyedObject} from "../../types/generic";
 
 
-const DataTableTBody = ({
+export const DataTableTBody = <T = KeyedObject>({
                             fields,
                             data,
                             keyField,
@@ -15,11 +16,12 @@ const DataTableTBody = ({
                             selected = null,
                             children,
                             ...rest
-                        }: DataTableTBodyProps) => {
+                        }: DataTableTBodyProps<T>) => {
 
     return (
         <TableBody {...rest}>
         {data.map(row => {
+            // @ts-ignore
             const keyValue = typeof keyField === "function" ? keyField(row) : row[keyField];
             const isSelected = typeof selected === 'function' ? selected(row) : keyValue === (selected ?? false);
             if (renderRow) {

@@ -18,7 +18,7 @@ const SubNavItem = ({title, description, url}:{
 
 const SubNavItemList = ({items = [], urlFormatter, itemSorter}:{
     items:MenuItem[];
-    urlFormatter: (val:any) => string;
+    urlFormatter: (val:string) => string;
     itemSorter: (a:MenuItem, b:MenuItem) => number;
 }) => {
     return (
@@ -43,7 +43,7 @@ const SubNavColumn = ({
     title: string;
     url?: string;
     subMenu?:Menu|null;
-    urlFormatter?: (val:any) => string;
+    urlFormatter?: (val:string) => string;
     itemSorter?: (a:MenuItem, b:MenuItem) => number;
 }) => {
     return (

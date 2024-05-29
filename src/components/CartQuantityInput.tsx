@@ -1,7 +1,7 @@
 import React, {ChangeEvent} from 'react';
 import FormControl from '@mui/material/FormControl';
 import FilledInput from "@mui/material/FilledInput";
-import {InputAdornment} from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';

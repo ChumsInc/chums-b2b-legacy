@@ -1,6 +1,6 @@
 import React, {useId} from 'react';
 import {useSelector} from "react-redux";
-import {selectResourcesMenu} from "../../menu";
+import {selectResourcesMenu} from "../index";
 import Menu from "@mui/material/Menu";
 import NavItemButton from "./NavItemButton";
 import MenuItemRouterLink from "./MenuItemRouterLink";

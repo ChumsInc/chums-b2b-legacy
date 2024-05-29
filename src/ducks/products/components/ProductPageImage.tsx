@@ -2,13 +2,12 @@ import React from 'react';
 import ProductImage from "../../../components/ProductImage";
 import {useSelector} from "react-redux";
 import {
-    selectCurrentProduct, selectProductAltImages,
+    selectCurrentProduct,
+    selectProductAltImages,
     selectProductCartItem,
-    selectProductColorCode, selectProductImage,
-    selectProductLoading,
-    selectSelectedProduct
+    selectProductImage,
+    selectProductLoading
 } from "../selectors";
-import {parseImageFilename2} from "../../../common/image";
 
 const ProductPageImage = () => {
     const cartItem = useSelector(selectProductCartItem);

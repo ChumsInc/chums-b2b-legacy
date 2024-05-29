@@ -5,14 +5,13 @@ import {billToCustomerSlug, customerShipToSorter, stateCountry} from "../../../u
 import {useSelector} from "react-redux";
 import {selectCustomerLoading, selectPermittedShipToAddresses, selectPrimaryShipTo} from "../selectors";
 import {SortProps} from "../../../types/generic";
-import SortableTable from "../../../common-components/SortableTable";
+import DataTable from "../../../common-components/DataTable";
 import TablePagination from "@mui/material/TablePagination";
 import LinearProgress from "@mui/material/LinearProgress";
 import {generatePath, NavLink} from "react-router-dom";
 import {PATH_CUSTOMER_DELIVERY} from "../../../constants/paths";
 import classNames from "classnames";
 import {useAppDispatch} from "../../../app/configureStore";
-import {loadCustomer} from "../actions";
 import {selectCurrentCustomer} from "../../user/selectors";
 
 import Box from "@mui/material/Box";
@@ -24,6 +23,7 @@ import ReloadCustomerButton from "./ReloadCustomerButton";
 export interface ShipToLinkProps extends Omit<LinkProps, 'to'> {
     shipTo: ShipToCustomer;
 }
+
 
 const ShipToLink = ({shipTo, children, ...rest}: ShipToLinkProps) => {
     const path = generatePath(PATH_CUSTOMER_DELIVERY, {
@@ -72,19 +72,15 @@ const ShipToList = () => {
         setData([...list].sort(customerShipToSorter(sort)));
     }, [list, sort]);
 
-    const reloadHandler = () => {
-        dispatch(loadCustomer(customer));
-    }
-
     const rowClassName = (row: ShipToCustomer) => {
         return classNames({'table-primary': row.ShipToCode === primaryShipTo?.ShipToCode});
     }
     return (
         <div>
             {loading && (<LinearProgress variant="indeterminate"/>)}
-            <SortableTable data={data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           rowClassName={rowClassName}
-                           currentSort={sort} onChangeSort={setSort} fields={fields} keyField="ShipToCode"/>
+            <DataTable data={data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+                       rowClassName={rowClassName}
+                       currentSort={sort} onChangeSort={setSort} fields={fields} keyField="ShipToCode"/>
             <Grid2 container spacing={2} justifyContent="space-between">
                 <ReloadCustomerButton/>
                 <TablePagination component="div" count={data.length}

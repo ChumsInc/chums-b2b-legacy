@@ -6,7 +6,10 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet';
 import Box from "@mui/material/Box";
 import ClearIcon from '@mui/icons-material/Clear';
 import IconButton from "@mui/material/IconButton";
-import {TableCell, TableRow, TextField} from "@mui/material";
+import TableRow from '@mui/material/TableRow';
+import TableCell from "@mui/material/TableCell";
+import TextField from "@mui/material/TextField";
+
 
 export interface SalesOrderCommentLineProps {
     line: SalesOrderDetailLine & Editable & Appendable;

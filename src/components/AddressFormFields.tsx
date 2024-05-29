@@ -4,7 +4,7 @@ import CountrySelect from './CountrySelect';
 import {CustomerAddress} from "b2b-types";
 import {isCanada, isUSA} from "../utils/customer";
 import Stack from "@mui/material/Stack";
-import {TextField} from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 const AddressFormFields = ({address, onChange, readOnly}: {
     address: CustomerAddress;

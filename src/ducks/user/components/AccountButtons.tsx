@@ -2,7 +2,7 @@ import React from 'react';
 import {customerSlug, longCustomerNo, longRepNo, sortUserAccounts} from '../../../utils/customer';
 import {UserCustomerAccess} from "b2b-types";
 import Stack from "@mui/material/Stack";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button"
 import {generatePath, Link as RoutedLink} from "react-router-dom";
 import {PATH_CUSTOMER_ACCOUNT, PATH_PROFILE_ACCOUNT} from "../../../constants/paths";
 

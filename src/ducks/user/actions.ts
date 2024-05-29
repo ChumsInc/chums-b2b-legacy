@@ -12,7 +12,6 @@ import {getProfile, getSignInProfile, getTokenExpiry} from "../../utils/jwtHelpe
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {AUTH_LOCAL} from "../../constants/app";
 import {
-    selectAuthType,
     selectLoggedIn,
     selectLoggingIn,
     selectResettingPassword,
@@ -47,7 +46,6 @@ import {StoredProfile} from "../../types/user";
 import {loadCustomerList} from "../customers/actions";
 import {isErrorResponse} from "../../utils/typeguards";
 import {APIErrorResponse} from "../../types/generic";
-import {selectActionStatus} from "../open-orders/selectors";
 
 export const setLoggedIn = createAction<SetLoggedInProps>('user/setLoggedIn');
 
@@ -168,7 +166,7 @@ export const setUserAccess = createAsyncThunk<UserCustomerAccess | null, UserCus
                 localStore.setItem<BasicCustomer>(STORE_CUSTOMER, {
                     ARDivisionNo,
                     CustomerNo,
-                    CustomerName
+                    CustomerName: CustomerName ?? ''
                 });
             } else {
                 dispatch(loadCustomerList(arg));

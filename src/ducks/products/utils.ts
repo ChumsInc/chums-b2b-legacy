@@ -68,13 +68,6 @@ export const updateCartProductPricing = (item:CartProduct|null, pricing: Custome
     }
 }
 
-export const updateCartProductImage = (item:CartProduct|null, product: Product, colorCode: string|null):CartProduct|null => {
-    if (!item) {
-        return null;
-    }
-    return null;
-}
-
 
 export function isCategoryChildSection(child: ProductCategoryChild): child is CategoryChildSection {
     return (child as CategoryChildSection).itemType === 'section';

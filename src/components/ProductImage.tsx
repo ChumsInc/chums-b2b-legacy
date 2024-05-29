@@ -28,11 +28,7 @@ export default function ProductImage({
                                          altImages = [],
                                          selectedItem = null,
                                          colorCode = '',
-                                         size = '800',
-                                         className = '',
-                                         title = '',
                                          altText = '',
-                                         loading = false
                                      }: ProductImageProps) {
     const selectedItemHash = `#${selectedItem}`;
     const filter = /^#[A-Z0-9]+/i;

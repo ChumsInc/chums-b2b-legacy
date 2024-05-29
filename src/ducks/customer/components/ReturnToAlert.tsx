@@ -1,7 +1,7 @@
+import React from 'react';
 import {useSelector} from "react-redux";
 import {selectCustomerReturnToPath} from "../selectors";
 import Alert from "@mui/material/Alert";
-import {useNavigate} from "react-router";
 import {useAppDispatch} from "../../../app/configureStore";
 import {setReturnToPath} from "../actions";
 import {Link as NavLink} from 'react-router-dom'
@@ -14,10 +14,10 @@ const returnPathText = (path: string): string => {
     }
     return `Return to ${path}`;
 }
+
 const ReturnToAlert = () => {
     const dispatch = useAppDispatch();
     const returnToPath = useSelector(selectCustomerReturnToPath);
-    const navigate = useNavigate();
 
     if (!returnToPath) {
         return null;

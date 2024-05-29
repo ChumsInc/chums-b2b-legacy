@@ -310,7 +310,7 @@ const salesOrderReducer = createReducer(initialSalesOrderState, (builder) => {
                 case DELETE_CART:
                     if (isDeprecatedDeleteCartAction(action)) {
                         if (action.status === FETCH_INIT) {
-                            state.processing === 'pending';
+                            state.processing = 'pending';
                         } else if (action.status === FETCH_FAILURE) {
                             state.processing = 'rejected';
                         }

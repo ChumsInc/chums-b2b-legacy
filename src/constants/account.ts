@@ -36,7 +36,7 @@ export const TERMS_CODES:TermsCodeList = {
     '19': {description: '10% 30 Net 31', due: 31},
     '22': {description: '5% 30 Net 31', due: 31},
     '23': {description: 'Net 10 Days', due: 10},
-    '26': {description: 'Wire Tranansfer', due: 0},
+    '26': {description: 'Wire Transfer', due: 0},
     '28': {description: '5% Net 60', due: 60},
     '29': {description: '5% 60 Net 61', due: 61},
     '30': {description: '1% 15 Net 30', due: 30},

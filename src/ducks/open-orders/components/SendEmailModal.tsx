@@ -4,9 +4,12 @@ import {useAppDispatch} from "../../../app/configureStore";
 import {selectSendEmailError, selectSendEmailResponse, selectSendEmailStatus} from "../selectors";
 import {closeEmailResponse} from "../actions";
 import Dialog from "@mui/material/Dialog";
-import {Button, DialogActions, DialogContent, DialogTitle} from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import Alert from "@mui/material/Alert";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 export default function SendEmailModal() {
     const dispatch = useAppDispatch();

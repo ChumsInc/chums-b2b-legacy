@@ -33,7 +33,7 @@ export const getAPIRequest = async (req:Request, res:Response) => {
     }
 }
 
-export async function loadJSON<T = any>(url:string, options?:RequestInit):Promise<T> {
+export async function loadJSON<T = unknown>(url:string, options?:RequestInit):Promise<T> {
     try {
         const res = await fetch(url, options);
         return await res.json() as T;

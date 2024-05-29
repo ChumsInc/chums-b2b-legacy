@@ -6,7 +6,7 @@ import {useSelector} from "react-redux";
 import {selectLoggedIn} from "../../user/selectors";
 import {ClickAwayListener} from '@mui/base';
 import VariantItem from "./VariantItem";
-import {selectCurrentProduct, selectProductColorCode, selectProductVariantId} from "../selectors";
+import {selectCurrentProduct, selectProductVariantId} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import {setCurrentVariant} from "../actions";
 import {selectCustomerPricing} from "../../customer/selectors";
@@ -23,7 +23,6 @@ const VariantSelector = () => {
     const selectedVariantId = useSelector(selectProductVariantId);
     const loggedIn = useSelector(selectLoggedIn);
     const product = useSelector(selectCurrentProduct);
-    const colorCode = useSelector(selectProductColorCode);
     const priceCodes = useSelector(selectCustomerPricing);
     const [show, setShow] = useState(false);
 
@@ -35,7 +34,7 @@ const VariantSelector = () => {
 
     const onClickSelector = () => setShow(!show);
 
-    const selectHandler = (variant:ProductVariant) => {
+    const selectHandler = (variant: ProductVariant) => {
         if (!variant || !variant.id) {
             return;
         }
@@ -59,7 +58,7 @@ const VariantSelector = () => {
         : getMSRP(variant?.product);
     const salesUM = getSalesUM(variant.product);
 
-    if (variants.filter(v => !!v.status && !!v.product?.status).length <= 1) {
+    if (variants.filter(v => v.status && v.product?.status).length <= 1) {
         return (
             <div className="variants-container">
                 <div className="btn btn-outline-secondary variant-selector">
@@ -82,7 +81,7 @@ const VariantSelector = () => {
         <ClickAwayListener onClickAway={() => setShow(false)}>
             <div className="variants-container dropdown">
                 <div className={classNames("btn-group", {show})}>
-                    <button type="button" disabled={variants.filter(v => !!v.status && !!v.product?.status).length <= 1}
+                    <button type="button" disabled={variants.filter(v => v.status && v.product?.status).length <= 1}
                             className="btn btn-outline-secondary dropdown-toggle variant-selector"
                             onClick={onClickSelector}>
                         <div>

@@ -5,35 +5,36 @@ import {selectCurrentCustomer} from "../../user/selectors";
 import {
     selectCurrentInvoiceNo,
     selectFilteredInvoicesList,
-    selectInvoicesList, selectInvoicesListLimit, selectInvoicesListLimitReached, selectInvoicesListOffset,
+    selectInvoicesListLimit,
+    selectInvoicesListLimitReached,
+    selectInvoicesListOffset,
     selectInvoicesLoaded,
-    selectInvoicesLoading, selectInvoicesSort
+    selectInvoicesLoading,
+    selectInvoicesSort
 } from "../selectors";
 import {loadInvoices, setInvoicesSort} from "../actions";
 import {InvoiceLink} from "./InvoiceLink";
 import {DateString} from "../../../components/DateString";
 import OrderLink from "../../../components/OrderLink";
 import numeral from "numeral";
-import {SortableTableField} from "../../../common-components/DataTable";
-import {InvoiceHeader} from "b2b-types";
+import DataTable, {SortableTableField} from "../../../common-components/DataTable";
+import {InvoiceHistoryHeader} from "b2b-types";
 import Decimal from "decimal.js";
 import {SortProps} from "../../../types/generic";
 import LinearProgress from "@mui/material/LinearProgress";
-import OrderFilter from "../../open-orders/components/OrderFilter";
-import SortableTable from "../../../common-components/SortableTable";
 import TablePagination from "@mui/material/TablePagination";
-import {invoiceKey, invoicesSorter} from "../utils";
+import {invoiceKey} from "../utils";
 import localStore from "../../../utils/LocalStore";
 import {STORE_INVOICES_ROWS_PER_PAGE} from "../../../constants/stores";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button";
 import InvoiceListFilter from "./InvoiceListFilter";
 import Box from "@mui/material/Box";
 
 
-const invoiceFields: SortableTableField<InvoiceHeader>[] = [
+const invoiceFields: SortableTableField<InvoiceHistoryHeader>[] = [
     {
         field: 'InvoiceNo', title: 'Invoice #',
-        render: (so) => <InvoiceLink invoice={so}/>, sortable: true
+        render: (invoice) => <InvoiceLink invoice={invoice}/>, sortable: true
     },
     {
         field: 'InvoiceDate', title: 'Invoice Date',
@@ -125,7 +126,7 @@ const InvoicesList = () => {
         return null;
     }
 
-    const sortChangeHandler = (sort: SortProps) => {
+    const sortChangeHandler = (sort: SortProps<InvoiceHistoryHeader>) => {
         dispatch(setInvoicesSort(sort));
     }
 
@@ -133,10 +134,11 @@ const InvoicesList = () => {
         <div>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
             <InvoiceListFilter onReload={reloadHandler}/>
-            <SortableTable keyField={row => invoiceKey(row)}
-                           data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           selected={invoiceNo}
-                           fields={invoiceFields} currentSort={sort} onChangeSort={sortChangeHandler}/>
+            <DataTable<InvoiceHistoryHeader> keyField={row => invoiceKey(row)}
+                                             data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+                                             selected={invoiceNo}
+                                             fields={invoiceFields} currentSort={sort}
+                                             onChangeSort={sortChangeHandler}/>
             <Box display="flex" justifyContent="flex-end">
                 <TablePagination component="div"
                                  count={list.length} page={page} onPageChange={(ev, page) => setPage(page)}

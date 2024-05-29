@@ -33,6 +33,7 @@ const serverConfig = {
         filename: "[name].js",
         sourceMapFilename: '[file].map',
         publicPath: '/',
+        clean: true,
     },
 }
 

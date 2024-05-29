@@ -6,7 +6,6 @@ import {
     CustomerPriceRecord,
     Keyword,
     Product,
-    ProductAdditionalData,
     ProductColorItem,
     ProductVariant,
     SellAsVariantsProduct
@@ -129,7 +128,7 @@ export const defaultCartItem = (product: Product | null, option?: CartItemColorP
         return colorCartItem(cartItem, product);
     }
     if (isSellAsMix(product)) {
-        let [color] = product.mix.items.filter(item => item.color?.code === option?.colorCode ?? product.defaultColor)
+        let [color] = product.mix.items.filter(item => item.color?.code === (option?.colorCode ?? product.defaultColor))
             .map(item => item.color);
         if (!color) {
             [color] = product.mix.items.filter(item => item.color?.code === product.defaultColor)
@@ -201,7 +200,10 @@ export const colorCartItem = (item: ProductColorItem, product?: BasicProduct): C
         price: item.msrp?.toString(),
         productId: item.productId,
         stdUM: item.stdUM,
-        image: (item.additionalData?.image_filename ?? '') || parseImageFilename2({image: product?.image ?? '', colorCode: item.color.code ?? item.colorCode ?? ''}),
+        image: (item.additionalData?.image_filename ?? '') || parseImageFilename2({
+            image: product?.image ?? '',
+            colorCode: item.color.code ?? item.colorCode ?? ''
+        }),
         name: product?.name ?? item.colorName,
         quantity: 1,
         season: item.additionalData?.season ?? product?.season ?? null,

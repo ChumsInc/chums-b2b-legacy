@@ -32,7 +32,7 @@ const ProductRouter = () => {
         if (kw) {
             keyword = {...kw};
         }
-    } else if (!!product) {
+    } else if (product) {
         const [kw] = keywords.filter(kw => kw.keyword === product);
         if (kw) {
             keyword = {...kw};

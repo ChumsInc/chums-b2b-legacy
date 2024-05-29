@@ -6,7 +6,7 @@ import MAPPolicy from "../../components/MAPPolicy";
 import UsagePolicy from "../../components/UsagePolicy";
 import DocumentTitle from "../../components/DocumentTitle";
 import {selectLoggedIn} from "../user/selectors";
-import {useLocation, useNavigate} from "react-router";
+import {useNavigate} from "react-router";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Grid2 from "@mui/material/Unstable_Grid2";
@@ -43,7 +43,7 @@ const SignUp = () => {
                     </Stack>
                 </Grid2>
                 <Grid2 xs={12} md={6}>
-                    <CustomerSignUp />
+                    <CustomerSignUp/>
                 </Grid2>
             </Grid2>
         </div>

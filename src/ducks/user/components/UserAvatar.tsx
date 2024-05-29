@@ -34,7 +34,7 @@ function stringAvatar(name: string) {
         .map(name => name[0]).join('')
     return {
         sx: {
-            bgcolor: stringToColor(name),
+            bgColor: stringToColor(name),
         },
         children: `${initials}`,
     };

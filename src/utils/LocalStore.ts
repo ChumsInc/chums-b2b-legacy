@@ -4,7 +4,7 @@
 import {deprecatedStorageKeys} from "../constants/stores";
 
 export default class LocalStore {
-    static getItem<T = any>(key:string, defaultValue:T):T {
+    static getItem<T = unknown>(key:string, defaultValue:T):T {
         if (typeof window === 'undefined' || !window.localStorage) {
             return defaultValue;
         }
@@ -19,7 +19,7 @@ export default class LocalStore {
         }
     }
 
-    static setItem<T>(key:string, data:any) {
+    static setItem<T = unknown>(key:string, data:T) {
         if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }

@@ -1,6 +1,6 @@
 import {defaultSort} from "./index";
 import Decimal from "decimal.js";
-import {ExtendedInvoice, Invoice, InvoiceHeader, InvoiceHistoryHeader} from "b2b-types";
+import {ExtendedInvoice, InvoiceHistoryHeader} from "b2b-types";
 import {SortProps} from "../../types/generic";
 
 export const invoiceTotal = (invoice: InvoiceHistoryHeader): Decimal => {
@@ -38,7 +38,7 @@ export const invoicesSorter = (sort: SortProps<InvoiceHistoryHeader> = defaultSo
             case 'Balance':
                 return (
                     new Decimal(a[field] ?? 0).sub(b[field] ?? 0).toNumber()
-                    ||(invoiceKey(a) > invoiceKey(b) ? 1 : -1)
+                    || (invoiceKey(a) > invoiceKey(b) ? 1 : -1)
                 ) * sortMod
             default:
                 return (invoiceKey(a) > invoiceKey(b) ? 1 : -1) * sortMod;

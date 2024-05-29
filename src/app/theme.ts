@@ -178,7 +178,7 @@ theme = createTheme({
     }
 })
 
-if (!!global.window) {
+if (global.window) {
     window.theme = theme;
 }
 

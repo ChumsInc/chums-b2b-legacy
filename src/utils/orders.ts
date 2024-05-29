@@ -3,7 +3,7 @@ import dayjs, {Dayjs} from "dayjs";
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone'
 import {OrderType} from "../types/salesorder";
-import {SalesOrder, SalesOrderHeader} from "b2b-types";
+import {SalesOrderHeader} from "b2b-types";
 import {isSalesOrderHeader} from "./typeguards";
 import {UnknownAction} from "@reduxjs/toolkit";
 import {DeprecatedFetchSalesOrderAction} from "../types/actions";
@@ -105,6 +105,6 @@ export const nextShipDate = (shipDate: Date | number | string | Dayjs = new Date
 };
 
 
-export function isDeprecatedFetchSalesOrderAction(action:UnknownAction|DeprecatedFetchSalesOrderAction): action is DeprecatedFetchSalesOrderAction {
+export function isDeprecatedFetchSalesOrderAction(action: UnknownAction | DeprecatedFetchSalesOrderAction): action is DeprecatedFetchSalesOrderAction {
     return action.type === 'FETCH_SALES_ORDER';
 }

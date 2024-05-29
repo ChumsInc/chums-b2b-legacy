@@ -165,7 +165,7 @@ const AddToCartForm = ({
     return (
         <form onSubmit={submitHandler} className="add-to-cart" method="post">
             <Stack spacing={2} direction="column">
-                <CartSelect cartNo={localCartNo} shipToCode={shipToCode} onChange={cartChangeHandler}
+                <CartSelect cartNo={localCartNo} onChange={cartChangeHandler}
                             excludeCartNo={excludeSalesOrder}/>
                 {(!localCartNo || localCartNo === NEW_CART) && (
                     <Stack spacing={2} direction="row">

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {ButtonProps} from "@mui/material/Button";
-import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import Button, {ButtonProps} from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {removeCart} from "../actions";
@@ -9,6 +8,10 @@ import {generatePath} from "react-router-dom";
 import {customerSlug} from "../../../utils/customer";
 import LinearProgress from "@mui/material/LinearProgress";
 import {selectSalesOrder} from "../../open-orders/selectors";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 export interface DeleteCartButtonProps extends ButtonProps {
     salesOrderNo?: string | null;

@@ -3,7 +3,6 @@ import Alert from "@mui/material/Alert";
 import {useSelector} from "react-redux";
 import {selectCustomerUsers} from "../selectors";
 import {CustomerUser, Editable} from "b2b-types";
-import {Button, DialogActions, DialogContent, DialogContentText, InputAdornment} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Stack from "@mui/material/Stack";
@@ -17,6 +16,11 @@ import {removeUser, saveUser} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectIsEmployee, selectIsRep} from "../../user/selectors";
 import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogActions from "@mui/material/DialogActions";
 
 const newUser: CustomerUser = {id: 0, name: '', email: '', accountType: 4};
 

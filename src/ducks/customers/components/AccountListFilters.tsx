@@ -1,7 +1,6 @@
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Box from "@mui/material/Box";
 import SearchIcon from "@mui/icons-material/Search";
-import {Button, TextField} from "@mui/material";
 import RepSelect from "../../reps/components/RepSelect";
 import React, {ChangeEvent, useEffect} from "react";
 import {loadCustomerList, setCustomersFilter, setCustomersRepFilter} from "../actions";
@@ -10,6 +9,8 @@ import {selectCustomersFilter, selectCustomersRepFilter} from "../selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectCanFilterReps, selectUserAccount} from "../../user/selectors";
 import {useDebounceValue} from "usehooks-ts";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
 const AccountListFilters = () => {
     const dispatch = useAppDispatch();

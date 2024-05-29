@@ -19,7 +19,7 @@ const MenuColumn: React.FC<MenuColumnProps> = ({
                                                }) => {
     return (
         <div className="nav-item nav-col-4">
-            {!!item.url
+            {item.url
                 ? <NavLink to={urlFormatter(item.url)} className="nav-link">{item.title}</NavLink>
                 : <span className="nav-link">{item.title}</span>
             }

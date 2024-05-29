@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Unstable_Grid2';
 import Stack from "@mui/material/Stack";
-import {TextField} from "@mui/material";
+import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
 import ShipToSelect from "../../customer/components/ShipToSelect";
 import {addressFromShipToAddress, multiLineAddress} from "../../customer/utils";

@@ -10,11 +10,12 @@ import PriceLevelNotice from "../../../components/PriceLevelNotice";
 import Decimal from "decimal.js";
 import SalesOrderLineButtons from "./SalesOrderLineButtons";
 import SalesOrderCommentLine from "./SalesOrderCommentLine";
-import {TableCell, TableRow} from "@mui/material";
 import FormattedUPC from "../../../components/FormattedUPC";
 import Typography from "@mui/material/Typography";
 import {selectCanViewAvailable} from "../../user/selectors";
 import {useAppSelector} from "../../../app/configureStore";
+import TableCell from '@mui/material/TableCell';
+import TableRow from "@mui/material/TableRow";
 
 export default function SalesOrderItemLine({
                                                line,

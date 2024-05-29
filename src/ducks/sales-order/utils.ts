@@ -88,18 +88,6 @@ export const emptyDetailLine: SalesOrderDetailLine = {
     LineKey: ''
 }
 
-const multiLineAddress = (address: CustomerAddress): string[] => {
-    const finalLine = [address.City, address.State, address.CountryCode, address.ZipCode]
-        .filter(val => !!val).join(' ');
-    return [
-        address.AddressLine1 ?? '',
-        address.AddressLine2 ?? '',
-        address.AddressLine3 ?? '',
-        finalLine
-    ].filter(line => !!line);
-}
-
-
 export const detailToCartItem = (line: SalesOrderDetailLine): CartItem | null => {
     if (line.InactiveItem !== 'N' || line.ProductType === 'D') {
         return null;

@@ -5,11 +5,12 @@ import OrderItemImage from "../../../components/OrderItemImage";
 import PriceLevelNotice from "../../../components/PriceLevelNotice";
 import UPCA from "../../../common/upc-a";
 import {InvoiceDetail} from "b2b-types";
-import {TableCell, TableRow} from "@mui/material";
 import Decimal from "decimal.js";
 import SalesOrderLineButtons from "../../open-orders/components/SalesOrderLineButtons";
 import FormattedUPC from "../../../components/FormattedUPC";
 import Typography from "@mui/material/Typography";
+import TableRow from '@mui/material/TableRow';
+import TableCell from "@mui/material/TableCell";
 
 
 const InvoiceDetailLine = ({line, onAddToCart}: {

@@ -17,7 +17,9 @@ export default function NavOrdersLink({inDrawer}: NavItemProps) {
         return null;
     }
 
-    const url = !!account ? generatePath(customerBasePath, {account: customerPath(account), section: 'orders'}) : null;
+    const url = account
+        ? generatePath(customerBasePath, {account: customerPath(account), section: 'orders'})
+        : null;
 
     if (inDrawer && url) {
         return (

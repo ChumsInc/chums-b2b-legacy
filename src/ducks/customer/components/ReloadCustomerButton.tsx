@@ -5,7 +5,7 @@ import {useSelector} from "react-redux";
 import {loadCustomer} from "../actions";
 import Button, {ButtonProps} from "@mui/material/Button";
 
-const ReloadCustomerButton = ({type, className, onClick, disabled, ...rest}: ButtonProps) => {
+const ReloadCustomerButton = ({type, onClick, disabled, ...rest}: ButtonProps) => {
     const dispatch = useAppDispatch();
     const currentCustomer = useSelector(selectCurrentCustomer);
 

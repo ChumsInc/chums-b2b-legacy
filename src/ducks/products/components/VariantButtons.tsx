@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {getMSRP, getPrices, getSalesUM, sortVariants} from "../../../utils/products";
 import {useSelector} from "react-redux";
 import {selectLoggedIn} from "../../user/selectors";
@@ -10,9 +10,7 @@ import {ProductVariant} from "b2b-types";
 import {isSellAsMix, isSellAsVariants} from "../utils";
 import VariantButton from "./VariantButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {styled} from "@mui/material/styles";
 import {sendGtagEvent} from "../../../api/gtag";
-
 
 
 const VariantButtons = () => {
@@ -37,9 +35,16 @@ const VariantButtons = () => {
             sendGtagEvent('select_item', {
                 item_list_id: product.itemCode,
                 item_list_name: [product.name, product.additionalData?.subtitle].filter(val => !!val).join(' / '),
-                items: [{item_id: variant.product.itemCode, item_name: `${variant.product.name}${variant.product.additionalData?.subtitle ? ' / ' + variant.product.additionalData?.subtitle : ''}`}]});
+                items: [{
+                    item_id: variant.product.itemCode,
+                    item_name: `${variant.product.name}${variant.product.additionalData?.subtitle ? ' / ' + variant.product.additionalData?.subtitle : ''}`
+                }]
+            });
         } else {
-            sendGtagEvent('select_content', {content_type: 'variant', content_id: variant.product?.itemCode ?? variant.id.toString()});
+            sendGtagEvent('select_content', {
+                content_type: 'variant',
+                content_id: variant.product?.itemCode ?? variant.id.toString()
+            });
         }
         dispatch(setCurrentVariant(variant))
     }
@@ -58,11 +63,6 @@ const VariantButtons = () => {
         return null;
     }
 
-    const prices = loggedIn
-        ? getPrices(variant?.product, priceCodes)
-        : getMSRP(variant?.product);
-    const salesUM = getSalesUM(variant.product);
-
     if (activeVariants.length === 1) {
         return (
             <Grid2 container>
@@ -80,7 +80,7 @@ const VariantButtons = () => {
                justifyContent={activeVariants.length === 2 ? 'center' : 'flex-start'}>
             {activeVariants
                 .map(variant => (
-                    <Grid2 key={variant.id} xs={activeVariants.length > 2 ? 4 : 12} sm={3} md={4} >
+                    <Grid2 key={variant.id} xs={activeVariants.length > 2 ? 4 : 12} sm={3} md={4}>
                         <VariantButton onClick={selectHandler} variant={variant}
                                        direction={{xs: activeVariants.length > 2 ? 'column' : 'row', sm: 'column'}}
                                        spacing={{xs: activeVariants.length <= 2 ? 2 : 0, sm: 0}}

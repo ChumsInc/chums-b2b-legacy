@@ -7,15 +7,16 @@ import {
     selectSearchLoading,
     selectSearchResults
 } from "./index";
-import {Autocomplete, InputAdornment, TextField} from "@mui/material";
 import {CONTENT_PATH_SEARCH_IMAGE} from "../../constants/paths";
 import {useDebounceValue} from 'usehooks-ts'
-import {useNavigate} from "react-router";
 import Stack from "@mui/material/Stack";
 import {addToCart} from "../cart/actions";
 import AddToCartButton from "../cart/components/AddToCartButton";
 import {selectSalesOrderActionStatus} from "../open-orders/selectors";
 import CircularProgress from "@mui/material/CircularProgress";
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
 
 export default function ItemAutocomplete({salesOrderNo}: {
@@ -26,7 +27,6 @@ export default function ItemAutocomplete({salesOrderNo}: {
     const loading = useAppSelector(selectSearchLoading);
     const fulfilled = useAppSelector(selectSearchFulfilled);
     const actionStatus = useAppSelector((state) => selectSalesOrderActionStatus(state, salesOrderNo));
-    const navigate = useNavigate();
 
     const [quantity, setQuantity] = useState(1);
     const [value, setValue] = useState<ItemSearchResult | null>(null);

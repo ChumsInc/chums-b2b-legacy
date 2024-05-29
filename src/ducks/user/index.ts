@@ -177,7 +177,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
                 state.access.current = getPrimaryAccount(state.accounts) ?? null;
             }
         })
-        .addCase(loadProfile.rejected, (state, action) => {
+        .addCase(loadProfile.rejected, (state) => {
             state.actionStatus = 'idle';
         })
         .addCase(setCustomerAccount.fulfilled, (state, action) => {
@@ -255,7 +255,7 @@ const userReducer = createReducer(initialUserState, (builder) => {
         .addCase(setNewPassword.fulfilled, (state, action) => {
             state.actionStatus = 'idle';
             if (action.payload?.success) {
-
+                // @TODO: do something here?
             }
         })
         .addCase(setNewPassword.rejected, (state) => {

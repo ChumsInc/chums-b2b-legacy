@@ -6,9 +6,13 @@ import {useSelector} from "react-redux";
 import {selectCanViewAvailable} from "../../user/selectors";
 import Decimal from "decimal.js";
 import {CartProduct} from "b2b-types";
-import {Collapse, Table, TableBody, TableCell, TableRow} from "@mui/material";
 import {styled, useTheme} from '@mui/material/styles'
 import Box from "@mui/material/Box";
+import TableCell from "@mui/material/TableCell";
+import Collapse from "@mui/material/Collapse";
+import Table from '@mui/material/Table';
+import TableRow from "@mui/material/TableRow";
+import TableBody from "@mui/material/TableBody";
 
 
 const CartItemDetailTableTHCell = styled(TableCell)`

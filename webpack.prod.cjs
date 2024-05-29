@@ -2,8 +2,8 @@ const {merge} = require('webpack-merge');
 const common = require('./webpack.common.cjs');
 const {WebpackManifestPlugin} = require('webpack-manifest-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = merge(common, {
     mode: 'production',
@@ -28,10 +28,13 @@ module.exports = merge(common, {
     },
     output: {
         filename: "[name].[contenthash].js",
+        clean: true,
     },
     plugins: [
         new BundleAnalyzerPlugin(),
-        new CleanWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: 'Output Management',
+        }),
         new WebpackManifestPlugin(),
     ]
 });

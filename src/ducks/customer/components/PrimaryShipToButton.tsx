@@ -1,4 +1,4 @@
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import Stack from "@mui/material/Stack";
 import PrimaryShipToIcon from "./PrimaryShipToIcon";

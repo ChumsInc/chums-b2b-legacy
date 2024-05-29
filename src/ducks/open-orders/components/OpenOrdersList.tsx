@@ -2,8 +2,7 @@ import React, {useEffect} from 'react';
 import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
 import {
-    selectCartsFilter,
-    selectCartsList, selectOpenOrdersFilter,
+    selectOpenOrdersFilter,
     selectOpenOrdersList,
     selectOpenOrdersLoaded,
     selectOpenOrdersLoading
@@ -16,12 +15,11 @@ import numeral from "numeral";
 import {SortableTableField} from "../../../common-components/DataTable";
 import Decimal from "decimal.js";
 import {SalesOrderHeader} from "b2b-types";
-import {loadOpenOrders, setCartsFilter, setOpenOrdersFilter} from "../actions";
-import Alert from "@mui/material/Alert";
+import {loadOpenOrders, setOpenOrdersFilter} from "../actions";
 import OrderFilter from "./OrderFilter";
 import LinearProgress from "@mui/material/LinearProgress";
 import NoOpenOrdersAlert from "./NoOpenOrdersAlert";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button"
 
 
 const openOrderFields: SortableTableField<SalesOrderHeader>[] = [
@@ -32,13 +30,19 @@ const openOrderFields: SortableTableField<SalesOrderHeader>[] = [
     },
     {field: 'ShipToCode', title: 'Ship To Code', sortable: true},
     {field: 'ShipToName', title: 'Ship To', sortable: true},
-    {field: 'ShipToCity', title: 'Location', sortable: true,
-        render: (so) => `${so.ShipToCity}, ${so.ShipToState} ${so.ShipToZipCode}`},
+    {
+        field: 'ShipToCity', title: 'Location', sortable: true,
+        render: (so) => `${so.ShipToCity}, ${so.ShipToState} ${so.ShipToZipCode}`
+    },
     {field: 'CustomerPONo', title: 'PO #', sortable: true},
-    {field: 'OrderDate', title: 'Ordered', sortable: true,
-        render: (so) => <DateString date={so.OrderDate}/>},
-    {field: 'ShipExpireDate', title: 'Ship Date', sortable: true,
-        render: (so) => <DateString date={so.ShipExpireDate}/>},
+    {
+        field: 'OrderDate', title: 'Ordered', sortable: true,
+        render: (so) => <DateString date={so.OrderDate}/>
+    },
+    {
+        field: 'ShipExpireDate', title: 'Ship Date', sortable: true,
+        render: (so) => <DateString date={so.ShipExpireDate}/>
+    },
     {
         field: 'NonTaxableAmt',
         title: 'Total',
@@ -81,7 +85,7 @@ const OpenOrdersList = () => {
             </OrderFilter>
             {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
             <OrdersList list={list} fields={openOrderFields}/>
-            <NoOpenOrdersAlert />
+            <NoOpenOrdersAlert/>
         </>
     )
 }

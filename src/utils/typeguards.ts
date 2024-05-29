@@ -21,7 +21,7 @@ export const isUserRole = (role:string|UserRole): role is UserRole => {
     return (role as UserRole).role !== undefined;
 }
 
-export function isErrorResponse<T = any>(res:T|APIErrorResponse|null):res is APIErrorResponse {
+export function isErrorResponse<T = unknown>(res:T|APIErrorResponse|null):res is APIErrorResponse {
     if (!res) {
         return false;
     }

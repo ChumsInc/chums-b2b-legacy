@@ -1,7 +1,12 @@
 import React, {useId} from 'react';
 import Dialog from "@mui/material/Dialog";
-import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle, useTheme} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import {useTheme} from "@mui/material/styles";
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
+import Button from "@mui/material/Button";
 
 const ConfirmDeleteCart = ({open, salesOrderNo, onConfirm, onCancel}: {
     open: boolean;

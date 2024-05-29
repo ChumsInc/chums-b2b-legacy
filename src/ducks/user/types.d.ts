@@ -1,14 +1,4 @@
-import {
-    BasicCustomer,
-    Customer,
-    Editable,
-    RecentCustomer,
-    Salesperson,
-    UserCustomerAccess,
-    UserProfile,
-    UserRole
-} from "b2b-types";
-import {EmptyObject} from "../../types/generic";
+import {Salesperson, UserCustomerAccess, UserProfile, UserRole} from "b2b-types";
 import {ExtendedUserProfile} from "../../types/user";
 import {DeprecatedAsyncAction} from "../../types/actions";
 
@@ -35,7 +25,6 @@ export interface UserPasswordState {
     newPassword2: string;
     visible: boolean;
 }
-
 
 
 export interface SetLoggedInProps {
@@ -88,4 +77,4 @@ export interface SetNewPasswordProps {
     newPassword: string;
 }
 
-export type SignUpProfile = Pick<UserProfile, 'id'|'email'|'name'|'accountType'>;
+export type SignUpProfile = Pick<UserProfile, 'id' | 'email' | 'name' | 'accountType'>;

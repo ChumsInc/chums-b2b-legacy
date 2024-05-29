@@ -3,8 +3,9 @@ import {useAppDispatch} from "../app/configureStore";
 import {loadPage} from "../ducks/page/actions";
 import {useSelector} from "react-redux";
 import {selectPageContent} from "../ducks/page/selectors";
-import {Card, CardContent} from "@mui/material";
+import Card from "@mui/material/Card";
 import Typography from "@mui/material/Typography";
+import CardContent from "@mui/material/CardContent";
 
 const MAPPolicy = () => {
     const dispatch = useAppDispatch();

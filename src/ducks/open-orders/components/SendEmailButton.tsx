@@ -2,7 +2,7 @@ import React from 'react';
 import {ButtonProps} from "@mui/material/Button";
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {selectSalesOrder, selectSalesOrderActionStatus, selectSendEmailStatus} from "../selectors";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button"
 import SendEmailModal from "./SendEmailModal";
 import {sendOrderEmail} from "../actions";
 

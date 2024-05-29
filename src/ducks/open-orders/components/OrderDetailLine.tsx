@@ -6,7 +6,8 @@ import {useAppDispatch} from "../../../app/configureStore";
 import {updateDetailLine} from "../actions";
 import SalesOrderItemLine from "./SalesOrderItemLine";
 import SalesOrderKitComponentLine from "./SalesOrderKitComponentLine";
-import {TableCell, TableRow} from "@mui/material";
+import TableRow from '@mui/material/TableRow';
+import TableCell from "@mui/material/TableCell";
 
 
 export default function OrderDetailLine({
@@ -57,7 +58,7 @@ export default function OrderDetailLine({
     }
 
     const addToCartHandler = () => {
-        if (!!onAddToCart) {
+        if (onAddToCart) {
             onAddToCart(line);
         }
     }

@@ -4,7 +4,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import PasswordTextField from "./PasswordTextField";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button"
 import {ChangePasswordProps, SetNewPasswordProps} from "../types";
 import TextField from "@mui/material/TextField";
 

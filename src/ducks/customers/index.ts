@@ -1,5 +1,4 @@
 import {Customer, RecentCustomer} from "b2b-types";
-import {PreloadedState} from "../../types/preload";
 import {createReducer} from "@reduxjs/toolkit";
 import {setLoggedIn, setUserAccess} from "../user/actions";
 

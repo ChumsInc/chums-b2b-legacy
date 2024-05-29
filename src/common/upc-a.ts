@@ -5,7 +5,7 @@
 export default class UPCA {
     static CHUMS = '000298';
     static raw (upc:string) {
-        let re = /[0-9]/;
+        const re = /[0-9]/;
         return upc.split('')
             .filter(c => re.test(c))
             .join('');
@@ -21,7 +21,7 @@ export default class UPCA {
         if (upc.length !== 11 && upc.length !== 12) {
             return upc;
         }
-        const [full, p1, p2, p3] = /(\d)(\d{5})(\d{5})(\d)/.exec(upc) ?? [];
+        const [, p1, p2, p3] = /(\d)(\d{5})(\d{5})(\d)/.exec(upc) ?? [];
         return [p1, p2, p3, UPCA.checkdigit(upc)].join(' ');
     }
 
@@ -36,12 +36,12 @@ export default class UPCA {
             console.log('UPCA.checkdigit() UPC is too short', upc);
             return upc;
         }
-        let cd = {
+        const cd = {
             even: 0,
             odd: 0
         };
         upc.split('').map((c, index) => {
-            let parsed = parseInt(c, 10);
+            const parsed = parseInt(c, 10);
             if (index % 2 === 0) {
                 cd.even += parsed;
             } else {

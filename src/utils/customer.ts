@@ -132,10 +132,11 @@ export const isValidCustomer = (arg:CustomerKey|null):arg is CustomerKey => {
 };
 
 
-export const calcPrice = ({stdPrice, PricingMethod = null, DiscountMarkup1 = 0}: {
+export const calcPrice = ({stdPrice, PricingMethod = null, DiscountMarkup1 = 0, stdCost = null}: {
     stdPrice: string | number | null;
     PricingMethod: string | null;
     DiscountMarkup1: string | number;
+    stdCost?: string | number | null;
 }): string | number => {
     switch (PricingMethod) {
         case PRICE_METHODS.override:
@@ -144,6 +145,10 @@ export const calcPrice = ({stdPrice, PricingMethod = null, DiscountMarkup1 = 0}:
             return new Decimal(stdPrice ?? 0).sub(DiscountMarkup1).toString();
         case PRICE_METHODS.discountPct:
             return new Decimal(stdPrice ?? 0).times(new Decimal(1).sub(new Decimal(DiscountMarkup1).div(100))).toString();
+        case PRICE_METHODS.costMarkupAmt:
+            return new Decimal(stdCost ?? 0).add(DiscountMarkup1).toString();
+        case PRICE_METHODS.costMarkupPct:
+            return new Decimal(stdCost ?? 0).times(new Decimal(1).add(new Decimal(DiscountMarkup1).div(100))).toString();
     }
     return stdPrice ?? 0;
 };
@@ -169,7 +174,7 @@ export const itemPrice = ({pricing = [], itemCode, priceCode, stdCost = 0, stdPr
     stdPrice: string | number | null;
 }) => {
     const {PricingMethod, DiscountMarkup1} = priceRecord({pricing, itemCode, priceCode});
-    return calcPrice({stdPrice, DiscountMarkup1, PricingMethod});
+    return calcPrice({stdPrice, DiscountMarkup1, PricingMethod, stdCost});
 };
 
 export const getFirstCustomer = (accounts: UserCustomerAccess[]): BasicCustomer | null => {

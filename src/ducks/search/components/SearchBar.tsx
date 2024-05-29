@@ -1,7 +1,6 @@
 import React, {SyntheticEvent, useEffect, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import {getSearchResults, selectSearchResults} from "../index";
-import {Autocomplete, TextField} from "@mui/material";
 import {
     CONTENT_PATH_SEARCH_IMAGE,
     PATH_PAGE,
@@ -12,6 +11,8 @@ import {generatePath, Link} from 'react-router-dom';
 import {SearchResult} from "b2b-types";
 import {useDebounceValue} from 'usehooks-ts'
 import {useNavigate} from "react-router";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 export const PATH_CATEGORY = '/products/:category';
 

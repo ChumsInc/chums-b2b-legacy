@@ -5,8 +5,8 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import TextField from "@mui/material/TextField";
 import Alert, {AlertColor} from "@mui/material/Alert";
 import Stack from "@mui/material/Stack";
-import {Button} from "@mui/material";
-import React, {FormEvent, useEffect, useState} from "react";
+import Button from "@mui/material/Button"
+import React, {FormEvent, useState} from "react";
 import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectResettingPassword} from "../selectors";
@@ -21,7 +21,7 @@ const RequestPasswordResetForm = () => {
     const isResettingPassword = useSelector(selectResettingPassword);
     const [email, setEmail] = useState('');
     const [response, setResponse] = useState('');
-    const [responseType, setResponseType] = useState<AlertColor|null>(null)
+    const [responseType, setResponseType] = useState<AlertColor | null>(null)
     const navigate = useNavigate();
 
 
@@ -67,7 +67,8 @@ const RequestPasswordResetForm = () => {
                         <Button type="button" variant="text" component={NavLink} to="/login">
                             Cancel
                         </Button>
-                        <Button type="submit" variant="contained" disabled={responseType === 'success'}>Reset Password</Button>
+                        <Button type="submit" variant="contained" disabled={responseType === 'success'}>Reset
+                            Password</Button>
                     </Stack>
                 </Stack>
             </Box>
@@ -76,7 +77,7 @@ const RequestPasswordResetForm = () => {
                     {response}
                 </Alert>
             )}
-            <AccessWarningAlert />
+            <AccessWarningAlert/>
         </Container>
     )
 }

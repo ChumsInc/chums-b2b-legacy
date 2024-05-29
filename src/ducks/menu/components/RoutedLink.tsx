@@ -8,5 +8,5 @@ interface RoutedLinkProps extends LinkProps {
     replace?: boolean;
 }
 export default function RoutedLink(props:RoutedLinkProps) {
-    return <Link underline="hover" {...props} component={RouterLink as any} />
+    return <Link underline="hover" {...props} component={RouterLink} />
 }

@@ -19,9 +19,6 @@ import UserMenu from "./UserMenu";
 import CartMenu from "./CartMenu";
 import SearchBar from "../../search/components/SearchBar";
 
-const drawerWidth = 240;
-// const navItems = ['Products', 'Accounts', 'Orders', 'Resources'];
-
 
 const NavBarUI = () => {
     const dispatch = useAppDispatch();
@@ -45,7 +42,7 @@ const NavBarUI = () => {
             <List>
                 {navItems.map((item) => (
                     <Fragment key={item.id}>
-                        {item.title ?? (!!item.render ? item.render({inDrawer: true}) : null)}
+                        {item.title ?? (item.render ? item.render({inDrawer: true}) : null)}
                     </Fragment>
                 ))}
             </List>
@@ -64,25 +61,30 @@ const NavBarUI = () => {
                                 <MenuIcon/>
                             </IconButton>
                             <HomeLink/>
-                            <Box sx={{display: {xs: 'none', md: 'flex'}, flex: '1 1 auto', flexDirection: 'row', alignItems: 'center'}}>
+                            <Box sx={{
+                                display: {xs: 'none', md: 'flex'},
+                                flex: '1 1 auto',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                            }}>
                                 {navItems.map((item) => (
                                     <Fragment key={item.id}>
-                                        {item.title ?? (!!item.render ? item.render({}) : null)}
+                                        {item.title ?? (item.render ? item.render({}) : null)}
                                     </Fragment>
                                 ))}
                             </Box>
                             <Box sx={{display: {xs: 'none', md: 'flex'}, flex: '1 1 auto'}}>
-                                <SearchBar />
+                                <SearchBar/>
                             </Box>
-                            <Stack spacing={2} direction="row" useFlexGap >
-                                <CartMenu />
+                            <Stack spacing={2} direction="row" useFlexGap>
+                                <CartMenu/>
                                 <UserMenu/>
                             </Stack>
                         </Toolbar>
                     </Container>
                 </AppBar>
             </HideOnScroll>
-            <Toolbar />
+            <Toolbar/>
             <NavDrawer>
                 {drawer}
             </NavDrawer>

@@ -5,8 +5,7 @@ export async function fetchPage(arg:string):Promise<ContentPage|null> {
     try {
         const url = `/api/pages/${encodeURIComponent(arg)}`;
         const response = await fetchJSON<{pages: ContentPage[]}>(url, {cache: 'no-cache'});
-        const page = response?.pages[0] ?? null;
-        return page;
+        return response?.pages[0] ?? null;
     } catch(err:unknown) {
         if (err instanceof Error) {
             console.debug("fetchPage()", err.message);

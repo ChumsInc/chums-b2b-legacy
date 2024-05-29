@@ -5,8 +5,6 @@ import Stack from '@mui/material/Stack'
 import Skeleton from '@mui/material/Skeleton';
 
 export default function SalesOrderSkeleton() {
-    const params = useParams<{customerSlug: string, salesOrderNo: string}>();
-
     return (
         <Grid container spacing={2}>
             <Grid xs={12} lg={6}>

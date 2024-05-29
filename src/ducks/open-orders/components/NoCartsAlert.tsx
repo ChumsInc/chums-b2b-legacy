@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSelector} from "react-redux";
-import {selectCartsLength, selectOpenOrdersLength} from "../selectors";
+import {selectCartsLength} from "../selectors";
 import Alert from "@mui/material/Alert";
 
 export default function NoCartsAlert() {

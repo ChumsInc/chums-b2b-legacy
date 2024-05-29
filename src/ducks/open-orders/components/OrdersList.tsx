@@ -1,8 +1,7 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import SortableTable from "../../../common-components/SortableTable";
+import DataTable, {SortableTableField} from "../../../common-components/DataTable";
 import {SalesOrderHeader} from "b2b-types";
 import {SortProps} from "../../../types/generic";
-import {SortableTableField} from "../../../common-components/DataTable";
 import TablePagination from "@mui/material/TablePagination";
 import {useAppDispatch} from "../../../app/configureStore";
 import {setSalesOrderSort} from "../actions";
@@ -14,7 +13,7 @@ export default function OrdersList({
                                        fields,
                                    }: {
     list: SalesOrderHeader[];
-    fields: SortableTableField[];
+    fields: SortableTableField<SalesOrderHeader>[];
 }) {
     const dispatch = useAppDispatch();
     const sort = useSelector(selectOpenOrdersSort);
@@ -30,15 +29,15 @@ export default function OrdersList({
         setPage(0);
     }
 
-    const sortChangeHandler = (sort: SortProps) => {
+    const sortChangeHandler = (sort: SortProps<SalesOrderHeader>) => {
         dispatch(setSalesOrderSort(sort));
     }
 
     return (
         <div>
-            <SortableTable keyField="SalesOrderNo"
-                           data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                           fields={fields} currentSort={sort} onChangeSort={sortChangeHandler}/>
+            <DataTable<SalesOrderHeader> keyField="SalesOrderNo"
+                                         data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+                                         fields={fields} currentSort={sort} onChangeSort={sortChangeHandler}/>
             <TablePagination component="div"
                              count={list.length} page={page} rowsPerPage={rowsPerPage}
                              onPageChange={(ev, page) => setPage(page)}

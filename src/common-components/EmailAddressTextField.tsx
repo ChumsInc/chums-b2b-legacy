@@ -1,9 +1,9 @@
 import React, {ChangeEvent, InputHTMLAttributes} from 'react';
 import TextField from "@mui/material/TextField";
-import {InputAdornment} from "@mui/material";
+import InputAdornment from "@mui/material/InputAdornment";
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 
-const FormGroupEmailAddress = ({
+const EmailAddressTextField = ({
                                    value,
                                    onChange,
                                    label = '',
@@ -26,4 +26,4 @@ const FormGroupEmailAddress = ({
     )
 };
 
-export default FormGroupEmailAddress;
+export default EmailAddressTextField;

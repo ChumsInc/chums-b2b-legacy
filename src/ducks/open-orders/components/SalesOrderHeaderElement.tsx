@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector} from "react-redux";
-import {Button, Chip, TextField} from "@mui/material";
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import {addressFromShipToAddress, multiLineAddress} from "../../customer/utils";
@@ -14,11 +13,14 @@ import {loadSalesOrder} from "../actions";
 import Grid from '@mui/material/Unstable_Grid2';
 import {customerSlug} from "../../../utils/customer";
 import {useMatch, useNavigate} from "react-router";
-import {selectSalesOrder, selectSalesOrderInvoices, selectSalesOrderLoading} from "../selectors";
+import {selectSalesOrder, selectSalesOrderInvoices} from "../selectors";
 import DuplicateCartDialog from "../../cart/components/DuplicateCartDialog";
 import {duplicateSalesOrder} from "../../cart/actions";
 import {selectCartLoading} from "../../cart/selectors";
 import {isClosedSalesOrder} from "../../sales-order/utils";
+import TextField from '@mui/material/TextField';
+import Button from "@mui/material/Button";
+import Chip from "@mui/material/Chip";
 
 const SalesOrderHeaderElement = () => {
     const dispatch = useAppDispatch();
@@ -86,8 +88,8 @@ const SalesOrderHeaderElement = () => {
                                            variant="filled" size="small" inputProps={{readOnly: true}}/>
                                 {dayjs(header.LastInvoiceDate).isValid() && (
                                     <TextField label="Invoice Date" type="date" fullWidth
-                                            value={dayjs(header.LastInvoiceDate).format('YYYY-MM-DD')}
-                                            variant="filled" size="small" inputProps={{readOnly: true}}/>
+                                               value={dayjs(header.LastInvoiceDate).format('YYYY-MM-DD')}
+                                               variant="filled" size="small" inputProps={{readOnly: true}}/>
                                 )}
                             </Stack>
                         )}
@@ -123,15 +125,17 @@ const SalesOrderHeaderElement = () => {
                         </Stack>
                         <Stack spacing={2} direction={{sm: 'column', md: 'row'}} sx={{justifyContent: 'flex-end'}}>
                             <Button type="button" variant="text" onClick={reloadHandler}>Reload</Button>
-                            <Button type="button" variant="outlined" onClick={() => setShowDuplicateCart(true)}>Duplicate Order</Button>
+                            <Button type="button" variant="outlined" onClick={() => setShowDuplicateCart(true)}>Duplicate
+                                Order</Button>
                         </Stack>
                     </Stack>
                 </Grid>
             </Grid>
-            <DuplicateCartDialog open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo} shipToCode={header.ShipToCode}
+            <DuplicateCartDialog open={showDuplicateCart} SalesOrderNo={header?.SalesOrderNo}
+                                 shipToCode={header.ShipToCode}
                                  loading={cartLoading}
                                  onConfirm={duplicateCartHandler}
-                                 onCancel={() => setShowDuplicateCart(false)} />
+                                 onCancel={() => setShowDuplicateCart(false)}/>
         </div>
     )
 }

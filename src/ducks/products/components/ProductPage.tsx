@@ -1,14 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {setCurrentVariant} from '../actions';
+import {loadProduct, setCartItemQuantity, setCurrentVariant} from '../actions';
 import classNames from "classnames";
-import VariantSelector from "./VariantSelector";
 import SwatchSet from "./SwatchSet";
 import AddToCartForm from "../../cart/components/AddToCartForm";
 import Alert from "@mui/material/Alert";
 import CartItemDetail from "./CartItemDetail";
 import {noop} from '../../../utils/general';
-import {Link, redirect} from "react-router-dom";
+import {redirect} from "react-router-dom";
 import MissingTaxScheduleAlert from "../../customer/components/MissingTaxScheduleAlert";
 import RequireLogin from "../../../components/RequireLogin";
 import {useAppDispatch} from "../../../app/configureStore";
@@ -29,12 +28,11 @@ import {isCartProduct, isProduct, isSellAsVariants} from "../utils";
 import {useLocation} from "react-router";
 import {isBillToCustomer} from "../../../utils/typeguards";
 import ProductPreSeasonAlert from "./ProductPreSeasonAlert";
-import {loadProduct, setCartItemQuantity} from "../actions";
 import SelectCustomerAlert from "../../customer/components/SelectCustomerAlert";
 import Box from "@mui/material/Box";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import VariantButtons from "./VariantButtons";
-import {Collapse} from "@mui/material";
+import Collapse from "@mui/material/Collapse";
 import {useIsSSR} from "../../../hooks/is-server-side";
 import {sendGtagEvent} from "../../../api/gtag";
 
@@ -53,7 +51,7 @@ const ProductPage = ({keyword}: {
     const season_code = useSelector(selectProductSeasonCode);
     const season_available = useSelector(selectProductSeasonAvailable);
     const location = useLocation();
-    const [cartMessage, setCartMessage] = useState<string|null>(null);
+    const [cartMessage, setCartMessage] = useState<string | null>(null);
     const timerHandle = useRef<number>(0);
 
     useEffect(() => {
@@ -79,7 +77,7 @@ const ProductPage = ({keyword}: {
         if (isSSR) {
             return;
         }
-        if (!!cartMessage) {
+        if (cartMessage) {
             timerHandle.current = window.setTimeout(() => {
                 setCartMessage(null);
             }, 5000);
@@ -107,7 +105,6 @@ const ProductPage = ({keyword}: {
         dispatch(setCartItemQuantity(quantity));
     }
 
-    const hasCustomer = !!customerAccount;
 
     return (
         <Box className={classNames('product-page', {loading})}>
@@ -125,7 +122,7 @@ const ProductPage = ({keyword}: {
                         </Box>
 
                         <ProductPageInfo/>
-                        <VariantButtons />
+                        <VariantButtons/>
 
                         <SwatchSet/>
                         {(!isCartProduct(cartItem) || !cartItem.itemCode) && !loading && (
@@ -142,7 +139,7 @@ const ProductPage = ({keyword}: {
                             <Alert severity="warning">{selectedProduct.dateAvailable}</Alert>
                         )}
                         <RequireLogin>
-                            <SelectCustomerAlert />
+                            <SelectCustomerAlert/>
                         </RequireLogin>
                         {!loggedIn && (
                             <Alert severity="warning" title="">

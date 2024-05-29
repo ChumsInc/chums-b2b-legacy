@@ -1,20 +1,19 @@
-import React, {ChangeEventHandler, useEffect, useId} from 'react';
+import React, {useEffect, useId} from 'react';
 import Select, {SelectChangeEvent} from '@mui/material/Select';
 import {longRepNo} from "../../../utils/customer";
 import {useSelector} from "react-redux";
 import {selectUserAccount} from "../../user/selectors";
 import {loadRepList} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
-import {FieldValue} from "../../../types/generic";
 import {selectRepsList, selectRepsLoaded, selectRepsLoading} from "../selectors";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 
 
-const RepSelect = ({value = '', onChange}:{
-    value: string|null;
-    onChange: (value:string|null) => void;
+const RepSelect = ({value = '', onChange}: {
+    value: string | null;
+    onChange: (value: string | null) => void;
 }) => {
     const dispatch = useAppDispatch();
     const userAccount = useSelector(selectUserAccount);
@@ -42,7 +41,7 @@ const RepSelect = ({value = '', onChange}:{
         return null;
     }
 
-    const changeHandler = (ev:SelectChangeEvent) => {
+    const changeHandler = (ev: SelectChangeEvent) => {
         return onChange(ev.target.value ?? null);
     }
 

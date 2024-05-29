@@ -1,5 +1,4 @@
 import {NavItemProps} from "../../../types/ui-features";
-import {useAppDispatch} from "../../../app/configureStore";
 import ListItemLink from "../../../components/ListItemLink";
 import React, {useId} from "react";
 import {useSelector} from "react-redux";
@@ -11,25 +10,11 @@ import Menu from "@mui/material/Menu";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import RepAccessListMenu from "./RepAccessListMenu";
 import RecentCustomersMenu from "./RecentCustomersMenu";
-import {MenuItem} from "b2b-types";
 import {SlotComponentProps} from "@mui/base";
 import Paper from "@mui/material/Paper";
 import UserAvatar from "../../user/components/UserAvatar";
 
-const items: MenuItem[] = [
-    {
-        id: 0,
-        url: '/profile',
-        title: 'Profile',
-        className: '',
-        description: 'Profile Menu',
-        parentId: 0,
-        status: true,
-        priority: 0
-    },
-]
 export default function NavAccountsLink({inDrawer}: NavItemProps) {
-    const dispatch = useAppDispatch();
     const mediaLg = useMediaQuery('(min-width: 1200px)');
     const isLoggedIn = useSelector(selectLoggedIn);
     const access = useSelector(selectCurrentAccess);
@@ -92,7 +77,7 @@ export default function NavAccountsLink({inDrawer}: NavItemProps) {
                     <MenuItemRouterLink to={'/profile'} onClick={handleClose}>Profile</MenuItemRouterLink>
                     <MenuItemRouterLink to={'/profile'} onClick={handleClose}><UserAvatar/></MenuItemRouterLink>
                 </div>
-                <RepAccessListMenu open={open} onClick={handleClose}/>
+                <RepAccessListMenu onClick={handleClose}/>
                 <RecentCustomersMenu onClick={handleClose}/>
             </Menu>
         </>

@@ -1,9 +1,7 @@
 import Button, {ButtonProps} from "@mui/material/Button";
 import {Link as RouterLink} from "react-router-dom";
 import React from "react";
-import {navItemButtonStyle, StyledNavButton} from "./NavItemButton";
-import {styled} from "@mui/material/styles";
-import {useTheme} from "@mui/material";
+import {useTheme} from "@mui/material/styles";
 
 
 export interface NavItemButtonLinkProps extends ButtonProps {
@@ -15,7 +13,7 @@ const NavItemButtonLink = ({to, replace, children, sx, ...props}: NavItemButtonL
     const theme = useTheme();
 
     return (
-        <Button component={RouterLink as any} size="large" disabled={!to} to={to} replace={replace}
+        <Button component={RouterLink} size="large" disabled={!to} to={to} replace={replace}
                 sx={{color: theme.palette.grey["900"], ...sx}} {...props}>
             {children}
         </Button>

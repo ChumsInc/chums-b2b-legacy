@@ -1,6 +1,6 @@
 import React, {useId} from 'react';
 import {useSelector} from "react-redux";
-import {selectProductMenu} from "../../menu";
+import {selectProductMenu} from "../index";
 import Menu from "@mui/material/Menu";
 import NavItemButton from "./NavItemButton";
 import MenuItemRouterLink from "./MenuItemRouterLink";
@@ -18,7 +18,6 @@ const itemStyle: SxProps<Theme> = {
 
 export default function ProductMenu() {
     const productMenu = useSelector(selectProductMenu);
-    const mediaMd = useMediaQuery('(min-width: 900px)');
     const mediaLg = useMediaQuery('(min-width: 1200px)');
     const buttonId = useId();
     const menuId = useId();

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {ProductAlternateImage} from "b2b-types";
 import Box from "@mui/material/Box";
-import {Fade} from "@mui/material";
+import Fade from "@mui/material/Fade";
 import Stack from "@mui/material/Stack";
 import Paper from "@mui/material/Paper";
 import {waitForIt} from "../utils/general";

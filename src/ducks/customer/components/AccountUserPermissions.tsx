@@ -1,12 +1,16 @@
 import React from 'react';
 import Typography from "@mui/material/Typography";
-import {Table, TableBody, TableCell, TableHead, TableRow} from "@mui/material";
 import BusinessIcon from "@mui/icons-material/Business";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import {useSelector} from "react-redux";
 import {selectCustomerUsers, selectPermittedShipToAddresses} from "../selectors";
 import {useMatch} from "react-router";
 import {customerUserPath} from "../../../utils/path-utils";
+import TableHead from "@mui/material/TableHead";
+import Table from '@mui/material/Table';
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from '@mui/material/TableBody';
 
 const AccountUserPermissions = () => {
     const users = useSelector(selectCustomerUsers);

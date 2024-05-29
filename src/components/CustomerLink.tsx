@@ -24,7 +24,7 @@ const CustomerLink = ({customer, selected = false}: {
     }
 
     return (
-        <Link component={RoutedLink} to={path} sx={{whiteSpace: 'nowrap'}}>
+        <Link component={RoutedLink} to={path} sx={{whiteSpace: 'nowrap'}} color={selected ? 'chumsRed' : undefined} aria-label={`Select '${customer.CustomerName}'`}>
             {longCustomerNo(customer)}
         </Link>
     )

@@ -8,7 +8,9 @@ import AvailabilityAlert from "../../../components/AvailabilityAlert";
 import numeral from "numeral";
 import Decimal from "decimal.js";
 import SalesOrderLineButtons from "./SalesOrderLineButtons";
-import {TableCell, TableRow} from "@mui/material";
+import TableCell from '@mui/material/TableCell';
+import TableRow from "@mui/material/TableRow";
+
 
 export default function SalesOrderKitComponentLine({
                                                        line,

@@ -21,9 +21,11 @@ const MissingTaxScheduleAlert = () => {
     return (
         <Alert severity="error">
             <strong className="me-1">Warning:</strong>
-            Missing Tax Schedule. Please contact <a
-            href={`mailto:cs@chums.com?subject=${customer.ARDivisionNo}-${customer.CustomerNo}${encodeURIComponent(' Missing Tax Schedule (B2B)')}`}
-            target="_blank">customer service.</a>
+            Missing Tax Schedule. Please contact
+            <a
+                href={`mailto:cs@chums.com?subject=${customer.ARDivisionNo}-${customer.CustomerNo}${encodeURIComponent(' Missing Tax Schedule (B2B)')}`}
+                rel="noreferrer"
+                target="_blank">customer service.</a>
         </Alert>
     )
 }

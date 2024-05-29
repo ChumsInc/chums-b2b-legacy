@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
 import Stack from "@mui/material/Stack";
-import {TextField} from "@mui/material";
+import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import {selectSalesOrderActionStatus} from "../../open-orders/selectors";
 import {addCartComment} from "../actions";

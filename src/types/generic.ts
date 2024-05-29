@@ -1,9 +1,9 @@
 export default class B2BError extends Error {
     url?: string;
-    debug?: any;
+    debug?: unknown;
     code?: string | number;
 
-    constructor(message: string, url?: string, debug?: any, code?: string | number) {
+    constructor(message: string, url?: string, debug?: unknown, code?: string | number) {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.debug = debug;
@@ -12,14 +12,14 @@ export default class B2BError extends Error {
     }
 }
 
-export interface SortProps<T = any> {
-    field: keyof T,
-    ascending: boolean,
+export interface SortProps<T = KeyedObject> {
+    field: keyof T;
+    ascending: boolean;
 }
 
-export interface FieldValue<T = any> {
-    field: keyof T,
-    value: any
+export interface FieldValue<T = KeyedObject> {
+    field: keyof T;
+    value: unknown;
 }
 
 export interface Appendable {
@@ -37,7 +37,7 @@ export type LoadStatus = 'pending' | 'rejected' | 'idle';
 export type OrderActionStatus = LoadStatus | 'saving' | 'promoting' | 'deleting';
 export type EmailActionStatus = LoadStatus | 'fulfilled'
 
-export interface KeyedObject<T = any> {
+export interface KeyedObject<T = unknown> {
     [key:string]: T
 }
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import SubNavColumn from "./SubNavColumn";
-import {PATH_RESOURCES_CHUMS_REPS, PATH_RESOURCES_CUSTOMER,} from "../../../constants/paths";
 import {useSelector} from "react-redux";
 import {selectLoggedIn} from "../../user/selectors";
 import {selectResourcesMenu} from "../index";

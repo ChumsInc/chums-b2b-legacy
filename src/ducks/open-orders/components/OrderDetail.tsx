@@ -1,25 +1,24 @@
 import React, {useEffect, useState} from 'react';
 import OrderDetailLine from "./OrderDetailLine";
 import SalesOrderTotal from "./SalesOrderTotal";
-import {CartItem, CartProduct, SalesOrderDetailLine} from "b2b-types";
+import {CartProduct, SalesOrderDetailLine} from "b2b-types";
 import Dialog from "@mui/material/Dialog";
 import {detailToCartItem} from "../../sales-order/utils";
-import {
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Table, TableBody, TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
-} from "@mui/material";
 import AddToCartForm from "../../cart/components/AddToCartForm";
 import {selectSalesOrder, selectSalesOrderDetail, selectSalesOrderIsCart} from "../selectors";
 import {useAppSelector} from "../../../app/configureStore";
-import ItemAutocomplete from "../../item-lookup/ItemAutocomplete";
 import {sendGtagEvent} from "../../../api/gtag";
 import Decimal from "decimal.js";
+import TableContainer from '@mui/material/TableContainer';
+import Table from '@mui/material/Table';
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import TableCell from "@mui/material/TableCell";
+import TableBody from '@mui/material/TableBody';
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 export default function OrderDetail({salesOrderNo}: {
     salesOrderNo?: string;
@@ -70,25 +69,25 @@ export default function OrderDetail({salesOrderNo}: {
         <TableContainer sx={{mt: 3}}>
             <Table size="small">
                 <TableHead>
-                <TableRow>
-                    <TableCell>Item</TableCell>
-                    <TableCell>Description</TableCell>
-                    <TableCell>U/M</TableCell>
-                    <TableCell align="right">Ordered</TableCell>
-                    <TableCell align="right">Unit Price</TableCell>
-                    <TableCell align="right">MSRP</TableCell>
-                    <TableCell align="right">Item Price</TableCell>
-                    <TableCell align="right">Ext Price</TableCell>
-                    <TableCell align="center">Action</TableCell>
-                </TableRow>
+                    <TableRow>
+                        <TableCell>Item</TableCell>
+                        <TableCell>Description</TableCell>
+                        <TableCell>U/M</TableCell>
+                        <TableCell align="right">Ordered</TableCell>
+                        <TableCell align="right">Unit Price</TableCell>
+                        <TableCell align="right">MSRP</TableCell>
+                        <TableCell align="right">Item Price</TableCell>
+                        <TableCell align="right">Ext Price</TableCell>
+                        <TableCell align="center">Action</TableCell>
+                    </TableRow>
                 </TableHead>
 
                 <TableBody>
-                {detail.map(line => (
-                    <OrderDetailLine key={line.LineSeqNo} salesOrderNo={salesOrderNo} line={line}
-                                     readOnly={!isCart}
-                                     onAddToCart={addToCartHandler}/>
-                ))}
+                    {detail.map(line => (
+                        <OrderDetailLine key={line.LineSeqNo} salesOrderNo={salesOrderNo} line={line}
+                                         readOnly={!isCart}
+                                         onAddToCart={addToCartHandler}/>
+                    ))}
                 </TableBody>
                 <SalesOrderTotal salesOrderNo={salesOrderNo}/>
             </Table>

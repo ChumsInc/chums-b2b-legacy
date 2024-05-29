@@ -1,8 +1,8 @@
 import React from 'react';
 import Chip, {ChipProps} from "@mui/material/Chip";
-import {styled, Theme, SxProps} from "@mui/material/styles";
+import {styled, SxProps} from "@mui/material/styles";
 
-const StyledChip = styled(Chip)<ChipProps>(({theme}) => ({
+const StyledChip = styled(Chip)<ChipProps>(() => ({
     width: 'auto',
     borderRadius: 0,
     height: '16px',
@@ -11,19 +11,28 @@ const StyledChip = styled(Chip)<ChipProps>(({theme}) => ({
     }
 }));
 
-export type ProductAttributeType = 'new'|'rfid-blocking'|'best-seller'|'upcycled'|'heat-transfer'|'sublimation'|'screen-printing'|'dome';
+export type ProductAttributeType =
+    'new'
+    | 'rfid-blocking'
+    | 'best-seller'
+    | 'upcycled'
+    | 'heat-transfer'
+    | 'sublimation'
+    | 'screen-printing'
+    | 'dome';
 
 
 export interface ProductAttributeChipProps extends ChipProps {
-    feature: ProductAttributeType|string;
-    label?:string;
+    feature: ProductAttributeType | string;
+    label?: string;
 }
 
 export interface ProductAttributeColor {
     color?: string;
     backgroundColor?: string;
 }
-const attributeColor = (attr: ProductAttributeType|string):ProductAttributeColor => {
+
+const attributeColor = (attr: ProductAttributeType | string): ProductAttributeColor => {
     switch (attr) {
         case 'best-seller':
             return {backgroundColor: '#D71D78', color: '#FFFFFF'};
@@ -45,7 +54,7 @@ const attributeColor = (attr: ProductAttributeType|string):ProductAttributeColor
     return {};
 }
 
-const attributeText = (attr: ProductAttributeType|string):string => {
+const attributeText = (attr: ProductAttributeType | string): string => {
     switch (attr) {
         case 'best-seller':
             return "BEST SELLER";
@@ -68,7 +77,7 @@ const attributeText = (attr: ProductAttributeType|string):string => {
 
 }
 
-export default function ProductAttributeChip({feature, label, sx, ...rest}:ProductAttributeChipProps) {
+export default function ProductAttributeChip({feature, label, sx, ...rest}: ProductAttributeChipProps) {
     if (!sx) {
         sx = {} as SxProps;
     }
@@ -77,6 +86,6 @@ export default function ProductAttributeChip({feature, label, sx, ...rest}:Produ
         label = attributeText(feature);
     }
     return (
-        <StyledChip label={label} {...rest} size="small" sx={{...colors, ...sx}} />
+        <StyledChip label={label} {...rest} size="small" sx={{...colors, ...sx}}/>
     )
 }

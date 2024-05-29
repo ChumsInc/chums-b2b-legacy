@@ -1,9 +1,10 @@
 import React from 'react';
-import {TableCell, TableRow} from "@mui/material";
 import {useSelector} from "react-redux";
 import {selectCurrentInvoice} from "../selectors";
 import Decimal from "decimal.js";
 import numeral from "numeral";
+import TableRow from '@mui/material/TableRow';
+import TableCell from "@mui/material/TableCell";
 
 
 const InvoiceFooterRow = ({title, value}: {

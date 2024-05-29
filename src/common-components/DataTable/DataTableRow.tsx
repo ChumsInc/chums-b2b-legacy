@@ -1,11 +1,12 @@
 import React from 'react';
 import classNames from "classnames";
-import {DataTableRowProps} from "./DataTableRow.types";
 import {noop} from "../../utils/general";
-import {TableCell, TableRow} from "@mui/material";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import {DataTableRowProps} from "./types";
+import {KeyedObject} from "../../types/generic";
 
-
-const DataTableRow = ({
+export const DataTableRow = <T = KeyedObject>({
                           className,
                           rowClassName,
                           selected,
@@ -14,7 +15,7 @@ const DataTableRow = ({
                           trRef,
                           onClick = noop,
                           ...rest
-                      }: DataTableRowProps) => {
+                      }: DataTableRowProps<T>) => {
     const clickHandler = () => {
         return onClick ? onClick() : noop();
     }
@@ -23,17 +24,21 @@ const DataTableRow = ({
 
     return (
         <TableRow ref={trRef} className={classNames({'table-active': selected}, className, _className)}
-            onClick={clickHandler} {...rest}>
+                  onClick={clickHandler} {...rest}>
             {fields.map((field, index) => {
                 const fieldClassName = typeof field.className === 'function' ? field.className(row) : field.className;
                 if (typeof field.render === 'function') {
                     return (
                         <TableCell key={index} align={field.align} className={classNames(fieldClassName)}
-                            colSpan={field.colSpan}>{field.render(row)}</TableCell>
+                                   colSpan={field.colSpan}>{field.render(row)}</TableCell>
                     );
                 }
-                return (<TableCell key={index} align={field.align} className={classNames(fieldClassName)}
-                            colSpan={field.colSpan}>{row[field.field]}</TableCell>);
+                return (
+                    <TableCell key={index} align={field.align} className={classNames(fieldClassName)}
+                                   colSpan={field.colSpan}>
+                        {String(row[field.field] ?? '')}
+                    </TableCell>
+                );
             })}
         </TableRow>
     )

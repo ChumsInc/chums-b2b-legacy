@@ -13,13 +13,14 @@ import DeliveryAddress from "../../../components/Address/DeliveryAddress";
 import LinearProgress from "@mui/material/LinearProgress";
 import ReloadCustomerButton from "./ReloadCustomerButton";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import {Button, TextField} from "@mui/material";
+import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import EmailAddressEditor from "../../../components/EmailAddressEditor";
 import TelephoneFormFields from "./TelephoneFormFields";
 import {generatePath} from "react-router-dom";
 import {customerSlug} from "../../../utils/customer";
 import PrimaryShipToButton from "./PrimaryShipToButton";
+import TextField from "@mui/material/TextField";
 
 const ShipToForm = () => {
     const dispatch = useAppDispatch();
@@ -41,6 +42,7 @@ const ShipToForm = () => {
 
 
     const onNewShipToCustomer = () => {
+        //@TODO: should we allow a B2B user to create a new shipTo location?
     }
 
     const submitHandler = (ev: FormEvent) => {
@@ -116,7 +118,7 @@ const ShipToForm = () => {
                                                     onChange={changeHandler}/>
                                 <TelephoneFormFields account={shipTo} onChange={changeHandler} readOnly={!canEdit}/>
                                 {shipTo.changed && (
-                                    <Alert severity="warning" title="Hey!">Don't forget to save your changes.</Alert>
+                                    <Alert severity="warning" title="Hey!">Don&apos;t forget to save your changes.</Alert>
                                 )}
                             </Stack>
                             <Stack direction="row" spacing={2} sx={{my: 3}} justifyContent="flex-end">

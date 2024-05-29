@@ -5,9 +5,6 @@ import SeasonTeaser from "../../../components/SeasonTeaser";
 import {BasicProduct} from "b2b-types";
 import CategoryGridItem from "./CategoryGridItem";
 import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
-import SizeIconList from "../../../components/SizeIconList";
-import ProductAttributeChip from "../../products/components/ProductAttributeChip";
 import ProductAttributeStack from "../../products/components/ProductAttrbuteStack";
 
 const ProductLink = ({title, description, product, imageUrl, className = ''}: {
@@ -17,7 +14,7 @@ const ProductLink = ({title, description, product, imageUrl, className = ''}: {
     imageUrl: string;
     className?: string;
 }) => {
-    const link = !!product.defaultCategoryKeyword
+    const link = product.defaultCategoryKeyword
         ? `/products/${product.defaultCategoryKeyword}/${product.keyword}`
         : `/products/${product.keyword}`;
     return (
@@ -27,8 +24,9 @@ const ProductLink = ({title, description, product, imageUrl, className = ''}: {
                               altText={title}
                               size="400" className="main-image"/>
                 <div className="product-title">{title}</div>
-                <ProductAttributeStack product={product} />
-                <SeasonTeaser season_teaser={product.season_teaser} season_active={product.season_active} sx={{justifyContent: 'center'}}/>
+                <ProductAttributeStack product={product}/>
+                <SeasonTeaser season_teaser={product.season_teaser} season_active={product.season_active}
+                              sx={{justifyContent: 'center'}}/>
             </Link>
             <div className="description">
                 <div dangerouslySetInnerHTML={{__html: description}}/>

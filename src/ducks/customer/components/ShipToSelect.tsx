@@ -18,21 +18,19 @@ export interface ShipToSelectProps extends Omit<FormControlProps, 'value' | 'onC
     onChange: (shipToCode: string | null, address: ShipToAddress | null) => void;
     readOnly?: boolean;
     required?: boolean;
-    inputProps?: InputBaseComponentProps;
 }
 
 const allLocationsValue = '__ALL';
 
 export default function ShipToSelect({
                                          value,
-                                         defaultName,
+                                         defaultName, // @TODO: not sure if this is needed?
                                          label,
                                          disabledShipToLocations,
                                          allowAllLocations,
                                          onChange,
                                          readOnly,
                                          required,
-                                         inputProps,
                                          ...formControlProps
                                      }: ShipToSelectProps) {
     const customer = useSelector(selectCustomerAccount);

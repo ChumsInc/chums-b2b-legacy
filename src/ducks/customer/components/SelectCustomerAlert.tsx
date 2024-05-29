@@ -5,7 +5,7 @@ import Link from '@mui/material/Link';
 import {useSelector} from "react-redux";
 import {selectCustomerLoading} from "../selectors";
 import {selectCurrentAccess, selectCurrentCustomer} from "../../user/selectors";
-import {useTheme} from "@mui/material";
+import {useTheme} from "@mui/material/styles";
 import {useLocation} from "react-router";
 
 const SelectCustomerAlert = () => {

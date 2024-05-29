@@ -2,11 +2,14 @@ import React, {ChangeEvent, useEffect, useId, useState} from "react";
 import {minShipDate} from "../../../utils/orders";
 import {DateCalendar,} from "@mui/x-date-pickers/DateCalendar";
 import dayjs, {Dayjs} from "dayjs";
-import {FormControl, InputAdornment, InputBaseComponentProps, InputLabel, Popover} from "@mui/material";
 import FilledInput from "@mui/material/FilledInput";
 import IconButton from "@mui/material/IconButton";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import {FormControlProps} from "@mui/material/FormControl";
+import FormControl, {FormControlProps} from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import InputAdornment from "@mui/material/InputAdornment";
+import Popover from "@mui/material/Popover";
+import {InputBaseComponentProps} from "@mui/material/InputBase";
 
 export interface ShipDateInputProps extends Omit<FormControlProps, 'onChange'> {
     value: string | null;
@@ -60,6 +63,7 @@ export default React.forwardRef(function ShipDateInput({value, onChange, inputPr
             <InputLabel htmlFor={id}>Requested Ship Date</InputLabel>
             <FilledInput type="date" value={dateValue(value)} inputRef={ref}
                          onChange={changeHandler}
+                         disabled={disabled}
                          inputProps={{
                              readOnly, id, ref,
                              min: dayjs(min).format('YYYY-MM-DD'),

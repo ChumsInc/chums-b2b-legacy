@@ -1,10 +1,10 @@
 const {merge} = require('webpack-merge');
 const common = require('./webpack.common.cjs');
 const path = require('path');
-const {CleanWebpackPlugin} = require("clean-webpack-plugin");
 const {WebpackManifestPlugin} = require("webpack-manifest-plugin");
 const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 const TerserPlugin = require('terser-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const clientConfig = {
     target: 'web',
@@ -33,9 +33,12 @@ const clientConfig = {
         filename: "[name].[contenthash:8].js",
         sourceMapFilename: '[file].map',
         publicPath: '/build',
+        clean: true,
     },
     plugins: [
-        new CleanWebpackPlugin(),
+        // new HtmlWebpackPlugin({
+        //     title: 'Output Management',
+        // }),
         new WebpackManifestPlugin({}),
         new BundleAnalyzerPlugin(),
 

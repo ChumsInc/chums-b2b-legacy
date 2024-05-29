@@ -12,9 +12,11 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import {CustomerAddress} from "b2b-types";
-import {Button, Checkbox, FormControlLabel} from "@mui/material";
 import Alert from "@mui/material/Alert";
 import {Link as RoutedLink} from 'react-router-dom'
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
 
 const newCustomer: SignUpUser = {
     email: '',

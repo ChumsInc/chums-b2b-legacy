@@ -1,13 +1,8 @@
 import React from 'react';
 import SeasonTeaser from "../../../components/SeasonTeaser";
 import {useSelector} from "react-redux";
-import {
-    selectCurrentProduct,
-    selectProductCartItem,
-    selectProductSeasonActive,
-    selectProductSeasonTeaser, selectSelectedProduct
-} from "../selectors";
-import {Collapse} from "@mui/material";
+import {selectSelectedProduct} from "../selectors";
+import Collapse from "@mui/material/Collapse";
 
 const ProductSeasonTeaser = () => {
     const product = useSelector(selectSelectedProduct);

@@ -2,9 +2,6 @@ import React, {useEffect} from 'react';
 import {useAppDispatch} from "../../../app/configureStore";
 import {useSelector} from "react-redux";
 import {selectCartsFilter, selectCartsList, selectOpenOrdersLoaded, selectOpenOrdersLoading} from "../selectors";
-import {newCart} from "../../cart/actions";
-import {PATH_SALES_ORDER} from "../../../constants/paths";
-import {NEW_CART, ORDER_TYPE} from "../../../constants/orders";
 import OrdersList from "./OrdersList";
 import {selectCurrentCustomer} from "../../user/selectors";
 import CartButton from "../../../components/CartButton";
@@ -14,26 +11,35 @@ import numeral from "numeral";
 import {SortableTableField} from "../../../common-components/DataTable";
 import {SalesOrderHeader} from "b2b-types";
 import Decimal from "decimal.js";
-import {generatePath, redirect} from "react-router-dom";
 import {calcOrderType} from "../../../utils/orders";
 import {loadOpenOrders, setCartsFilter} from "../actions";
 import OrderFilter from "./OrderFilter";
 import LinearProgress from "@mui/material/LinearProgress";
 import NoCartsAlert from "./NoCartsAlert";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button"
 
 const cartFields: SortableTableField<SalesOrderHeader>[] = [
     {field: 'SalesOrderNo', title: 'Cart', render: (so) => <CartButton salesOrderNo={so.SalesOrderNo}/>},
     {
-        field: 'SalesOrderNo', title: 'Order #', render: (so) => <OrderLink salesOrderNo={so.SalesOrderNo}
-                                                                            orderType={calcOrderType(so)}/>, sortable: true
+        field: 'SalesOrderNo',
+        title: 'Order #',
+        render: (so) => <OrderLink salesOrderNo={so.SalesOrderNo}
+                                   orderType={calcOrderType(so)}/>,
+        sortable: true
     },
     {field: 'CustomerPONo', title: 'PO #', sortable: true},
     {field: 'OrderDate', title: 'Ordered Created', render: (so) => <DateString date={so.OrderDate}/>, sortable: true},
-    {field: 'ShipToName', title: 'Ship To', sortable: true, render: (row) => (
+    {
+        field: 'ShipToName', title: 'Ship To', sortable: true, render: (row) => (
             <span>{!!row.ShipToCode && (<span>[{row.ShipToCode}]</span>)} {row.ShipToName}</span>
-        )},
-    {field: 'ShipToCity', title: 'Location', render: (so) => `${so.ShipToCity}, ${so.ShipToState} ${so.ShipToZipCode}`, sortable: true},
+        )
+    },
+    {
+        field: 'ShipToCity',
+        title: 'Location',
+        render: (so) => `${so.ShipToCity}, ${so.ShipToState} ${so.ShipToZipCode}`,
+        sortable: true
+    },
     {
         field: 'NonTaxableAmt',
         title: 'Total',
@@ -57,11 +63,12 @@ const CartsList = () => {
         }
     }, [loading, loaded, currentCustomer]);
 
-    const newCartHandler = () => {
-        dispatch(newCart());
-        const path = generatePath(PATH_SALES_ORDER, {orderType: ORDER_TYPE.cart, salesOrderNo: NEW_CART});
-        redirect(path);
-    }
+    //@TODO: Should there be a new cart button on the carts list page? the old one had it, but I don't know how much it was used.
+    // const newCartHandler = () => {
+    //     dispatch(newCart());
+    //     const path = generatePath(PATH_SALES_ORDER, {orderType: ORDER_TYPE.cart, salesOrderNo: NEW_CART});
+    //     redirect(path);
+    // }
 
     const reloadHandler = () => {
         if (currentCustomer) {

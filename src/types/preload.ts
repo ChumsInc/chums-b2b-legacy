@@ -55,7 +55,7 @@ export interface PreloadedState {
         loaded?: boolean;
     }
     version?: {
-        versionNo?: string;
+        versionNo?: string|null;
     }
 }
 

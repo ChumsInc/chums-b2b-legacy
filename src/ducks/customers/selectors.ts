@@ -16,7 +16,9 @@ export const selectFilteredCustomerList = createSelector(
         let filterRegex = /^/;
         try {
             filterRegex = new RegExp(`\\b${filter ?? ''}`, 'i');
-        } catch(err:unknown) {}
+        } catch(err:unknown) {
+            filterRegex = /^/;
+        }
         return list
             .filter(customer => !repFilter || customer.SalespersonNo === repFilter)
             .filter(customer => {

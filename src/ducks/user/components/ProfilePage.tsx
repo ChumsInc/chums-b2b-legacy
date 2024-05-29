@@ -14,7 +14,6 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Container from "@mui/material/Container";
 import {useLocation} from "react-router";
 import {setReturnToPath} from "../../customer/actions";
-import PasswordForm from "./PasswordForm";
 
 const ProfilePage = () => {
     const dispatch = useAppDispatch();

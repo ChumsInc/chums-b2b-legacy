@@ -7,7 +7,7 @@ import {
     selectCustomerShipTo
 } from "../selectors";
 import React, {useEffect} from "react";
-import {Tooltip} from "@mui/material";
+import Tooltip from "@mui/material/Tooltip";
 import Box from "@mui/material/Box";
 import {billToCustomerSlug, customerNo, customerSlug, parseCustomerSlug} from "../../../utils/customer";
 import Typography from "@mui/material/Typography";

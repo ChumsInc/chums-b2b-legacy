@@ -1,9 +1,8 @@
 import React from 'react';
-import classNames from "classnames";
 import {parseColor} from '../../../utils/products';
 import {ProductColor} from "b2b-types";
 import {styled} from "@mui/material/styles";
-import {Button} from "@mui/material";
+import Button from "@mui/material/Button"
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import MiniChip from "../../../components/MiniChip";
@@ -45,13 +44,13 @@ const Swatch = ({color, itemQuantity, swatchFormat = '?', active = false, newCol
     }
     return (
         <SwatchButton variant={active ? 'outlined' : "text"}
-                      // sx={{borderColor: !active ? 'transparent' : undefined}}
+            // sx={{borderColor: !active ? 'transparent' : undefined}}
                       className="swatch" onClick={clickHandler}>
             <Stack direction="column">
                 <Box className="color-code">{color?.code}</Box>
                 {!!itemQuantity && <Box className="color-qty">x{itemQuantity}</Box>}
                 <SwatchImage className={swatchClassname}/>
-                {newColor && <NewColorChip label="New" /> }
+                {newColor && <NewColorChip label="New"/>}
             </Stack>
         </SwatchButton>
     )

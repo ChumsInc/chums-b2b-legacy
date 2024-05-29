@@ -8,7 +8,6 @@ import {Editable} from "b2b-types";
 import {ExtendedUserProfile} from "../../../types/user";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import {Button, InputAdornment, TextField} from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import LinearProgress from "@mui/material/LinearProgress";
 import Avatar from "@mui/material/Avatar";
@@ -16,6 +15,9 @@ import Alert from "@mui/material/Alert";
 import {Link as NavLink} from 'react-router-dom';
 import Container from "@mui/material/Container";
 import LockPersonIcon from '@mui/icons-material/LockPerson';
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
 
 type EditableUserProfile = Pick<ExtendedUserProfile, 'name' | 'email'> & Editable;
 
@@ -100,7 +102,7 @@ const UserProfile = () => {
                             </Button>
                             <Button type="submit" variant="contained" disabled={!user?.changed}>Save Changes</Button>
                         </Stack>
-                        {user?.changed && (<Alert severity="warning">Don't forget to save your changes.</Alert>)}
+                        {user?.changed && (<Alert severity="warning">Don&apos;t forget to save your changes.</Alert>)}
                     </form>
                 </Grid2>
             </Grid2>

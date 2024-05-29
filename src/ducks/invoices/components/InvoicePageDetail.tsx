@@ -2,23 +2,21 @@ import React, {useState} from 'react';
 import {useSelector} from "react-redux";
 import {selectCurrentInvoice} from "../selectors";
 import InvoiceDetailLine from "./InvoiceDetailLine";
-import {
-    Button,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow
-} from "@mui/material";
 import TableFooter from "@mui/material/TableFooter";
 import {CartProduct, InvoiceHistoryDetail} from "b2b-types";
 import InvoiceFooter from "./InvoiceFooter";
 import AddToCartForm from "../../cart/components/AddToCartForm";
 import Dialog from "@mui/material/Dialog";
+import TableContainer from '@mui/material/TableContainer';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableCell from "@mui/material/TableCell";
+import TableBody from '@mui/material/TableBody';
+import TableRow from "@mui/material/TableRow";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import Button from "@mui/material/Button";
 
 const InvoicePageDetail = () => {
     const invoice = useSelector(selectCurrentInvoice);
@@ -83,7 +81,7 @@ const InvoicePageDetail = () => {
                 </TableFooter>
             </Table>
             <Dialog open={open} onClose={() => setCartItem(null)}>
-                <DialogTitle>Add '{cartItem?.itemCode}' To Cart</DialogTitle>
+                <DialogTitle>Add &apos;{cartItem?.itemCode}&apos; To Cart</DialogTitle>
                 <DialogContent>
                     {!!cartItem && (
                         <AddToCartForm cartItem={cartItem}

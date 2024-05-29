@@ -2,7 +2,6 @@ import 'dotenv/config';
 import Debug from 'debug';
 import fs from "node:fs/promises";
 import {NextFunction, Request, Response} from "express";
-import {createStore} from "redux";
 import {rootReducer} from "../app/configureStore";
 import {renderToString} from "react-dom/server";
 import {Provider} from "react-redux";
@@ -14,9 +13,9 @@ import {loadJSON, loadKeywords} from "./utils";
 import {loadManifest} from "./manifest";
 import B2BHtml from "./B2BHTML";
 import {HelmetData, HelmetProvider} from "react-helmet-async";
-import {Route} from "react-router-dom";
 import {StaticRouter} from "react-router-dom/server";
 import {configureStore} from "@reduxjs/toolkit";
+import {PreloadedState} from "../types/preload";
 
 const debug = Debug('chums:index');
 
@@ -33,13 +32,13 @@ async function loadMainCSS(): Promise<string> {
     }
 }
 
-async function loadVersionNo():Promise<string|null> {
+async function loadVersionNo(): Promise<string | null> {
     try {
         const file = await fs.readFile('./package.json');
         const packageJSON = Buffer.from(file).toString();
         const json = JSON.parse(packageJSON);
         return json?.version ?? null;
-    } catch(err:unknown) {
+    } catch (err: unknown) {
         if (err instanceof Error) {
             console.debug("loadVersionNo()", err.message);
             return Promise.reject(err);
@@ -57,7 +56,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
             return;
         }
         const manifestFiles = await loadManifest();
-        const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json`);
+        const preload = await loadJSON<PreloadedState>(`http://localhost:${API_PORT}/preload/state.json`);
         if (!preload.version) {
             const versionNo = await loadVersionNo();
             preload.version = {versionNo}
@@ -69,7 +68,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
             <Provider store={store}>
                 <HelmetProvider context={helmetData.context}>
                     <StaticRouter location={req.url}>
-                        <App />
+                        <App/>
                     </StaticRouter>
                 </HelmetProvider>
             </Provider>
@@ -78,7 +77,9 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         try {
             const stat = await fs.stat("./public/b2b-swatches/swatches.css");
             swatchMTime = stat.mtimeMs ?? 0;
-        } catch(err:unknown) {}
+        } catch (err: unknown) {
+            //Do nothing here
+        }
 
         const css = await loadMainCSS();
         const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
@@ -133,7 +134,7 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
             }
             searchParams.set('category', found.keyword);
         }
-        const preload = await loadJSON(`http://localhost:${API_PORT}/preload/state.json?${searchParams.toString()}`);
+        const preload = await loadJSON<PreloadedState>(`http://localhost:${API_PORT}/preload/state.json?${searchParams.toString()}`);
         if (!preload.version) {
             const versionNo = await loadVersionNo();
             preload.version = {versionNo}

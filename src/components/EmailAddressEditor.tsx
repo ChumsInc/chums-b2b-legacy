@@ -1,6 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import FormGroupEmailAddress from "../common-components/FormGroupEmailAddress";
-import {FormHelperText} from "@mui/material";
+import EmailAddressTextField from "../common-components/EmailAddressTextField";
+import FormHelperText from "@mui/material/FormHelperText";
 import {BillToCustomer, ShipToCustomer} from "b2b-types";
 
 
@@ -72,7 +72,7 @@ const EmailAddressEditor = ({
                             .reduce((acc: number, val: string) => acc + val.length, 0);
                         const maxLength = Math.min(maxEmailLength, Math.max(maxMultipleLength - otherLength, addr.length));
                         return (
-                            <FormGroupEmailAddress key={index} label={label} value={addr}
+                            <EmailAddressTextField key={index} label={label} value={addr}
                                                    inputProps={{
                                                        readOnly,
                                                        maxLength,
@@ -87,7 +87,7 @@ const EmailAddressEditor = ({
         )
     }
     return (
-        <FormGroupEmailAddress label={label}
+        <EmailAddressTextField label={label}
                                inputProps={{
                                    readOnly,
                                    maxLength: maxEmailLength,

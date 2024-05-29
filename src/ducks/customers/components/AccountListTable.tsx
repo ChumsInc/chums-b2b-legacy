@@ -4,26 +4,31 @@ import {TableComponents, TableVirtuoso} from "react-virtuoso";
 import {useSelector} from "react-redux";
 import {selectCustomerSort, selectFilteredCustomerList} from "../selectors";
 import {Customer} from "b2b-types";
-import {Table, TableBody, TableCell, TableContainer, TableRow, TableSortLabel} from "@mui/material";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableRow from "@mui/material/TableRow";
+import TableSortLabel from "@mui/material/TableSortLabel";
 import Paper from "@mui/material/Paper";
 import {useAppDispatch} from "../../../app/configureStore";
 import {setCustomersSort} from "../actions";
 import {accountListColumns} from "./ColumnData";
+import {shortCustomerKey} from "../../../utils/customer";
 
 
 
 const VirtuosoTableComponents: TableComponents<Customer> = {
-    Scroller: forwardRef<HTMLDivElement>((props, ref) => (
-        <TableContainer component={Paper} {...props} ref={ref} elevation={0}/>
-    )),
+    Scroller: forwardRef<HTMLDivElement>(function VirtualTableScroller(props, ref) {
+        return (<TableContainer component={Paper} {...props} ref={ref} elevation={0}/>)
+    }),
     Table: (props) => (
         <Table {...props} sx={{borderCollapse: 'separate', tableLayout: 'fixed'}}/>
     ),
-    // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
-    TableRow: ({item: _item, ...props}) => <TableRow {...props} />,
-    TableBody: forwardRef<HTMLTableSectionElement>((props, ref) => (
-        <TableBody {...props} ref={ref}/>
-    ))
+    TableRow: ({item: _item, ...props}) => <TableRow {...props} data-customer-key={shortCustomerKey(_item)} />,
+    TableBody: forwardRef<HTMLTableSectionElement>(function VirtualTableBody(props, ref) {
+        return (<TableBody {...props} ref={ref}/>)
+    })
 }
 
 function fixedHeaderContent() {

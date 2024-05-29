@@ -7,13 +7,13 @@ import {selectCustomerPricing} from "../../customer/selectors";
 import {ProductVariant} from "b2b-types";
 import Button from "@mui/material/Button";
 import {styled} from '@mui/material/styles';
-import Stack, {StackProps} from "@mui/material/Stack";
+import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import {ResponsiveStyleValue} from "@mui/system";
 
 
-const VariantButtonBase = styled(Button)(({theme}) => ({
+const VariantButtonBase = styled(Button)(() => ({
     width: '100%',
 }));
 
@@ -38,7 +38,7 @@ const VariantButton = ({variant, selected, direction, spacing, onClick}: {
             <Stack direction={direction ?? {xs: 'row', sm: 'column'}}
                    spacing={spacing ?? {xs: 2, sm: 0}} alignItems="center">
                 <Box>
-                    <Typography variant="variantButtonText" >{variant.title}</Typography>
+                    <Typography variant="variantButtonText">{variant.title}</Typography>
                 </Box>
                 <Box>
                     <Typography variant="variantButtonPrice">
