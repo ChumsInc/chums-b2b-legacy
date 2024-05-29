@@ -11,7 +11,7 @@ const serverConfig = {
     entry: {
         server: './src/server/index.ts'
     },
-    devtool: 'source-map',
+    devtool: 'none',
     optimization: {
         minimize: true,
         minimizer: [
@@ -31,7 +31,6 @@ const serverConfig = {
     output: {
         path: path.resolve(__dirname, './dist'),
         filename: "[name].js",
-        sourceMapFilename: '[file].map',
         publicPath: '/',
         clean: true,
     },

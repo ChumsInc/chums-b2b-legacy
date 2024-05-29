@@ -21,7 +21,7 @@
         "jsx": "react-jsx",
         "declaration": false,
         "noImplicitAny": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "outDir": "dist",
         "baseUrl": "./src"
     },

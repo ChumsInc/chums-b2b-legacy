@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const {merge} = require('webpack-merge');
 const common = require('./webpack.common.cjs');
 const path = require('path');
@@ -39,6 +40,10 @@ const clientConfig = {
         // new HtmlWebpackPlugin({
         //     title: 'Output Management',
         // }),
+        new webpack.SourceMapDevToolPlugin({
+            filename: '[file].map',
+            append: `\n //# sourceMappingURL=/build/[url]`
+        }),
         new WebpackManifestPlugin({}),
         new BundleAnalyzerPlugin(),
 
