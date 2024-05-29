@@ -34,7 +34,7 @@ const AppUpdateLocalLogin = () => {
         if (isSSR || !isLoggedIn) {
             return;
         }
-        if (isLoggedIn && expiresIn < fiveMinutes) {
+        if (isLoggedIn && expiresIn < fiveMinutes && expiresIn > 0) {
             console.log('dispatching updateLocalAuth()');
             dispatch(updateLocalAuth())
         }

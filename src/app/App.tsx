@@ -25,7 +25,7 @@ import ProductRouter from "../ducks/products/components/ProductRouter";
 import BillToForm from "../ducks/customer/components/BillToForm";
 import ShipToForm from "../ducks/customer/components/ShipToForm";
 import AccountUsers from "../ducks/customer/components/AccountUsers";
-import ThemeProvider from "@mui/material/styles/ThemeProvider";
+import {ThemeProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import ContentPage404 from "../components/ContentPage404";
 import CartsList from "../ducks/open-orders/components/CartsList";

@@ -12,6 +12,7 @@ import {useLocation, useParams} from "react-router";
 import AccountList from "./AccountList";
 import {redirect} from "react-router-dom";
 import {setReturnToPath} from "../../customer/actions";
+import {setCustomersFilter} from "../actions";
 
 const AccountListContainer = () => {
     const dispatch = useAppDispatch();
@@ -26,6 +27,10 @@ const AccountListContainer = () => {
             dispatch(setReturnToPath(location.state.returnTo));
         }
     }, []);
+
+    useEffect(() => {
+        dispatch(setCustomersFilter(''));
+    }, [access]);
 
     useEffect(() => {
         if (accessListLoading) {

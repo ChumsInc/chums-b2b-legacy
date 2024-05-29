@@ -194,7 +194,7 @@ export const loadProfile = createAsyncThunk<UserProfileResponse>(
     {
         condition: (_arg, {getState}) => {
             const state = getState() as RootState;
-            return !selectUserLoading(state);
+            return !selectUserLoading(state) && selectLoggedIn(state);
         }
     }
 )
