@@ -2,7 +2,7 @@ import 'dotenv/config';
 import Debug from 'debug';
 import express from "express";
 import favicon from "serve-favicon";
-import path from "path";
+import path from "node:path";
 import {renderApp, renderAppContentPage, renderAppProductPage} from "./render";
 import {getVersion, getVersionJS} from "./version";
 import {getManifest} from "./manifest";
