@@ -91,6 +91,9 @@ export const updateLocalAuth = createAsyncThunk<void, void>(
             const expires = getTokenExpiry(token);
             dispatch(setLoggedIn({loggedIn: true, authType: AUTH_LOCAL, token, expires}));
         } catch (err: unknown) {
+            if (err instanceof  Error) {
+                console.log('updateLocalAuth()', err.message)
+            }
             dispatch(setLoggedIn({loggedIn: false}));
             auth.removeToken();
             return;

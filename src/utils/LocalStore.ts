@@ -4,7 +4,7 @@
 import {deprecatedStorageKeys} from "../constants/stores";
 
 export default class LocalStore {
-    static getItem<T = unknown>(key:string, defaultValue:T):T {
+    static getItem<T = unknown>(key: string, defaultValue: T): T {
         if (typeof window === 'undefined' || !window.localStorage) {
             return defaultValue;
         }
@@ -14,19 +14,19 @@ export default class LocalStore {
         }
         try {
             return JSON.parse(data) ?? defaultValue;
-        } catch(err:unknown) {
+        } catch (err: unknown) {
             return defaultValue;
         }
     }
 
-    static setItem<T = unknown>(key:string, data:T) {
+    static setItem<T = unknown>(key: string, data: T) {
         if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }
         window.localStorage.setItem(key, JSON.stringify(data));
     }
 
-    static removeItem(key:string) {
+    static removeItem(key: string) {
         if (typeof window === 'undefined' || !window.localStorage) {
             return;
         }

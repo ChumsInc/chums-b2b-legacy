@@ -7,7 +7,7 @@ import {
 } from "../../constants/actions";
 import {auth} from '../../api/IntranetAuthService';
 import localStore from "../../utils/LocalStore";
-import {STORE_AUTHTYPE, STORE_CUSTOMER, STORE_USER_ACCESS} from "../../constants/stores";
+import {STORE_AUTHTYPE, STORE_AVATAR, STORE_CUSTOMER, STORE_USER_ACCESS} from "../../constants/stores";
 import {getFirstCustomer,} from "../../utils/customer";
 import {jwtDecode, JwtPayload} from "jwt-decode";
 import {createReducer, isRejected, UnknownAction} from "@reduxjs/toolkit";
@@ -33,6 +33,7 @@ import {DeprecatedUserProfileAction, UserPasswordState, UserSignupState} from ".
 import {BasicCustomer, Editable, UserCustomerAccess, UserProfile} from "b2b-types";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 import {LoadStatus} from "../../types/generic";
+import LocalStore from "../../utils/LocalStore";
 
 
 
@@ -66,6 +67,7 @@ export const initialUserState = (): UserState => {
     }
     const isLoggedIn = auth.loggedIn();
     const profile = isLoggedIn ? (auth.getProfile() ?? null) : null
+    const avatar = LocalStore.getItem<string|null>(STORE_AVATAR, null);
     const accounts = profile?.chums?.user?.accounts ?? [];
     const customer = isLoggedIn
         ? localStore.getItem<BasicCustomer | null>(STORE_CUSTOMER, getFirstCustomer(accounts) ?? null)
@@ -79,7 +81,7 @@ export const initialUserState = (): UserState => {
         token: existingToken ?? null,
         tokenExpires: existingTokenExpires,
         profile: profile?.chums?.user ?? null,
-        picture: profile?.imageUrl ?? null,
+        picture: avatar ?? profile?.imageUrl ?? null,
         accounts: profile?.chums?.user?.accounts ?? [],
         roles: profile?.chums?.user?.roles ?? [],
         loggedIn: isLoggedIn,
