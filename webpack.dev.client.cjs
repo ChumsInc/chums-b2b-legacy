@@ -20,7 +20,7 @@ const clientConfig = {
             './src/client/index.tsx',
         ],
     },
-    devtool: 'eval-cheap-module-source-map',
+    devtool: 'eval-source-map',
     devServer: {
         compress: true,
         client: {
@@ -54,7 +54,6 @@ const clientConfig = {
         watchFiles: 'src/**/*',
     },
     plugins: [
-        // new webpack.HotModuleReplacementPlugin(),
     ],
     stats: {
         errorDetails: true,

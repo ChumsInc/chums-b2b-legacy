@@ -43,7 +43,6 @@ import {useIsSSR} from "../hooks/is-server-side";
 import LocalStore from "../utils/LocalStore";
 import {isTokenExpired} from "../utils/jwtHelper";
 import {auth} from "../api/IntranetAuthService";
-import {STORE_PROFILE, STORE_TOKEN, STORE_VERSION} from "../constants/stores";
 import {useLocation} from "react-router";
 import {sendGtagEvent} from "../api/gtag";
 
@@ -66,11 +65,6 @@ const App = () => {
             return;
         }
         LocalStore.removeDeprecatedItems();
-        const _version = LocalStore.getItem<string | null>(STORE_VERSION, null);
-        if (!_version || _version < '3.0.3') {
-            LocalStore.removeItem(STORE_TOKEN);
-            LocalStore.removeItem(STORE_PROFILE);
-        }
         const token = auth.getToken();
         if (token && isTokenExpired(token)) {
             auth.removeToken();
