@@ -1,6 +1,7 @@
 export const STORE_CURRENT_CART = 'chums/b2b/current-cart';
 export const STORE_AUTHTYPE = 'chums/b2b/authtype';
 export const STORE_PROFILE = 'chums/b2b/profile';
+export const STORE_AVATAR = 'chums/b2b/avatar'
 export const STORE_TOKEN = 'chums/b2b/id_token';
 export const STORE_USER = 'chums/b2b/googleUser';
 export const STORE_CUSTOMER = 'chums/b2b/customer';
