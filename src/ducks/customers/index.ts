@@ -45,6 +45,10 @@ export const customersReducer = createReducer(initialUserState, builder => {
             if (!action.payload?.loggedIn) {
                 state.list = [];
                 state.recent = [];
+                state.filter = '';
+                state.repFilter = '';
+                state.sort = {field: 'CustomerName', ascending: true};
+                state.loaded = false;
             }
         })
         .addCase(loadCustomerList.pending, (state) => {
