@@ -13,9 +13,7 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Paper from "@mui/material/Paper";
 import {useAppDispatch} from "../../../app/configureStore";
 import {setCustomersSort} from "../actions";
-import {accountListColumns} from "./ColumnData";
-import {shortCustomerKey} from "../../../utils/customer";
-
+import {accountListColumns} from "./AccountListColumns";
 
 
 const VirtuosoTableComponents: TableComponents<Customer> = {
@@ -25,11 +23,25 @@ const VirtuosoTableComponents: TableComponents<Customer> = {
     Table: (props) => (
         <Table {...props} sx={{borderCollapse: 'separate', tableLayout: 'fixed'}}/>
     ),
-    TableRow: ({item: _item, ...props}) => <TableRow {...props} data-customer-key={shortCustomerKey(_item)} />,
+    // eslint-disable-next-line react/prop-types,@typescript-eslint/no-unused-vars
+    TableRow: ({item, ...props}) => <TableRow {...props} />,
     TableBody: forwardRef<HTMLTableSectionElement>(function VirtualTableBody(props, ref) {
         return (<TableBody {...props} ref={ref}/>)
     })
 }
+
+
+const AccountListTable = () => {
+    const customers = useSelector(selectFilteredCustomerList);
+    return (
+        <Box sx={{height: 600, maxHeight: '75vh', width: '100%', mb: 3}}>
+            <TableVirtuoso data={customers} components={VirtuosoTableComponents}
+                           fixedHeaderContent={fixedHeaderContent} itemContent={rowContent}/>
+        </Box>
+    )
+}
+
+export default AccountListTable;
 
 function fixedHeaderContent() {
     const dispatch = useAppDispatch();
@@ -72,15 +84,3 @@ function rowContent(_index: number, row: Customer) {
         </>
     )
 }
-
-const AccountListTable = () => {
-    const customers = useSelector(selectFilteredCustomerList);
-    return (
-        <Box sx={{height: 600, maxHeight: '75vh', width: '100%', mb: 3}}>
-            <TableVirtuoso data={customers} components={VirtuosoTableComponents}
-                           fixedHeaderContent={fixedHeaderContent} itemContent={rowContent}/>
-        </Box>
-    )
-}
-
-export default AccountListTable;
