@@ -12,6 +12,7 @@ export const STORE_INVOICES_ROWS_PER_PAGE = 'chums/b2b/invoices.rowsPerPage';
 export const STORE_INVOICES_SORT = 'chums/b2b/invoices.sort';
 export const STORE_VERSION = 'chums/b2b/version';
 export const STORE_CUSTOMER_SHIPPING_ACCOUNT = 'chums/b2b/customerShippingAccount';
+export const STORE_SHOW_SIGNUP_POPUP = 'chums/b2b/signUpPopup';
 
 export interface DeprecatedStorageKeyList {
     [key: string]: string | null;

@@ -1,4 +1,5 @@
-import {alpha, createTheme} from '@mui/material/styles'
+import {createTheme} from '@mui/material/styles'
+import {alpha} from "@mui/material";
 
 declare module '@mui/material/styles' {
     interface TypographyVariants {
@@ -25,8 +26,8 @@ declare module '@mui/material/styles' {
     }
 }
 
-const chumsRedBase = '#d0112b';
-const chumsRedMain = alpha(chumsRedBase, 0.7);
+export const chumsRedBase = '#d0112b';
+export const chumsRedMain = alpha(chumsRedBase, 0.7);
 
 // Update the Typography's variant prop options
 declare module '@mui/material/Typography' {
@@ -37,13 +38,19 @@ declare module '@mui/material/Typography' {
     }
 }
 
+declare module '@mui/material/Button' {
+    interface ButtonPropsColorOverrides {
+        chumsRed: true;
+    }
+}
+
 let theme = createTheme({});
 
 theme = createTheme({
     palette: {
         chumsRed: theme.palette.augmentColor({
             color: {
-                main: '#d0112b'
+                main: chumsRedBase,
             },
             name: 'chumsRed'
         }),

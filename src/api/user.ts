@@ -139,6 +139,7 @@ export async function fetchGoogleLogin(token: string): Promise<UserProfileRespon
             body,
             credentials: 'omit'
         });
+
         response.reps = [];
         if (response.user?.accountType === 1) {
             response.reps = await fetchRepList();

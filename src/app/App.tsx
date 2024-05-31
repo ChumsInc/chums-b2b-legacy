@@ -83,10 +83,10 @@ const App = () => {
 
     return (
         <StrictMode>
-            <ErrorBoundary>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline>
+                        <>
                             <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
                                 <Routes>
                                     <Route path="/" element={<MainOutlet/>}>
@@ -140,11 +140,11 @@ const App = () => {
                                     </Route>
                                 </Routes>
                             </GoogleOAuthProvider>
+                        </>
 
-                        </CssBaseline>
-                    </ThemeProvider>
-                </LocalizationProvider>
-            </ErrorBoundary>
+                    </CssBaseline>
+                </ThemeProvider>
+            </LocalizationProvider>
         </StrictMode>
     )
 }

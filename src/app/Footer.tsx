@@ -9,6 +9,7 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import Stack from "@mui/material/Stack";
+import SignUpModal from "../components/SignUpModal";
 
 const SiteFooter = styled(Box)(() => ({
     width: '100%',
@@ -106,6 +107,7 @@ const Footer = () => {
             </ContactsContainer>
             <BottomLinksContainer>
                 <Box sx={{ml: {xs: '1rem'}}}><AppVersion /></Box>
+                <Box sx={{ml: {xs: '1rem'}}}><SignUpModal /></Box>
                 <BottomLinks direction="row" useFlexGap flexWrap="wrap" sx={{display: 'none'}}>
                     <BottomLink underline="hover" href="//chums.com/page/jobs" target="_blank" rel="noreferrer">CAREERS</BottomLink>
                     <BottomLink underline="hover" href="//chums.com/page/customization" target="_blank" rel="noreferrer">CUSTOMIZE</BottomLink>

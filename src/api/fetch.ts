@@ -22,19 +22,29 @@ async function handleJSONResponse<T = unknown>(res:Response, args?: unknown):Pro
         args: args ?? null
     })
     if (!res.ok) {
-        const text = await res.text();
-        if (![401, 403].includes(res.status)) {
-            await postErrors({message: `error: ${res.status}`, componentStack})
+        const text = res.statusText ?? await res.text();
+        if (/(401|403|504)/.test(res.status.toString())) {
+            return Promise.reject(new B2BError(text, res.url, null, res.status));
         }
+        await postErrors({message: `error: ${res.status}`, componentStack});
         return Promise.reject(new B2BError(text, res.url, null, res.status));
     }
-    const json = await res.json();
-    if (json.error) {
-        await postErrors({message: json.error, componentStack});
-        console.warn(json.error);
-        return Promise.reject(new B2BError(json.error, res.url));
+    try {
+        const json = await res.json();
+        if (json.error) {
+            await postErrors({message: json.error, componentStack});
+            console.warn(json.error);
+            return Promise.reject(new B2BError(json.error, res.url));
+        }
+        return json;
+    } catch(err:unknown) {
+        if (err instanceof Error) {
+            console.debug("handleJSONResponse()", err.message);
+            return Promise.reject(err);
+        }
+        console.debug("handleJSONResponse()", err);
+        return Promise.reject(new Error('Error in handleJSONResponse()'));
     }
-    return json || {};
 }
 
 export async function allowErrorResponseHandler<T = unknown>(res:Response):Promise<T> {

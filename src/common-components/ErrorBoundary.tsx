@@ -15,12 +15,16 @@ function ErrorFallback({error, resetErrorBoundary}: FallbackProps) {
     )
 }
 
-export default function ErrorBoundary({children}: {
-    children: React.ReactNode
+export default function ErrorBoundary({reportErrors, children}: {
+    reportErrors?: boolean|undefined;
+    children: React.ReactNode;
 }) {
     const userProfile = useSelector(selectUserProfile);
 
     const logError = (error: Error, info: React.ErrorInfo) => {
+        if (reportErrors === false) {
+            return;
+        }
         postErrors({
             message: error.message,
             userId: userProfile?.id,
