@@ -11,19 +11,15 @@ import {STORE_SHOW_SIGNUP_POPUP} from "../constants/stores";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import Box from "@mui/material/Box";
-import {Link as RoutedLink, NavLink} from 'react-router-dom'
-import Link from "@mui/material/Link";
+import {NavLink} from 'react-router-dom'
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from "@mui/material/Typography";
-import {styled, useTheme} from "@mui/material/styles";
-import ErrorBoundary from '../common-components/ErrorBoundary';
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Stack from "@mui/material/Stack";
 import ChumsLogo from "./ChumsLogo";
-import {chumsRedBase} from "../app/theme";
 
 const imagePathLandscape = "/images/chums/homepage/2024/06/B2BPopUpImage-landscape.jpg";
 const imagePathPortrait = "/images/chums/homepage/2024/06/B2BPopUpImage-portrait.jpg";
@@ -39,11 +35,6 @@ const Transition = React.forwardRef(function Transition(
 })
 
 const excludedPaths = /^\/(login|signup|set-password|reset-password)/;
-
-const ChumsRedButton = styled(Button)(({theme}) => ({
-    backgroundColor: chumsRedBase,
-}));
-
 
 const SignUpModal = () => {
     const id = useId();
@@ -95,7 +86,7 @@ const SignUpModal = () => {
 
     return (
         <>
-            <Button variant="text" onClick={() => setShowModal(true)}>Test Dialog</Button>
+            {/*<Button variant="text" onClick={() => setShowModal(true)}>Test Dialog</Button>*/}
             <Dialog open={showModal} TransitionComponent={Transition} keepMounted onClose={handleClose}
                     aria-describedby={id} maxWidth="sm">
                 <DialogTitle id={id}>
@@ -115,16 +106,19 @@ const SignUpModal = () => {
                 <DialogContent>
                     <Grid2 container spacing={2}>
                         <Grid2 xs={12} sm={6}>
-                            <Stack direction="column" spacing={2} sx={{alignItems: 'center', justifyContent: 'center', height: '100%'}}>
-                                <ChumsLogo sx={{maxWidth: '75%'}} />
+                            <Stack direction="column" spacing={2}
+                                   sx={{alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+                                <ChumsLogo sx={{maxWidth: '75%'}}/>
                                 <Typography sx={{textAlign: 'center'}}>
                                     Open your B2B account today for easy ordering and world-class customer service.
                                 </Typography>
                             </Stack>
                         </Grid2>
                         <Grid2 xs={12} sm={6}>
-                            <Box component="img" src={imagePathPortrait} width="361px" height="542px" sx={{width: '100%', height: 'auto', display: {xs: 'inline', sm: 'none'}}} />
-                            <Box component="img" src={imagePathLandscape} width="722px" height="542px" sx={{width: '100%', height: 'auto', display: {xs: 'none', sm: 'inline'}}} />
+                            <Box component="img" src={imagePathPortrait} width="361px" height="542px"
+                                 sx={{width: '100%', height: 'auto', display: {xs: 'inline', sm: 'none'}}}/>
+                            <Box component="img" src={imagePathLandscape} width="722px" height="542px"
+                                 sx={{width: '100%', height: 'auto', display: {xs: 'none', sm: 'inline'}}}/>
                         </Grid2>
                     </Grid2>
                 </DialogContent>
