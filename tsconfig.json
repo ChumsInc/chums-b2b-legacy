@@ -23,7 +23,8 @@
         "noImplicitAny": true,
         "sourceMap": true,
         "outDir": "dist",
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "newLine": "lf"
     },
     "include": [
         "src/**/*"

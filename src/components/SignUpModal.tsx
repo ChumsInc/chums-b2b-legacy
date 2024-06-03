@@ -55,6 +55,7 @@ const SignUpModal = () => {
             // if the user is logged in, don't bother ever showing the dialog
             // if the user is on the login, signup, reset-password, etc., don't bother ever showing the dialog
             handleClose();
+            window.clearTimeout(timer.current);
             return;
         }
 
@@ -62,7 +63,7 @@ const SignUpModal = () => {
             return;
         }
 
-        window.setTimeout(() => {
+        timer.current = window.setTimeout(() => {
             setShowModal(true);
         }, delay.current);
 
