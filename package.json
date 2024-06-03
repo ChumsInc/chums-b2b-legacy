@@ -1,6 +1,6 @@
 {
   "name": "chums-b2b",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "",
   "main": "src/server/index.js",
   "type": "commonjs",
