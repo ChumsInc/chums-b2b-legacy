@@ -42,7 +42,7 @@ const SignUpModal = () => {
     const isSSR = useIsSSR();
     const location = useLocation();
     const timer = useRef<number>(0);
-    const delay = useRef<number>(15 * 1000);
+    const delay = useRef<number>(10 * 1000);
     const isLoggedIn = useAppSelector(selectLoggedIn);
     const [showModal, setShowModal] = useState<boolean>(false);
     const [enabled, setEnabled] = React.useState<boolean>(LocalStore.getItem<boolean>(STORE_SHOW_SIGNUP_POPUP, !isLoggedIn));
@@ -55,8 +55,8 @@ const SignUpModal = () => {
         if (isLoggedIn || excludedPaths.test(location.pathname)) {
             // if the user is logged in, don't bother ever showing the dialog
             // if the user is on the login, signup, reset-password, etc., don't bother ever showing the dialog
-            handleClose();
             window.clearTimeout(timer.current);
+            handleClose();
             return;
         }
 
@@ -65,27 +65,29 @@ const SignUpModal = () => {
             return;
         }
 
-        timer.current = window.setTimeout(() => {
-            setShowModal(true);
-        }, delay.current);
-
+        delayShowPopup();
         return () => {
             if (!isSSR) {
                 window.clearTimeout(timer.current);
             }
         }
-    }, [isLoggedIn, enabled, delay]);
+    }, [isLoggedIn, enabled, delay.current, location.pathname]);
 
-    useEffect(() => {
+    const delayShowPopup = () => {
         window.clearTimeout(timer.current)
-        setShowModal(false);
-        delay.current = Math.max(delay.current - 2000, 3000);
-    }, [location]);
+        timer.current = window.setTimeout(() => {
+            setShowModal(true);
+        }, delay.current);
+    }
 
     const handleClose = () => {
         setShowModal(false);
         setEnabled(false);
         LocalStore.setItem<boolean>(STORE_SHOW_SIGNUP_POPUP, false);
+    }
+
+    if (isSSR || isLoggedIn || !enabled) {
+        return null;
     }
 
     return (
@@ -119,9 +121,9 @@ const SignUpModal = () => {
                             </Stack>
                         </Grid2>
                         <Grid2 xs={12} sm={6}>
-                            <Box component="img" src={imagePathPortrait} width="361px" height="542px"
+                            <Box component="img" src={imagePathPortrait} width="361px" height="542px" loading="lazy"
                                  sx={{width: '100%', height: 'auto', display: {xs: 'inline', sm: 'none'}}}/>
-                            <Box component="img" src={imagePathLandscape} width="722px" height="542px"
+                            <Box component="img" src={imagePathLandscape} width="722px" height="542px" loading="lazy"
                                  sx={{width: '100%', height: 'auto', display: {xs: 'none', sm: 'inline'}}}/>
                         </Grid2>
                     </Grid2>
