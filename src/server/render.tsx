@@ -55,6 +55,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
             next();
             return;
         }
+        const nonce:string = res.locals.cspNonce!;
         const manifestFiles = await loadManifest();
         const preload = await loadJSON<PreloadedState>(`http://localhost:${API_PORT}/preload/state.json`);
         if (!preload.version) {
@@ -82,7 +83,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         }
 
         const css = await loadMainCSS();
-        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
+        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()} cspNonce={nonce}
                                               manifestFiles={manifestFiles} helmet={helmetData.context.helmet}
                                               swatchTimestamp={swatchMTime.toString(36)}/>);
         const html = `<!DOCTYPE html>
@@ -157,7 +158,7 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         );
         const {mtimeMs: swatchMTime} = await fs.stat("./public/b2b-swatches/swatches.css");
         const css = await loadMainCSS();
-        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
+        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()} cspNonce={res.locals.cspNonce}
                                              manifestFiles={manifestFiles}
                                              swatchTimestamp={swatchMTime.toString(36)}
                                              helmet={helmetData.context.helmet}/>);
@@ -211,7 +212,7 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
         );
         const {mtimeMs: swatchMTime} = await fs.stat("./public/b2b-swatches/swatches.css");
         const css = await loadMainCSS();
-        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
+        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()} cspNonce={res.locals.cspNonce}
                                              manifestFiles={manifestFiles}
                                              swatchTimestamp={swatchMTime.toString(36)}
                                              helmet={helmetData.context.helmet}/>);
