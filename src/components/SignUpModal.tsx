@@ -20,7 +20,6 @@ import Typography from "@mui/material/Typography";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Stack from "@mui/material/Stack";
 import ChumsLogo from "./ChumsLogo";
-import {current} from "@reduxjs/toolkit";
 
 const imagePathLandscape = "/images/chums/homepage/2024/06/B2BPopUpImage-landscape.jpg";
 const imagePathPortrait = "/images/chums/homepage/2024/06/B2BPopUpImage-portrait.jpg";
