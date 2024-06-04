@@ -82,9 +82,12 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         }
 
         const css = await loadMainCSS();
-        const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
-                                             manifestFiles={manifestFiles} helmet={helmetData.context.helmet}
-                                             swatchTimestamp={swatchMTime.toString(36)}/>)
+        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
+                                              manifestFiles={manifestFiles} helmet={helmetData.context.helmet}
+                                              swatchTimestamp={swatchMTime.toString(36)}/>);
+        const html = `<!DOCTYPE html>
+                    ${_html}
+                    `;
         res.send(html);
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -154,10 +157,13 @@ export async function renderAppProductPage(req: Request, res: Response, next: Ne
         );
         const {mtimeMs: swatchMTime} = await fs.stat("./public/b2b-swatches/swatches.css");
         const css = await loadMainCSS();
-        const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
+        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles}
                                              swatchTimestamp={swatchMTime.toString(36)}
-                                             helmet={helmetData.context.helmet}/>)
+                                             helmet={helmetData.context.helmet}/>);
+        const html = `<!DOCTYPE html>
+                    ${_html}
+                    `;
         res.send(html);
     } catch (err: unknown) {
         if (err instanceof Error) {
@@ -205,10 +211,13 @@ export async function renderAppContentPage(req: Request, res: Response, next: Ne
         );
         const {mtimeMs: swatchMTime} = await fs.stat("./public/b2b-swatches/swatches.css");
         const css = await loadMainCSS();
-        const html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
+        const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()}
                                              manifestFiles={manifestFiles}
                                              swatchTimestamp={swatchMTime.toString(36)}
-                                             helmet={helmetData.context.helmet}/>)
+                                             helmet={helmetData.context.helmet}/>);
+        const html = `<!DOCTYPE html>
+                    ${_html}
+                    `;
         res.send(html);
     } catch (err: unknown) {
         if (err instanceof Error) {
