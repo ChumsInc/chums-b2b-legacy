@@ -7,10 +7,12 @@ import {renderApp, renderAppContentPage, renderAppProductPage} from "./render";
 import {getVersion, getVersionJS} from "./version";
 import {getManifest} from "./manifest";
 import {getAPIRequest, handleInvalidURL} from "./utils";
+import helmet from "helmet";
 
 const debug = Debug('chums:server:index');
 
 const app = express();
+// app.use(helmet())
 app.use(favicon(path.join(process.cwd(), './public', 'favicon.ico')));
 app.get('/chums.css.map', (req, res) => {
     res.redirect('/css/chums.css.map');
