@@ -78,7 +78,7 @@ const OpenOrdersList = () => {
 
     return (
         <>
-            <OrderFilter value={filter} onChange={(ev) => dispatch(setOpenOrdersFilter(ev.target.value))}>
+            <OrderFilter value={filter} onChange={(ev) => dispatch(setOpenOrdersFilter(ev.target.value))} maxLength={30}>
                 <Button type="button" variant="text" onClick={reloadHandler}>
                     Reload
                 </Button>

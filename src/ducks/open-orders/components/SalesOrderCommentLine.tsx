@@ -43,12 +43,13 @@ export default React.forwardRef(function SalesOrderCommentLine({
                                ref={ref}
                                label="Item Comment"
                                sx={{flex: '1 1 auto'}}
-                               inputProps={{readOnly}}
+                               inputProps={{readOnly, maxLength: 2048}}
                                multiline maxRows={4} minRows={1}
                                onChange={changeHandler}
                                InputProps={{
-                                   endAdornment: <IconButton size="small" onClick={onDelete}><ClearIcon/></IconButton>
+                                   endAdornment: <IconButton size="small" onClick={onDelete}><ClearIcon/></IconButton>,
                                }}
+
                     />
                 </Box>
             </TableCell>

@@ -181,6 +181,7 @@ const EditAccountUserForm = () => {
                 <TextField type="string" fullWidth label="User Name"
                            value={user.name} onChange={changeHandler('name')}
                            variant="filled"
+                           inputProps={{maxLength: 45}}
                            InputProps={{
                                startAdornment: (<InputAdornment position="start"><PersonIcon/></InputAdornment>)
                            }}
@@ -190,6 +191,7 @@ const EditAccountUserForm = () => {
                 <TextField type="email" fullWidth label="Email Address"
                            value={user.email} onChange={changeHandler('email')}
                            variant="filled"
+                           inputProps={{maxLength: 255}}
                            InputProps={{
                                startAdornment: (<InputAdornment position="start"><AlternateEmailIcon/></InputAdornment>)
                            }}

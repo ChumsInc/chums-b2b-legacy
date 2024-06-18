@@ -125,7 +125,7 @@ export default function ItemAutocomplete({salesOrderNo}: {
                 }}
                 value={value}/>
             <TextField size="small" variant="filled"
-                       inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}} label="Quantity" value={quantity}
+                       inputProps={{inputMode: 'numeric', pattern: '[0-9]*', maxLength: 4}} label="Quantity" value={quantity}
                        onChange={quantityChangeHandler}
                        InputProps={{
                            endAdornment: (

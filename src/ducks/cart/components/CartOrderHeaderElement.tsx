@@ -241,8 +241,8 @@ const CartOrderHeaderElement = () => {
                         <TextField label="Cart Name" type="text" fullWidth variant="filled" size="small"
                                    value={cartHeader?.CustomerPONo ?? ''} required
                                    onChange={changeHandler("CustomerPONo")}
-                                   inputProps={{ref: customerPORef}}/>
-                        <TextField label="Promo Code" type="text" fullWidth
+                                   inputProps={{ref: customerPORef, maxLength: 30}}/>
+                        <TextField label="Promo Code" type="text" fullWidth inputProps={{maxLength: 30}}
                                    value={cartHeader?.UDF_PROMO_DEAL ?? ''} onChange={changeHandler('UDF_PROMO_DEAL')}
                                    variant="filled" size="small"/>
                     </Stack>
@@ -287,6 +287,7 @@ const CartOrderHeaderElement = () => {
                                                disabled={loadingStatus !== 'idle'}
                                                onChange={valueChangeHandler('PaymentType')}/>
                             <TextField label="Purchase Order No" type="text" fullWidth variant="filled" size="small"
+                                       inputProps={{maxLength: 30}}
                                        disabled={loadingStatus !== 'idle'}
                                        error={!header.CustomerPONo}
                                        value={header?.CustomerPONo ?? ''} required/>

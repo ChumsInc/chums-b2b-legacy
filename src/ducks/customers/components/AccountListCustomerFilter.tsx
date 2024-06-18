@@ -42,6 +42,7 @@ const AccountListCustomerFilter = () => {
         <Box sx={{display: 'flex', alignItems: 'flex-end'}}>
             <SearchIcon sx={{color: 'action.active', mr: 1, my: 0.5}}/>
             <TextField variant="standard"
+                       inputProps={{maxLength: 50}}
                        value={value}
                        onChange={filterChangeHandler} label="Filter Customers" fullWidth/>
         </Box>

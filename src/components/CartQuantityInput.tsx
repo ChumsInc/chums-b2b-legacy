@@ -42,6 +42,7 @@ const CartQuantityInput = ({quantity, unitOfMeasure = 'EA', onChange, min = 0, d
                              inputMode: 'numeric',
                              pattern: '[0-9]*',
                              readOnly: disabled,
+                             maxLength: 4,
                              sx: {textAlign: 'center'},
                          }}
                          required={required}

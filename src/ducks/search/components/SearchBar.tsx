@@ -71,8 +71,9 @@ export default function SearchBar() {
     return (
         <Autocomplete
             sx={{width: 300, display: 'inline-block'}}
-            renderInput={(params) => (
-                <TextField {...params} variant="outlined" size="small" label="Search" fullWidth/>
+            renderInput={({inputProps, ...params}) => (
+                <TextField {...params} inputProps={{...inputProps, maxLength: 30}}
+                           variant="outlined" size="small" label="Search" fullWidth/>
             )}
             inputValue={inputValue}
             onInputChange={inputChangeHandler}

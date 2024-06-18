@@ -177,11 +177,6 @@ const BillToForm = () => {
                                                }}
                                     />
                                 ))}
-                                {/*<EmailAddressEditor label="Email Address"*/}
-                                {/*                    required={true} readOnly={!canEdit}*/}
-                                {/*                    value={customer.EmailAddress}*/}
-                                {/*                    onChange={changeHandler}*/}
-                                {/*                    allowMultiple/>*/}
                                 <TelephoneFormFields account={customer} onChange={changeHandler} readOnly={!canEdit}/>
                                 {customer.changed &&
                                     <Alert severity="warning" title="Hey!">Don&#39;t forget to save your changes.</Alert>

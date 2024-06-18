@@ -41,9 +41,9 @@ const ShipToForm = () => {
     }, [shipToAddresses, params, loading])
 
 
-    const onNewShipToCustomer = () => {
-        //@TODO: should we allow a B2B user to create a new shipTo location?
-    }
+    // const onNewShipToCustomer = () => {
+    //     //@TODO: should we allow a B2B user to create a new shipTo location?
+    // }
 
     const submitHandler = (ev: FormEvent) => {
         ev.preventDefault();

@@ -81,7 +81,7 @@ const CartsList = () => {
     }
     return (
         <div>
-            <OrderFilter value={filter} onChange={(ev) => dispatch(setCartsFilter(ev.target.value))}>
+            <OrderFilter value={filter} onChange={(ev) => dispatch(setCartsFilter(ev.target.value))} maxLength={30}>
                 <Button variant="text" onClick={reloadHandler}>
                     Reload
                 </Button>

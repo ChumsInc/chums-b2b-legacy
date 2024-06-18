@@ -34,6 +34,7 @@ const InvoiceListFilter = ({onReload}: { onReload: () => void }) => {
         <Stack direction="row" spacing={2}>
             <TextField type="search" value={search} onChange={searchChangeHandler} variant="filled" size="small"
                        label="Search"
+                       inputProps={{maxLength: 30}}
                        InputProps={{
                            startAdornment: (
                                <InputAdornment position="start"><SearchIcon/></InputAdornment>

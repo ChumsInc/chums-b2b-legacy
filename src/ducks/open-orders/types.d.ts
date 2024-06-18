@@ -8,11 +8,9 @@ export interface OpenOrderDetailList {
 }
 
 export interface EditableSalesOrderHeader extends SalesOrderHeader {
-    actionStatus: OrderActionStatus;
     changed?: boolean;
 }
 export interface EditableSalesOrder extends SalesOrder {
-    actionStatus?: OrderActionStatus;
     changed?: boolean;
     detail: OpenOrderDetailList;
 }
