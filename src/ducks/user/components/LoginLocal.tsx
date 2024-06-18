@@ -52,6 +52,7 @@ const LoginLocal = () => {
                                variant="filled" label="Email"
                                onChange={ev => setEmail(ev.target.value)} value={email}
                                autoComplete="username"
+                               inputProps={{maxLength: 255}}
                                InputLabelProps={{shrink: true}}
                                required/>
                 </Box>
@@ -61,6 +62,7 @@ const LoginLocal = () => {
                                        label="Password"
                                        onChange={ev => setPassword(ev.target.value)} value={password}
                                        autoComplete="current-password"
+                                       inputProps={{maxLength: 128}}
                                        InputLabelProps={{shrink: true}}
                                        required/>
                 </Box>

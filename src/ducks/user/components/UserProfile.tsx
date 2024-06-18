@@ -86,9 +86,10 @@ const UserProfile = () => {
                         {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
                         <Stack spacing={2} direction={{xs: "column", lg: "row"}}>
                             <TextField label="Name" type="text" fullWidth variant="filled" size="small"
+                                       inputProps={{maxLength: 45}}
                                        value={user?.name ?? ''} onChange={changeHandler('name')}/>
                             <TextField label="Email Address" type="email" fullWidth variant="filled" size="small"
-                                       inputProps={{readOnly: authType !== AUTH_LOCAL}}
+                                       inputProps={{readOnly: authType !== AUTH_LOCAL, maxLength: 255}}
                                        InputProps={{endAdornment: renderEmailLockIcon() }}
                                        helperText={authType === AUTH_GOOGLE ? 'Please contact CHUMS customer service if you need to change your email address' : undefined}
                                        value={user?.email ?? ''} onChange={changeHandler('email')}/>
