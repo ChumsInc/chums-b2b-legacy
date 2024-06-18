@@ -10,6 +10,7 @@ import {getAPIRequest, handleInvalidURL} from "./utils";
 import helmet from "helmet";
 import * as crypto from "node:crypto";
 import compression from 'compression';
+import {IncomingMessage, ServerResponse} from 'node:http'
 
 const debug = Debug('chums:server:index');
 
@@ -23,12 +24,12 @@ app.use((req:Request, res:Response, next:NextFunction) => {
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
-            // @ts-ignore
-            "script-src": ["'self'", "accounts.google.com", "www.google-analytics.com", "www.googletagmanager.com", (req:Request, res:Response):string => `'nonce-${res.locals.cspNonce}'`],
+            "script-src": ["'self'", "accounts.google.com", "www.google-analytics.com", "www.googletagmanager.com", (_req:IncomingMessage, res:ServerResponse):string => `'nonce-${(res as Response).locals.cspNonce}'`, "'unsafe-inline'", "'strict-dynamic'"],
             "connect-src": ["'self'", "www.googletagmanager.com", "www.google-analytics.com", "accounts.google.com", ],
             "img-src": ["'self'", "b2b.chums.com", "*.chums.com", "www.googletagmanager.com", "*.googleusercontent.com"],
             "frame-src": ["'self'", "accounts.google.com"],
-        }
+
+        },
     }
 }))
 app.use(favicon(path.join(process.cwd(), './public', 'favicon.ico')));
