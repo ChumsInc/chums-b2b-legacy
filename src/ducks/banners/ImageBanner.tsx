@@ -38,6 +38,8 @@ export default function ImageBanner({banner}: { banner: Banner }) {
                         <source media={`(min-width: ${(banner.image.mobile?.width || 480) + 1}px)`}
                                 srcSet={bannerImagePath(banner.image.desktop.filename)}/>)}
                     <Box component="img"
+                         width={{xs: banner.image.mobile?.width || 480, sm: banner.image.desktop?.width || 1600}}
+                         height={{xs: banner.image.mobile?.height || 600, sm: banner.image.desktop?.height || 500 }}
                          src={src}
                          alt={banner.image.desktop?.altText ?? banner.image.mobile?.altText ?? ''}
                          sx={{maxWidth: '100%', height: 'auto'}}
