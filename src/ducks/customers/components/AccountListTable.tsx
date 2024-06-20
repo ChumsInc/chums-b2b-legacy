@@ -58,7 +58,7 @@ function fixedHeaderContent() {
     return (
         <TableRow>
             {accountListColumns.map(col => (
-                <TableCell key={col.id ?? col.field} variant="head"
+                <TableCell key={col.id ?? col.field} variant="head" component="th"
                            sortDirection={col.field === sort.field ? sortDirection : false}
                            align={col.align} style={{width: col.width}}
                            sx={{backgroundColor: 'background.paper', ...col.sx}}>

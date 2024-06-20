@@ -7,9 +7,22 @@ import {selectLoggedIn} from "../user/selectors";
 import {selectCustomersLoading} from "./selectors";
 import {isTokenExpired} from "../../utils/jwtHelper";
 import {auth} from "../../api/IntranetAuthService";
+import localStore from "../../utils/LocalStore";
+import {STORE_CUSTOMERS_FILTER_REP, STORE_CUSTOMERS_FILTER_STATE} from "../../constants/stores";
 
 export const setCustomersFilter = createAction<string>('customers/setFilter');
-export const setCustomersRepFilter = createAction<string | null>('customers/setRepFilter');
+export const setCustomersRepFilter = createAction('customers/setRepFilter', (arg:string|null) => {
+    localStore.setItem<string>(STORE_CUSTOMERS_FILTER_REP, arg ?? '');
+    return {
+        payload: arg
+    }
+});
+export const setCustomersStateFilter = createAction('customers/setStateFilter', (arg:string|null) => {
+    localStore.setItem<string>(STORE_CUSTOMERS_FILTER_STATE, arg ?? '');
+    return {
+        payload: arg
+    }
+});
 export const setCustomersSort = createAction<SortProps<Customer>>('customers/setSort');
 
 export const loadCustomerList = createAsyncThunk<Customer[], UserCustomerAccess | null>(

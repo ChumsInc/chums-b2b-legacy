@@ -4,10 +4,16 @@ import {setLoggedIn, setUserAccess} from "../user/actions";
 
 import {customerListSorter} from "../../utils/customer";
 import {SortProps} from "../../types/generic";
-import {loadCustomerList, setCustomersFilter, setCustomersRepFilter, setCustomersSort} from "./actions";
+import {
+    loadCustomerList,
+    setCustomersFilter,
+    setCustomersRepFilter,
+    setCustomersSort,
+    setCustomersStateFilter
+} from "./actions";
 import {auth} from "../../api/IntranetAuthService";
 import localStore from "../../utils/LocalStore";
-import {STORE_RECENT_ACCOUNTS} from "../../constants/stores";
+import {STORE_CUSTOMERS_FILTER_REP, STORE_CUSTOMERS_FILTER_STATE, STORE_RECENT_ACCOUNTS} from "../../constants/stores";
 import {loadCustomer, setCustomerAccount} from "../customer/actions";
 
 export interface CustomersState {
@@ -15,8 +21,11 @@ export interface CustomersState {
     list: Customer[];
     loading: boolean;
     loaded: boolean;
-    filter: string;
-    repFilter: string;
+    filters: {
+        search: string;
+        rep: string;
+        state: string;
+    }
     sort: SortProps<Customer>;
     recent: RecentCustomer[];
 }
@@ -32,8 +41,11 @@ export const initialUserState = (): CustomersState => {
         list: [],
         loading: false,
         loaded: false,
-        filter: '',
-        repFilter: '',
+        filters: {
+            search: '',
+            rep: localStore.getItem<string>(STORE_CUSTOMERS_FILTER_REP, '') ?? '',
+            state: localStore.getItem<string>(STORE_CUSTOMERS_FILTER_STATE, '') ?? '',
+        },
         sort: {field: 'CustomerName', ascending: true},
         recent: recentCustomers,
     }
@@ -45,8 +57,8 @@ export const customersReducer = createReducer(initialUserState, builder => {
             if (!action.payload?.loggedIn) {
                 state.list = [];
                 state.recent = [];
-                state.filter = '';
-                state.repFilter = '';
+                state.filters.search = '';
+                state.filters.rep = '';
                 state.sort = {field: 'CustomerName', ascending: true};
                 state.loaded = false;
             }
@@ -67,8 +79,8 @@ export const customersReducer = createReducer(initialUserState, builder => {
             if (state.key !== action.meta.arg?.id) {
                 state.list = [];
                 state.loaded = false;
-                state.repFilter = '';
-                state.filter = '';
+                state.filters.rep = '';
+                state.filters.search = '';
             }
             state.key = action.meta.arg?.id ?? null;
         })
@@ -81,10 +93,13 @@ export const customersReducer = createReducer(initialUserState, builder => {
             }
         })
         .addCase(setCustomersFilter, (state, action) => {
-            state.filter = action.payload;
+            state.filters.search = action.payload;
         })
         .addCase(setCustomersRepFilter, (state, action) => {
-            state.repFilter = action.payload ?? '';
+            state.filters.rep = action.payload ?? '';
+        })
+        .addCase(setCustomersStateFilter, (state, action) => {
+            state.filters.state = action.payload ?? '';
         })
         .addCase(setCustomersSort, (state, action) => {
             state.sort = action.payload;
