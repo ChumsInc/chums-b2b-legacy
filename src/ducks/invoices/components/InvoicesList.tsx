@@ -29,6 +29,8 @@ import {STORE_INVOICES_ROWS_PER_PAGE} from "../../../constants/stores";
 import Button from "@mui/material/Button";
 import InvoiceListFilter from "./InvoiceListFilter";
 import Box from "@mui/material/Box";
+import {ErrorBoundary} from "react-error-boundary";
+import Alert from "@mui/material/Alert";
 
 
 const invoiceFields: SortableTableField<InvoiceHistoryHeader>[] = [
@@ -131,24 +133,26 @@ const InvoicesList = () => {
     }
 
     return (
-        <div>
-            {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
-            <InvoiceListFilter onReload={reloadHandler}/>
-            <DataTable<InvoiceHistoryHeader> keyField={row => invoiceKey(row)}
-                                             data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-                                             selected={invoiceNo}
-                                             fields={invoiceFields} currentSort={sort}
-                                             onChangeSort={sortChangeHandler}/>
-            <Box display="flex" justifyContent="flex-end">
-                <TablePagination component="div"
-                                 count={list.length} page={page} onPageChange={(ev, page) => setPage(page)}
-                                 rowsPerPage={rowsPerPage} onRowsPerPageChange={rowsPerPageChangeHandler}
-                                 showFirstButton showLastButton/>
-                <Button type="button" variant="text" onClick={loadMoreHandler} disabled={limitReached || loading}>
-                    Load More
-                </Button>
+        <ErrorBoundary FallbackComponent={() => <Alert severity="error">Sorry, an error occurred</Alert> }>
+            <Box>
+                <InvoiceListFilter onReload={reloadHandler}/>
+                {loading && <LinearProgress variant="indeterminate" sx={{mb: 1}}/>}
+                <DataTable<InvoiceHistoryHeader> keyField={row => invoiceKey(row)}
+                                                 data={list.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+                                                 selected={invoiceNo}
+                                                 fields={invoiceFields} currentSort={sort}
+                                                 onChangeSort={sortChangeHandler}/>
+                <Box display="flex" justifyContent="flex-end">
+                    <TablePagination component="div"
+                                     count={list.length} page={page} onPageChange={(ev, page) => setPage(page)}
+                                     rowsPerPage={rowsPerPage} onRowsPerPageChange={rowsPerPageChangeHandler}
+                                     showFirstButton showLastButton/>
+                    <Button type="button" variant="text" onClick={loadMoreHandler} disabled={limitReached || loading}>
+                        Load More
+                    </Button>
+                </Box>
             </Box>
-        </div>
+        </ErrorBoundary>
     );
 }
 

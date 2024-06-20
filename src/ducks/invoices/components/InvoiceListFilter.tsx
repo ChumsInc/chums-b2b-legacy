@@ -1,5 +1,4 @@
 import {useAppDispatch, useAppSelector} from "../../../app/configureStore";
-import Stack from "@mui/material/Stack";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 import React, {ChangeEvent} from "react";
@@ -11,6 +10,7 @@ import Button from '@mui/material/Button'
 import Checkbox from '@mui/material/Checkbox'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import InputAdornment from '@mui/material/InputAdornment'
+import Grid2 from "@mui/material/Unstable_Grid2";
 
 const InvoiceListFilter = ({onReload}: { onReload: () => void }) => {
     const dispatch = useAppDispatch();
@@ -31,25 +31,33 @@ const InvoiceListFilter = ({onReload}: { onReload: () => void }) => {
     }
 
     return (
-        <Stack direction="row" spacing={2}>
-            <TextField type="search" value={search} onChange={searchChangeHandler} variant="filled" size="small"
-                       label="Search"
-                       inputProps={{maxLength: 30}}
-                       InputProps={{
-                           startAdornment: (
-                               <InputAdornment position="start"><SearchIcon/></InputAdornment>
-                           )
-                       }}
-                       placeholder={'Invoice or PO #'}/>
-            <ShipToSelect value={shipTo} onChange={shipToChangeHandler} allowAllLocations fullWidth={false}/>
-            <FormGroup>
-                <FormControlLabel control={<Checkbox checked={showPaid} onChange={prepaidChangeHandler}/>}
-                                  label="Show paid invoices?"/>
-            </FormGroup>
-            <Button type="button" variant="text" onClick={onReload}>
-                Reload
-            </Button>
-        </Stack>
+        <Grid2 container direction="row" spacing={2}>
+            <Grid2 sx={{flex: '1 1 auto'}}>
+                <TextField type="search" value={search} onChange={searchChangeHandler} variant="standard" size="small"
+                           label="Search" fullWidth
+                           inputProps={{maxLength: 30}}
+                           InputProps={{
+                               startAdornment: (
+                                   <InputAdornment position="start"><SearchIcon/></InputAdornment>
+                               )
+                           }}
+                           placeholder={'Invoice or PO #'}/>
+            </Grid2>
+            <Grid2 sx={{flex: '1 1 auto'}}>
+                <ShipToSelect value={shipTo} onChange={shipToChangeHandler} variant="standard" allowAllLocations/>
+            </Grid2>
+            <Grid2 sx={{flex: '1 1 auto'}}>
+                <FormGroup>
+                    <FormControlLabel control={<Checkbox checked={showPaid} onChange={prepaidChangeHandler}/>}
+                                      label="Show paid invoices?"/>
+                </FormGroup>
+            </Grid2>
+            <Grid2>
+                <Button type="button" variant="text" onClick={onReload}>
+                    Reload
+                </Button>
+            </Grid2>
+        </Grid2>
     )
 }
 

@@ -1,18 +1,15 @@
 import React, {useEffect, useState} from 'react';
-import {SortableTableField} from "../../../common-components/DataTable";
+import DataTable, {SortableTableField} from "../../../common-components/DataTable";
 import {ShipToCustomer} from "b2b-types";
 import {billToCustomerSlug, customerShipToSorter, stateCountry} from "../../../utils/customer";
 import {useSelector} from "react-redux";
 import {selectCustomerLoading, selectPermittedShipToAddresses, selectPrimaryShipTo} from "../selectors";
 import {SortProps} from "../../../types/generic";
-import DataTable from "../../../common-components/DataTable";
 import TablePagination from "@mui/material/TablePagination";
 import LinearProgress from "@mui/material/LinearProgress";
 import {generatePath, NavLink} from "react-router-dom";
 import {PATH_CUSTOMER_DELIVERY} from "../../../constants/paths";
 import classNames from "classnames";
-import {useAppDispatch} from "../../../app/configureStore";
-import {selectCurrentCustomer} from "../../user/selectors";
 
 import Box from "@mui/material/Box";
 import PrimaryShipToIcon from "./PrimaryShipToIcon";
@@ -58,8 +55,6 @@ const fields: SortableTableField<ShipToCustomer>[] = [
     }
 ]
 const ShipToList = () => {
-    const dispatch = useAppDispatch();
-    const customer = useSelector(selectCurrentCustomer)
     const list = useSelector(selectPermittedShipToAddresses);
     const loading = useSelector(selectCustomerLoading);
     const primaryShipTo = useSelector(selectPrimaryShipTo);
@@ -81,13 +76,13 @@ const ShipToList = () => {
             <DataTable data={data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
                        rowClassName={rowClassName}
                        currentSort={sort} onChangeSort={setSort} fields={fields} keyField="ShipToCode"/>
-            <Grid2 container spacing={2} justifyContent="space-between">
-                <ReloadCustomerButton/>
+            <Grid2 container spacing={2} justifyContent="end">
                 <TablePagination component="div" count={data.length}
                                  page={page} onPageChange={(ev, page) => setPage(page)}
                                  rowsPerPage={rowsPerPage}
                                  onRowsPerPageChange={(ev) => setRowsPerPage(+ev.target.value)}
                                  showFirstButton showLastButton/>
+                <ReloadCustomerButton/>
             </Grid2>
         </div>
     )

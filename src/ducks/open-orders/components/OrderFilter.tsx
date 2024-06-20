@@ -14,8 +14,9 @@ const OrderFilter = ({value, onChange, children, placeholder, className, id, ...
         id = _id;
     }
     return (
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} justifyContent="space-between">
             <TextField type="search" value={value} onChange={onChange} variant="standard" size="small" id={id}
+                       fullWidth
                        InputProps={{
                            startAdornment: (
                                <InputAdornment position="start"><SearchIcon/></InputAdornment>
