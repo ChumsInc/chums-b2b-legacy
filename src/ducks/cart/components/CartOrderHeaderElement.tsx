@@ -138,8 +138,20 @@ const CartOrderHeaderElement = () => {
             return;
         }
         switch (field) {
-            case 'ShipVia':
             case 'ShipExpireDate':
+                if (dayjs(value).isValid()) {
+                    switch (dayjs(value).day()) {
+                        case 0:
+                            setCartHeader({...cartHeader, [field]: dayjs(value).add(1, 'day').toISOString(), changed: true});
+                            return;
+                        case 6:
+                            setCartHeader({...cartHeader, [field]: dayjs(value).add(2, 'day').toISOString(), changed: true});
+                            return;
+                    }
+                }
+                setCartHeader({...cartHeader, [field]: value ?? '', changed: true});
+                return;
+            case 'ShipVia':
             case 'PaymentType':
                 setCartHeader({...cartHeader, [field]: value ?? '', changed: true});
         }
@@ -177,31 +189,25 @@ const CartOrderHeaderElement = () => {
         if (!cartHeader) {
             return;
         }
+        const gtagValue = new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber();
         if (cartProgress < cartProgress_Confirm) {
             const next = validateForm(cartProgress);
+            const gtagItems = detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}));
             switch (next) {
                 case cartProgress_Delivery:
-                    sendGtagEvent('begin_checkout', {
-                        currency: "USD",
-                        value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
-                        items: detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}))
-                    });
+                    sendGtagEvent(
+                        'begin_checkout',
+                        {currency: "USD", value: gtagValue, items: gtagItems});
                     break;
                 case cartProgress_Payment:
-                    sendGtagEvent('add_shipping_info', {
-                        currency: "USD",
-                        value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
-                        shipping_tier: cartHeader.ShipVia,
-                        items: detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}))
-                    })
+                    sendGtagEvent(
+                        'add_shipping_info',
+                        {currency: "USD", value: gtagValue, shipping_tier: cartHeader.ShipVia, items: gtagItems})
                     break;
                 case cartProgress_Confirm:
-                    sendGtagEvent('add_payment_info', {
-                        currency: "USD",
-                        value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
-                        payment_type: cartHeader.PaymentType,
-                        items: detail.map(item => ({item_id: item.ItemCode, item_name: item.ItemCodeDesc}))
-                    })
+                    sendGtagEvent(
+                        'add_payment_info',
+                        {currency: "USD", value: gtagValue, payment_type: cartHeader.PaymentType, items: gtagItems})
                     break;
             }
             setCartProgress(next);
@@ -209,7 +215,7 @@ const CartOrderHeaderElement = () => {
         }
         sendGtagEvent('purchase', {
             currency: "USD",
-            value: new Decimal(cartHeader.TaxableAmt).add(cartHeader.NonTaxableAmt).sub(cartHeader.DiscountAmt).toNumber(),
+            value: gtagValue,
             transaction_id: cartHeader.SalesOrderNo,
             items: detail.filter(item => item.ItemType !== '4').map(item => ({
                 item_id: item.ItemCode,
