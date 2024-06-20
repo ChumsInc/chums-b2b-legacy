@@ -87,3 +87,6 @@ export const TERRITORIES_CANADA:StateTerritory[] = [
     {code: 'SK', name: 'Saskatchewan'},
     {code: 'YT', name: 'Yukon'},
 ];
+
+
+export const stateTerritorySorter = (a:StateTerritory, b:StateTerritory) => a.code === b.code ? 0 : (a.code > b.code ? 1 : -1);
