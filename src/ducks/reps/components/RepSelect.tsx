@@ -22,6 +22,7 @@ const RepSelect = ({value = '', onChange}: {
     const loaded = useSelector(selectRepsLoaded);
     const allowSelectReps = /[%_]+/.test(userAccount?.SalespersonNo ?? '');
     const labelId = useId();
+    const inputId = useId();
 
     useEffect(() => {
         if (!loading && !loaded && allowSelectReps) {
@@ -47,8 +48,8 @@ const RepSelect = ({value = '', onChange}: {
 
     return (
         <FormControl fullWidth>
-            <InputLabel id={labelId}>Sales Rep</InputLabel>
-            <Select labelId={labelId} label="Sales Rep" variant="standard"
+            <InputLabel id={labelId} htmlFor={inputId}>Sales Rep</InputLabel>
+            <Select labelId={labelId} label="Sales Rep" variant="standard" inputProps={{id: inputId}}
                     onChange={changeHandler} value={value ?? ''}>
                 <MenuItem value="">All Available Reps</MenuItem>
                 {options.map(option => (

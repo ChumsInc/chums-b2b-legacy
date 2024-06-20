@@ -56,7 +56,7 @@ theme = createTheme({
         }),
         chumsGrey: theme.palette.augmentColor({
             color: {
-                main: '#8a8a8d',
+                main: '#454547',
             },
             name: 'chumsGrey',
         })
