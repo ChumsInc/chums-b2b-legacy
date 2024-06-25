@@ -13,28 +13,36 @@ import {setNewPassword} from "../actions";
 import {ChangePasswordResponse, SetNewPasswordProps} from "../types";
 import Alert from "@mui/material/Alert";
 import {isErrorResponse} from "../../../utils/typeguards";
+import {useIsSSR} from "../../../hooks/is-server-side";
 
 const ResetPassword = () => {
     const dispatch = useAppDispatch();
+    const isSSR = useIsSSR();
     const params = useParams<{ hash: string; key: string }>();
-    const [hash, setHash] = useState(params.hash ?? new URLSearchParams(document.location.search).get('h') ?? '')
-    const [key, setKey] = useState(params.key ?? new URLSearchParams(document.location.search).get('key') ?? '');
+    const [hash, setHash] = useState(params.hash ?? new URLSearchParams(document?.location?.search).get('h') ?? '')
+    const [key, setKey] = useState(params.key ?? new URLSearchParams(document?.location?.search).get('key') ?? '');
     const [alert, setAlert] = useState<string | null>(null);
     const profile = useSelector(selectSignUpProfile);
     const loading = useSelector(selectSignUpStatus);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const search = new URLSearchParams(document.location.search);
+        if (isSSR) {
+            return;
+        }
+        const search = new URLSearchParams(document?.location?.search);
         if (!hash) {
             setHash(search.get('h') ?? '');
         }
         if (!key) {
             setKey(search.get('key') ?? '');
         }
-    }, [document.location.search]);
+    }, [document?.location?.search]);
 
     useEffect(() => {
+        if (isSSR) {
+            return;
+        }
         if (!hash || !key) {
             return;
         }
