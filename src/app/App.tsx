@@ -12,7 +12,6 @@ import Logout from "../components/Logout";
 import ResetPassword from "../ducks/user/components/ResetPassword";
 import ContentPage from "../ducks/page/ContentPage";
 import InvoicePage from "../ducks/invoices/components/InvoicePage";
-import ErrorBoundary from "../common-components/ErrorBoundary";
 import {selectCurrentCustomer, selectLoggedIn} from "../ducks/user/selectors";
 import {selectCustomerLoaded, selectCustomerLoading} from "../ducks/customer/selectors";
 import {LocalizationProvider} from "@mui/x-date-pickers";

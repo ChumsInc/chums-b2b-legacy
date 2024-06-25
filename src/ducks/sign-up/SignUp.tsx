@@ -10,10 +10,13 @@ import {useNavigate} from "react-router";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Grid2 from "@mui/material/Unstable_Grid2";
+import {useIsSSR} from "../../hooks/is-server-side";
 
 const SignUp = () => {
+    const isSSR = useIsSSR();
     const navigate = useNavigate();
     const loggedIn = useSelector(selectLoggedIn);
+
 
     useEffect(() => {
         if (loggedIn) {
@@ -22,11 +25,14 @@ const SignUp = () => {
     }, [loggedIn]);
 
     useEffect(() => {
-        const params = new URLSearchParams(document.location.search);
+        if (isSSR) {
+            return;
+        }
+        const params = new URLSearchParams(document?.location?.search);
         const hash = params.get('h') ?? '';
         const key = params.get('key') ?? '';
         if (!loggedIn && !!hash && !!key) {
-            navigate(PATH_SET_PASSWORD + document.location.search, {replace: true});
+            navigate(PATH_SET_PASSWORD + document?.location?.search, {replace: true});
         }
     }, [])
 

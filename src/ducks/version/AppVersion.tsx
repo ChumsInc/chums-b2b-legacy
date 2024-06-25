@@ -5,9 +5,11 @@ import {ignoreVersion, loadVersion} from "./actions";
 import {useAppDispatch} from "../../app/configureStore";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import {useIsSSR} from "../../hooks/is-server-side";
 
 
 const AppVersion = () => {
+    const isSSR = useIsSSR();
     const dispatch = useAppDispatch();
     const version = useSelector(selectVersion);
     const shouldAlert = useSelector(selectShouldAlertVersion);
@@ -33,30 +35,31 @@ const AppVersion = () => {
     }
 
     useEffect(() => {
-        if (typeof window === 'undefined') {
+        if (isSSR) {
             return;
         }
 
         if (!version) {
             onUpdateVersion();
         }
-        if (global.document) {
-            const intervalId = window.setInterval(onUpdateVersion, minCheckInterval);
-            setIntervalId(intervalId);
-        }
+        const intervalId = window.setInterval(onUpdateVersion, minCheckInterval);
+        setIntervalId(intervalId);
         return () => {
-            if (typeof window === 'undefined') {
+            if (isSSR) {
                 return;
             }
-
             window.clearInterval(intervalId);
             window.removeEventListener('visibilityChange', visibilityChangeHandler)
         }
     }, [])
 
-    if (global.document) {
-        document.addEventListener('visibilitychange', visibilityChangeHandler);
+    if (isSSR) {
+        return;
     }
+
+    // if (!isSSR && global.document) {
+    //     document?.addEventListener('visibilitychange', visibilityChangeHandler);
+    // }
 
     return (
         <div>

@@ -17,7 +17,7 @@ import {StaticRouter} from "react-router-dom/server";
 import {configureStore} from "@reduxjs/toolkit";
 import {PreloadedState} from "../types/preload";
 
-const debug = Debug('chums:index');
+const debug = Debug('chums:server:render');
 
 async function loadMainCSS(): Promise<string> {
     try {
@@ -56,15 +56,22 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
             return;
         }
         const nonce:string = res.locals.cspNonce!;
+        debug('renderApp()', 'loading manifest');
         const manifestFiles = await loadManifest();
+        debug('renderApp()', 'loading preloaded state');
         const preload = await loadJSON<PreloadedState>(`http://localhost:${API_PORT}/preload/state.json`);
         if (!preload.version) {
+            debug('renderApp()', 'loading version');
             const versionNo = await loadVersionNo();
             preload.version = {versionNo}
         }
+
         const initialState = prepState(preload ?? {});
+        debug('renderApp()', 'configuring Store');
         const store = configureStore({reducer: rootReducer, preloadedState: initialState});
         const helmetData = new HelmetData({});
+
+        debug('renderApp()', 'rendering to string');
         const app = renderToString(
             <Provider store={store}>
                 <HelmetProvider context={helmetData.context}>
@@ -75,6 +82,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
             </Provider>
         );
         let swatchMTime = 0;
+        debug('renderApp()', 'loading swatch css');
         try {
             const stat = await fs.stat("./public/b2b-swatches/swatches.css");
             swatchMTime = stat.mtimeMs ?? 0;
@@ -83,6 +91,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         }
 
         const css = await loadMainCSS();
+        debug('renderApp()', 'rendering to final html');
         const _html = renderToString(<B2BHtml html={app} css={css} state={store.getState()} cspNonce={nonce}
                                               manifestFiles={manifestFiles} helmet={helmetData.context.helmet}
                                               swatchTimestamp={swatchMTime.toString(36)}/>);

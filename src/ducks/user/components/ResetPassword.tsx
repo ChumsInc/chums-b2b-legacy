@@ -19,8 +19,8 @@ const ResetPassword = () => {
     const dispatch = useAppDispatch();
     const isSSR = useIsSSR();
     const params = useParams<{ hash: string; key: string }>();
-    const [hash, setHash] = useState(params.hash ?? new URLSearchParams(document?.location?.search).get('h') ?? '')
-    const [key, setKey] = useState(params.key ?? new URLSearchParams(document?.location?.search).get('key') ?? '');
+    const [hash, setHash] = useState(params.hash ?? '')
+    const [key, setKey] = useState(params.key ?? '');
     const [alert, setAlert] = useState<string | null>(null);
     const profile = useSelector(selectSignUpProfile);
     const loading = useSelector(selectSignUpStatus);
@@ -37,7 +37,7 @@ const ResetPassword = () => {
         if (!key) {
             setKey(search.get('key') ?? '');
         }
-    }, [document?.location?.search]);
+    }, []);
 
     useEffect(() => {
         if (isSSR) {

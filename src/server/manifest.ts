@@ -3,7 +3,7 @@ import Debug from 'debug';
 import {loadVersion} from "./version";
 import {Request, Response} from "express";
 import path from "node:path";
-const debug = Debug('chums:index');
+const debug = Debug('chums:server:manifest');
 
 export interface ManifestFiles {
     'main.js'?: string;
