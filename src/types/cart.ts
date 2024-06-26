@@ -1,4 +1,4 @@
-import {SalesOrderDetailLine, ShipToAddress} from "b2b-types";
+import {SalesOrder, SalesOrderDetailLine, ShipToAddress} from "b2b-types";
 
 export interface Appendable {
     newLine?: boolean;
@@ -142,7 +142,10 @@ export interface CartQuoteResponse {
         CustomerNo: string;
         ShipToCode: string
     };
-    values: unknown
+    values: unknown;
+    updated?: {
+        salesOrder?: SalesOrder
+    }
 }
 
 export type CartProgress_Cart = 0;

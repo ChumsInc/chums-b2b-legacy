@@ -19,6 +19,9 @@ export async function postCartAction(company: string, arDivisionNo: string, cust
             const error = new B2BError('Unable to save cart', url, response);
             return Promise.reject(error);
         }
+        if (response?.updated?.salesOrder) {
+            return response.updated.salesOrder;
+        }
         return await fetchSalesOrder({
             ARDivisionNo: arDivisionNo,
             CustomerNo: customerNo,
