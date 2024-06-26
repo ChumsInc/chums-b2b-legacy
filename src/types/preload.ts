@@ -17,7 +17,8 @@ export interface PreloadedState {
         keywords?: Keyword[];
         messages?: Message[];
         productMenu?: Menu;
-        slides?: Slide[],
+        slides?: Slide[];
+        nonce?: string;
     }
     banners?: {
         list: Banner[]

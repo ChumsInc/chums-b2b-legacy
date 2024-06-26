@@ -21,6 +21,7 @@ export interface AppState {
     keywords: Keyword[],
     lifestyle: string;
     debug: boolean | null;
+    nonce: string|null;
 }
 
 export const initialAppState = (preload?: PreloadedState): AppState => ({
@@ -33,6 +34,7 @@ export const initialAppState = (preload?: PreloadedState): AppState => ({
     keywords: preload?.keywords?.list ?? [],
     lifestyle: '',
     debug: null,
+    nonce: preload?.app?.nonce ?? null,
 })
 
 const appReducer = createReducer(initialAppState, (builder) => {

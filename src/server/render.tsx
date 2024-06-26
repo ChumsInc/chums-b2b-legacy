@@ -67,6 +67,7 @@ export async function renderApp(req: Request, res: Response, next: NextFunction)
         }
 
         const initialState = prepState(preload ?? {});
+        initialState.app.nonce = nonce;
         debug('renderApp()', 'configuring Store');
         const store = configureStore({reducer: rootReducer, preloadedState: initialState});
         const helmetData = new HelmetData({});
