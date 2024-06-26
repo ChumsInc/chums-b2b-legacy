@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import Debug from 'debug';
-import express, {Request, NextFunction, Response} from "express";
+import express, {NextFunction, Request, Response} from "express";
 import favicon from "serve-favicon";
 import path from "node:path";
 import {renderApp, renderAppContentPage, renderAppProductPage} from "./render";
@@ -16,7 +16,7 @@ const debug = Debug('chums:server:index');
 
 const app = express();
 app.use(compression());
-app.use((req:Request, res:Response, next:NextFunction) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     res.locals.cspNonce = crypto.randomBytes(32).toString("hex");
     next();
 })
@@ -24,12 +24,62 @@ app.use((req:Request, res:Response, next:NextFunction) => {
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
-            "script-src": ["'self'", "accounts.google.com", "www.google-analytics.com", "www.googletagmanager.com", (_req:IncomingMessage, res:ServerResponse):string => `'nonce-${(res as Response).locals.cspNonce}'`, "'unsafe-inline'", "'strict-dynamic'"],
-            "connect-src": ["'self'", "www.googletagmanager.com", "www.google-analytics.com", "accounts.google.com", ],
-            "img-src": ["'self'", "b2b.chums.com", "*.chums.com", "www.googletagmanager.com", "*.googleusercontent.com"],
-            "frame-src": ["'self'", "accounts.google.com"],
-
+            "connect-src": [
+                "'self'",
+                "www.googletagmanager.com",
+                "www.google-analytics.com",
+                "accounts.google.com",
+                "https://accounts.google.com/gsi/",
+                "'unsafe-inline'",
+                (_req: IncomingMessage, res: ServerResponse): string => `'nonce-${(res as Response).locals.cspNonce}'`,
+            ],
+            "script-src": [
+                "'self'",
+                "accounts.google.com",
+                "https://accounts.google.com/gsi/client",
+                "www.google-analytics.com",
+                "www.googletagmanager.com",
+                "'unsafe-inline'",
+                (_req: IncomingMessage, res: ServerResponse): string => `'nonce-${(res as Response).locals.cspNonce}'`,
+            ],
+            "img-src": [
+                "'self'",
+                "b2b.chums.com",
+                "*.chums.com",
+                "www.googletagmanager.com",
+                "*.googleusercontent.com",
+                "'unsafe-inline'",
+            ],
+            "frame-src": [
+                "'self'",
+                "accounts.google.com",
+                "https://accounts.google.com/gsi/",
+                "'unsafe-inline'",
+            ],
+            "style-src": [
+                "'self'",
+                "b2b.chums.com",
+                "*.chums.com",
+                "https://accounts.google.com/gsi/style",
+                "https://fonts.googleapis.com",
+                "'unsafe-inline'",
+            ],
+            "font-src": [
+                "'self'",
+                "https://fonts.gstatic.com",
+                "'unsafe-inline'",
+            ],
+            "default-src": [
+                "'self'",
+                "'unsafe-inline'",
+            ],
         },
+    },
+    referrerPolicy: {
+        policy: 'strict-origin-when-cross-origin',
+    },
+    crossOriginOpenerPolicy: {
+        policy: 'same-origin-allow-popups',
     }
 }))
 app.use(favicon(path.join(process.cwd(), './public', 'favicon.ico')));
@@ -42,7 +92,7 @@ app.use('/build', express.static('./public/build', {fallthrough: false}));
 app.use('/images', express.static('./public/images', {fallthrough: false}));
 app.set('trust proxy', true);
 app.use((req, res, next) => {
-    debug(req.ip, req.method,  req.url);
+    debug(req.ip, req.method, req.url);
     next();
 })
 app.get('/manifest.json', getManifest);
@@ -61,7 +111,7 @@ app.use((req, res) => {
     res.status(404).json({error: 'Not Found', status: 404});
 })
 
-app.listen(process.env.PORT, function() {
+app.listen(process.env.PORT, function () {
     debug('server running at localhost:' + process.env.PORT);
 });
 
