@@ -3,7 +3,7 @@ import {signInWithGoogle} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
 import {useGoogleOneTapLogin} from "@react-oauth/google";
 
-const GoogleSignInOneTap = ({onDone}:{onDone?: () => void}) => {
+const GoogleSignInOneTap = ({onDone}: { onDone?: () => void }) => {
     const dispatch = useAppDispatch();
 
     useGoogleOneTapLogin({
@@ -20,6 +20,7 @@ const GoogleSignInOneTap = ({onDone}:{onDone?: () => void}) => {
                 onDone();
             }
         },
+        use_fedcm_for_prompt: true,
     })
 
     return (
