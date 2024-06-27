@@ -28,6 +28,8 @@ export interface CartQuoteBase {
     SalesOrderNo: string;
     promo_code?: string;
     Comment?: string;
+    versionNo?: string|null;
+    referrer?: string;
 }
 
 export interface CartAppendBody extends CartQuoteBase {

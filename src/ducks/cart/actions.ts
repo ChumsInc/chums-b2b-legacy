@@ -37,6 +37,7 @@ import {CustomerShippingAccount} from "../../types/customer";
 import {GtagItem, sendGtagEvent} from "../../api/gtag";
 import Decimal from "decimal.js";
 import {loadSalesOrder} from "../open-orders/actions";
+import {selectVersion} from "../version";
 
 export const customerFromState = (state: RootState) => {
     if (!isCustomer(state.user.currentCustomer)) {
@@ -102,6 +103,8 @@ export const saveNewCart = createAsyncThunk<SalesOrder | null, SaveNewCartProps>
     'cart/save-new',
     async (arg, {getState}) => {
         const state = getState() as RootState;
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const customer = selectCurrentCustomer(state);
         const promo_code = selectCurrentPromoCode(state);
         const body: NewCartBody = {
@@ -112,6 +115,8 @@ export const saveNewCart = createAsyncThunk<SalesOrder | null, SaveNewCartProps>
             Comment: arg.comment ?? '',
             SalesOrderNo: '',
             promo_code: promo_code?.promo_code ?? '',
+            versionNo,
+            referrer
         };
 
         const {ARDivisionNo, CustomerNo} = customer!;
@@ -142,6 +147,8 @@ export const addToCart = createAsyncThunk<SalesOrder | null, AddToCartProps>(
     'cart/addItem',
     async (arg, {getState}) => {
         const state = getState() as RootState;
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const customer = selectCurrentCustomer(state)!;
         const promo_code = selectCurrentPromoCode(state);
         const header = selectSalesOrder(state, arg.salesOrderNo);
@@ -152,6 +159,8 @@ export const addToCart = createAsyncThunk<SalesOrder | null, AddToCartProps>(
             QuantityOrdered: arg.quantity.toString(),
             promo_code: promo_code?.promo_code ?? '',
             Comment: arg.comment ?? undefined,
+            versionNo,
+            referrer,
         }
         return await postCartAction('chums', customer.ARDivisionNo, customer.CustomerNo, header!.ShipToCode, body);
     }, {
@@ -175,6 +184,8 @@ export const duplicateSalesOrder = createAsyncThunk<SalesOrder | null, Duplicate
     'cart/duplicateSalesOrder',
     async (arg, {getState}) => {
         const state = getState() as RootState;
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const customer = selectCurrentCustomer(state)!;
         const promo_code = selectCurrentPromoCode(state);
         const body: DuplicateSalesOrderBody = {
@@ -182,6 +193,8 @@ export const duplicateSalesOrder = createAsyncThunk<SalesOrder | null, Duplicate
             CartName: arg.cartName,
             SalesOrderNo: arg.salesOrderNo,
             promo_code: promo_code?.promo_code,
+            versionNo,
+            referrer
         }
         return await postCartAction('chums', customer.ARDivisionNo, customer.CustomerNo, arg.shipToCode ?? null, body);
     },
@@ -223,6 +236,8 @@ export const saveCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>(
             sendGtagEvent('remove_from_cart', {items});
         }
 
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const body: UpdateCartBody = {
             action: 'update',
             SalesOrderNo: arg.SalesOrderNo,
@@ -234,6 +249,8 @@ export const saveCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>(
             newLines,
             changedLines,
             promo_code: promo_code?.promo_code,
+            versionNo,
+            referrer
         }
         return await postCartAction('chums', ARDivisionNo, CustomerNo, ShipToCode, body);
     }, {
@@ -261,6 +278,8 @@ export const promoteCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>
     'cart/promote',
     async (arg, {getState}) => {
         const state = getState() as RootState;
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const customer = selectCustomerAccount(state)!;
         const {ARDivisionNo, CustomerNo} = customer;
         const ShipToCode = arg.ShipToCode ?? customer.PrimaryShipToCode ?? '';
@@ -293,6 +312,8 @@ export const promoteCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>
             ShipToCode: arg.ShipToCode ?? customer.PrimaryShipToCode ?? '',
             promo_code: promo_code?.promo_code ?? '',
             Comment: comment.join(' '),
+            versionNo,
+            referrer
         }
         return await postCartAction('chums', ARDivisionNo, CustomerNo, ShipToCode, body);
     },
@@ -309,11 +330,16 @@ export const promoteCart = createAsyncThunk<SalesOrder | null, SalesOrderHeader>
 
 export const removeCart = createAsyncThunk<SalesOrderHeader[], SalesOrderHeader>(
     'cart/remove',
-    async (arg) => {
+    async (arg, {getState}) => {
+        const state = getState() as RootState;
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const {Company, ARDivisionNo, CustomerNo} = arg;
         const data: DeleteCartBody = {
             action: 'delete',
             SalesOrderNo: arg.SalesOrderNo,
+            versionNo,
+            referrer,
         };
         await postCartAction(Company, ARDivisionNo, CustomerNo, null, data);
         return await fetchOpenSalesOrders({ARDivisionNo, CustomerNo});
@@ -339,6 +365,8 @@ export const addCartComment = createAsyncThunk<SalesOrder | null, AddCartComment
     'cart/addComment',
     async (arg, {getState}) => {
         const state = getState() as RootState;
+        const versionNo = selectVersion(state);
+        const referrer = window?.location?.href;
         const salesOrder = selectSalesOrder(state, arg.salesOrderNo);
         const {Company, ARDivisionNo, CustomerNo, ShipToCode} = salesOrder!;
         const data: CartAppendCommentBody = {
@@ -346,6 +374,8 @@ export const addCartComment = createAsyncThunk<SalesOrder | null, AddCartComment
             action: 'line-comment',
             LineKey: '',
             Comment: arg.comment,
+            versionNo,
+            referrer
         }
         return await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, data);
     },
