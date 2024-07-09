@@ -84,12 +84,8 @@ export const minShipDate = (): string => {
     _dayjs.extend(utc);
     _dayjs.extend(timezone);
 
-    let _printDate = _dayjs().tz('America/Denver');
-    if (_printDate.hour() >= 12) {
-        _printDate = _dayjs().startOf('day').add(24 + 8, 'hours');
-    }
-
-    return _dayjs(addWorkDays(_printDate, 5)).startOf('day').toISOString();
+    const _printDate = _dayjs().tz('America/Denver').startOf('day');
+    return _dayjs(addWorkDays(_printDate, 6)).startOf('day').toISOString();
 }
 
 export const nextShipDate = (shipDate: Date | number | string | Dayjs = new Date()): string => {
