@@ -44,6 +44,7 @@ export interface PriceLevelsDescriptionList {
 export interface CustomerPermissions {
     billTo: boolean;
     shipTo: string[];
+    canSetDefaultShipTo: boolean;
 }
 
 export interface CustomerShippingAccount {
