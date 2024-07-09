@@ -21,7 +21,7 @@ const PrimaryShipToButton = ({shipTo, disabled}:PrimaryShipToButtonProps) => {
     const permissions = useSelector(selectCustomerPermissions);
 
     const onSetDefaultShipTo = async () => {
-        if (shipTo && shipTo.ShipToCode !== primaryShipTo?.ShipToCode) {
+        if (permissions?.canSetDefaultShipTo && shipTo && shipTo.ShipToCode !== primaryShipTo?.ShipToCode) {
             await dispatch(setDefaultShipTo(shipTo.ShipToCode))
             dispatch(loadCustomer(shipTo));
         }
@@ -36,7 +36,7 @@ const PrimaryShipToButton = ({shipTo, disabled}:PrimaryShipToButtonProps) => {
             {primaryShipTo?.ShipToCode !== shipTo.ShipToCode && (
                 <Button type="button" variant="outlined"
                         startIcon={<LocalShippingIcon/>}
-                        disabled={shipTo.changed || disabled || shipTo.ShipToCode === primaryShipTo?.ShipToCode || !permissions?.billTo}
+                        disabled={!permissions?.canSetDefaultShipTo || shipTo.changed || disabled || shipTo.ShipToCode === primaryShipTo?.ShipToCode || !permissions?.billTo}
                         onClick={onSetDefaultShipTo}>
                     Set as default delivery location
                 </Button>
