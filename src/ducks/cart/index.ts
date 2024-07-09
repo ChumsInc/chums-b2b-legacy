@@ -221,6 +221,7 @@ const cartReducer = createReducer(initialCartState, builder => {
         .addCase(removeCart.fulfilled, (state) => {
             state.loading = false;
             state.cartNo = NEW_CART;
+            state.cartName = '';
             state.cartTotal = 0;
             state.cartQuantity = 0;
             state.cartProgress = CART_PROGRESS_STATES.cart;

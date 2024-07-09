@@ -334,14 +334,14 @@ export const removeCart = createAsyncThunk<SalesOrderHeader[], SalesOrderHeader>
         const state = getState() as RootState;
         const versionNo = selectVersion(state);
         const referrer = window?.location?.href;
-        const {Company, ARDivisionNo, CustomerNo} = arg;
+        const {Company, ARDivisionNo, CustomerNo, ShipToCode} = arg;
         const data: DeleteCartBody = {
             action: 'delete',
             SalesOrderNo: arg.SalesOrderNo,
             versionNo,
             referrer,
         };
-        await postCartAction(Company, ARDivisionNo, CustomerNo, null, data);
+        await postCartAction(Company, ARDivisionNo, CustomerNo, ShipToCode, data);
         return await fetchOpenSalesOrders({ARDivisionNo, CustomerNo});
     },
     {
