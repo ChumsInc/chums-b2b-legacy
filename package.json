@@ -113,5 +113,8 @@
     "watch": [
       "./dist"
     ]
+  },
+  "overrides": {
+    "eslint": "^9.6.0"
   }
 }
