@@ -2,7 +2,7 @@ import React, {useEffect, useId} from 'react';
 import Select, {SelectChangeEvent} from '@mui/material/Select';
 import {longRepNo} from "../../../utils/customer";
 import {useSelector} from "react-redux";
-import {selectUserAccount} from "../../user/selectors";
+import {selectCurrentUserAccount} from "../../user/selectors";
 import {loadRepList} from "../actions";
 import {useAppDispatch} from "../../../app/configureStore";
 import {selectRepsList, selectRepsLoaded, selectRepsLoading} from "../selectors";
@@ -16,7 +16,7 @@ const RepSelect = ({value = '', onChange}: {
     onChange: (value: string | null) => void;
 }) => {
     const dispatch = useAppDispatch();
-    const userAccount = useSelector(selectUserAccount);
+    const userAccount = useSelector(selectCurrentUserAccount);
     const reps = useSelector(selectRepsList);
     const loading = useSelector(selectRepsLoading);
     const loaded = useSelector(selectRepsLoaded);

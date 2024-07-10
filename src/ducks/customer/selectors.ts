@@ -2,6 +2,9 @@ import {createSelector} from "@reduxjs/toolkit";
 import {isBillToCustomer} from "../../utils/typeguards";
 import {RootState} from "../../app/configureStore";
 import {ShipToCustomer} from "b2b-types";
+import {customerShipToSorter} from "../../utils/customer";
+import {selectCurrentUserAccount} from "../user/selectors";
+import {filterShipToByUserAccount} from "./utils";
 
 export const selectCustomerKey = (state:RootState) => state.customer.key;
 export const selectCustomerAccount = (state:RootState) => state.customer.account ?? null;
@@ -25,12 +28,20 @@ export const selectCustomerPermissionsLoaded = (state:RootState) => state.custom
 
 
 export const selectPermittedShipToAddresses = createSelector(
-    [selectCustomerShipToAddresses, selectCustomerPermissions],
-    (addresses, permissions) => {
+    [selectCustomerShipToAddresses, selectCustomerPermissions, selectCurrentUserAccount],
+    (addresses, permissions, access) => {
         if (permissions?.billTo) {
-            return addresses;
+            return [...addresses]
+                .filter(filterShipToByUserAccount(access))
+                .sort(customerShipToSorter({field: 'ShipToName', ascending: true}));
         }
-        return addresses.filter(addr => permissions?.shipTo.includes(addr.ShipToCode));
+        return addresses
+            .filter(address => !access?.isRepAccount
+                || (
+                    [address.SalespersonDivisionNo, '%'].includes(access.SalespersonDivisionNo)
+                    && [address.SalespersonDivisionNo, '%'].includes(access.SalespersonDivisionNo)
+                ))
+            .filter(addr => permissions?.shipTo.includes(addr.ShipToCode)).sort(customerShipToSorter({field: 'ShipToName', ascending: true}));
     }
 )
 

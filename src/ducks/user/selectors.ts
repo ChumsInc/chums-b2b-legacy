@@ -16,7 +16,7 @@ export const selectLoggingIn = (state:RootState) => state.user.actionStatus === 
 
 export const selectAuthType = (state:RootState) => state.user.authType;
 
-export const selectUserAccount = (state:RootState) => state.user.access.current ?? null;
+export const selectCurrentUserAccount = (state:RootState) => state.user.access.current ?? null;
 
 export const selectCurrentCustomer = (state:RootState) => state.user.currentCustomer ?? null;
 
@@ -49,7 +49,7 @@ export const selectCanViewAvailable = createSelector(
     }
 )
 export const selectCanFilterReps = createSelector(
-    [selectUserAccount],
+    [selectCurrentUserAccount],
     (account) => {
         return /[%_]+/.test(account?.SalespersonNo ?? '');
     }

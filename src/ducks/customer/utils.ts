@@ -1,11 +1,10 @@
-import {BillToAddress, CustomerAddress, ShipToAddress} from "b2b-types";
+import {BillToAddress, CustomerAddress, ShipToAddress, ShipToCustomer, UserCustomerAccess} from "b2b-types";
 import {FetchCustomerResponse} from "./types";
 import {CustomerState} from "./index";
 import {
     customerContactSorter, customerPaymentCardSorter,
     customerPriceRecordSorter,
-    customerShipToSorter, customerUserSorter,
-    defaultShipToSort
+    customerShipToSorter, customerUserSorter, defaultShipToSort,
 } from "../../utils/customer";
 
 export const addressFromShipToAddress = (address:ShipToAddress|null):CustomerAddress => {
@@ -81,4 +80,15 @@ export const customerResponseToState = (payload:FetchCustomerResponse|null, stat
     nextState.paymentCards = [...(payload?.paymentCards ?? [])].sort(customerPaymentCardSorter);
     nextState.users = [...(payload?.users ?? [])].sort(customerUserSorter);
     return nextState;
+}
+
+export const filterShipToByUserAccount = (access:UserCustomerAccess|null) => (address:ShipToCustomer): boolean => {
+    if (!access) {
+        return false;
+    }
+    if(!access.isRepAccount) {
+        return true;
+    }
+    return [address.SalespersonDivisionNo, '%'].includes(access.SalespersonDivisionNo)
+        && [address.SalespersonNo, '%'].includes(access.SalespersonNo)
 }

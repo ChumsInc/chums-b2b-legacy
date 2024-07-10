@@ -1,4 +1,11 @@
-import {companyCode, customerSlug, customerUserSorter, emptyCustomer} from "../../utils/customer";
+import {
+    companyCode,
+    customerShipToSorter,
+    customerSlug,
+    customerUserSorter,
+    defaultShipToSort,
+    emptyCustomer, shortCustomerKey
+} from "../../utils/customer";
 import {createReducer} from "@reduxjs/toolkit";
 import {
     BillToCustomer,
@@ -20,6 +27,7 @@ import {
     setDefaultShipTo,
     setReturnToPath
 } from "./actions";
+import {loadCustomerList} from '../customers/actions'
 import {setLoggedIn, setUserAccess} from "../user/actions";
 import {LoadStatus, Selectable} from "../../types/generic";
 import {CustomerPermissions} from "../../types/customer";
@@ -147,7 +155,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.permissions.values = permissions?.values ?? null;
             state.contacts = contacts ?? [];
             state.pricing = pricing ?? [];
-            state.shipToAddresses = shipToAddresses ?? [];
+            state.shipToAddresses = (shipToAddresses ?? []).sort(customerShipToSorter(defaultShipToSort));
             state.paymentCards = paymentCards ?? [];
             state.users = users ?? [];
             state.loaded = true;
@@ -178,7 +186,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.permissions.values = permissions?.values ?? null;
             state.contacts = contacts ?? [];
             state.pricing = pricing ?? [];
-            state.shipToAddresses = shipToAddresses ?? [];
+            state.shipToAddresses = (shipToAddresses ?? []).sort(customerShipToSorter(defaultShipToSort));
             state.paymentCards = paymentCards ?? [];
             state.users = users ?? [];
             state.loaded = true;
@@ -230,7 +238,7 @@ const customerReducer = createReducer(initialCustomerState, builder => {
             state.permissions.values = permissions?.values ?? null;
             state.contacts = contacts ?? [];
             state.pricing = pricing ?? [];
-            state.shipToAddresses = shipToAddresses ?? [];
+            state.shipToAddresses = (shipToAddresses ?? []).sort(customerShipToSorter(defaultShipToSort));
             state.paymentCards = paymentCards ?? [];
             state.users = users ?? [];
             state.loaded = true;
@@ -275,6 +283,21 @@ const customerReducer = createReducer(initialCustomerState, builder => {
         })
         .addCase(setReturnToPath, (state, action) => {
             state.returnToPath = action.payload;
+        })
+        .addCase(loadCustomerList.fulfilled, (state, action) => {
+            if (state.account) {
+                const [customer] = action.payload.filter(customer => customerSlug(customer) === customerSlug(state.account));
+                if (!customer) {
+                    state.account = null;
+                    state.contacts = [];
+                    state.pricing = [];
+                    state.shipToAddresses = [];
+                    state.paymentCards = [];
+                    state.users = [];
+                    state.permissions.values = null;
+                    state.loaded = true;
+                }
+            }
         })
 })
 

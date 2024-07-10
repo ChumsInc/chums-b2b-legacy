@@ -3,7 +3,7 @@ import React from "react";
 import {loadCustomerList} from "../actions";
 import {useSelector} from "react-redux";
 import {useAppDispatch} from "../../../app/configureStore";
-import {selectCanFilterReps, selectUserAccount} from "../../user/selectors";
+import {selectCanFilterReps, selectCurrentUserAccount} from "../../user/selectors";
 import Button from "@mui/material/Button";
 import AccountListCustomerFilter from "./AccountListCustomerFilter";
 import AccountListRepFilter from "./AccountListRepFilter";
@@ -12,7 +12,7 @@ import {selectCustomerStates} from "../selectors";
 
 const AccountListFilters = () => {
     const dispatch = useAppDispatch();
-    const userAccount = useSelector(selectUserAccount);
+    const userAccount = useSelector(selectCurrentUserAccount);
     const allowSelectReps = useSelector(selectCanFilterReps);
     const statesList = useSelector(selectCustomerStates);
 
