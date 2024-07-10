@@ -54,6 +54,7 @@ app.use(helmet({
                 "'self'",
                 "accounts.google.com",
                 "https://accounts.google.com/gsi/",
+                "https://www.youtube.com/",
                 "'unsafe-inline'",
             ],
             "style-src": [
