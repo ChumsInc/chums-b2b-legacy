@@ -8,6 +8,10 @@ import FormControl, {FormControlProps} from '@mui/material/FormControl'
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {ShipToAddress} from "b2b-types";
 import {shipToAddressFromBillingAddress} from "../../../utils/customer";
+import Chip from "@mui/material/Chip";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Stack from "@mui/material/Stack";
 
 export interface ShipToSelectProps extends Omit<FormControlProps, 'value' | 'onChange'> {
     value: string | null;
@@ -108,7 +112,13 @@ export default function ShipToSelect({
                     .map(shipTo => (
                         <MenuItem key={shipTo.ShipToCode} value={shipTo.ShipToCode}
                                   disabled={disabledShipToLocations?.includes(shipTo.ShipToCode)}>
-                            [{shipTo.ShipToCode || 'Billing'}] {shipTo.ShipToName}, {shipTo.ShipToCity} {shipTo.ShipToState}
+                            <Stack direction="row" key={shipTo.ShipToCode} spacing={2} sx={{width: '100%'}}>
+                                <Chip label={shipTo.ShipToCode} size="small" sx={{flex: '0 0 20%'}} />
+                                <Box sx={{width: '80%'}}>
+                                    <Typography variant="body1" sx={{whiteSpace: 'wrap'}}>{shipTo.ShipToName}</Typography>
+                                    <Typography variant="body1" sx={{fontSize: '80%'}}>{shipTo.ShipToCity}, {shipTo.ShipToState}</Typography>
+                                </Box>
+                            </Stack>
                         </MenuItem>
                     ))}
             </Select>

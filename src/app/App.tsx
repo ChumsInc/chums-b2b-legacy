@@ -127,8 +127,7 @@ const App = () => {
                                                 <Route path="carts/:salesOrderNo" element={<SalesOrderPage/>}/>
                                                 <Route path="orders" element={<OpenOrdersList/>}/>
                                                 <Route path="orders/:salesOrderNo" element={<SalesOrderPage/>}/>
-                                                <Route path="closed/:salesOrderNo"
-                                                       element={<ClosedSalesOrderPage/>}/>
+                                                <Route path="closed/:salesOrderNo" element={<ClosedSalesOrderPage/>}/>
                                                 <Route path="invoices" element={<InvoicesList/>}/>
                                                 <Route path="invoices/:type/:invoiceNo" element={<InvoicePage/>}/>
                                                 <Route path="*" element={<ContentPage404/>}/>

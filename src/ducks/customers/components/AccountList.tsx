@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 import {loadCustomerList} from '../actions';
 import {longAccountNumber} from "../../../utils/customer";
 import ErrorBoundary from "../../../common-components/ErrorBoundary";
-import {selectUserAccount,} from "../../user/selectors";
+import {selectCurrentUserAccount,} from "../../user/selectors";
 import {useAppDispatch} from "../../../app/configureStore";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -20,7 +20,7 @@ const AccountList = () => {
     const dispatch = useAppDispatch();
     const match = useMatch('/profile/:id');
     const location = useLocation();
-    const userAccount = useSelector(selectUserAccount);
+    const userAccount = useSelector(selectCurrentUserAccount);
     const loading = useSelector(selectCustomersLoading);
     const loaded = useSelector(selectCustomersLoaded);
 

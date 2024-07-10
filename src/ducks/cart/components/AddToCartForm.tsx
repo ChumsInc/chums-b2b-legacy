@@ -24,6 +24,8 @@ import CartQuantityInput from "../../../components/CartQuantityInput";
 import {CartProduct} from "b2b-types";
 import Decimal from "decimal.js";
 import {sendGtagEvent} from "../../../api/gtag";
+import ShipToAutocomplete from "../../customer/components/ShipToAutocomplete";
+import Box from "@mui/material/Box";
 
 const AddToCartForm = ({
                            cartItem,
@@ -66,7 +68,7 @@ const AddToCartForm = ({
     const [_comment, setComment] = useState<string>(comment ?? '');
     const [localCartName, setLocalCartName] = useState<string>(cartName ?? '');
     const [localCartNo, setLocalCartNo] = useState<string>(cartNo ?? '');
-    const [shipToCode, setShipToCode] = useState<string>(currentShipToCode ?? '');
+    const [shipToCode, setShipToCode] = useState<string|null>(currentShipToCode);
 
     useEffect(() => {
         if (!permissions && !permissionsLoading) {
@@ -120,7 +122,8 @@ const AddToCartForm = ({
     }
 
     const shipToCodeChangeHandler = (code: string | null) => {
-        setShipToCode(code ?? '')
+        console.debug('shipToCodeChangeHandler()', {code});
+        setShipToCode(code)
     }
 
     const submitHandler = async (ev: FormEvent) => {
@@ -157,7 +160,7 @@ const AddToCartForm = ({
             itemCode: cartItem.itemCode,
             quantity,
             comment,
-            shipToCode,
+            shipToCode: shipToCode ?? '',
         }));
         onDone();
     }
@@ -168,13 +171,18 @@ const AddToCartForm = ({
                 <CartSelect cartNo={localCartNo} onChange={cartChangeHandler}
                             excludeCartNo={excludeSalesOrder}/>
                 {(!localCartNo || localCartNo === NEW_CART) && (
-                    <Stack spacing={2} direction="row">
-                        <CartNameInput value={localCartName} onChange={onChangeCartName}
-                                       error={!localCartName}
-                                       fullWidth
-                                       helperText="Please name your cart."/>
-                        <ShipToSelect value={shipToCode}
-                                      onChange={shipToCodeChangeHandler}/>
+                    <Stack spacing={2} direction={{xs: "column", md: "row"}}>
+                        <Box sx={{width: '50%'}}>
+                            <CartNameInput value={localCartName} onChange={onChangeCartName}
+                                           error={!localCartName}
+                                           fullWidth
+                                           helperText="Please name your cart."/>
+
+                        </Box>
+                        <Box sx={{width: '50%'}}>
+                            <ShipToSelect value={shipToCode} onChange={shipToCodeChangeHandler}/>
+                            {/*<ShipToAutocomplete shipToCode={shipToCode} onChange={shipToCodeChangeHandler} />*/}
+                        </Box>
                     </Stack>
                 )}
                 <Stack direction="row" spacing={2} justifyContent="flex-end">

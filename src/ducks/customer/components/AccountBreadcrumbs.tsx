@@ -2,7 +2,7 @@ import React from 'react';
 import {PATH_PROFILE, PATH_PROFILE_ACCOUNT} from "../../../constants/paths";
 import Breadcrumb from "../../../components/Breadcrumb";
 import {useSelector} from "react-redux";
-import {selectUserAccount, selectUserAccountsCount} from "../../user/selectors";
+import {selectCurrentUserAccount, selectUserAccountsCount} from "../../user/selectors";
 import {selectCustomerAccount} from "../selectors";
 import {useLocation} from "react-router";
 import {BreadcrumbPath} from "../../../types/breadcrumbs";
@@ -10,7 +10,7 @@ import {generatePath} from "react-router-dom";
 
 const AccountBreadcrumbs = () => {
     const countUserAccounts = useSelector(selectUserAccountsCount);
-    const userAccount = useSelector(selectUserAccount);
+    const userAccount = useSelector(selectCurrentUserAccount);
     const customerAccount = useSelector(selectCustomerAccount);
     const location = useLocation();
 

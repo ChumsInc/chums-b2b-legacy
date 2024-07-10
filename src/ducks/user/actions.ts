@@ -15,7 +15,7 @@ import {
     selectLoggedIn,
     selectLoggingIn,
     selectResettingPassword,
-    selectUserAccount,
+    selectCurrentUserAccount,
     selectUserActionStatus,
     selectUserLoading
 } from "./selectors";
@@ -184,7 +184,7 @@ export const setUserAccess = createAsyncThunk<UserCustomerAccess | null, UserCus
             const state = getState() as RootState;
             return selectLoggedIn(state)
                 && !!arg?.isRepAccount
-                && selectUserAccount(state)?.id !== arg?.id;
+                && selectCurrentUserAccount(state)?.id !== arg?.id;
         }
     }
 )
