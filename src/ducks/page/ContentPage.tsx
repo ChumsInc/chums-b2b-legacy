@@ -41,12 +41,12 @@ const ContentPage = () => {
 
     const documentTitle = `${loading ? 'Loading: ' : ''}${content?.title ?? params.keyword}`;
     return (
-        <div className={'page-' + content?.keyword}>
+        <div className={`page-${content?.keyword}`}>
             <DocumentTitle documentTitle={documentTitle}/>
             <Typography component="h1" variant="h1">{content?.title}</Typography>
             <Divider sx={{my: 3}} />
             {loading && <LinearProgress variant="indeterminate"/>}
-            <div dangerouslySetInnerHTML={{__html: content?.content ?? ''}}/>
+            <div dangerouslySetInnerHTML={{__html: content?.content ?? ''}} className="has-bootstrap"/>
         </div>
     )
 }

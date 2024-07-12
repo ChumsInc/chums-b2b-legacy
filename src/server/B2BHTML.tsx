@@ -56,6 +56,7 @@ export default function B2BHtml({html, css, state, helmet, manifestFiles, swatch
 
             <style dangerouslySetInnerHTML={{__html: css}} nonce={cspNonce}/>
             <link rel="stylesheet" href={`https://b2b.chums.com/b2b-swatches/swatches.css?version=${swatchTimestamp}`}  nonce={cspNonce}/>
+            <link rel="stylesheet" href="/css/has-bootstrap.css"  nonce={cspNonce}/>
             <link rel="preconnect" href="https://fonts.googleapis.com"/>
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
             <link
