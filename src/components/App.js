@@ -100,11 +100,6 @@ const App = () => {
                     </ErrorBoundary>
 
                     <Route path={PATH_PRODUCT} component={ProductRouter}/>
-                    {!loggedIn && (
-                        <Route path={PATH_RESOURCES_CHUMS_REPS}>
-                            <Redirect to={PATH_PAGE_RESOURCES}/>
-                        </Route>
-                    )}
                     <Route path={PATH_PAGE} component={ContentPage}/>
                     {!loggedIn && (
                         <Fragment>

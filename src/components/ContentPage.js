@@ -7,6 +7,8 @@ import ProgressBar from "./ProgressBar";
 import ContentPage404 from "./ContentPage404";
 import {setLifestyle} from '../actions/app';
 import DocumentTitle from "./DocumentTitle";
+import {selectLoggedIn} from "../selectors/user";
+import Alert from "../common-components/Alert";
 
 class ContentPage extends Component {
     static propTypes = {
@@ -16,7 +18,9 @@ class ContentPage extends Component {
         lifestyle: contentPageShape.lifestyle,
         appLifestyle: contentPageShape.lifestyle,
         documentTitle: PropTypes.string,
-
+        status: contentPageShape.status,
+        requiresLogin: contentPageShape.requiresLogin,
+        isLoggedIn: PropTypes.bool,
         loading: PropTypes.bool,
         match: PropTypes.shape({
             params: PropTypes.shape({
@@ -33,6 +37,7 @@ class ContentPage extends Component {
         content: '',
         lifestyle: '',
         loading: false,
+        status: false,
     };
 
     constructor(props) {
@@ -63,24 +68,48 @@ class ContentPage extends Component {
 
 
     render() {
-        const {loading, keyword, title, content, status} = this.props;
+        const {loading, keyword, title, content, status, requiresLogin, isLoggedIn} = this.props;
         const documentTitle = loading ? `Loading: ${title}` : title;
+
+        if (!status) {
+            return (
+                <div className={'page-' + keyword}>
+                    <DocumentTitle documentTitle="Inactive Content"/>
+                    <h1>{title || (!!loading ? 'Loading' : '')}</h1>
+                    {!!loading && <ProgressBar striped={true} />}
+                    <ContentPage404/>
+                </div>
+            );
+        }
+
+        if (!isLoggedIn && requiresLogin) {
+            return (
+                <div className={'page-' + keyword}>
+                    <DocumentTitle documentTitle={documentTitle}/>
+                    <h1>{title || (!!loading ? 'Loading' : '')}</h1>
+                    {!!loading && <ProgressBar striped={true}/>}
+                    <Alert type="alert-danger"><strong>Warning: </strong> Login is required for this content!</Alert>
+                </div>
+            )
+        }
+
         return (
             <div className={'page-' + keyword}>
                 <DocumentTitle documentTitle={documentTitle} />
                 <h1>{title || (!!loading ? 'Loading' : '')}</h1>
                 {!!loading && <ProgressBar striped={true} />}
-                {status === 404 && <ContentPage404/>}
-                <div dangerouslySetInnerHTML={{__html: content}}/>
+                <div dangerouslySetInnerHTML={{__html: content ?? undefined}}/>
             </div>
         );
     }
 }
 
-const mapStateToProps = ({page, app}) => {
+const mapStateToProps = (state) => {
+    const {page, app} = state;
     const {content, loading} = page;
     const {lifestyle: appLifestyle, documentTitle} = app;
-    return {loading, ...content, appLifestyle, documentTitle};
+    const isLoggedIn = selectLoggedIn(state);
+    return {loading, ...content, appLifestyle, documentTitle, isLoggedIn};
 };
 
 const mapDispatchToProps = {

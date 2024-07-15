@@ -46,7 +46,7 @@ class PasswordForm extends Component{
         if (!global.zxcvbn) {
             const zxcvbn = document.createElement('script');
             zxcvbn.type = 'text/javascript';
-            zxcvbn.src = 'https://intranet.chums.com/node-dev/modules/zxcvbn/dist/zxcvbn.js';
+            zxcvbn.src = '/node_modules/zxcvbn/dist/zxcvbn.js';
             document.body.appendChild(zxcvbn);
         }
 

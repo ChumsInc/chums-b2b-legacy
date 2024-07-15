@@ -326,8 +326,9 @@ export const contentPageShape = {
     title: PropTypes.string,
     metaDescription: PropTypes.string,
     content: PropTypes.string,
-    status: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+    status: PropTypes.bool,
     lifestyle: PropTypes.string,
+    requiresLogin: PropTypes.bool,
 };
 
 export const paymentCardShape = {

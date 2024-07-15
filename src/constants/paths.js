@@ -90,7 +90,7 @@ export const API_PATH_ITEM_AVAILABILITY = '/node-sage/api/:Company/production/it
 export const API_PATH_PRODUCT_MENU = '/api/menus/2';
 
 export const API_PATH_SEARCH = '/api/search/v3/:term';
-export const API_PATH_PAGE = '/api/pages/:keyword';
+export const API_PATH_PAGE = '/api/pages/:keyword.json';
 export const API_PATH_VERSION = '/version';
 
 

@@ -15,8 +15,7 @@ export const fetchPage = (keyword) => (dispatch, getState) => {
     dispatch ({type: FETCH_PAGE, status: FETCH_INIT});
     const url = buildPath(API_PATH_PAGE, {keyword});
     fetchGET(url, {cache: 'no-cache'})
-        .then(({pages}) => {
-            const page = pages[0];
+        .then(({page}) => {
             if (!page) {
                 dispatch({type: FETCH_PAGE, status: FETCH_FAILURE, page: {keyword, title: 'Page Not Found', status: 404}});
                 return;

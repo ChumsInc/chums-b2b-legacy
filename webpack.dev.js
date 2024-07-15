@@ -10,6 +10,11 @@ const localProxy = {
     secure: false,
 };
 
+const b2bProxy = {
+    target: 'https://b2b.chums.com',
+    changeOrigin: true,
+}
+
 module.exports = merge(common, {
     mode: 'development',
     devServer: {
@@ -25,18 +30,10 @@ module.exports = merge(common, {
             }
         ],
         hot: true,
-        proxy: {
-            '/api': {...localProxy},
-            '/images/': {...localProxy},
-            '/pdf/': {...localProxy},
-            '/files/': {...localProxy},
-            '/node_modules/': {...localProxy},
-            '/node-chums/': {...localProxy},
-            '/node-dev/': {...localProxy},
-            '/node-sage/': {...localProxy},
-            '/sage/': {...localProxy},
-            '/version': {...localProxy},
-        },
+        proxy: [
+            {context: ['/images', '/pdf', '/files'], ...b2bProxy},
+            {context: ['/api', '/node-sage', '/sage', '/version'], ...localProxy},
+        ],
         watchFiles: 'src/**/*',
     },
     devtool: 'eval-source-map',
