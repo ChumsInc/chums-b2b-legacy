@@ -30,6 +30,7 @@ debug.enabled = true;
 
 
 const categoryProductRegexp = pathToRegexp('/products/:category?/:product?');
+const pageRegexp = pathToRegexp('/pages/:page');
 
 const app = express();
 
@@ -175,8 +176,8 @@ async function handleRender(req, res) {
     }
     const keywords = initialState.products.keywords;
 
-    const parsedProduct = categoryProductRegexp.exec(req.path);
-    if (parsedProduct) {
+    if (categoryProductRegexp.test(req.path)) {
+        const parsedProduct = categoryProductRegexp.exec(req.path);
         try {
             let keyword;
             const search = parsedProduct[2] ? parsedProduct[2] : parsedProduct[1];
@@ -221,7 +222,16 @@ async function handleRender(req, res) {
         } catch(err) {
             console.trace("handleRender() preload product", err.message);
         }
+    } else if (pageRegexp.test(req.path)) {
+        const parsedPage = pageRegexp.exec(req.path) ?? [];
+        const [keyword] = initialState?.page?.list?.filter(kw => kw.keyword === parsedPage[1]);
+        if (keyword) {
+            const res = await loadJSON(`http://localhost:${API_PORT}/pages/${encodeURIComponent(keyword.keyword)}.json`);
+            initialState.page.content = res.page ?? {};
+        }
     }
+
+
 
 
     try {
